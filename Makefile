@@ -33,7 +33,7 @@ ALL_PACKAGES=\
 all: test
 
 format:
-	gofmt -w ${MODULE_ROOT} ${TEST_ROOT}
+	gofmt -w ${MODULE_ROOT}
 
 vet: format
 	go vet ${ALL_PACKAGES}
@@ -46,7 +46,6 @@ test: vet
 
 clean:
 	go clean -i ${ALL_PACKAGES}
-	- rm ${PROFILE_FILENAMES}
 
 check_style:
 	(! find . -name '*.go' | xargs gofmt -s -d | grep '^')
