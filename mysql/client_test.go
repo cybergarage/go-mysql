@@ -19,5 +19,10 @@ import (
 )
 
 func TestDefaultClinet(t *testing.T) {
-	NewClient()
+	client := NewClient()
+	err := client.Open()
+	defer client.Close()
+	if err != nil {
+		t.Error(err)
+	}
 }

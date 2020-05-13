@@ -14,15 +14,43 @@
 
 package mysql
 
+import (
+	"database/sql"
+	"fmt"
+
+	_ "github.com/go-sql-driver/mysql"
+)
+
 // Client represents a client for Cassndra server.
 type Client struct {
 	*Config
+	db *sql.DB
 }
 
 // NewClient returns a client instance.
 func NewClient() *Client {
 	client := &Client{
 		Config: NewDefaultConfig(),
+		db:     nil,
 	}
 	return client
+}
+
+// Open opens a database specified by the internal configuration.
+func (client *Client) Open() error {
+	dsName := fmt.Sprintf("tcp(127.0.0.1:3306)")
+	db, err := sql.Open(dsName)
+	if err != nil {
+		return err
+	}
+	client.db = db
+	return nil
+}
+
+// Close closes opens a database specified by the internal configuration.
+func (client *Client) Close() error {
+	if client.db == nil {
+		return nil
+	}
+	return client.db.Close()
 }
