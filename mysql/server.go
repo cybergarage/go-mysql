@@ -14,6 +14,8 @@
 
 package mysql
 
+import "fmt"
+
 // Server represents a MySQL compatible server.
 type Server struct {
 	*Config
@@ -42,7 +44,7 @@ func (server *Server) SetQueryHandler(h QueryHandler) {
 
 // Start starts the server.
 func (server *Server) Start() error {
-	l, err := NewListener("tcp", ":0", server.AuthHandler, server.QueryHandler, 0, 0, false)
+	l, err := NewListener("tcp", fmt.Sprintf(":%d", server.Port), server.AuthHandler, server.QueryHandler, 0, 0, false)
 	if err != nil {
 		return err
 	}
