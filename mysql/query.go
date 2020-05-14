@@ -16,14 +16,10 @@ package mysql
 
 import (
 	vitess "vitess.io/vitess/go/mysql"
+	querypb "vitess.io/vitess/go/vt/proto/query"
 )
 
-// A AuthHandler is an interface used for the user authentication.
-type AuthHandler interface {
-	vitess.AuthServer
-}
+// PrepareData is a buffer used for store prepare statement meta data
+type PrepareData vitess.PrepareData
 
-// A QueryHandler is an interface used for the request queries.
-type QueryHandler interface {
-	vitess.Handler
-}
+type Field querypb.Field

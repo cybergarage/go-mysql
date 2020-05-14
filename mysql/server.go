@@ -14,9 +14,11 @@
 
 package mysql
 
-// Server is an instance for MongoDB protocols.
+// Server represents a MySQL compatible server.
 type Server struct {
 	*Config
+	AuthHandler
+	QueryHandler
 }
 
 // NewServer returns a new server instance.
@@ -24,13 +26,22 @@ func NewServer() *Server {
 	server := &Server{
 		Config: NewDefaultConfig(),
 	}
-
 	return server
 }
 
 // Start starts the server.
 func (server *Server) Start() error {
 	return nil
+}
+
+// SetAuthHandler sets a user authentication handler.
+func (server *Server) SetAuthHandler(h AuthHandler) {
+	server.AuthHandler = h
+}
+
+// SetQueryHandler sets a query handler.
+func (server *Server) SetQueryHandler(h QueryHandler) {
+	server.QueryHandler = h
 }
 
 // Stop stops the server.
