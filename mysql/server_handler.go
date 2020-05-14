@@ -24,6 +24,10 @@ func (server *Server) NewConnection(c *Conn) {
 func (server *Server) ConnectionClosed(c *Conn) {
 }
 
+// ComInitDB is called once at the beginning to set db name, and subsequently for every ComInitDB event.
+func (server *Server) ComInitDB(c *Conn, schemaName string) {
+}
+
 // ComQuery is called when a connection receives a query.
 func (server *Server) ComQuery(c *Conn, query string, callback func(*sqltypes.Result) error) error {
 	return nil
