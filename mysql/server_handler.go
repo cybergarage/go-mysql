@@ -14,8 +14,6 @@
 
 package mysql
 
-import "vitess.io/vitess/go/sqltypes"
-
 // NewConnection is called when a connection is created.
 func (server *Server) NewConnection(c *Conn) {
 }
@@ -29,8 +27,12 @@ func (server *Server) ComInitDB(c *Conn, schemaName string) {
 }
 
 // ComQuery is called when a connection receives a query.
-func (server *Server) ComQuery(c *Conn, query string, callback func(*sqltypes.Result) error) error {
-	return nil
+func (server *Server) ComQuery(c *Conn, query string, callback func(*Result) error) error {
+	res := &Result{
+		Rows: [][]Value{},
+	}
+	err := callback(res)
+	return err
 }
 
 // ComPrepare is called when a connection receives a prepared statement query.
@@ -39,7 +41,7 @@ func (server *Server) ComPrepare(c *Conn, query string) ([]*Field, error) {
 }
 
 // ComStmtExecute is called when a connection receives a statement execute query.
-func (server *Server) ComStmtExecute(c *Conn, prepare *PrepareData, callback func(*sqltypes.Result) error) error {
+func (server *Server) ComStmtExecute(c *Conn, prepare *PrepareData, callback func(*Result) error) error {
 	return nil
 }
 
