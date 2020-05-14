@@ -14,6 +14,10 @@
 
 package mysql
 
+import (
+	"go-mysql/mysql/query"
+)
+
 // NewConnection is called when a connection is created.
 func (server *Server) NewConnection(c *Conn) {
 }
@@ -27,11 +31,16 @@ func (server *Server) ComInitDB(c *Conn, schemaName string) {
 }
 
 // ComQuery is called when a connection receives a query.
-func (server *Server) ComQuery(c *Conn, query string, callback func(*Result) error) error {
+func (server *Server) ComQuery(c *Conn, q string, callback func(*Result) error) error {
+	parser := query.NewParser()
+	_, err := parser.Parse(q)
+	if err != nil {
+		return err
+	}
 	res := &Result{
 		Rows: [][]Value{},
 	}
-	err := callback(res)
+	err = callback(res)
 	return err
 }
 
