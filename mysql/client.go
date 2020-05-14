@@ -38,7 +38,7 @@ func NewClient() *Client {
 
 // Open opens a database specified by the internal configuration.
 func (client *Client) Open() error {
-	dsName := fmt.Sprintf("tcp(127.0.0.1:3306)")
+	dsName := fmt.Sprintf("root@tcp(127.0.0.1:3306)/")
 	db, err := sql.Open("mysql", dsName)
 	if err != nil {
 		return err
