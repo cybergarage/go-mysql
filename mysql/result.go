@@ -15,8 +15,18 @@
 package mysql
 
 import (
-	vitess "vitess.io/vitess/go/mysql"
+	vitesstypes "vitess.io/vitess/go/sqltypes"
+	vitesspb "vitess.io/vitess/go/vt/proto/query"
 )
 
-// PrepareData is a buffer used for store prepare statement meta data
-type PrepareData = vitess.PrepareData
+// Result represents a query result.
+type Result = vitesstypes.Result
+
+// Field represents a field.
+type Field = vitesspb.Field
+
+// Row represents a row.
+type Row = vitesspb.Value
+
+// Value represents a value.
+type Value = vitesstypes.Value
