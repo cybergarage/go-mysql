@@ -20,6 +20,8 @@ import (
 
 func TestServer(t *testing.T) {
 	server := NewServer()
+	server.SetAuthHandler(NewDefaultAuthHandler())
+	server.SetQueryHandler(server)
 
 	err := server.Start()
 	if err != nil {

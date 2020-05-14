@@ -20,6 +20,6 @@ import (
 )
 
 // PrepareData is a buffer used for store prepare statement meta data
-type PrepareData vitess.PrepareData
+type PrepareData = vitess.PrepareData
 
-type Field querypb.Field
+type Field = querypb.Field
