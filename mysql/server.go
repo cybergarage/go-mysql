@@ -19,6 +19,7 @@ type Server struct {
 	*Config
 	AuthHandler
 	QueryHandler
+	listener *Listener
 }
 
 // NewServer returns a new server instance.
@@ -27,11 +28,6 @@ func NewServer() *Server {
 		Config: NewDefaultConfig(),
 	}
 	return server
-}
-
-// Start starts the server.
-func (server *Server) Start() error {
-	return nil
 }
 
 // SetAuthHandler sets a user authentication handler.
@@ -44,8 +40,25 @@ func (server *Server) SetQueryHandler(h QueryHandler) {
 	server.QueryHandler = h
 }
 
+// Start starts the server.
+func (server *Server) Start() error {
+	l, err := NewListener("tcp", ":0", server.AuthHandler, server.QueryHandler, 0, 0, false)
+	if err != nil {
+		return err
+	}
+	server.listener = l
+
+	go server.listener.Accept()
+
+	return nil
+}
+
 // Stop stops the server.
 func (server *Server) Stop() error {
+	if server.listener != nil {
+		server.listener.Close()
+		server.listener = nil
+	}
 	return nil
 }
 

@@ -19,4 +19,4 @@ import (
 )
 
 // Conn represents a connection of MySQL binary protocol
-type Conn vitess.Conn
+type Conn = vitess.Conn
