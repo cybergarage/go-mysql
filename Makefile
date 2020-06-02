@@ -39,6 +39,8 @@ ALL_PACKAGES=\
 	${MODULE_PACKAGES} \
 	${EXAMPLES_PACKAGES}
 
+BINARIES=${EXAMPLE_BINARIES}
+
 .PHONY: clean check_style
 
 all: test
@@ -54,6 +56,9 @@ build: vet
 
 test: vet
 	go test -v -cover -p=1 ${ALL_PACKAGES}
+
+install: build
+	go install -v -gcflags=${GCFLAGS} ${BINARIES}
 
 clean:
 	go clean -i ${ALL_PACKAGES}
