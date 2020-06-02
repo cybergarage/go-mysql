@@ -18,9 +18,6 @@ import (
 	vitesssql "vitess.io/vitess/go/vt/sqlparser"
 )
 
-// Statement represents a query tatement.
-type Statement = vitesssql.Statement
-
 // Parser represents a SQL parser.
 type Parser struct {
 }
