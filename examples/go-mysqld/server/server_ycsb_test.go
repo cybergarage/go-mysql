@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mysql
+package server
 
 import (
+	"go-mysql/mysql"
 	"testing"
 )
 
@@ -25,7 +26,7 @@ var testYCSBSetupQueries []string = []string{
 }
 
 func testYCSBSetup(t *testing.T) {
-	client := NewClient()
+	client := mysql.NewClient()
 	err := client.Open()
 	defer client.Close()
 	if err != nil {
@@ -49,7 +50,7 @@ func testYCSBRunWorkload(t *testing.T) {
 
 func TestYCSB(t *testing.T) {
 	server := NewServer()
-	server.SetAuthHandler(NewDefaultAuthHandler())
+	server.SetAuthHandler(mysql.NewDefaultAuthHandler())
 	server.SetQueryHandler(server)
 
 	err := server.Start()
