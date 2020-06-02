@@ -15,7 +15,7 @@
 package mysql
 
 import (
-	"fmt"
+	"context"
 	"go-mysql/mysql/query"
 )
 
@@ -38,9 +38,26 @@ func (server *Server) ComQuery(c *Conn, q string, callback func(*Result) error) 
 	if err != nil {
 		return err
 	}
-	fmt.Printf("%s\n", stmt)
+
 	res := &Result{
 		Rows: [][]Value{},
+	}
+
+	ctx := context.Background()
+
+	executor := server.QueryExecutor
+	if executor != nil {
+		switch v := stmt.(type) {
+		case (*query.DDL):
+		case (*query.Insert):
+			res, err = executor.Insert(ctx, v)
+		case (*query.Select):
+			res, err = executor.Select(ctx, v)
+		case (*query.Update):
+			res, err = executor.Update(ctx, v)
+		case (*query.Delete):
+			res, err = executor.Delete(ctx, v)
+		}
 	}
 	err = callback(res)
 	return err

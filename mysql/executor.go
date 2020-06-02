@@ -26,13 +26,13 @@ type DDOExecutor interface {
 // DMOExecutor defines a executor interface for DMO (Data Manipulation Operations).
 type DMOExecutor interface {
 	// Insert should handle INSERT queries.
-	Insert(context.Context, query.Statement) (*Result, error)
+	Insert(context.Context, *query.Insert) (*Result, error)
 	// Update should handle UPDATE queries.
-	Update(context.Context, query.Statement) (*Result, error)
+	Update(context.Context, *query.Update) (*Result, error)
 	// Delete should handle DELETE queries.
-	Delete(context.Context, query.Statement) (*Result, error)
+	Delete(context.Context, *query.Delete) (*Result, error)
 	// Select should handle SELECT queries.
-	Select(context.Context, query.Statement) (*Result, error)
+	Select(context.Context, *query.Select) (*Result, error)
 }
 
 // DCOExecutor defines a executor interface for DCO (Data Control Operations).
