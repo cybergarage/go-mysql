@@ -15,6 +15,7 @@
 package mysql
 
 import (
+	"fmt"
 	"go-mysql/mysql/query"
 )
 
@@ -33,10 +34,11 @@ func (server *Server) ComInitDB(c *Conn, schemaName string) {
 // ComQuery is called when a connection receives a query.
 func (server *Server) ComQuery(c *Conn, q string, callback func(*Result) error) error {
 	parser := query.NewParser()
-	_, err := parser.Parse(q)
+	stmt, err := parser.Parse(q)
 	if err != nil {
 		return err
 	}
+	fmt.Printf("%s\n", stmt)
 	res := &Result{
 		Rows: [][]Value{},
 	}
