@@ -27,7 +27,8 @@ type Server struct {
 // NewServer returns a new server instance.
 func NewServer() *Server {
 	server := &Server{
-		Config: NewDefaultConfig(),
+		Config:      NewDefaultConfig(),
+		AuthHandler: NewDefaultAuthHandler(),
 	}
 	return server
 }
