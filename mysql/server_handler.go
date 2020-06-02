@@ -48,7 +48,30 @@ func (server *Server) ComQuery(c *Conn, q string, callback func(*Result) error) 
 	executor := server.QueryExecutor
 	if executor != nil {
 		switch v := stmt.(type) {
+		case (*query.DBDDL):
+			switch v.Action {
+			case "create":
+				res, err = executor.CreateDatabase(ctx, v)
+			case "drop":
+				res, err = executor.DropDatabase(ctx, v)
+			case "alter":
+				res, err = executor.AlterDatabase(ctx, v)
+			}
 		case (*query.DDL):
+			switch v.Action {
+			case "create":
+				res, err = executor.CreateTable(ctx, v)
+			case "drop":
+				res, err = executor.DropTable(ctx, v)
+			case "alter":
+				res, err = executor.AlterTable(ctx, v)
+			case "rename":
+				res, err = executor.RenameTable(ctx, v)
+			case "truncate":
+				res, err = executor.TruncateTable(ctx, v)
+			case "analyze":
+				res, err = executor.AnalyzeTable(ctx, v)
+			}
 		case (*query.Insert):
 			res, err = executor.Insert(ctx, v)
 		case (*query.Select):
