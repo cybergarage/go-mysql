@@ -21,15 +21,19 @@ type Server struct {
 	*Config
 	AuthHandler
 	QueryHandler
+	QueryExecutor
 	listener *Listener
 }
 
 // NewServer returns a new server instance.
 func NewServer() *Server {
 	server := &Server{
-		Config:      NewDefaultConfig(),
-		AuthHandler: NewDefaultAuthHandler(),
+		Config:        NewDefaultConfig(),
+		AuthHandler:   NewDefaultAuthHandler(),
+		QueryHandler:  nil,
+		QueryExecutor: nil,
 	}
+	server.SetQueryHandler(server)
 	return server
 }
 
@@ -41,6 +45,11 @@ func (server *Server) SetAuthHandler(h AuthHandler) {
 // SetQueryHandler sets a query handler.
 func (server *Server) SetQueryHandler(h QueryHandler) {
 	server.QueryHandler = h
+}
+
+// SetQueryExecutor sets a query executor.
+func (server *Server) SetQueryExecutor(e QueryExecutor) {
+	server.QueryExecutor = e
 }
 
 // Start starts the server.

@@ -16,6 +16,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"go-mysql/mysql"
 	"go-mysql/mysql/query"
 )
@@ -31,21 +32,25 @@ func NewMemStore() *MemStore {
 }
 
 // Insert should handle INSERT queries.
-func (store *MemStore) Insert(ctx context.Context, stmt query.Statement) (*mysql.Result, error) {
+func (store *MemStore) Insert(ctx context.Context, stmt *query.Insert) (*mysql.Result, error) {
+	fmt.Printf("%v\n", stmt)
 	return nil, nil
 }
 
 // Update should handle UPDATE queries.
-func (store *MemStore) Update(ctx context.Context, stmt query.Statement) (*mysql.Result, error) {
+func (store *MemStore) Update(ctx context.Context, stmt *query.Update) (*mysql.Result, error) {
+	fmt.Printf("%v\n", stmt)
 	return nil, nil
 }
 
 // Delete should handle DELETE queries.
-func (store *MemStore) Delete(ctx context.Context, stmt query.Statement) (*mysql.Result, error) {
+func (store *MemStore) Delete(ctx context.Context, stmt *query.Delete) (*mysql.Result, error) {
+	fmt.Printf("%v\n", stmt)
 	return nil, nil
 }
 
 // Select should handle SELECT queries.
-func (store *MemStore) Select(ctx context.Context, stmt query.Statement) (*mysql.Result, error) {
+func (store *MemStore) Select(ctx context.Context, stmt *query.Select) (*mysql.Result, error) {
+	fmt.Printf("%v\n", stmt)
 	return nil, nil
 }
