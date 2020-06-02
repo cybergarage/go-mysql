@@ -50,7 +50,6 @@ func testYCSBRunWorkload(t *testing.T) {
 
 func TestYCSB(t *testing.T) {
 	server := NewServer()
-	server.SetAuthHandler(mysql.NewDefaultAuthHandler())
 	server.SetQueryHandler(server)
 
 	err := server.Start()
