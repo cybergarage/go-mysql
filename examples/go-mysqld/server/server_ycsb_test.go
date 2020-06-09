@@ -15,26 +15,23 @@
 package server
 
 import (
+	"fmt"
 	"go-mysql/mysql"
 	"testing"
 )
 
-var testYCSBSetupQueries []string = []string{
-	"CREATE DATABASE ycsb",
-	"USE ycsb",
-	"CREATE TABLE usertable (YCSB_KEY VARCHAR(255) PRIMARY KEY, FIELD0 TEXT, FIELD1 TEXT, FIELD2 TEXT, FIELD3 TEXT, FIELD4 TEXT, FIELD5 TEXT, FIELD6 TEXT, FIELD7 TEXT, FIELD8 TEXT, FIELD9 TEXT)",
-	"SELECT * FROM usertable",
-}
+const (
+	testYCSBDataSize = 100
+)
 
-func testYCSBSetup(t *testing.T) {
-	client := mysql.NewClient()
-	err := client.Open()
-	defer client.Close()
-	if err != nil {
-		t.Error(err)
+func testYCSBSetup(t *testing.T, client *mysql.Client) {
+	var setupQueries []string = []string{
+		"CREATE DATABASE ycsb",
+		"USE ycsb",
+		"CREATE TABLE usertable (YCSB_KEY VARCHAR(255) PRIMARY KEY, FIELD0 TEXT, FIELD1 TEXT, FIELD2 TEXT, FIELD3 TEXT, FIELD4 TEXT, FIELD5 TEXT, FIELD6 TEXT, FIELD7 TEXT, FIELD8 TEXT, FIELD9 TEXT)",
 	}
 
-	for n, query := range testYCSBSetupQueries {
+	for n, query := range setupQueries {
 		t.Logf("[%d] %s", n, query)
 		_, err := client.Query(query)
 		if err != nil {
@@ -43,10 +40,26 @@ func testYCSBSetup(t *testing.T) {
 	}
 }
 
-func testYCSBLoadWorkload(t *testing.T) {
+func testYCSBLoadWorkload(t *testing.T, client *mysql.Client) {
+	for n := 0; n < testYCSBDataSize; n++ {
+		query := fmt.Sprintf("INSERT INTO usertable VALUES (YCSB_KEY =\"%d\", FIELD0 =\"%d\",FIELD1 =\"%d\",FIELD2 =\"%d\",FIELD3 =\"%d\",FIELD4 =\"%d\",FIELD5 =\"%d\",FIELD6 =\"%d\",FIELD7 =\"%d\",FIELD8 =\"%d\",FIELD9 =\"%d\")",
+			n, n, n, n, n, n, n, n, n, n, n)
+		_, err := client.Query(query)
+		if err != nil {
+			t.Error(err)
+		}
+	}
 }
 
-func testYCSBRunWorkload(t *testing.T) {
+func testYCSBRunWorkload(t *testing.T, client *mysql.Client) {
+	for n := 0; n < testYCSBDataSize; n++ {
+		query := fmt.Sprintf("SELECT FIELD0, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5, FIELD6, FIELD7, FIELD8, FIELD9 FROM usertable WHERE YCSB_KEY = \"%d\"",
+			n)
+		_, err := client.Query(query)
+		if err != nil {
+			t.Error(err)
+		}
+	}
 }
 
 func TestYCSB(t *testing.T) {
@@ -59,9 +72,16 @@ func TestYCSB(t *testing.T) {
 		return
 	}
 
-	testYCSBSetup(t)
-	testYCSBLoadWorkload(t)
-	testYCSBRunWorkload(t)
+	client := mysql.NewClient()
+	err = client.Open()
+	defer client.Close()
+	if err != nil {
+		t.Error(err)
+	}
+
+	testYCSBSetup(t, client)
+	testYCSBLoadWorkload(t, client)
+	testYCSBRunWorkload(t, client)
 
 	err = server.Stop()
 	if err != nil {
