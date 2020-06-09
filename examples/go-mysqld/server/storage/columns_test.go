@@ -12,11 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package server
+package storage
 
-const (
-	errorSystemDatabaseNotFound = "System database (%s) is not found"
-	errorSystemTableNotFound    = "System table (%s) is not found"
-	errorCollectionNotFound     = "Collection (%s) is not found"
-	errorDatabaseNotFound       = "Database (%s) is not found"
+import (
+	"testing"
 )
+
+func TestColumnsEquals(t *testing.T) {
+	testColumns := []*Column{
+		NewColumnWithName("a"),
+		NewColumnWithNameAndValue("b", 1),
+	}
+
+	colums := NewColumnsWithColumns(testColumns)
+	if !colums.Equals(colums) {
+		t.Errorf("%v != %v", colums, colums)
+	}
+}

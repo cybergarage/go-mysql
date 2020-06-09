@@ -12,11 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package server
+package storage
 
-const (
-	errorSystemDatabaseNotFound = "System database (%s) is not found"
-	errorSystemTableNotFound    = "System table (%s) is not found"
-	errorCollectionNotFound     = "Collection (%s) is not found"
-	errorDatabaseNotFound       = "Database (%s) is not found"
+import (
+	"testing"
 )
+
+func TestNewTable(t *testing.T) {
+	tbl := NewTable()
+
+	rows := tbl.GetRows()
+	if len(rows) != 0 {
+		t.Errorf("%d", len(rows))
+	}
+}
