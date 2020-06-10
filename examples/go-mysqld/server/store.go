@@ -20,5 +20,5 @@ import (
 
 // Store should support only DMOExecutor methods
 type Store interface {
-	mysql.DMOExecutor
+	mysql.QueryExecutor
 }
