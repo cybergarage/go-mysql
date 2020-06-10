@@ -38,6 +38,7 @@ func NewServerWithStore(store Store) *Server {
 		Server: mysql.NewServer(),
 		Store:  store,
 	}
+	server.SetQueryExecutor(store)
 	return server
 }
 
