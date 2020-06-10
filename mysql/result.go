@@ -30,3 +30,11 @@ type Row = vitesspb.Value
 
 // Value represents a value.
 type Value = vitesstypes.Value
+
+// NewResult returns a blank result.
+func NewResult() *Result {
+	res := &Result{
+		Rows: [][]Value{},
+	}
+	return res
+}
