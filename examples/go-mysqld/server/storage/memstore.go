@@ -34,77 +34,77 @@ func NewMemStore() *MemStore {
 // CreateDatabase should handle a CREATE database statement.
 func (store *MemStore) CreateDatabase(ctx context.Context, stmt *query.DBDDL) (*mysql.Result, error) {
 	fmt.Printf("%v\n", stmt)
-	return nil, nil
+	return mysql.NewResult(), nil
 }
 
 // AlterDatabase should handle a ALTER database statement.
 func (store *MemStore) AlterDatabase(ctx context.Context, stmt *query.DBDDL) (*mysql.Result, error) {
 	fmt.Printf("%v\n", stmt)
-	return nil, nil
+	return mysql.NewResult(), nil
 }
 
 // DropDatabase should handle a DROP database statement.
 func (store *MemStore) DropDatabase(ctx context.Context, stmt *query.DBDDL) (*mysql.Result, error) {
 	fmt.Printf("%v\n", stmt)
-	return nil, nil
+	return mysql.NewResult(), nil
 }
 
 // CreateTable should handle a CREATE table statement.
 func (store *MemStore) CreateTable(ctx context.Context, stmt *query.DDL) (*mysql.Result, error) {
 	fmt.Printf("%v\n", stmt)
-	return nil, nil
+	return mysql.NewResult(), nil
 }
 
 // AlterTable should handle a ALTER table statement.
 func (store *MemStore) AlterTable(ctx context.Context, stmt *query.DDL) (*mysql.Result, error) {
 	fmt.Printf("%v\n", stmt)
-	return nil, nil
+	return mysql.NewResult(), nil
 }
 
 // DropTable should handle a DROP table statement.
 func (store *MemStore) DropTable(ctx context.Context, stmt *query.DDL) (*mysql.Result, error) {
 	fmt.Printf("%v\n", stmt)
-	return nil, nil
+	return mysql.NewResult(), nil
 }
 
 // RenameTable should handle a RENAME table statement.
 func (store *MemStore) RenameTable(ctx context.Context, stmt *query.DDL) (*mysql.Result, error) {
 	fmt.Printf("%v\n", stmt)
-	return nil, nil
+	return mysql.NewResult(), nil
 }
 
 // TruncateTable should handle a TRUNCATE table statement.
 func (store *MemStore) TruncateTable(ctx context.Context, stmt *query.DDL) (*mysql.Result, error) {
 	fmt.Printf("%v\n", stmt)
-	return nil, nil
+	return mysql.NewResult(), nil
 }
 
 // AnalyzeTable should handle a ANALYZE table statement.
 func (store *MemStore) AnalyzeTable(ctx context.Context, stmt *query.DDL) (*mysql.Result, error) {
 	fmt.Printf("%v\n", stmt)
-	return nil, nil
+	return mysql.NewResult(), nil
 }
 
 // Insert should handle a INSERT statement.
 func (store *MemStore) Insert(ctx context.Context, stmt *query.Insert) (*mysql.Result, error) {
 	fmt.Printf("%v\n", stmt)
-	return nil, nil
+	return mysql.NewResult(), nil
 }
 
 // Update should handle a UPDATE statement.
 func (store *MemStore) Update(ctx context.Context, stmt *query.Update) (*mysql.Result, error) {
 	fmt.Printf("%v\n", stmt)
-	return nil, nil
+	return mysql.NewResult(), nil
 }
 
 // Delete should handle a DELETE statement.
 func (store *MemStore) Delete(ctx context.Context, stmt *query.Delete) (*mysql.Result, error) {
 	fmt.Printf("%v\n", stmt)
-	return nil, nil
+	return mysql.NewResult(), nil
 }
 
 // Select should handle a SELECT statement.
 func (store *MemStore) Select(ctx context.Context, stmt *query.Select) (*mysql.Result, error) {
 	fmt.Printf("%v\n", stmt)
-	return nil, nil
+	return mysql.NewResult(), nil
 }
