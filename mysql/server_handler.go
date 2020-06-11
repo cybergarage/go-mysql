@@ -44,6 +44,7 @@ func (server *Server) ComQuery(c *Conn, q string, callback func(*Result) error) 
 	}
 
 	ctx := context.Background()
+	conn := c
 
 	executor := server.QueryExecutor
 	if executor != nil {
@@ -51,35 +52,35 @@ func (server *Server) ComQuery(c *Conn, q string, callback func(*Result) error) 
 		case (*query.DBDDL):
 			switch v.Action {
 			case "create":
-				res, err = executor.CreateDatabase(ctx, v)
+				res, err = executor.CreateDatabase(ctx, conn, v)
 			case "drop":
-				res, err = executor.DropDatabase(ctx, v)
+				res, err = executor.DropDatabase(ctx, conn, v)
 			case "alter":
-				res, err = executor.AlterDatabase(ctx, v)
+				res, err = executor.AlterDatabase(ctx, conn, v)
 			}
 		case (*query.DDL):
 			switch v.Action {
 			case "create":
-				res, err = executor.CreateTable(ctx, v)
+				res, err = executor.CreateTable(ctx, conn, v)
 			case "drop":
-				res, err = executor.DropTable(ctx, v)
+				res, err = executor.DropTable(ctx, conn, v)
 			case "alter":
-				res, err = executor.AlterTable(ctx, v)
+				res, err = executor.AlterTable(ctx, conn, v)
 			case "rename":
-				res, err = executor.RenameTable(ctx, v)
+				res, err = executor.RenameTable(ctx, conn, v)
 			case "truncate":
-				res, err = executor.TruncateTable(ctx, v)
+				res, err = executor.TruncateTable(ctx, conn, v)
 			case "analyze":
-				res, err = executor.AnalyzeTable(ctx, v)
+				res, err = executor.AnalyzeTable(ctx, conn, v)
 			}
 		case (*query.Insert):
-			res, err = executor.Insert(ctx, v)
+			res, err = executor.Insert(ctx, conn, v)
 		case (*query.Select):
-			res, err = executor.Select(ctx, v)
+			res, err = executor.Select(ctx, conn, v)
 		case (*query.Update):
-			res, err = executor.Update(ctx, v)
+			res, err = executor.Update(ctx, conn, v)
 		case (*query.Delete):
-			res, err = executor.Delete(ctx, v)
+			res, err = executor.Delete(ctx, conn, v)
 		}
 	}
 	err = callback(res)
