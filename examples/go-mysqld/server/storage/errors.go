@@ -15,5 +15,7 @@
 package storage
 
 const (
-	errorCollectionNotFound = "Collection (%s) is not found"
+	errorDatabaseFound    = "Database (%s) is already created"
+	errorDatabaseNotFound = "Database (%s) is not found"
+	errorTableNotFound    = "Table (%s) is not found"
 )

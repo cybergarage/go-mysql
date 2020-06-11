@@ -22,18 +22,28 @@ import (
 )
 
 type MemStore struct {
+	Databases
 }
 
 // NewMemStore returns an in-memory storeinstance.
 func NewMemStore() *MemStore {
-	store := &MemStore{}
-
+	store := &MemStore{
+		Databases: NewDatabases(),
+	}
 	return store
 }
 
 // CreateDatabase should handle a CREATE database statement.
 func (store *MemStore) CreateDatabase(ctx context.Context, stmt *query.DBDDL) (*mysql.Result, error) {
-	fmt.Printf("%v\n", stmt)
+	dbName := stmt.DBName
+	_, ok := store.GetDatabase(dbName)
+	if ok {
+		return mysql.NewResult(), fmt.Errorf(errorDatabaseFound, dbName)
+	}
+	err := store.AddDatabase(NewDatabaseWithName(dbName))
+	if err != nil {
+		return mysql.NewResult(), err
+	}
 	return mysql.NewResult(), nil
 }
 
