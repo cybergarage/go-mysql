@@ -22,35 +22,35 @@ import (
 // DDOExecutor defines a executor interface for DDO (Data Definition Operations).
 type DDOExecutor interface {
 	// CreateDatabase should handle a CREATE database statement.
-	CreateDatabase(context.Context, *query.DBDDL) (*Result, error)
+	CreateDatabase(context.Context, *Conn, *query.DBDDL) (*Result, error)
 	// AlterDatabase should handle a ALTER database statement.
-	AlterDatabase(context.Context, *query.DBDDL) (*Result, error)
+	AlterDatabase(context.Context, *Conn, *query.DBDDL) (*Result, error)
 	// DropDatabase should handle a DROP database statement.
-	DropDatabase(context.Context, *query.DBDDL) (*Result, error)
+	DropDatabase(context.Context, *Conn, *query.DBDDL) (*Result, error)
 	// CreateTable should handle a CREATE table statement.
-	CreateTable(context.Context, *query.DDL) (*Result, error)
+	CreateTable(context.Context, *Conn, *query.DDL) (*Result, error)
 	// AlterTable should handle a ALTER table statement.
-	AlterTable(context.Context, *query.DDL) (*Result, error)
+	AlterTable(context.Context, *Conn, *query.DDL) (*Result, error)
 	// DropTable should handle a DROP table statement.
-	DropTable(context.Context, *query.DDL) (*Result, error)
+	DropTable(context.Context, *Conn, *query.DDL) (*Result, error)
 	// RenameTable should handle a RENAME table statement.
-	RenameTable(context.Context, *query.DDL) (*Result, error)
+	RenameTable(context.Context, *Conn, *query.DDL) (*Result, error)
 	// TruncateTable should handle a TRUNCATE table statement.
-	TruncateTable(context.Context, *query.DDL) (*Result, error)
+	TruncateTable(context.Context, *Conn, *query.DDL) (*Result, error)
 	// AnalyzeTable should handle a ANALYZE table statement.
-	AnalyzeTable(context.Context, *query.DDL) (*Result, error)
+	AnalyzeTable(context.Context, *Conn, *query.DDL) (*Result, error)
 }
 
 // DMOExecutor defines a executor interface for DMO (Data Manipulation Operations).
 type DMOExecutor interface {
 	// Insert should handle a INSERT statement.
-	Insert(context.Context, *query.Insert) (*Result, error)
+	Insert(context.Context, *Conn, *query.Insert) (*Result, error)
 	// Update should handle a UPDATE statement.
-	Update(context.Context, *query.Update) (*Result, error)
+	Update(context.Context, *Conn, *query.Update) (*Result, error)
 	// Delete should handle a DELETE statement.
-	Delete(context.Context, *query.Delete) (*Result, error)
+	Delete(context.Context, *Conn, *query.Delete) (*Result, error)
 	// Select should handle a SELECT statement.
-	Select(context.Context, *query.Select) (*Result, error)
+	Select(context.Context, *Conn, *query.Select) (*Result, error)
 }
 
 // DCOExecutor defines a executor interface for DCO (Data Control Operations).
