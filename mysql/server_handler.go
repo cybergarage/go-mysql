@@ -87,6 +87,8 @@ func (server *Server) ComQuery(c *mysql.Conn, q string, callback func(*Result) e
 			res, err = executor.Update(ctx, conn, v)
 		case (*query.Delete):
 			res, err = executor.Delete(ctx, conn, v)
+		case (*query.Use):
+			conn.Database = v.DBName.String()
 		}
 	}
 	err = callback(res)

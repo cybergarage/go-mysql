@@ -24,6 +24,11 @@ type Conn struct {
 	Database string
 }
 
+// newConn returns a connection with a default empty connection.
+func newConn() *Conn {
+	return NewConnWithConn(&vitess.Conn{})
+}
+
 // NewConnWithConn returns a connection with a raw connection.
 func NewConnWithConn(c *vitess.Conn) *Conn {
 	conn := &Conn{
