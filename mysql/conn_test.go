@@ -15,19 +15,9 @@
 package mysql
 
 import (
-	vitess "vitess.io/vitess/go/mysql"
+	"testing"
 )
 
-// Conn represents a connection of MySQL binary protocol
-type Conn struct {
-	*vitess.Conn
-	Database string
-}
-
-// NewConnWithConn returns a connection with a raw connection.
-func NewConnWithConn(c *vitess.Conn) *Conn {
-	conn := &Conn{
-		Conn: c,
-	}
-	return conn
+func TestNewConnWithConn(t *testing.T) {
+	NewConnWithConn(nil)
 }

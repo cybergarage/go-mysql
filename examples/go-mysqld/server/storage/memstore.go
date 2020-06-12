@@ -35,6 +35,7 @@ func NewMemStore() *MemStore {
 
 // CreateDatabase should handle a CREATE database statement.
 func (store *MemStore) CreateDatabase(ctx context.Context, conn *mysql.Conn, stmt *query.DBDDL) (*mysql.Result, error) {
+	fmt.Printf("%v\n", stmt)
 	dbName := stmt.DBName
 	_, ok := store.GetDatabase(dbName)
 	if ok {
@@ -61,6 +62,7 @@ func (store *MemStore) DropDatabase(ctx context.Context, conn *mysql.Conn, stmt 
 
 // CreateTable should handle a CREATE table statement.
 func (store *MemStore) CreateTable(ctx context.Context, conn *mysql.Conn, stmt *query.DDL) (*mysql.Result, error) {
+	fmt.Printf("%v\n", stmt)
 	tableName := stmt.Table.Name.String()
 	_ = NewTableWithName(tableName)
 	return mysql.NewResult(), nil
