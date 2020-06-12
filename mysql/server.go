@@ -23,6 +23,7 @@ type Server struct {
 	QueryHandler
 	QueryExecutor
 	listener *Listener
+	ConnMap
 }
 
 // NewServer returns a new server instance.
@@ -32,6 +33,7 @@ func NewServer() *Server {
 		AuthHandler:   NewDefaultAuthHandler(),
 		QueryHandler:  nil,
 		QueryExecutor: nil,
+		ConnMap:       NewConnMap(),
 	}
 	server.SetQueryHandler(server)
 	return server
