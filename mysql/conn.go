@@ -24,6 +24,7 @@ import (
 type Conn struct {
 	*vitess.Conn
 	Database  string
+	UID       uint32
 	Timestamp time.Time
 }
 
@@ -36,6 +37,7 @@ func newConn() *Conn {
 func NewConnWithConn(c *vitess.Conn) *Conn {
 	conn := &Conn{
 		Conn:      c,
+		UID:       c.ConnectionID,
 		Timestamp: time.Now(),
 	}
 	return conn
