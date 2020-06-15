@@ -15,13 +15,16 @@
 package mysql
 
 import (
+	"time"
+
 	vitess "vitess.io/vitess/go/mysql"
 )
 
 // Conn represents a connection of MySQL binary protocol
 type Conn struct {
 	*vitess.Conn
-	Database string
+	Database  string
+	Timestamp time.Time
 }
 
 // newConn returns a connection with a default empty connection.
@@ -32,7 +35,8 @@ func newConn() *Conn {
 // NewConnWithConn returns a connection with a raw connection.
 func NewConnWithConn(c *vitess.Conn) *Conn {
 	conn := &Conn{
-		Conn: c,
+		Conn:      c,
+		Timestamp: time.Now(),
 	}
 	return conn
 }
