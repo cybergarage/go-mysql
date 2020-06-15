@@ -37,8 +37,13 @@ func newConn() *Conn {
 func NewConnWithConn(c *vitess.Conn) *Conn {
 	conn := &Conn{
 		Conn:      c,
-		UID:       c.ConnectionID,
+		UID:       0,
 		Timestamp: time.Now(),
 	}
+
+	if c != nil {
+		conn.UID = c.ConnectionID
+	}
+
 	return conn
 }
