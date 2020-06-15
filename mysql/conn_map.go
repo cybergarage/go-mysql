@@ -27,14 +27,14 @@ func (cm ConnMap) AddConn(c *Conn) {
 	cm[c.ConnectionID] = c
 }
 
-// GetByConnID returns a connection and true when the specified connection exists by the connection ID, otherwise nil and false.
-func (cm ConnMap) GetByConnID(cid uint32) (*Conn, bool) {
+// GetConnByUID returns a connection and true when the specified connection exists by the connection ID, otherwise nil and false.
+func (cm ConnMap) GetConnByUID(cid uint32) (*Conn, bool) {
 	c, ok := cm[cid]
 	return c, ok
 }
 
-// DeleteByConnID deletes the specified connection by the connection ID.
-func (cm ConnMap) DeleteByConnID(cid uint32) {
+// DeleteConnByUID deletes the specified connection by the connection ID.
+func (cm ConnMap) DeleteConnByUID(cid uint32) {
 	delete(cm, cid)
 }
 

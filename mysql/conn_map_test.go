@@ -39,7 +39,7 @@ func TestNewConnMap(t *testing.T) {
 	}
 
 	for n := 0; n < TestLoopCnt; n++ {
-		c, ok := cm.GetByConnID(uint32(n))
+		c, ok := cm.GetConnByUID(uint32(n))
 		if !ok {
 			t.Errorf("%d", n)
 			continue
@@ -54,7 +54,7 @@ func TestNewConnMap(t *testing.T) {
 		if cm.Length() != (TestLoopCnt - n) {
 			t.Errorf("%d != %d", cm.Length(), (TestLoopCnt - n))
 		}
-		cm.DeleteByConnID(uint32(n))
+		cm.DeleteConnByUID(uint32(n))
 	}
 	if cm.Length() != 0 {
 		t.Errorf("%d != %d", cm.Length(), 0)
