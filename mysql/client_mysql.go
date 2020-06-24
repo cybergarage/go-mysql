@@ -37,9 +37,9 @@ func NewMySQLClient() *MySQLClient {
 }
 
 // Open opens a database specified by the internal configuration.
-func (client *MySQLClient) Open() error {
+func (client *MySQLClient) Open(dbName string) error {
 	dbDrv := mysql.MySQLDriver{}
-	dsName := fmt.Sprintf("root@tcp(127.0.0.1:3306)")
+	dsName := fmt.Sprintf("root@tcp(127.0.0.1:3306)/%s", dbName)
 	conn, err := dbDrv.Open(dsName)
 	if err != nil {
 		return err

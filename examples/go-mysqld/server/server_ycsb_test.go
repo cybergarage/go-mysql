@@ -73,7 +73,7 @@ func TestYCSB(t *testing.T) {
 	}
 
 	client := mysql.NewClient()
-	err = client.Open()
+	err = client.Open("ycsb")
 	defer client.Close()
 	if err != nil {
 		t.Error(err)
