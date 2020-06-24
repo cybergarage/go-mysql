@@ -36,7 +36,11 @@ func (server *Server) ConnectionClosed(c *vitess.Conn) {
 
 // ComInitDB is called once at the beginning to set db name, and subsequently for every ComInitDB event.
 func (server *Server) ComInitDB(c *vitess.Conn, schemaName string) {
-	fmt.Printf("%v %d schema (%s)\n", c, c.ConnectionID, schemaName)
+	fmt.Printf("ComInitDB %v %d schema (%s)\n", c, c.ConnectionID, schemaName)
+	conn, ok := server.GetConnByUID(c.ConnectionID)
+	if ok {
+		conn.Database = schemaName
+	}
 }
 
 // ComQuery is called when a connection receives a query.
@@ -57,7 +61,7 @@ func (server *Server) ComQuery(c *vitess.Conn, q string, callback func(*Result) 
 		conn = NewConnWithConn(c)
 	}
 
-	fmt.Printf("%v %s query (%s)\n", conn, conn.Database, q)
+	fmt.Printf("ComQuery %v %s query (%s)\n", conn, conn.Database, q)
 
 	executor := server.QueryExecutor
 	if executor != nil {
