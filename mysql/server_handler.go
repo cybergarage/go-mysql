@@ -19,26 +19,28 @@ import (
 	"fmt"
 	"go-mysql/mysql/query"
 
-	"vitess.io/vitess/go/mysql"
+	vitess "vitess.io/vitess/go/mysql"
 )
 
 // NewConnection is called when a connection is created.
-func (server *Server) NewConnection(c *mysql.Conn) {
+func (server *Server) NewConnection(c *vitess.Conn) {
+	fmt.Printf("NewConnection %d\n", c.ConnectionID)
+	server.AddConn(NewConnWithConn(c))
 }
 
 // ConnectionClosed is called when a connection is closed.
-func (server *Server) ConnectionClosed(c *mysql.Conn) {
+func (server *Server) ConnectionClosed(c *vitess.Conn) {
+	fmt.Printf("ConnectionClosed %d\n", c.ConnectionID)
+	server.DeleteConnByUID(c.ConnectionID)
 }
 
 // ComInitDB is called once at the beginning to set db name, and subsequently for every ComInitDB event.
-func (server *Server) ComInitDB(c *mysql.Conn, schemaName string) {
-	fmt.Printf("%v schema (%s)\n", c, schemaName)
+func (server *Server) ComInitDB(c *vitess.Conn, schemaName string) {
+	fmt.Printf("%v %d schema (%s)\n", c, c.ConnectionID, schemaName)
 }
 
 // ComQuery is called when a connection receives a query.
-func (server *Server) ComQuery(c *mysql.Conn, q string, callback func(*Result) error) error {
-	fmt.Printf("%v query (%s)\n", c, q)
-
+func (server *Server) ComQuery(c *vitess.Conn, q string, callback func(*Result) error) error {
 	parser := query.NewParser()
 	stmt, err := parser.Parse(q)
 	if err != nil {
@@ -50,7 +52,12 @@ func (server *Server) ComQuery(c *mysql.Conn, q string, callback func(*Result) e
 	}
 
 	ctx := context.Background()
-	conn := NewConnWithConn(c)
+	conn, ok := server.GetConnByUID(c.ConnectionID)
+	if !ok {
+		conn = NewConnWithConn(c)
+	}
+
+	fmt.Printf("%v %s query (%s)\n", conn, conn.Database, q)
 
 	executor := server.QueryExecutor
 	if executor != nil {
@@ -96,20 +103,20 @@ func (server *Server) ComQuery(c *mysql.Conn, q string, callback func(*Result) e
 }
 
 // ComPrepare is called when a connection receives a prepared statement query.
-func (server *Server) ComPrepare(c *mysql.Conn, query string) ([]*Field, error) {
+func (server *Server) ComPrepare(c *vitess.Conn, query string) ([]*Field, error) {
 	return nil, nil
 }
 
 // ComStmtExecute is called when a connection receives a statement execute query.
-func (server *Server) ComStmtExecute(c *mysql.Conn, prepare *PrepareData, callback func(*Result) error) error {
+func (server *Server) ComStmtExecute(c *vitess.Conn, prepare *PrepareData, callback func(*Result) error) error {
 	return nil
 }
 
 // WarningCount is called at the end of each query to obtain the value to be returned to the client in the EOF packet.
-func (server *Server) WarningCount(c *mysql.Conn) uint16 {
+func (server *Server) WarningCount(c *vitess.Conn) uint16 {
 	return 0
 }
 
 // ComResetConnection is called when the connection is reseted.
-func (server *Server) ComResetConnection(c *mysql.Conn) {
+func (server *Server) ComResetConnection(c *vitess.Conn) {
 }
