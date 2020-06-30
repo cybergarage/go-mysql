@@ -39,7 +39,7 @@ func NewRowWithColumns(columns *Columns) *Row {
 }
 
 // Equals returns true when the specified row is equals to this row, otherwise false.
-func (row *Row) Equals(other Row) bool {
+func (row *Row) Equals(other *Row) bool {
 	return row.Columns.Equals(NewColumnsWithColumns(other.GetColumns()))
 }
 
