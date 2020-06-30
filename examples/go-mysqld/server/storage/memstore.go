@@ -122,3 +122,13 @@ func (store *MemStore) Select(ctx context.Context, conn *mysql.Conn, stmt *query
 	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
+
+// ShowDatabases should handle a SHOW DATABASES statement.
+func (store *MemStore) ShowDatabases(ctx context.Context, conn *mysql.Conn) (*mysql.Result, error) {
+	return mysql.NewResult(), nil
+}
+
+// ShowTables should handle a SHOW TABLES statement.
+func (store *MemStore) ShowTables(ctx context.Context, conn *mysql.Conn, database string) (*mysql.Result, error) {
+	return mysql.NewResult(), nil
+}
