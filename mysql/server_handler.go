@@ -90,6 +90,13 @@ func (server *Server) ComQuery(c *vitess.Conn, q string, callback func(*Result) 
 			case "analyze":
 				res, err = executor.AnalyzeTable(ctx, conn, v)
 			}
+		case (*query.Show):
+			switch v.Type {
+			case "DATABASES":
+				res, err = executor.ShowDatabases(ctx, conn)
+			case "TABLES":
+				res, err = executor.ShowTables(ctx, conn, conn.Database)
+			}
 		case (*query.Insert):
 			res, err = executor.Insert(ctx, conn, v)
 		case (*query.Select):

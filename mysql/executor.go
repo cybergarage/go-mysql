@@ -57,9 +57,18 @@ type DMOExecutor interface {
 type DCOExecutor interface {
 }
 
+// DAOExecutor defines a executor interface for DAO (Database Administration Operations).
+type DAOExecutor interface {
+	// ShowDatabases should handle a SHOW DATABASES statement.
+	ShowDatabases(context.Context, *Conn) (*Result, error)
+	// ShowTables should handle a SHOW TABLES statement.
+	ShowTables(context.Context, *Conn, string) (*Result, error)
+}
+
 // QueryExecutor represents an interface to execute all CQL queries.
 type QueryExecutor interface {
 	DDOExecutor
 	DMOExecutor
 	DCOExecutor
+	DAOExecutor
 }
