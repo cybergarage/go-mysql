@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"go-mysql/mysql"
+	"go-mysql/mysql/log"
 	"go-mysql/mysql/query"
 )
 
@@ -35,7 +36,7 @@ func NewMemStore() *MemStore {
 
 // CreateDatabase should handle a CREATE database statement.
 func (store *MemStore) CreateDatabase(ctx context.Context, conn *mysql.Conn, stmt *query.DBDDL) (*mysql.Result, error) {
-	fmt.Printf("%v\n", stmt)
+	log.Debug("%v\n", stmt)
 	dbName := stmt.DBName
 	_, ok := store.GetDatabase(dbName)
 	if ok {
@@ -50,19 +51,19 @@ func (store *MemStore) CreateDatabase(ctx context.Context, conn *mysql.Conn, stm
 
 // AlterDatabase should handle a ALTER database statement.
 func (store *MemStore) AlterDatabase(ctx context.Context, conn *mysql.Conn, stmt *query.DBDDL) (*mysql.Result, error) {
-	fmt.Printf("%v\n", stmt)
+	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // DropDatabase should handle a DROP database statement.
 func (store *MemStore) DropDatabase(ctx context.Context, conn *mysql.Conn, stmt *query.DBDDL) (*mysql.Result, error) {
-	fmt.Printf("%v\n", stmt)
+	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // CreateTable should handle a CREATE table statement.
 func (store *MemStore) CreateTable(ctx context.Context, conn *mysql.Conn, stmt *query.DDL) (*mysql.Result, error) {
-	fmt.Printf("%v\n", stmt)
+	log.Debug("%v\n", stmt)
 	tableName := stmt.Table.Name.String()
 	_ = NewTableWithName(tableName)
 	return mysql.NewResult(), nil
@@ -70,54 +71,54 @@ func (store *MemStore) CreateTable(ctx context.Context, conn *mysql.Conn, stmt *
 
 // AlterTable should handle a ALTER table statement.
 func (store *MemStore) AlterTable(ctx context.Context, conn *mysql.Conn, stmt *query.DDL) (*mysql.Result, error) {
-	fmt.Printf("%v\n", stmt)
+	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // DropTable should handle a DROP table statement.
 func (store *MemStore) DropTable(ctx context.Context, conn *mysql.Conn, stmt *query.DDL) (*mysql.Result, error) {
-	fmt.Printf("%v\n", stmt)
+	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // RenameTable should handle a RENAME table statement.
 func (store *MemStore) RenameTable(ctx context.Context, conn *mysql.Conn, stmt *query.DDL) (*mysql.Result, error) {
-	fmt.Printf("%v\n", stmt)
+	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // TruncateTable should handle a TRUNCATE table statement.
 func (store *MemStore) TruncateTable(ctx context.Context, conn *mysql.Conn, stmt *query.DDL) (*mysql.Result, error) {
-	fmt.Printf("%v\n", stmt)
+	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // AnalyzeTable should handle a ANALYZE table statement.
 func (store *MemStore) AnalyzeTable(ctx context.Context, conn *mysql.Conn, stmt *query.DDL) (*mysql.Result, error) {
-	fmt.Printf("%v\n", stmt)
+	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // Insert should handle a INSERT statement.
 func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query.Insert) (*mysql.Result, error) {
-	fmt.Printf("%v\n", stmt)
+	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // Update should handle a UPDATE statement.
 func (store *MemStore) Update(ctx context.Context, conn *mysql.Conn, stmt *query.Update) (*mysql.Result, error) {
-	fmt.Printf("%v\n", stmt)
+	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // Delete should handle a DELETE statement.
 func (store *MemStore) Delete(ctx context.Context, conn *mysql.Conn, stmt *query.Delete) (*mysql.Result, error) {
-	fmt.Printf("%v\n", stmt)
+	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // Select should handle a SELECT statement.
 func (store *MemStore) Select(ctx context.Context, conn *mysql.Conn, stmt *query.Select) (*mysql.Result, error) {
-	fmt.Printf("%v\n", stmt)
+	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
