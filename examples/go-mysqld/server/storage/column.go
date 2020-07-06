@@ -22,9 +22,9 @@ const (
 )
 
 const (
-	// ISO8601DateFormat is a data format for CQL primitive
+	// ISO8601DateFormat is a data format for SQL primitive
 	ISO8601DateFormat = "2006-01-02"
-	// ISO8601TimestampFormat is a timestamp format for CQL primitive
+	// ISO8601TimestampFormat is a timestamp format for SQL primitive
 	ISO8601TimestampFormat = "2006-01-02T15:04:05-0700"
 )
 
