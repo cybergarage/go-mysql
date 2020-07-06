@@ -15,27 +15,28 @@
 package mysql
 
 const (
+	defaultHost = "127.0.0.1"
 	defaultPort = 3306
 )
 
 // Config stores server configuration parammeters.
 type Config struct {
-	Addr string
+	Host string
 	Port int
 }
 
 // NewDefaultConfig returns a default configuration instance.
 func NewDefaultConfig() *Config {
 	config := &Config{
-		Addr: "",
+		Host: defaultHost,
 		Port: defaultPort,
 	}
 	return config
 }
 
-// SetAddress sets a bind interface address.
-func (config *Config) SetAddress(addr string) {
-	config.Addr = addr
+// SetHost sets a host address.
+func (config *Config) SetHost(host string) {
+	config.Host = host
 }
 
 // SetPort sets a listen port.
