@@ -65,7 +65,7 @@ type DAOExecutor interface {
 	ShowTables(context.Context, *Conn, string) (*Result, error)
 }
 
-// QueryExecutor represents an interface to execute all CQL queries.
+// QueryExecutor represents an interface to execute all SQL queries.
 type QueryExecutor interface {
 	DDOExecutor
 	DMOExecutor
