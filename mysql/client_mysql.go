@@ -21,7 +21,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-// Client represents a client for Cassndra server.
+// Client represents a client for MySQL server.
 type MySQLClient struct {
 	*Config
 	conn driver.Conn
