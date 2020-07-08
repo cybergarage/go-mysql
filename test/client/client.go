@@ -18,6 +18,9 @@ import (
 	"go-mysql/mysql"
 )
 
+// Client represents a client for MySQL server.
+type Client = mysql.Client
+
 // NewDefaultClient returns a default client instance with the specified host and port.
 func NewDefaultClient() *mysql.Client {
 	return mysql.NewClient()

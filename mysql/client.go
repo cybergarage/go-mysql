@@ -21,7 +21,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// Client represents a client for Cassndra server.
+// Client represents a client for MySQL server.
 type Client struct {
 	*Config
 	db *sql.DB
@@ -37,8 +37,8 @@ func NewClient() *Client {
 }
 
 // Open opens a database specified by the internal configuration.
-func (client *Client) Open(dbName string) error {
-	dsName := fmt.Sprintf("root@tcp(%s:%d)/%s", client.Host, client.Port, dbName)
+func (client *Client) Open() error {
+	dsName := fmt.Sprintf("root@tcp(%s:%d)/%s", client.Host, client.Port, client.Database)
 	db, err := sql.Open("mysql", dsName)
 	if err != nil {
 		return err
