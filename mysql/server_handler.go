@@ -114,7 +114,7 @@ func (server *Server) ComQuery(c *vitess.Conn, q string, callback func(*Result) 
 }
 
 // ComPrepare is called when a connection receives a prepared statement query.
-func (server *Server) ComPrepare(c *vitess.Conn, query string) ([]*Field, error) {
+func (server *Server) ComPrepare(c *vitess.Conn, query string, bindVars map[string]*BindVariable) ([]*Field, error) {
 	return nil, nil
 }
 
