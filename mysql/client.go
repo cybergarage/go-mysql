@@ -57,5 +57,12 @@ func (client *Client) Close() error {
 
 // Query executes a query that returns rows.
 func (client *Client) Query(query string, args ...interface{}) (*sql.Rows, error) {
+	if client.db == nil {
+		err := client.Open()
+		if err != nil {
+			return nil, err
+		}
+		defer client.Close()
+	}
 	return client.db.Query(query, args...)
 }
