@@ -34,3 +34,12 @@ func (dbs Databases) GetDatabase(name string) (*Database, bool) {
 	ks, ok := dbs[name]
 	return ks, ok
 }
+
+// GetTableWithDatabase returns a specified table in a specified database.
+func (dbs *Databases) GetTableWithDatabase(dbName string, tableName string) (*Table, bool) {
+	db, ok := dbs.GetDatabase(dbName)
+	if !ok {
+		return nil, false
+	}
+	return db.GetTable(tableName)
+}
