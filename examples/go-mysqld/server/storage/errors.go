@@ -18,4 +18,5 @@ const (
 	errorDatabaseFound    = "Database (%s) is already created"
 	errorDatabaseNotFound = "Database (%s) is not found"
 	errorTableNotFound    = "Table (%s.%s) is not found"
+	errorTableFound       = "Table (%s.%s) is already created"
 )

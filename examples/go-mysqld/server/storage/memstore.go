@@ -66,15 +66,18 @@ func (store *MemStore) CreateTable(ctx context.Context, conn *mysql.Conn, stmt *
 	dbName := conn.Database
 	db, ok := store.GetDatabase(dbName)
 	if !ok {
-		return mysql.NewResult(), fmt.Errorf(errorDatabaseFound, dbName)
+		return mysql.NewResult(), fmt.Errorf(errorDatabaseNotFound, dbName)
 	}
 	tableName := stmt.Table.Name.String()
 	_, ok = db.GetTable(tableName)
 	if !ok {
-		return mysql.NewResult(), fmt.Errorf(errorTableNotFound, dbName, tableName)
+		table := NewTableWithName(tableName)
+		db.AddTable(table)
+	} else {
+		if !stmt.IfExists {
+			return mysql.NewResult(), fmt.Errorf(errorTableFound, dbName, tableName)
+		}
 	}
-	table := NewTableWithName(tableName)
-	db.AddTable(table)
 	return mysql.NewResult(), nil
 }
 
@@ -111,6 +114,15 @@ func (store *MemStore) AnalyzeTable(ctx context.Context, conn *mysql.Conn, stmt 
 // Insert should handle a INSERT statement.
 func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query.Insert) (*mysql.Result, error) {
 	log.Debug("%v\n", stmt)
+	_, ok := store.GetTableWithDatabase(conn.Database, stmt.Table.Name.String())
+	if !ok {
+		return mysql.NewResult(), fmt.Errorf(errorTableNotFound, conn.Database, stmt.Table.Name.String())
+	}
+	columns := stmt.Columns
+	for n, column := range columns {
+		log.Debug("[%d] %v\n", n, column)
+	}
+	// rows := stmt.Rows
 	return mysql.NewResult(), nil
 }
 
