@@ -35,7 +35,8 @@ func TestServer(t *testing.T) {
 	}
 
 	client := NewClient()
-	err = client.Open("ycsb")
+	client.SetDatabase("ycsb")
+	err = client.Open()
 	defer client.Close()
 	if err != nil {
 		t.Error(err)

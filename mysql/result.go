@@ -25,6 +25,9 @@ type Result = vitesstypes.Result
 // Field represents a field.
 type Field = vitesspb.Field
 
+// BindVariable represents a single bind variable.
+type BindVariable = vitesspb.BindVariable
+
 // Row represents a row.
 type Row = vitesspb.Value
 
