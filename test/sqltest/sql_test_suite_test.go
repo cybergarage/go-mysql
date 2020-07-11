@@ -15,6 +15,7 @@
 package sqltest
 
 import (
+	"go-mysql/mysql/log"
 	"go-mysql/test/client"
 	"go-mysql/test/server"
 	"testing"
@@ -24,6 +25,8 @@ const sqlTestDatabase = "test"
 
 // TestSQLTestSuite runs already passed scenario test files.
 func TestSQLTestSuite(t *testing.T) {
+	log.SetStdoutDebugEnbled(true)
+
 	server := server.NewServer()
 	err := server.Start()
 	if err != nil {
@@ -40,17 +43,8 @@ func TestSQLTestSuite(t *testing.T) {
 
 	client := client.NewDefaultClient()
 	client.SetDatabase(sqlTestDatabase)
-	err = client.Open()
-	if err != nil {
-		t.Error(err)
-		return
-	}
 	err = client.CreateDatabase(sqlTestDatabase)
 	if err != err {
-		t.Error(err)
-	}
-	err = client.Close()
-	if err != nil {
 		t.Error(err)
 	}
 
@@ -61,16 +55,8 @@ func TestSQLTestSuite(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = client.Open()
-	if err != nil {
-		t.Error(err)
-	}
 	err = client.DropDatabase(sqlTestDatabase)
 	if err != err {
-		t.Error(err)
-	}
-	err = client.Close()
-	if err != nil {
 		t.Error(err)
 	}
 }
