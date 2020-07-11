@@ -15,13 +15,33 @@
 package client
 
 import (
+	"fmt"
 	"go-mysql/mysql"
 )
 
 // Client represents a client for MySQL server.
-type Client = mysql.Client
+type Client struct {
+	*mysql.Client
+}
 
 // NewDefaultClient returns a default client instance with the specified host and port.
-func NewDefaultClient() *mysql.Client {
-	return mysql.NewClient()
+func NewDefaultClient() *Client {
+	client := &Client{
+		Client: mysql.NewClient(),
+	}
+	return client
+}
+
+// CreateDatabase creates a specified database.
+func (client *Client) CreateDatabase(name string) error {
+	query := fmt.Sprintf("CREATE DATABSE %s", name)
+	_, err := client.Query(query)
+	return err
+}
+
+// DropDatabase dtops a specified database.
+func (client *Client) DropDatabase(name string) error {
+	query := fmt.Sprintf("DROP DATABSE %s", name)
+	_, err := client.Query(query)
+	return err
 }
