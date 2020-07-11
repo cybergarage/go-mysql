@@ -114,15 +114,18 @@ func (store *MemStore) AnalyzeTable(ctx context.Context, conn *mysql.Conn, stmt 
 // Insert should handle a INSERT statement.
 func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query.Insert) (*mysql.Result, error) {
 	log.Debug("%v\n", stmt)
-	_, ok := store.GetTableWithDatabase(conn.Database, stmt.Table.Name.String())
+	dbName := conn.Database
+	tableName := stmt.Table.Name.String()
+	_, ok := store.GetTableWithDatabase(dbName, tableName)
 	if !ok {
-		return mysql.NewResult(), fmt.Errorf(errorTableNotFound, conn.Database, stmt.Table.Name.String())
+		return mysql.NewResult(), fmt.Errorf(errorTableNotFound, dbName, tableName)
 	}
 	columns := stmt.Columns
 	for n, column := range columns {
 		log.Debug("[%d] %v\n", n, column)
 	}
-	// rows := stmt.Rows
+	rows := stmt.Rows
+	log.Debug("%v\n", rows)
 	return mysql.NewResult(), nil
 }
 
