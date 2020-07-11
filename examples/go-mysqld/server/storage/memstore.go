@@ -20,6 +20,8 @@ import (
 	"go-mysql/mysql"
 	"go-mysql/mysql/log"
 	"go-mysql/mysql/query"
+
+	"vitess.io/vitess/go/vt/sqlparser"
 )
 
 type MemStore struct {
@@ -126,6 +128,10 @@ func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query
 	}
 	rows := stmt.Rows
 	log.Debug("%v\n", rows)
+	node, _ := rows.(sqlparser.SQLNode)
+	log.Debug("%v\n", node)
+	values, _ := node.(sqlparser.Values)
+	log.Debug("%v\n", values)
 	return mysql.NewResult(), nil
 }
 
