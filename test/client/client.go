@@ -34,14 +34,14 @@ func NewDefaultClient() *Client {
 
 // CreateDatabase creates a specified database.
 func (client *Client) CreateDatabase(name string) error {
-	query := fmt.Sprintf("CREATE DATABSE %s", name)
+	query := fmt.Sprintf("CREATE DATABASE %s", name)
 	_, err := client.Query(query)
 	return err
 }
 
 // DropDatabase dtops a specified database.
 func (client *Client) DropDatabase(name string) error {
-	query := fmt.Sprintf("DROP DATABSE %s", name)
+	query := fmt.Sprintf("DROP DATABASE %s", name)
 	_, err := client.Query(query)
 	return err
 }
