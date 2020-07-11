@@ -63,9 +63,18 @@ func (store *MemStore) DropDatabase(ctx context.Context, conn *mysql.Conn, stmt 
 
 // CreateTable should handle a CREATE table statement.
 func (store *MemStore) CreateTable(ctx context.Context, conn *mysql.Conn, stmt *query.DDL) (*mysql.Result, error) {
-	log.Debug("%v\n", stmt)
+	dbName := conn.Database
+	db, ok := store.GetDatabase(dbName)
+	if !ok {
+		return mysql.NewResult(), fmt.Errorf(errorDatabaseFound, dbName)
+	}
 	tableName := stmt.Table.Name.String()
-	_ = NewTableWithName(tableName)
+	_, ok = db.GetTable(tableName)
+	if !ok {
+		return mysql.NewResult(), fmt.Errorf(errorTableNotFound, dbName, tableName)
+	}
+	table := NewTableWithName(tableName)
+	db.AddTable(table)
 	return mysql.NewResult(), nil
 }
 
