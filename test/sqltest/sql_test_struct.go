@@ -86,10 +86,19 @@ func (ct *SQLTest) Run() error {
 		return err
 	}
 
+	errTraceMsg := func(n int) string {
+		errTraceMsg := ct.GetName() + "\n"
+		for i := 0; i < n; i++ {
+			errTraceMsg += fmt.Sprintf(goodQueryPrefix, i, scenario.Queries[i])
+			errTraceMsg += "\n"
+		}
+		return errTraceMsg
+	}
+
 	for n, query := range scenario.Queries {
 		rs, err := client.Query(query)
 		if err != nil {
-			return err
+			return fmt.Errorf("%s%s", errTraceMsg(n), err.Error())
 		}
 		defer rs.Close()
 
@@ -117,18 +126,18 @@ func (ct *SQLTest) Run() error {
 		expectedRows, err := expectedRes.GetRows()
 		if err != nil {
 			if len(rsRows) != 0 {
-				return fmt.Errorf(errorJSONResponseHasUnexpectedRows, n, query, rsRows)
+				return fmt.Errorf("%s"+errorJSONResponseHasUnexpectedRows, errTraceMsg(n), n, query, rsRows)
 			}
 		} else {
 			if len(rsRows) != len(expectedRows) {
-				return fmt.Errorf(errorJSONResponseUnmatchedRowCount, n, query, rsRows, expectedRows)
+				return fmt.Errorf("%s"+errorJSONResponseUnmatchedRowCount, errTraceMsg(n), n, query, rsRows, expectedRows)
 			}
 		}
 
 		for _, row := range rsRows {
 			err = expectedRes.HasRow(row)
 			if err != nil {
-				return fmt.Errorf(errorQueryPrefix+"%s", n, query, err.Error())
+				return fmt.Errorf("%s"+errorQueryPrefix+"%s", errTraceMsg(n), n, query, err.Error())
 			}
 		}
 	}

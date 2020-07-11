@@ -21,7 +21,9 @@ const (
 	errorJSONResponseNotFound          = "JSON response is not found"
 	errorJSONResponseRowsNotFound      = "JSON response (%v) has no '%s'"
 	errorJSONResponseHasNoRow          = "JSON response (%v) has no %v"
-	errorQueryPrefix                   = "[%d] %s : "
+	queryLinePrefix                    = "[%d] %s"
+	goodQueryPrefix                    = "O " + queryLinePrefix + " : "
+	errorQueryPrefix                   = "X " + queryLinePrefix + " : "
 	errorJSONResponseUnmatchedRowCount = errorQueryPrefix + "JSON response row count (%v) is unmatched to (%v)"
 	errorJSONResponseHasUnexpectedRows = errorQueryPrefix + "JSON response has unexpected rows (%v)"
 )
