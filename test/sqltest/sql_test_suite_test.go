@@ -20,6 +20,8 @@ import (
 	"testing"
 )
 
+const sqlTestDatabase = "test"
+
 // TestSQLTestSuite runs already passed scenario test files.
 func TestSQLTestSuite(t *testing.T) {
 	server := server.NewServer()
@@ -37,9 +39,37 @@ func TestSQLTestSuite(t *testing.T) {
 	}
 
 	client := client.NewDefaultClient()
+	client.SetDatabase(sqlTestDatabase)
+	err = client.Open()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	err = client.CreateDatabase(sqlTestDatabase)
+	if err != err {
+		t.Error(err)
+	}
+	err = client.Close()
+	if err != nil {
+		t.Error(err)
+	}
+
 	cs.SetClient(client)
 
 	err = cs.Run()
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = client.Open()
+	if err != nil {
+		t.Error(err)
+	}
+	err = client.DropDatabase(sqlTestDatabase)
+	if err != err {
+		t.Error(err)
+	}
+	err = client.Close()
 	if err != nil {
 		t.Error(err)
 	}
