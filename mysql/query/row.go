@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"sync"
 
+	"vitess.io/vitess/go/vt/sqlparser"
 	vitess "vitess.io/vitess/go/vt/sqlparser"
 )
 
@@ -58,9 +59,39 @@ func (row *Row) Equals(other *Row) bool {
 	return row.Columns.Equals(NewColumnsWithColumns(other.GetColumns()))
 }
 
+func (row *Row) hasMatchedColumn(name string, val interface{}) bool {
+	return false
+}
+
 // IsMatched returns true when the row is satisfied with the specified condition, otherwise false.
 func (row *Row) IsMatched(cond *Condition) bool {
-	return false
+	if cond == nil {
+		return true
+	}
+
+	isMatched := false
+	switch e := cond.Expr.(type) {
+	case *sqlparser.ComparisonExpr:
+		switch l := e.Left.(type) {
+		case *sqlparser.ColName:
+			switch r := e.Right.(type) {
+			case sqlparser.ValTuple:
+				for _, val := range r {
+					switch v := val.(type) {
+					case *sqlparser.SQLVal:
+						value, err := NewValueWithSQLVal(v)
+						if err != nil {
+							continue
+						}
+						if row.hasMatchedColumn(l.Name.String(), value) {
+							isMatched = true
+						}
+					}
+				}
+			}
+		}
+	}
+	return isMatched
 }
 
 // String returns the string representation.
