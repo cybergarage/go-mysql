@@ -138,6 +138,8 @@ func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query
 		table.AddRow(row)
 	}
 
+	//table.Dump()
+
 	return mysql.NewResult(), nil
 }
 

@@ -15,6 +15,7 @@
 package storage
 
 import (
+	"fmt"
 	"go-mysql/mysql/query"
 	"sync"
 )
@@ -79,4 +80,12 @@ func (tbl *Table) DeleteAll() int {
 // String returns the string representation.
 func (tbl *Table) String() string {
 	return tbl.value
+}
+
+// Dump outputs all row values for debug.
+func (tbl *Table) Dump() {
+	fmt.Printf("%s\n", tbl.GetName())
+	for n, row := range tbl.GetRows() {
+		fmt.Printf("[%d] %s\n", n, row.String())
+	}
 }
