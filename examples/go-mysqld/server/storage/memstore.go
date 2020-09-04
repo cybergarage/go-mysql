@@ -118,20 +118,66 @@ func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query
 	log.Debug("%v\n", stmt)
 	dbName := conn.Database
 	tableName := stmt.Table.Name.String()
-	_, ok := store.GetTableWithDatabase(dbName, tableName)
+	table, ok := store.GetTableWithDatabase(dbName, tableName)
 	if !ok {
 		return mysql.NewResult(), fmt.Errorf(errorTableNotFound, dbName, tableName)
 	}
-	columns := stmt.Columns
-	for n, column := range columns {
-		log.Debug("[%d] %v\n", n, column)
-	}
+
+	columns := query.NewColumns()
+
+	//queryColumns := stmt.Columns
+
 	rows := stmt.Rows
 	log.Debug("%v\n", rows)
 	node, _ := rows.(sqlparser.SQLNode)
 	log.Debug("%v\n", node)
-	values, _ := node.(sqlparser.Values)
-	log.Debug("%v\n", values)
+	queryRows, _ := node.(sqlparser.Values)
+	log.Debug("%v\n", queryRows)
+
+	// if len(queryColumns) != len(queryValues) {
+	// 	// TODO: Return an aprociate errors
+	// 	return mysql.NewResult(), nil
+	// }
+
+	// for n, queryColumn := range queryColumns {
+	// 	name := queryColumn.String()
+	// 	value := queryValues[n]
+	// 	column := NewColumnWithNameAndValue(name, value)
+	// 	columns.AddColumn(column)
+	// 	log.Debug("[%d] %v\n", n, queryColumn)
+	// }
+
+	for _, queryRow := range queryRows {
+		for _, expr := range queryRow {
+			cmpExpr, ok := expr.(*sqlparser.ComparisonExpr)
+			if !ok {
+				continue
+			}
+			col, ok := cmpExpr.Left.(*sqlparser.ColName)
+			if !ok {
+				continue
+			}
+			val, ok := cmpExpr.Right.(*sqlparser.SQLVal)
+			if !ok {
+				continue
+			}
+			column := query.NewColumnWithNameAndValue(col.Name.String(), val.Val)
+			columns.AddColumn(column)
+		}
+
+		table.AddRow(query.NewRowWithColumns(columns))
+
+		// const (
+		// 	StrVal = ValType(iota)
+		// 	IntVal
+		// 	FloatVal
+		// 	HexNum
+		// 	HexVal
+		// 	ValArg
+		// 	BitVal
+		// )
+	}
+
 	return mysql.NewResult(), nil
 }
 

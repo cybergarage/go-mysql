@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package storage
+package query
 
 // Columns represents a column array.
 type Columns struct {
@@ -45,9 +45,7 @@ func (cols *Columns) AddColumn(col *Column) {
 
 // AddColumns adds columns.
 func (cols *Columns) AddColumns(columns []*Column) {
-
 	cols.allList = append(cols.allList, columns...)
-
 }
 
 // GetColumns returns the all columns.
