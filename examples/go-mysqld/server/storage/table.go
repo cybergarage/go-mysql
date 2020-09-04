@@ -57,8 +57,13 @@ func (tbl *Table) Insert(row *Row) bool {
 
 // FindMatchedRows returns only matched and rows by the specified conditions.
 func (tbl *Table) FindMatchedRows(cond *Condition) (*Rows, error) {
-	rows := query.NewRows()
-	return rows, nil
+	matchedRows := query.NewRows()
+	for _, row := range tbl.GetRows() {
+		if row.IsMatched(cond) {
+			matchedRows.AddRow(row)
+		}
+	}
+	return matchedRows, nil
 }
 
 // Select returns only matched and projected rows by the specified conditions and the columns.
