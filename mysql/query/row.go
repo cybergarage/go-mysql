@@ -58,6 +58,11 @@ func (row *Row) Equals(other *Row) bool {
 	return row.Columns.Equals(NewColumnsWithColumns(other.GetColumns()))
 }
 
+// IsMatched returns true when the row is satisfied with the specified condition, otherwise false.
+func (row *Row) IsMatched(cond *Condition) bool {
+	return false
+}
+
 // String returns the string representation.
 func (row *Row) String() string {
 	str := ""
