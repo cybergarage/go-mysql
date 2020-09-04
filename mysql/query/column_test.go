@@ -12,17 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package storage
+package query
 
 import (
 	"testing"
 )
 
-func TestNewRow(t *testing.T) {
-	row := NewRow()
+func TestColumnEquals(t *testing.T) {
+	columns := []*Column{
+		NewColumn(),
+		NewColumnWithName("a"),
+		NewColumnWithNameAndValue("a", 1),
+	}
 
-	_, ok := row.GetColumn(0)
-	if ok {
-		t.Errorf("%v", row)
+	for _, colum := range columns {
+		if !colum.Equals(colum) {
+			t.Errorf("%s != %s", colum, colum)
+		}
 	}
 }

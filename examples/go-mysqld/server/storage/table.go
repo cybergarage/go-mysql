@@ -15,8 +15,12 @@
 package storage
 
 import (
+	"go-mysql/mysql/query"
 	"sync"
 )
+
+type Row = query.Row
+type Rows = query.Rows
 
 // Table represents a destination or source database of query.
 type Table struct {
@@ -29,7 +33,7 @@ type Table struct {
 func NewTableWithName(name string) *Table {
 	tbl := &Table{
 		value: name,
-		Rows:  NewRows(),
+		Rows:  query.NewRows(),
 	}
 	return tbl
 }
@@ -68,7 +72,7 @@ func (tbl *Table) Delete() int {
 func (tbl *Table) DeleteAll() int {
 	rows := tbl.GetRows()
 	nRowsCnt := len(rows)
-	tbl.Rows = NewRows()
+	tbl.Rows = query.NewRows()
 	return nRowsCnt
 }
 
