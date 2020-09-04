@@ -68,7 +68,7 @@ func (cols *Columns) GetColumnByName(name string) (*Column, bool) {
 		return col, true
 	}
 	for _, col := range cols.allList {
-		if col.GetName() == name {
+		if col.Name() == name {
 			cols.cachedMap[name] = col
 			return col, true
 		}
@@ -93,7 +93,7 @@ func (cols *Columns) IsAllColumn() bool {
 // Equals returns true when the specified columns are equals to this columns, otherwise false.
 func (cols *Columns) Equals(otherCols *Columns) bool {
 	for _, col := range cols.allList {
-		otherCol, ok := otherCols.GetColumnByName(col.GetName())
+		otherCol, ok := otherCols.GetColumnByName(col.Name())
 		if !ok {
 			return false
 		}

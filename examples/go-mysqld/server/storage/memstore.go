@@ -123,10 +123,6 @@ func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query
 		return mysql.NewResult(), fmt.Errorf(errorTableNotFound, dbName, tableName)
 	}
 
-	columns := query.NewColumns()
-
-	//queryColumns := stmt.Columns
-
 	rows := stmt.Rows
 	log.Debug("%v\n", rows)
 	node, _ := rows.(sqlparser.SQLNode)
@@ -134,48 +130,12 @@ func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query
 	queryRows, _ := node.(sqlparser.Values)
 	log.Debug("%v\n", queryRows)
 
-	// if len(queryColumns) != len(queryValues) {
-	// 	// TODO: Return an aprociate errors
-	// 	return mysql.NewResult(), nil
-	// }
-
-	// for n, queryColumn := range queryColumns {
-	// 	name := queryColumn.String()
-	// 	value := queryValues[n]
-	// 	column := NewColumnWithNameAndValue(name, value)
-	// 	columns.AddColumn(column)
-	// 	log.Debug("[%d] %v\n", n, queryColumn)
-	// }
-
 	for _, queryRow := range queryRows {
-		for _, expr := range queryRow {
-			cmpExpr, ok := expr.(*sqlparser.ComparisonExpr)
-			if !ok {
-				continue
-			}
-			col, ok := cmpExpr.Left.(*sqlparser.ColName)
-			if !ok {
-				continue
-			}
-			val, ok := cmpExpr.Right.(*sqlparser.SQLVal)
-			if !ok {
-				continue
-			}
-			column := query.NewColumnWithNameAndValue(col.Name.String(), val.Val)
-			columns.AddColumn(column)
+		row, err := query.NewRowWithValTuple(queryRow)
+		if err != nil {
+			return mysql.NewResult(), err
 		}
-
-		table.AddRow(query.NewRowWithColumns(columns))
-
-		// const (
-		// 	StrVal = ValType(iota)
-		// 	IntVal
-		// 	FloatVal
-		// 	HexNum
-		// 	HexVal
-		// 	ValArg
-		// 	BitVal
-		// )
+		table.AddRow(row)
 	}
 
 	return mysql.NewResult(), nil

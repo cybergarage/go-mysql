@@ -14,7 +14,12 @@
 
 package query
 
-import "reflect"
+import (
+	"fmt"
+	"reflect"
+
+	vitess "vitess.io/vitess/go/vt/sqlparser"
+)
 
 const (
 	NotPrimaryKey    = -1
@@ -39,7 +44,7 @@ func NewColumn() *Column {
 	return NewColumnWithName("")
 }
 
-// NewColumnWithName returns a column instance with the specified name.
+// NewColumnWithName returns a column with the specified name.
 func NewColumnWithName(name string) *Column {
 	col := &Column{
 		name:  name,
@@ -48,11 +53,32 @@ func NewColumnWithName(name string) *Column {
 	return col
 }
 
-// NewColumnWithNameAndValue returns a column instance with the specified name and value.
+// NewColumnWithNameAndValue returns a column with the specified name and value.
 func NewColumnWithNameAndValue(name string, val interface{}) *Column {
 	col := NewColumnWithName(name)
 	col.SetValue(val)
 	return col
+}
+
+// NewColumnWithComparisonExpr returns a column with the specified ComparisonExpr.
+func NewColumnWithComparisonExpr(expr interface{}) (*Column, error) {
+	cmpExpr, ok := expr.(*vitess.ComparisonExpr)
+	if !ok {
+		return nil, fmt.Errorf(errorInvalidComparisonExpr, expr)
+	}
+	cmpCol, ok := cmpExpr.Left.(*vitess.ColName)
+	if !ok {
+		return nil, fmt.Errorf(errorInvalidComparisonExpr, cmpExpr)
+	}
+	cmpVal, ok := cmpExpr.Right.(*vitess.SQLVal)
+	if !ok {
+		return nil, fmt.Errorf(errorInvalidComparisonExpr, cmpExpr)
+	}
+	val, err := NewValueWithSQLVal(cmpVal)
+	if err != nil {
+		return nil, err
+	}
+	return NewColumnWithNameAndValue(cmpCol.Name.String(), val), nil
 }
 
 // SetName sets a column name.
@@ -60,8 +86,8 @@ func (col *Column) SetName(name string) {
 	col.name = name
 }
 
-// GetName returns the column name.
-func (col *Column) GetName() string {
+// Name returns the column name.
+func (col *Column) Name() string {
 	return col.name
 }
 
@@ -70,8 +96,8 @@ func (col *Column) SetValue(value interface{}) {
 	col.value = value
 }
 
-// GetValue returns the value.
-func (col *Column) GetValue() interface{} {
+// Value returns the value.
+func (col *Column) Value() interface{} {
 	return col.value
 }
 
