@@ -15,97 +15,97 @@
 package query
 
 import (
-	vitesssql "vitess.io/vitess/go/vt/sqlparser"
+	vitess "vitess.io/vitess/go/vt/sqlparser"
 )
 
 // Statement represents a query statement.
-type Statement = vitesssql.Statement
+type Statement = vitess.Statement
 
 // StatementType encodes the type of a SQL statement
-type StatementType = vitesssql.StatementType
+type StatementType = vitess.StatementType
 
 // These constants are used to identify the SQL statement type.
 // Changing this list will require reviewing all calls to Preview.
 const (
-	StmtSelect   = vitesssql.StmtSelect
-	StmtStream   = vitesssql.StmtStream
-	StmtInsert   = vitesssql.StmtInsert
-	StmtReplace  = vitesssql.StmtReplace
-	StmtUpdate   = vitesssql.StmtUpdate
-	StmtDelete   = vitesssql.StmtDelete
-	StmtDDL      = vitesssql.StmtDDL
-	StmtBegin    = vitesssql.StmtBegin
-	StmtCommit   = vitesssql.StmtCommit
-	StmtRollback = vitesssql.StmtRollback
-	StmtSet      = vitesssql.StmtSet
-	StmtShow     = vitesssql.StmtShow
-	StmtUse      = vitesssql.StmtUse
-	StmtOther    = vitesssql.StmtOther
-	StmtUnknown  = vitesssql.StmtUnknown
-	StmtComment  = vitesssql.StmtComment
-	StmtPriv     = vitesssql.StmtPriv
-	//StmtExplain  = vitesssql.StmtExplain
+	StmtSelect   = vitess.StmtSelect
+	StmtStream   = vitess.StmtStream
+	StmtInsert   = vitess.StmtInsert
+	StmtReplace  = vitess.StmtReplace
+	StmtUpdate   = vitess.StmtUpdate
+	StmtDelete   = vitess.StmtDelete
+	StmtDDL      = vitess.StmtDDL
+	StmtBegin    = vitess.StmtBegin
+	StmtCommit   = vitess.StmtCommit
+	StmtRollback = vitess.StmtRollback
+	StmtSet      = vitess.StmtSet
+	StmtShow     = vitess.StmtShow
+	StmtUse      = vitess.StmtUse
+	StmtOther    = vitess.StmtOther
+	StmtUnknown  = vitess.StmtUnknown
+	StmtComment  = vitess.StmtComment
+	StmtPriv     = vitess.StmtPriv
+	//StmtExplain  = vitess.StmtExplain
 )
 
 // SelectStatement any SELECT statement.
-type SelectStatement = vitesssql.SelectStatement
+type SelectStatement = vitess.SelectStatement
 
 // Select represents a SELECT statement.
-type Select = vitesssql.Select
+type Select = vitess.Select
 
 // Union represents a UNION statement.
-type Union = vitesssql.Union
+type Union = vitess.Union
 
 // Stream represents a SELECT statement.
-type Stream = vitesssql.Stream
+type Stream = vitess.Stream
 
 // Insert represents an INSERT or REPLACE statement.
-type Insert = vitesssql.Insert
+type Insert = vitess.Insert
 
 // Update represents an UPDATE statement.
-type Update = vitesssql.Update
+type Update = vitess.Update
 
 // Delete represents a DELETE statement.
-type Delete = vitesssql.Delete
+type Delete = vitess.Delete
 
 // Set represents a SET statement.
-type Set = vitesssql.Set
+type Set = vitess.Set
 
 // SetTransaction represents a SET TRANSACTION statement.
-type SetTransaction = vitesssql.SetTransaction
+type SetTransaction = vitess.SetTransaction
 
 // Characteristic is a transaction related change
-type Characteristic = vitesssql.Characteristic
+type Characteristic = vitess.Characteristic
 
 // IsolationLevel is self-explanatory in this context
-type IsolationLevel = vitesssql.IsolationLevel
+type IsolationLevel = vitess.IsolationLevel
 
 // AccessMode is ReadOnly/ReadWrite
-type AccessMode = vitesssql.AccessMode
+type AccessMode = vitess.AccessMode
 
 // DBDDL represents a CREATE, DROP, or ALTER database statement.
-type DBDDL = vitesssql.DBDDL
+type DBDDL = vitess.DBDDL
 
 // DDL represents a CREATE, ALTER, DROP, RENAME, TRUNCATE or ANALYZE statement.
-type DDL = vitesssql.DDL
+type DDL = vitess.DDL
 
 // ParenSelect is a parenthesized SELECT statement.
-type ParenSelect = vitesssql.ParenSelect
+type ParenSelect = vitess.ParenSelect
 
 // Show represents a show statement.
-type Show = vitesssql.Show
+type Show = vitess.Show
 
 // Use represents a use statement.
-type Use = vitesssql.Use
+type Use = vitess.Use
 
 // Begin represents a Begin statement.
-type Begin = vitesssql.Begin
+type Begin = vitess.Begin
 
 // Commit represents a Commit statement.
-type Commit = vitesssql.Commit
+type Commit = vitess.Commit
 
 // Rollback represents a Rollback statement.
-type Rollback = vitesssql.Rollback
+type Rollback = vitess.Rollback
 
 // Explain represents an EXPLAIN statement
-//type Explain = vitesssql.Explain
+//type Explain = vitess.Explain
