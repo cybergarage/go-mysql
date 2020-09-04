@@ -21,7 +21,7 @@ import (
 	"go-mysql/mysql/log"
 	"go-mysql/mysql/query"
 
-	"vitess.io/vitess/go/vt/sqlparser"
+	vitess "vitess.io/vitess/go/vt/sqlparser"
 )
 
 type MemStore struct {
@@ -46,7 +46,7 @@ func (store *MemStore) CreateDatabase(ctx context.Context, conn *mysql.Conn, stm
 	}
 	err := store.AddDatabase(NewDatabaseWithName(dbName))
 	if err != nil {
-		return mysql.NewResult(), err
+		return nil, err
 	}
 	return mysql.NewResult(), nil
 }
@@ -70,6 +70,7 @@ func (store *MemStore) CreateTable(ctx context.Context, conn *mysql.Conn, stmt *
 	if !ok {
 		return mysql.NewResult(), fmt.Errorf(errorDatabaseNotFound, dbName)
 	}
+
 	tableName := stmt.Table.Name.String()
 	_, ok = db.GetTable(tableName)
 	if !ok {
@@ -120,20 +121,20 @@ func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query
 	tableName := stmt.Table.Name.String()
 	table, ok := store.GetTableWithDatabase(dbName, tableName)
 	if !ok {
-		return mysql.NewResult(), fmt.Errorf(errorTableNotFound, dbName, tableName)
+		return nil, fmt.Errorf(errorTableNotFound, dbName, tableName)
 	}
 
 	rows := stmt.Rows
 	log.Debug("%v\n", rows)
-	node, _ := rows.(sqlparser.SQLNode)
+	node, _ := rows.(vitess.SQLNode)
 	log.Debug("%v\n", node)
-	queryRows, _ := node.(sqlparser.Values)
+	queryRows, _ := node.(vitess.Values)
 	log.Debug("%v\n", queryRows)
 
 	for _, queryRow := range queryRows {
 		row, err := query.NewRowWithValTuple(queryRow)
 		if err != nil {
-			return mysql.NewResult(), err
+			return nil, err
 		}
 		table.AddRow(row)
 	}
@@ -158,6 +159,42 @@ func (store *MemStore) Delete(ctx context.Context, conn *mysql.Conn, stmt *query
 // Select should handle a SELECT statement.
 func (store *MemStore) Select(ctx context.Context, conn *mysql.Conn, stmt *query.Select) (*mysql.Result, error) {
 	log.Debug("%v\n", stmt)
+
+	// db, ok := store.GetDatabase(dbName)
+	// if !ok {
+	// 	return mysql.NewResult(), fmt.Errorf(errorDatabaseNotFound, dbName)
+	// }
+
+	tableExprs := stmt.From
+	if len(tableExprs) != 1 {
+		return nil, fmt.Errorf("JOIN query is not supported")
+	}
+	tableExpr, ok := tableExprs[0].(*vitess.AliasedTableExpr)
+	if !ok {
+		return nil, fmt.Errorf("Invalid Table : %v", tableExpr)
+	}
+	tableName, ok := tableExpr.Expr.(vitess.TableName)
+	if !ok {
+		return nil, fmt.Errorf("Invalid Table : %v", tableExpr)
+	}
+
+	dbName := conn.Database
+	table, ok := store.GetTableWithDatabase(dbName, tableName.Name.String())
+	if !ok {
+		return nil, fmt.Errorf(errorTableNotFound, dbName, tableName)
+	}
+
+	_, err := table.Select(stmt.Where)
+	if err != nil {
+		return nil, err
+	}
+
+	// Table.Name.String()
+	// table, ok := store.GetTableWithDatabase(dbName, tableName)
+	// if !ok {
+	// 	return mysql.NewResult(), fmt.Errorf(errorTableNotFound, dbName, tableName)
+	// }
+
 	return mysql.NewResult(), nil
 }
 
