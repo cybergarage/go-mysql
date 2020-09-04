@@ -22,6 +22,7 @@ import (
 
 type Row = query.Row
 type Rows = query.Rows
+type Condition = query.Condition
 
 // Table represents a destination or source database of query.
 type Table struct {
@@ -54,9 +55,19 @@ func (tbl *Table) Insert(row *Row) bool {
 	return tbl.AddRow(row)
 }
 
+// FindMatchedRows returns only matched and rows by the specified conditions.
+func (tbl *Table) FindMatchedRows(cond *Condition) (*Rows, error) {
+	rows := query.NewRows()
+	return rows, nil
+}
+
 // Select returns only matched and projected rows by the specified conditions and the columns.
-func (tbl *Table) Select(q string) (*Rows, error) {
-	return nil, nil
+func (tbl *Table) Select(cond *Condition) (*Rows, error) {
+	rows, err := tbl.FindMatchedRows(cond)
+	if err != nil {
+		return nil, err
+	}
+	return rows, nil
 }
 
 // Update updates rows which are satisfied by the specified columns and conditions.
