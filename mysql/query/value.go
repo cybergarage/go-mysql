@@ -43,5 +43,5 @@ func NewValueWithSQLVal(sqlVal *sqlparser.SQLVal) (interface{}, error) {
 	case FloatVal:
 		return strconv.ParseFloat(string(sqlVal.Val), 64)
 	}
-	return nil, fmt.Errorf("Unknown SQLVal type : %v", sqlVal)
+	return nil, fmt.Errorf(errorUnknownSQLValType, sqlVal)
 }

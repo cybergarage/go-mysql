@@ -17,6 +17,8 @@ package query
 import (
 	"fmt"
 	"sync"
+
+	vitess "vitess.io/vitess/go/vt/sqlparser"
 )
 
 // Row represents a row object which includes query execution results.
@@ -25,17 +27,30 @@ type Row struct {
 	*Columns
 }
 
-// NewRow return a row instance.
+// NewRow return a row.
 func NewRow() *Row {
 	return NewRowWithColumns(NewColumns())
 }
 
-// NewRowWithColumns return a row instance with the specified columns.
+// NewRowWithColumns return a row with the specified columns.
 func NewRowWithColumns(columns *Columns) *Row {
 	row := &Row{
 		Columns: columns,
 	}
 	return row
+}
+
+// NewRowWithValTuple return a row with the specified value tuple.
+func NewRowWithValTuple(valTuple vitess.ValTuple) (*Row, error) {
+	columns := NewColumns()
+	for _, val := range valTuple {
+		column, err := NewColumnWithComparisonExpr(val)
+		if err != nil {
+			return nil, err
+		}
+		columns.AddColumn(column)
+	}
+	return NewRowWithColumns(columns), nil
 }
 
 // Equals returns true when the specified row is equals to this row, otherwise false.
@@ -50,7 +65,7 @@ func (row *Row) String() string {
 		if 0 < n {
 			str += ", "
 		}
-		str += fmt.Sprintf("%s", col.GetValue())
+		str += fmt.Sprintf("%s", col.Value())
 	}
 	return str
 }
