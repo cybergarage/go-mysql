@@ -160,11 +160,6 @@ func (store *MemStore) Delete(ctx context.Context, conn *mysql.Conn, stmt *query
 func (store *MemStore) Select(ctx context.Context, conn *mysql.Conn, stmt *query.Select) (*mysql.Result, error) {
 	log.Debug("%v\n", stmt)
 
-	// db, ok := store.GetDatabase(dbName)
-	// if !ok {
-	// 	return mysql.NewResult(), fmt.Errorf(errorDatabaseNotFound, dbName)
-	// }
-
 	tableExprs := stmt.From
 	if len(tableExprs) != 1 {
 		return nil, fmt.Errorf("JOIN query is not supported")
