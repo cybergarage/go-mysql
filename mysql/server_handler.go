@@ -109,6 +109,11 @@ func (server *Server) ComQuery(c *vitess.Conn, q string, callback func(*Result) 
 			conn.Database = v.DBName.String()
 		}
 	}
+
+	if err != nil && res == nil {
+		res = NewResult()
+	}
+
 	err = callback(res)
 	return err
 }
