@@ -57,7 +57,7 @@ ALL_PACKAGES=\
 
 BINARIES=${EXAMPLE_BINARIES}
 
-.PHONY: clean check_style
+.PHONY: clean test
 
 all: test
 
@@ -70,7 +70,7 @@ vet: format
 build: vet
 	go build -v ${MODULE_PACKAGES}
 
-test: vet
+test:
 	go test -v -cover -p=1 ${ALL_PACKAGES}
 
 install: build
@@ -78,8 +78,3 @@ install: build
 
 clean:
 	go clean -i ${ALL_PACKAGES}
-
-check_style:
-	(! find . -name '*.go' | xargs gofmt -s -d | grep '^')
-	(! find . -name '*.go' | xargs goimports -d | grep '^')
-	golangci-lint run --timeout=5m
