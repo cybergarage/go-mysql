@@ -1,8 +1,6 @@
 module go-mysql
 
-go 1.13
-
-replace vitess.io/vitess => ../vitess
+go 1.18
 
 require (
 	github.com/go-sql-driver/mysql v1.5.0
