@@ -15,6 +15,6 @@
 package query
 
 const (
-	errorInvalidComparisonExpr = "Invalid ComparisonExpr : %v"
-	errorUnknownSQLValType     = "Unknown SQLVal type : %v"
+	errorInvalidComparisonExpr = "invalid ComparisonExpr : %v"
+	errorUnknownSQLValType     = "unknown SQLVal type : %v"
 )

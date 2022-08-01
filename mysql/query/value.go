@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"strconv"
 
-	"vitess.io/vitess/go/vt/sqlparser"
 	vitess "vitess.io/vitess/go/vt/sqlparser"
 )
 
@@ -26,22 +25,23 @@ const (
 	StrVal   = vitess.StrVal
 	IntVal   = vitess.IntVal
 	FloatVal = vitess.FloatVal
-	// TODO: Support other SQL types
-	// HexNum
-	// HexVal
-	// ValArg
-	// BitVal
+	// TODO: Support other SQL types.
+	// HexNum.
+	// HexVal.
+	// ValArg.
+	// BitVal.
 )
 
-// NewValueWithSQLVal converts the specified SQL value to Golang value.
-func NewValueWithSQLVal(sqlVal *sqlparser.SQLVal) (interface{}, error) {
-	switch sqlVal.Type {
+// NewValueWithLiteral converts the specified literal to Golang value.
+func NewValueWithLiteral(literal *vitess.Literal) (interface{}, error) {
+	switch literal.Type {
 	case StrVal:
-		return string(sqlVal.Val), nil
+		return literal.Val, nil
 	case IntVal:
-		return strconv.ParseInt(string(sqlVal.Val), 0, 64)
+		return strconv.ParseInt(literal.Val, 0, 64)
 	case FloatVal:
-		return strconv.ParseFloat(string(sqlVal.Val), 64)
+		return strconv.ParseFloat(literal.Val, 64)
+	case BitVal, HexNum, HexVal:
+		return nil, fmt.Errorf(errorUnknownSQLValType, literal)
 	}
-	return nil, fmt.Errorf(errorUnknownSQLValType, sqlVal)
 }

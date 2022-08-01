@@ -37,19 +37,19 @@ func TestColumnEquals(t *testing.T) {
 func TestNewColumnWithComparisonExprs(t *testing.T) {
 	cmpExprs := []*vitess.ComparisonExpr{
 		&vitess.ComparisonExpr{
-			Operator: vitess.EqualStr,
+			Operator: vitess.EqualOp,
 			Left:     &vitess.ColName{Name: vitess.NewColIdent("a")},
-			Right:    vitess.NewStrVal([]byte("hello")),
+			Right:    vitess.NewStrLiteral("hello"),
 		},
 		&vitess.ComparisonExpr{
-			Operator: vitess.EqualStr,
+			Operator: vitess.EqualOp,
 			Left:     &vitess.ColName{Name: vitess.NewColIdent("b")},
-			Right:    vitess.NewIntVal([]byte("1234")),
+			Right:    vitess.NewIntLiteral("1234"),
 		},
 		&vitess.ComparisonExpr{
-			Operator: vitess.EqualStr,
+			Operator: vitess.EqualOp,
 			Left:     &vitess.ColName{Name: vitess.NewColIdent("c")},
-			Right:    vitess.NewFloatVal([]byte("1234")),
+			Right:    vitess.NewFloatLiteral("1234"),
 		},
 	}
 
@@ -78,6 +78,5 @@ func TestNewColumnWithComparisonExprs(t *testing.T) {
 		if val != expValues[n] {
 			t.Errorf("%s != %s", val, expValues[n])
 		}
-
 	}
 }

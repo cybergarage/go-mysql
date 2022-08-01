@@ -66,37 +66,26 @@ func (server *Server) ComQuery(c *vitess.Conn, q string, callback func(*Result) 
 	executor := server.QueryExecutor
 	if executor != nil {
 		switch v := stmt.(type) {
-		case (*query.DBDDL):
-			switch v.Action {
-			case "create":
-				res, err = executor.CreateDatabase(ctx, conn, v)
-			case "drop":
-				res, err = executor.DropDatabase(ctx, conn, v)
-			case "alter":
-				res, err = executor.AlterDatabase(ctx, conn, v)
-			}
-		case (*query.DDL):
-			switch v.Action {
-			case "create":
+		case query.DDL:
+			switch v.GetAction() {
+			case query.CreateDDLAction:
 				res, err = executor.CreateTable(ctx, conn, v)
-			case "drop":
+			case query.DropDDLAction:
 				res, err = executor.DropTable(ctx, conn, v)
-			case "alter":
+			case query.AlterDDLAction:
 				res, err = executor.AlterTable(ctx, conn, v)
-			case "rename":
+			case query.RenameDDLAction:
 				res, err = executor.RenameTable(ctx, conn, v)
-			case "truncate":
+			case query.TruncateDDLAction:
 				res, err = executor.TruncateTable(ctx, conn, v)
-			case "analyze":
-				res, err = executor.AnalyzeTable(ctx, conn, v)
 			}
-		case (*query.Show):
-			switch v.Type {
-			case "DATABASES":
-				res, err = executor.ShowDatabases(ctx, conn)
-			case "TABLES":
-				res, err = executor.ShowTables(ctx, conn, conn.Database)
-			}
+		// case (*query.Show):
+		// 	switch v.Type {
+		// 	case "DATABASES":
+		// 		res, err = executor.ShowDatabases(ctx, conn)
+		// 	case "TABLES":
+		// 		res, err = executor.ShowTables(ctx, conn, conn.Database)
+		// 	}
 		case (*query.Insert):
 			res, err = executor.Insert(ctx, conn, v)
 		case (*query.Select):
@@ -107,6 +96,7 @@ func (server *Server) ComQuery(c *vitess.Conn, q string, callback func(*Result) 
 			res, err = executor.Delete(ctx, conn, v)
 		case (*query.Use):
 			conn.Database = v.DBName.String()
+		default:
 		}
 	}
 

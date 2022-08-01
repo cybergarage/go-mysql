@@ -22,23 +22,23 @@ import (
 // DDOExecutor defines a executor interface for DDO (Data Definition Operations).
 type DDOExecutor interface {
 	// CreateDatabase should handle a CREATE database statement.
-	CreateDatabase(context.Context, *Conn, *query.DBDDL) (*Result, error)
+	CreateDatabase(context.Context, *Conn, query.DBDDL) (*Result, error)
 	// AlterDatabase should handle a ALTER database statement.
-	AlterDatabase(context.Context, *Conn, *query.DBDDL) (*Result, error)
+	AlterDatabase(context.Context, *Conn, query.DBDDL) (*Result, error)
 	// DropDatabase should handle a DROP database statement.
-	DropDatabase(context.Context, *Conn, *query.DBDDL) (*Result, error)
+	DropDatabase(context.Context, *Conn, query.DBDDL) (*Result, error)
 	// CreateTable should handle a CREATE table statement.
-	CreateTable(context.Context, *Conn, *query.DDL) (*Result, error)
+	CreateTable(context.Context, *Conn, query.DDL) (*Result, error)
 	// AlterTable should handle a ALTER table statement.
-	AlterTable(context.Context, *Conn, *query.DDL) (*Result, error)
+	AlterTable(context.Context, *Conn, query.DDL) (*Result, error)
 	// DropTable should handle a DROP table statement.
-	DropTable(context.Context, *Conn, *query.DDL) (*Result, error)
+	DropTable(context.Context, *Conn, query.DDL) (*Result, error)
 	// RenameTable should handle a RENAME table statement.
-	RenameTable(context.Context, *Conn, *query.DDL) (*Result, error)
+	RenameTable(context.Context, *Conn, query.DDL) (*Result, error)
 	// TruncateTable should handle a TRUNCATE table statement.
-	TruncateTable(context.Context, *Conn, *query.DDL) (*Result, error)
+	TruncateTable(context.Context, *Conn, query.DDL) (*Result, error)
 	// AnalyzeTable should handle a ANALYZE table statement.
-	AnalyzeTable(context.Context, *Conn, *query.DDL) (*Result, error)
+	AnalyzeTable(context.Context, *Conn, query.DDL) (*Result, error)
 }
 
 // DMOExecutor defines a executor interface for DMO (Data Manipulation Operations).

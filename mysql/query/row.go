@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"sync"
 
-	"vitess.io/vitess/go/vt/sqlparser"
 	vitess "vitess.io/vitess/go/vt/sqlparser"
 )
 
@@ -71,15 +70,15 @@ func (row *Row) IsMatched(cond *Condition) bool {
 
 	isMatched := false
 	switch e := cond.Expr.(type) {
-	case *sqlparser.ComparisonExpr:
+	case *vitess.ComparisonExpr:
 		switch l := e.Left.(type) {
-		case *sqlparser.ColName:
+		case *vitess.ColName:
 			switch r := e.Right.(type) {
-			case sqlparser.ValTuple:
+			case vitess.ValTuple:
 				for _, val := range r {
 					switch v := val.(type) {
-					case *sqlparser.SQLVal:
-						value, err := NewValueWithSQLVal(v)
+					case *vitess.Literal:
+						value, err := NewValueWithLiteral(v)
 						if err != nil {
 							continue
 						}
