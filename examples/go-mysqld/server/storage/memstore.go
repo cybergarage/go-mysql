@@ -37,9 +37,9 @@ func NewMemStore() *MemStore {
 }
 
 // CreateDatabase should handle a CREATE database statement.
-func (store *MemStore) CreateDatabase(ctx context.Context, conn *mysql.Conn, stmt *query.DBDDL) (*mysql.Result, error) {
+func (store *MemStore) CreateDatabase(ctx context.Context, conn *mysql.Conn, stmt query.DBDDL) (*mysql.Result, error) {
 	log.Debug("%v\n", stmt)
-	dbName := stmt.DBName
+	dbName := stmt.GetDatabaseName()
 	_, ok := store.GetDatabase(dbName)
 	if ok {
 		return mysql.NewResult(), fmt.Errorf(errorDatabaseFound, dbName)
@@ -52,32 +52,32 @@ func (store *MemStore) CreateDatabase(ctx context.Context, conn *mysql.Conn, stm
 }
 
 // AlterDatabase should handle a ALTER database statement.
-func (store *MemStore) AlterDatabase(ctx context.Context, conn *mysql.Conn, stmt *query.DBDDL) (*mysql.Result, error) {
+func (store *MemStore) AlterDatabase(ctx context.Context, conn *mysql.Conn, stmt query.DBDDL) (*mysql.Result, error) {
 	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // DropDatabase should handle a DROP database statement.
-func (store *MemStore) DropDatabase(ctx context.Context, conn *mysql.Conn, stmt *query.DBDDL) (*mysql.Result, error) {
+func (store *MemStore) DropDatabase(ctx context.Context, conn *mysql.Conn, stmt query.DBDDL) (*mysql.Result, error) {
 	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // CreateTable should handle a CREATE table statement.
-func (store *MemStore) CreateTable(ctx context.Context, conn *mysql.Conn, stmt *query.DDL) (*mysql.Result, error) {
+func (store *MemStore) CreateTable(ctx context.Context, conn *mysql.Conn, stmt query.DDL) (*mysql.Result, error) {
 	dbName := conn.Database
 	db, ok := store.GetDatabase(dbName)
 	if !ok {
 		return mysql.NewResult(), fmt.Errorf(errorDatabaseNotFound, dbName)
 	}
 
-	tableName := stmt.Table.Name.String()
+	tableName := stmt.GetTable().Name.String()
 	_, ok = db.GetTable(tableName)
 	if !ok {
 		table := NewTableWithName(tableName)
 		db.AddTable(table)
 	} else {
-		if !stmt.IfExists {
+		if !stmt.GetIfExists() {
 			return mysql.NewResult(), fmt.Errorf(errorTableFound, dbName, tableName)
 		}
 	}
@@ -85,31 +85,31 @@ func (store *MemStore) CreateTable(ctx context.Context, conn *mysql.Conn, stmt *
 }
 
 // AlterTable should handle a ALTER table statement.
-func (store *MemStore) AlterTable(ctx context.Context, conn *mysql.Conn, stmt *query.DDL) (*mysql.Result, error) {
+func (store *MemStore) AlterTable(ctx context.Context, conn *mysql.Conn, stmt query.DDL) (*mysql.Result, error) {
 	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // DropTable should handle a DROP table statement.
-func (store *MemStore) DropTable(ctx context.Context, conn *mysql.Conn, stmt *query.DDL) (*mysql.Result, error) {
+func (store *MemStore) DropTable(ctx context.Context, conn *mysql.Conn, stmt query.DDL) (*mysql.Result, error) {
 	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // RenameTable should handle a RENAME table statement.
-func (store *MemStore) RenameTable(ctx context.Context, conn *mysql.Conn, stmt *query.DDL) (*mysql.Result, error) {
+func (store *MemStore) RenameTable(ctx context.Context, conn *mysql.Conn, stmt query.DDL) (*mysql.Result, error) {
 	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // TruncateTable should handle a TRUNCATE table statement.
-func (store *MemStore) TruncateTable(ctx context.Context, conn *mysql.Conn, stmt *query.DDL) (*mysql.Result, error) {
+func (store *MemStore) TruncateTable(ctx context.Context, conn *mysql.Conn, stmt query.DDL) (*mysql.Result, error) {
 	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // AnalyzeTable should handle a ANALYZE table statement.
-func (store *MemStore) AnalyzeTable(ctx context.Context, conn *mysql.Conn, stmt *query.DDL) (*mysql.Result, error) {
+func (store *MemStore) AnalyzeTable(ctx context.Context, conn *mysql.Conn, stmt query.DDL) (*mysql.Result, error) {
 	log.Debug("%v\n", stmt)
 	return mysql.NewResult(), nil
 }

@@ -21,10 +21,10 @@ import (
 )
 
 func TestNewValue(t *testing.T) {
-	sqlValues := []*vitess.SQLVal{
-		vitess.NewStrVal([]byte("hello")),
-		vitess.NewIntVal([]byte("1234")),
-		vitess.NewFloatVal([]byte("1234")),
+	literals := []*vitess.Literal{
+		vitess.NewStrLiteral("hello"),
+		vitess.NewIntLiteral("1234"),
+		vitess.NewFloatLiteral("1234"),
 	}
 	expValues := []interface{}{
 		"hello",
@@ -32,8 +32,8 @@ func TestNewValue(t *testing.T) {
 		float64(1234),
 	}
 
-	for n, sqlVal := range sqlValues {
-		val, err := NewValueWithSQLVal(sqlVal)
+	for n, l := range literals {
+		val, err := NewValueWithLiteral(l)
 		if err != nil {
 			t.Error(err)
 			continue

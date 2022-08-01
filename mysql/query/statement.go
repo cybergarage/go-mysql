@@ -21,7 +21,7 @@ import (
 // Statement represents a query statement.
 type Statement = vitess.Statement
 
-// StatementType encodes the type of a SQL statement
+// StatementType encodes the type of a SQL statement.
 type StatementType = vitess.StatementType
 
 // These constants are used to identify the SQL statement type.
@@ -44,7 +44,24 @@ const (
 	StmtUnknown  = vitess.StmtUnknown
 	StmtComment  = vitess.StmtComment
 	StmtPriv     = vitess.StmtPriv
-	//StmtExplain  = vitess.StmtExplain
+	// StmtExplain  = vitess.StmtExplain.
+)
+
+const (
+	CreateDDLAction           = vitess.CreateDDLAction
+	AlterDDLAction            = vitess.AlterDDLAction
+	DropDDLAction             = vitess.DropDDLAction
+	RenameDDLAction           = vitess.RenameDDLAction
+	TruncateDDLAction         = vitess.TruncateDDLAction
+	CreateVindexDDLAction     = vitess.CreateVindexDDLAction
+	DropVindexDDLAction       = vitess.DropVindexDDLAction
+	AddVschemaTableDDLAction  = vitess.AddVschemaTableDDLAction
+	DropVschemaTableDDLAction = vitess.DropVschemaTableDDLAction
+	AddColVindexDDLAction     = vitess.AddColVindexDDLAction
+	DropColVindexDDLAction    = vitess.DropColVindexDDLAction
+	AddSequenceDDLAction      = vitess.AddSequenceDDLAction
+	AddAutoIncDDLAction       = vitess.AddAutoIncDDLAction
+	RevertDDLAction           = vitess.RevertDDLAction
 )
 
 // SelectStatement any SELECT statement.
@@ -74,23 +91,20 @@ type Set = vitess.Set
 // SetTransaction represents a SET TRANSACTION statement.
 type SetTransaction = vitess.SetTransaction
 
-// Characteristic is a transaction related change
+// Characteristic is a transaction related change.
 type Characteristic = vitess.Characteristic
 
-// IsolationLevel is self-explanatory in this context
+// IsolationLevel is self-explanatory in this context.
 type IsolationLevel = vitess.IsolationLevel
 
-// AccessMode is ReadOnly/ReadWrite
+// AccessMode is ReadOnly/ReadWrite.
 type AccessMode = vitess.AccessMode
 
 // DBDDL represents a CREATE, DROP, or ALTER database statement.
-type DBDDL = vitess.DBDDL
+type DBDDL = vitess.DBDDLStatement
 
 // DDL represents a CREATE, ALTER, DROP, RENAME, TRUNCATE or ANALYZE statement.
-type DDL = vitess.DDL
-
-// ParenSelect is a parenthesized SELECT statement.
-type ParenSelect = vitess.ParenSelect
+type DDL = vitess.DDLStatement
 
 // Show represents a show statement.
 type Show = vitess.Show
@@ -108,4 +122,4 @@ type Commit = vitess.Commit
 type Rollback = vitess.Rollback
 
 // Explain represents an EXPLAIN statement
-//type Explain = vitess.Explain
+// type Explain = vitess.Explain
