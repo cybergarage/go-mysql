@@ -18,8 +18,9 @@ import (
 	"context"
 	"fmt"
 	"go-mysql/mysql"
-	"go-mysql/mysql/log"
 	"go-mysql/mysql/query"
+
+	"github.com/cybergarage/go-logger/log"
 
 	vitess "vitess.io/vitess/go/vt/sqlparser"
 )
