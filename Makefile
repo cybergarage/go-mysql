@@ -76,7 +76,7 @@ BINARIES=${EXAMPLE_BINARIES}
 all: test
 
 format:
-	gofmt -w ${ALL_ROOTS}
+	gofmt -s -w ${ALL_ROOTS}
 
 vet: format
 	go vet ${ALL_PKGS}
