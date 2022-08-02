@@ -15,10 +15,11 @@
 package sqltest
 
 import (
-	"go-mysql/github.com/cybergarage/go-logger/log"
-	"go-mysql/test/client"
-	"go-mysql/test/server"
 	"testing"
+
+	"github.com/cybergarage/go-logger/log"
+	"github.com/cybergarage/go-mysql/test/client"
+	"github.com/cybergarage/go-mysql/test/server"
 )
 
 const sqlTestDatabase = "test"

@@ -16,7 +16,8 @@ package client
 
 import (
 	"fmt"
-	"go-mysql/mysql"
+
+	"github.com/cybergarage/go-mysql/mysql"
 )
 
 // Client represents a client for MySQL server.

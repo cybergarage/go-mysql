@@ -16,8 +16,9 @@ package server
 
 import (
 	"fmt"
-	"go-mysql/mysql"
 	"testing"
+
+	"github.com/cybergarage/go-mysql/mysql"
 )
 
 const (

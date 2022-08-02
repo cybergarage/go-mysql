@@ -15,7 +15,7 @@
 package server
 
 import (
-	"go-mysql/mysql"
+	"github.com/cybergarage/go-mysql/mysql"
 )
 
 // Store should support only DMOExecutor methods

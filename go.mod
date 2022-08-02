@@ -1,4 +1,4 @@
-module go-mysql
+module github.com/cybergarage/go-mysql
 
 go 1.18
 

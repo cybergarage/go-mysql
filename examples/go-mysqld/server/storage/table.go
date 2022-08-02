@@ -16,8 +16,9 @@ package storage
 
 import (
 	"fmt"
-	"go-mysql/mysql/query"
 	"sync"
+
+	"github.com/cybergarage/go-mysql/mysql/query"
 )
 
 type Row = query.Row

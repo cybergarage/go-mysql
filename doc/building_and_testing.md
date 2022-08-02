@@ -7,7 +7,7 @@
 `go-mysql` extends [Vitess](https://github.com/vitessio/vitess) package which is a sharding package for MySQL compatible servers. So `go-mysql` requires the [Vitess](https://github.com/vitessio/vitess) package for the compiling, but `go-mysql` has not succeeded to import the package directly yet due to the following compile errors. 
 
 ```
-go build go-mysql/mysql
+go build github.com/cybergarage/go-mysql/mysql
 # pkg-config --cflags  -- gomysql
 Package gomysql was not found in the pkg-config search path.
 Perhaps you should add the directory containing `gomysql.pc'

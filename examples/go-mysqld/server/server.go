@@ -17,8 +17,8 @@ package server
 import (
 	"time"
 
-	"go-mysql/examples/go-mysqld/server/storage"
-	"go-mysql/mysql"
+	"github.com/cybergarage/go-mysql/examples/go-mysqld/server/storage"
+	"github.com/cybergarage/go-mysql/mysql"
 )
 
 const (

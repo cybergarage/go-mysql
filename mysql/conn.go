@@ -20,7 +20,7 @@ import (
 	vitess "vitess.io/vitess/go/mysql"
 )
 
-// Conn represents a connection of MySQL binary protocol
+// Conn represents a connection of MySQL binary protocol.
 type Conn struct {
 	*vitess.Conn
 	Database  string

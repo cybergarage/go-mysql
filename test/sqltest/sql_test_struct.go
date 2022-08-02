@@ -17,7 +17,7 @@ package sqltest
 import (
 	"fmt"
 
-	"go-mysql/test/client"
+	"github.com/cybergarage/go-mysql/test/client"
 )
 
 const (
