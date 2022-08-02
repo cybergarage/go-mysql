@@ -49,7 +49,7 @@ func (file *File) Ext() string {
 	return filepath.Ext(file.Path)
 }
 
-// IsDir returns true when the file represents a directory, otherwise false
+// IsDir returns true when the file represents a directory, otherwise false.
 func (file *File) IsDir() bool {
 	fi, err := os.Stat(file.Path)
 	if err != nil {
