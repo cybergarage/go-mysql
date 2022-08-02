@@ -18,14 +18,15 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cybergarage/go-mysql/mysql"
+	mysqltest "github.com/cybergarage/go-mysql/mysqltest/client"
 )
 
 const (
 	testYCSBDataSize = 100
 )
 
-func testYCSBSetup(t *testing.T, client *mysql.Client) {
+func testYCSBSetup(t *testing.T, client mysqltest.Client) {
+	t.Helper()
 	var setupQueries []string = []string{
 		"CREATE DATABASE ycsb",
 		"SHOW DATABASES",
@@ -42,7 +43,8 @@ func testYCSBSetup(t *testing.T, client *mysql.Client) {
 	}
 }
 
-func testYCSBLoadWorkload(t *testing.T, client *mysql.Client) {
+func testYCSBLoadWorkload(t *testing.T, client mysqltest.Client) {
+	t.Helper()
 	for n := 0; n < testYCSBDataSize; n++ {
 		query := fmt.Sprintf("INSERT INTO usertable VALUES (YCSB_KEY =\"%d\", FIELD0 =\"%d\",FIELD1 =\"%d\",FIELD2 =\"%d\",FIELD3 =\"%d\",FIELD4 =\"%d\",FIELD5 =\"%d\",FIELD6 =\"%d\",FIELD7 =\"%d\",FIELD8 =\"%d\",FIELD9 =\"%d\")",
 			n, n, n, n, n, n, n, n, n, n, n)
@@ -53,7 +55,8 @@ func testYCSBLoadWorkload(t *testing.T, client *mysql.Client) {
 	}
 }
 
-func testYCSBRunWorkload(t *testing.T, client *mysql.Client) {
+func testYCSBRunWorkload(t *testing.T, client mysqltest.Client) {
+	t.Helper()
 	for n := 0; n < testYCSBDataSize; n++ {
 		query := fmt.Sprintf("SELECT FIELD0, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5, FIELD6, FIELD7, FIELD8, FIELD9 FROM usertable WHERE YCSB_KEY = \"%d\"",
 			n)
@@ -74,7 +77,7 @@ func TestYCSB(t *testing.T) {
 		return
 	}
 
-	client := mysql.NewClient()
+	client := mysqltest.NewDefaultClient()
 	client.SetDatabase("ycsb")
 	err = client.Open()
 	defer client.Close()
