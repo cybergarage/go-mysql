@@ -32,3 +32,4 @@ linters:
     - exhaustruct
     - gocritic
     - golint
+    - revive
