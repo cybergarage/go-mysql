@@ -41,7 +41,7 @@ func NewValueWithLiteral(literal *vitess.Literal) (interface{}, error) {
 		return strconv.ParseInt(literal.Val, 0, 64)
 	case FloatVal:
 		return strconv.ParseFloat(literal.Val, 64)
-	case BitVal, HexNum, HexVal:
+	default:
 		return nil, fmt.Errorf(errorUnknownSQLValType, literal)
 	}
 }

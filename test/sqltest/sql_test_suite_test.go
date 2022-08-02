@@ -15,7 +15,7 @@
 package sqltest
 
 import (
-	"go-mysql/mysql/log"
+	"go-mysql/github.com/cybergarage/go-logger/log"
 	"go-mysql/test/client"
 	"go-mysql/test/server"
 	"testing"

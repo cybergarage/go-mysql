@@ -16,8 +16,9 @@ package mysql
 
 import (
 	"context"
-	"go-mysql/mysql/log"
 	"go-mysql/mysql/query"
+
+	"github.com/cybergarage/go-logger/log"
 
 	vitess "vitess.io/vitess/go/mysql"
 )
