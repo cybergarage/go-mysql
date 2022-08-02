@@ -52,5 +52,4 @@ func TestSQLUntestedCases(t *testing.T) {
 			t.Error(err)
 		}
 	}
-
 }
