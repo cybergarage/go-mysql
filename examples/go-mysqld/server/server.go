@@ -26,7 +26,7 @@ const (
 )
 
 // Server represents a test server.
-// This Server struct behave as ${hoge}CommandExecutor
+// This Server struct behave as ${hoge}CommandExecutor.
 type Server struct {
 	*mysql.Server
 	Store

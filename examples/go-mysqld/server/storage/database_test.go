@@ -20,9 +20,7 @@ import (
 
 func TestNewDatabase(t *testing.T) {
 	ks := NewDatabase()
-
-	tables := ks.GetTables()
-	if len(tables) != 0 {
+	if tables := ks.GetTables(); len(tables) != 0 {
 		t.Errorf("%d", len(tables))
 	}
 }

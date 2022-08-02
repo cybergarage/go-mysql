@@ -18,7 +18,7 @@ import (
 	"github.com/cybergarage/go-mysql/mysql"
 )
 
-// Store should support only DMOExecutor methods
+// Store should support only DMOExecutor methods.
 type Store interface {
 	mysql.QueryExecutor
 }

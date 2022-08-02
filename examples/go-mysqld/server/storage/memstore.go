@@ -18,11 +18,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/mysql"
 	"github.com/cybergarage/go-mysql/mysql/query"
-
-	"github.com/cybergarage/go-logger/log"
-
 	vitess "vitess.io/vitess/go/vt/sqlparser"
 )
 
@@ -168,11 +166,11 @@ func (store *MemStore) Select(ctx context.Context, conn *mysql.Conn, stmt *query
 	}
 	tableExpr, ok := tableExprs[0].(*vitess.AliasedTableExpr)
 	if !ok {
-		return nil, fmt.Errorf("Invalid Table : %v", tableExpr)
+		return nil, fmt.Errorf("invalid Table : %v", tableExpr)
 	}
 	tableName, ok := tableExpr.Expr.(vitess.TableName)
 	if !ok {
-		return nil, fmt.Errorf("Invalid Table : %v", tableExpr)
+		return nil, fmt.Errorf("invalid Table : %v", tableExpr)
 	}
 
 	dbName := conn.Database
