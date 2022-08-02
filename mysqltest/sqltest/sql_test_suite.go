@@ -84,7 +84,7 @@ func (suite *SQLTestSuite) Run() error {
 		test.SetClient(suite.client)
 		err := test.Run()
 		if err != nil {
-			return fmt.Errorf("%s : %s", test.GetName(), err.Error())
+			return fmt.Errorf("%s : %w", test.GetName(), err)
 		}
 	}
 	return nil

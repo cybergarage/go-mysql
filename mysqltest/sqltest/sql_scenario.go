@@ -64,7 +64,7 @@ func (file *SQLScenario) LoadFile(filename string) error {
 
 	err = file.ParseLineStrings(lines)
 	if err != nil {
-		return fmt.Errorf("%s : %s", filename, err.Error())
+		return fmt.Errorf("%s : %w", filename, err)
 	}
 
 	file.Filename = filename
