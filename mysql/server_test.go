@@ -16,6 +16,8 @@ package mysql
 
 import (
 	"testing"
+
+	"github.com/cybergarage/go-mysql/mysqltest/client"
 )
 
 var testServerQueries []string = []string{
@@ -34,7 +36,7 @@ func TestServer(t *testing.T) {
 		return
 	}
 
-	client := NewClient()
+	client := client.NewClient()
 	client.SetDatabase("ycsb")
 	err = client.Open()
 	defer client.Close()

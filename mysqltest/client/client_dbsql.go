@@ -12,60 +12,57 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mysql
+package client
 
 import (
-	"database/sql/driver"
+	"database/sql"
 	"fmt"
 
-	"github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
-// Client represents a client for MySQL server.
-type MySQLClient struct {
+// ClientDB represents a client.
+type ClientDB struct {
 	*Config
-	conn driver.Conn
+	db *sql.DB
 }
 
-// NewMySQLClient returns a client instance.
-func NewMySQLClient() *MySQLClient {
-	client := &MySQLClient{
+// NewClientDB returns a client instance.
+func NewClientDB() *ClientDB {
+	client := &ClientDB{
 		Config: NewDefaultConfig(),
-		conn:   nil,
+		db:     nil,
 	}
 	return client
 }
 
 // Open opens a database specified by the internal configuration.
-func (client *MySQLClient) Open(dbName string) error {
-	dbDrv := mysql.MySQLDriver{}
-	dsName := fmt.Sprintf("root@tcp(127.0.0.1:3306)/%s", dbName)
-	conn, err := dbDrv.Open(dsName)
+func (client *ClientDB) Open() error {
+	dsName := fmt.Sprintf("root@tcp(%s:%d)/%s", client.Host, client.Port, client.Database)
+	db, err := sql.Open("mysql", dsName)
 	if err != nil {
 		return err
 	}
-	client.conn = conn
+	client.db = db
 	return nil
 }
 
 // Close closes opens a database specified by the internal configuration.
-func (client *MySQLClient) Close() error {
-	if client.conn == nil {
+func (client *ClientDB) Close() error {
+	if client.db == nil {
 		return nil
 	}
-	return client.conn.Close()
+	return client.db.Close()
 }
 
 // Query executes a query that returns rows.
-func (client *MySQLClient) Query(query string, args ...interface{}) (driver.Rows, error) {
-	if client.conn == nil {
-		return nil, nil
+func (client *ClientDB) Query(query string, args ...interface{}) (*sql.Rows, error) {
+	if client.db == nil {
+		err := client.Open()
+		if err != nil {
+			return nil, err
+		}
+		defer client.Close()
 	}
-	stmt, err := client.conn.Prepare(query)
-	if err != nil {
-		return nil, err
-	}
-	queryArgs := []driver.Value{}
-	rows, err := stmt.Query(queryArgs)
-	return rows, err
+	return client.db.Query(query, args...)
 }
