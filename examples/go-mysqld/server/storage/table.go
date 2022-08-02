@@ -15,9 +15,9 @@
 package storage
 
 import (
-	"fmt"
 	"sync"
 
+	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/mysql/query"
 )
 
@@ -101,8 +101,8 @@ func (tbl *Table) String() string {
 
 // Dump outputs all row values for debug.
 func (tbl *Table) Dump() {
-	fmt.Printf("%s\n", tbl.GetName())
+	log.Info("%s\n", tbl.GetName())
 	for n, row := range tbl.GetRows() {
-		fmt.Printf("[%d] %s\n", n, row.String())
+		log.Info("[%d] %s\n", n, row.String())
 	}
 }
