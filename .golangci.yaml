@@ -31,3 +31,4 @@ linters:
     - typecheck
     - exhaustruct
     - gocritic
+    - golint
