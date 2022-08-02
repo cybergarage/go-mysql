@@ -19,11 +19,9 @@ import (
 )
 
 func TestServer(t *testing.T) {
-	var err error
-	var server *Server
-	server = NewServer()
+	server := NewServer()
 
-	err = server.Start()
+	err := server.Start()
 	if err != nil {
 		t.Error(err)
 		return

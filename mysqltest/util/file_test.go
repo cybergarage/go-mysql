@@ -99,5 +99,4 @@ func TestFileListFiles(t *testing.T) {
 	} else {
 		t.Errorf(errorFileListNotFound, ext)
 	}
-
 }

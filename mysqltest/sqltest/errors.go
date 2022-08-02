@@ -15,9 +15,9 @@
 package sqltest
 
 const (
-	errorInvalidScenarioCases          = "Query cases [%d] are not equal with result cases [%d]"
-	errorClientNotFound                = "Client for testing is not found"
-	errorInvalidJSONResponse           = "Invalid JSON response : %v"
+	errorInvalidScenarioCases          = "query cases [%d] are not equal with result cases [%d]"
+	errorClientNotFound                = "client for testing is not found"
+	errorInvalidJSONResponse           = "invalid JSON response : %v"
 	errorJSONResponseNotFound          = "JSON response is not found"
 	errorJSONResponseRowsNotFound      = "JSON response (%v) has no '%s'"
 	errorJSONResponseHasNoRow          = "JSON response (%v) has no %v"
