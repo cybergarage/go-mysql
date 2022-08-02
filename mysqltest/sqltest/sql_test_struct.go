@@ -98,7 +98,7 @@ func (ct *SQLTest) Run() error {
 	for n, query := range scenario.Queries {
 		rs, err := client.Query(query)
 		if err != nil {
-			return fmt.Errorf("%s%s", errTraceMsg(n), err.Error())
+			return fmt.Errorf("%s%w", errTraceMsg(n), err)
 		}
 		defer rs.Close()
 
