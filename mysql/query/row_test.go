@@ -19,10 +19,5 @@ import (
 )
 
 func TestNewRow(t *testing.T) {
-	row := NewRow()
-
-	_, ok := row.GetColumn(0)
-	if ok {
-		t.Errorf("%v", row)
-	}
+	NewRow()
 }

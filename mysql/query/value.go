@@ -25,11 +25,9 @@ const (
 	StrVal   = vitess.StrVal
 	IntVal   = vitess.IntVal
 	FloatVal = vitess.FloatVal
-	// TODO: Support other SQL types.
-	// HexNum.
-	// HexVal.
-	// ValArg.
-	// BitVal.
+	HexNum   = vitess.HexNum
+	HexVal   = vitess.HexVal
+	BitVal   = vitess.BitVal
 )
 
 // NewValueWithLiteral converts the specified literal to Golang value.
@@ -41,7 +39,8 @@ func NewValueWithLiteral(literal *vitess.Literal) (interface{}, error) {
 		return strconv.ParseInt(literal.Val, 0, 64)
 	case FloatVal:
 		return strconv.ParseFloat(literal.Val, 64)
-	default:
+	case BitVal, HexNum, HexVal:
 		return nil, fmt.Errorf(errorUnknownSQLValType, literal)
 	}
+	return nil, fmt.Errorf(errorUnknownSQLValType, literal)
 }

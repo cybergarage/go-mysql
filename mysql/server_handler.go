@@ -17,10 +17,8 @@ package mysql
 import (
 	"context"
 
-	"github.com/cybergarage/go-mysql/mysql/query"
-
 	"github.com/cybergarage/go-logger/log"
-
+	"github.com/cybergarage/go-mysql/mysql/query"
 	vitess "vitess.io/vitess/go/mysql"
 )
 
@@ -46,6 +44,7 @@ func (server *Server) ComInitDB(c *vitess.Conn, schemaName string) {
 }
 
 // ComQuery is called when a connection receives a query.
+// nolint: exhaustive
 func (server *Server) ComQuery(c *vitess.Conn, q string, callback func(*Result) error) error {
 	parser := query.NewParser()
 	stmt, err := parser.Parse(q)
