@@ -27,7 +27,7 @@ const (
 
 func testYCSBSetup(t *testing.T, client mysqltest.Client) {
 	t.Helper()
-	var setupQueries []string = []string{
+	setupQueries := []string{
 		"CREATE DATABASE ycsb",
 		"SHOW DATABASES",
 		"USE ycsb",
