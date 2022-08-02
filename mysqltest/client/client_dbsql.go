@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mysql
+package client
 
 import (
 	"database/sql"
@@ -21,15 +21,15 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// Client represents a client for MySQL server.
-type Client struct {
+// ClientDB represents a client.
+type ClientDB struct {
 	*Config
 	db *sql.DB
 }
 
-// NewClient returns a client instance.
-func NewClient() *Client {
-	client := &Client{
+// NewClientDB returns a client instance.
+func NewClientDB() *ClientDB {
+	client := &ClientDB{
 		Config: NewDefaultConfig(),
 		db:     nil,
 	}
@@ -37,7 +37,7 @@ func NewClient() *Client {
 }
 
 // Open opens a database specified by the internal configuration.
-func (client *Client) Open() error {
+func (client *ClientDB) Open() error {
 	dsName := fmt.Sprintf("root@tcp(%s:%d)/%s", client.Host, client.Port, client.Database)
 	db, err := sql.Open("mysql", dsName)
 	if err != nil {
@@ -48,7 +48,7 @@ func (client *Client) Open() error {
 }
 
 // Close closes opens a database specified by the internal configuration.
-func (client *Client) Close() error {
+func (client *ClientDB) Close() error {
 	if client.db == nil {
 		return nil
 	}
@@ -56,7 +56,7 @@ func (client *Client) Close() error {
 }
 
 // Query executes a query that returns rows.
-func (client *Client) Query(query string, args ...interface{}) (*sql.Rows, error) {
+func (client *ClientDB) Query(query string, args ...interface{}) (*sql.Rows, error) {
 	if client.db == nil {
 		err := client.Open()
 		if err != nil {

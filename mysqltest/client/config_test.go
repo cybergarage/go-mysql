@@ -12,16 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mysql
+package client
 
 import (
 	"testing"
 )
 
-func TestDefaultClinet(t *testing.T) {
-	client := NewClient()
-	defer client.Close()
-	if err := client.Open(); err != nil {
-		t.Error(err)
-	}
+func TestDefaultConfig(t *testing.T) {
+	NewDefaultConfig()
 }

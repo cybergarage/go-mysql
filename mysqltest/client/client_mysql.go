@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mysql
+package client
 
 import (
 	"database/sql/driver"
@@ -21,7 +21,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-// Client represents a client for MySQL server.
+// Client represents a client.
 type MySQLClient struct {
 	*Config
 	conn driver.Conn

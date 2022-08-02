@@ -18,6 +18,10 @@ import (
 	"testing"
 )
 
-func TestDefaultClient(t *testing.T) {
-	NewDefaultClient()
+func TestDefaultClinet(t *testing.T) {
+	client := NewDefaultClient()
+	defer client.Close()
+	if err := client.Open(); err != nil {
+		t.Error(err)
+	}
 }

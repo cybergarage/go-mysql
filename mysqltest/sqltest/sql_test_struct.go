@@ -27,7 +27,7 @@ const (
 // SQLTest represents a SQL test.
 type SQLTest struct {
 	Scenario *SQLScenario
-	client   *client.Client
+	client   client.Client
 }
 
 // NewSQLTest returns a SQL test instance.
@@ -44,7 +44,7 @@ func NewSQLTestWithFile(filename string) (*SQLTest, error) {
 }
 
 // SetClient sets a client for testing.
-func (ct *SQLTest) SetClient(c *client.Client) {
+func (ct *SQLTest) SetClient(c client.Client) {
 	ct.client = c
 }
 
