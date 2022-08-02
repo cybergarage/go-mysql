@@ -18,8 +18,8 @@ import (
 	"path"
 	"testing"
 
-	"github.com/cybergarage/go-mysql/test/client"
-	"github.com/cybergarage/go-mysql/test/server"
+	"github.com/cybergarage/go-mysql/mysqltest/client"
+	"github.com/cybergarage/go-mysql/mysqltest/server"
 )
 
 // TestSQLUntestedCases is a temporary debug test to check untested test cases.
