@@ -18,8 +18,8 @@ import (
 	"fmt"
 	"regexp"
 
-	"go-mysql/test/client"
-	"go-mysql/test/util"
+	"github.com/cybergarage/go-mysql/test/client"
+	"github.com/cybergarage/go-mysql/test/util"
 )
 
 const (

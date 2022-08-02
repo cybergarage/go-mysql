@@ -16,7 +16,8 @@ package mysql
 
 import (
 	"context"
-	"go-mysql/mysql/query"
+
+	"github.com/cybergarage/go-mysql/mysql/query"
 
 	"github.com/cybergarage/go-logger/log"
 

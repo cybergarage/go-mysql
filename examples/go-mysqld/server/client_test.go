@@ -17,7 +17,7 @@ package server
 import (
 	"testing"
 
-	"go-mysql/examples/go-mysqld/server/storage"
+	"github.com/cybergarage/go-mysql/examples/go-mysqld/server/storage"
 )
 
 func newTestServer() *Server {

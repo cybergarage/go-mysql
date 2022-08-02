@@ -18,5 +18,5 @@ import (
 	vitess "vitess.io/vitess/go/mysql"
 )
 
-// PrepareData is a buffer used for store prepare statement meta data
+// PrepareData is a buffer used for store prepare statement meta data.
 type PrepareData = vitess.PrepareData

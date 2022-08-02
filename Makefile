@@ -16,7 +16,7 @@ SHELL := bash
 
 PREFIX?=$(shell pwd)
 
-GIT_ROOT=
+GIT_ROOT=github.com/cybergarage/
 PRODUCT_NAME=go-mysql
 PKG_NAME=mysql
 
@@ -57,7 +57,7 @@ ALL_SRCS=\
 	${MODULE_SRCS}
 
 ALL_PKGS=\
-	${MODULE_SRCS} \
+	${MODULE_PKGS} \
 	${EXAMPLES_PKGS} \
 	${TEST_PKGS}
 

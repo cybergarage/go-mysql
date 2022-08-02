@@ -17,8 +17,9 @@ package storage
 import (
 	"context"
 	"fmt"
-	"go-mysql/mysql"
-	"go-mysql/mysql/query"
+
+	"github.com/cybergarage/go-mysql/mysql"
+	"github.com/cybergarage/go-mysql/mysql/query"
 
 	"github.com/cybergarage/go-logger/log"
 

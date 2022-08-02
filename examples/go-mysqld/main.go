@@ -40,7 +40,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"go-mysql/examples/go-mysqld/server"
+	"github.com/cybergarage/go-mysql/examples/go-mysqld/server"
 )
 
 const (
