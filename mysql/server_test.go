@@ -49,6 +49,7 @@ func TestServer(t *testing.T) {
 		_, err := client.Query(query)
 		if err != nil {
 			t.Error(err)
+			break
 		}
 	}
 
