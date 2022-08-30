@@ -39,17 +39,19 @@ func TestSQLUntestedCases(t *testing.T) {
 	client := client.NewDefaultClient()
 
 	for _, testFilename := range testFilenames {
-		ct := NewSQLTest()
-		err = ct.LoadFile(path.Join(SQLTestSuiteDefaultTestDirectory, testFilename))
-		if err != nil {
-			t.Error(err)
-			continue
-		}
-		ct.SetClient(client)
+		t.Run(testFilename, func(t *testing.T) {
+			ct := NewSQLTest()
+			err = ct.LoadFile(path.Join(SQLTestSuiteDefaultTestDirectory, testFilename))
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			ct.SetClient(client)
 
-		err = ct.Run()
-		if err != nil {
-			t.Error(err)
-		}
+			err = ct.Run()
+			if err != nil {
+				t.Error(err)
+			}
+		})
 	}
 }
