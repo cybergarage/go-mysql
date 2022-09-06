@@ -38,7 +38,7 @@ func NewMemStore() *MemStore {
 
 // CreateDatabase should handle a CREATE database statement.
 func (store *MemStore) CreateDatabase(ctx context.Context, conn *mysql.Conn, stmt query.DBDDL) (*mysql.Result, error) {
-	log.Debug("%v\n", stmt)
+	log.Debugf("%v\n", stmt)
 	dbName := stmt.GetDatabaseName()
 	_, ok := store.GetDatabase(dbName)
 	if ok {
@@ -53,13 +53,13 @@ func (store *MemStore) CreateDatabase(ctx context.Context, conn *mysql.Conn, stm
 
 // AlterDatabase should handle a ALTER database statement.
 func (store *MemStore) AlterDatabase(ctx context.Context, conn *mysql.Conn, stmt query.DBDDL) (*mysql.Result, error) {
-	log.Debug("%v\n", stmt)
+	log.Debugf("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // DropDatabase should handle a DROP database statement.
 func (store *MemStore) DropDatabase(ctx context.Context, conn *mysql.Conn, stmt query.DBDDL) (*mysql.Result, error) {
-	log.Debug("%v\n", stmt)
+	log.Debugf("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
@@ -86,37 +86,37 @@ func (store *MemStore) CreateTable(ctx context.Context, conn *mysql.Conn, stmt q
 
 // AlterTable should handle a ALTER table statement.
 func (store *MemStore) AlterTable(ctx context.Context, conn *mysql.Conn, stmt query.DDL) (*mysql.Result, error) {
-	log.Debug("%v\n", stmt)
+	log.Debugf("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // DropTable should handle a DROP table statement.
 func (store *MemStore) DropTable(ctx context.Context, conn *mysql.Conn, stmt query.DDL) (*mysql.Result, error) {
-	log.Debug("%v\n", stmt)
+	log.Debugf("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // RenameTable should handle a RENAME table statement.
 func (store *MemStore) RenameTable(ctx context.Context, conn *mysql.Conn, stmt query.DDL) (*mysql.Result, error) {
-	log.Debug("%v\n", stmt)
+	log.Debugf("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // TruncateTable should handle a TRUNCATE table statement.
 func (store *MemStore) TruncateTable(ctx context.Context, conn *mysql.Conn, stmt query.DDL) (*mysql.Result, error) {
-	log.Debug("%v\n", stmt)
+	log.Debugf("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // AnalyzeTable should handle a ANALYZE table statement.
 func (store *MemStore) AnalyzeTable(ctx context.Context, conn *mysql.Conn, stmt query.DDL) (*mysql.Result, error) {
-	log.Debug("%v\n", stmt)
+	log.Debugf("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // Insert should handle a INSERT statement.
 func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query.Insert) (*mysql.Result, error) {
-	log.Debug("%v\n", stmt)
+	log.Debugf("%v\n", stmt)
 	dbName := conn.Database
 	tableName := stmt.Table.Name.String()
 	table, ok := store.GetTableWithDatabase(dbName, tableName)
@@ -125,11 +125,11 @@ func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query
 	}
 
 	rows := stmt.Rows
-	log.Debug("%v\n", rows)
+	log.Debugf("%v\n", rows)
 	node, _ := rows.(vitess.SQLNode)
-	log.Debug("%v\n", node)
+	log.Debugf("%v\n", node)
 	queryRows, _ := node.(vitess.Values)
-	log.Debug("%v\n", queryRows)
+	log.Debugf("%v\n", queryRows)
 
 	for _, queryRow := range queryRows {
 		row, err := query.NewRowWithValTuple(queryRow)
@@ -146,19 +146,19 @@ func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query
 
 // Update should handle a UPDATE statement.
 func (store *MemStore) Update(ctx context.Context, conn *mysql.Conn, stmt *query.Update) (*mysql.Result, error) {
-	log.Debug("%v\n", stmt)
+	log.Debugf("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // Delete should handle a DELETE statement.
 func (store *MemStore) Delete(ctx context.Context, conn *mysql.Conn, stmt *query.Delete) (*mysql.Result, error) {
-	log.Debug("%v\n", stmt)
+	log.Debugf("%v\n", stmt)
 	return mysql.NewResult(), nil
 }
 
 // Select should handle a SELECT statement.
 func (store *MemStore) Select(ctx context.Context, conn *mysql.Conn, stmt *query.Select) (*mysql.Result, error) {
-	log.Debug("%v\n", stmt)
+	log.Debugf("%v\n", stmt)
 
 	tableExprs := stmt.From
 	if len(tableExprs) != 1 {

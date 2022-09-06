@@ -13,19 +13,19 @@
 // limitations under the License.
 
 /*
- go-mysqld is an example of implementing a compatible MySQL server using go-mysql.
-	NAME
-	 go-mysqld
+	 go-mysqld is an example of implementing a compatible MySQL server using go-mysql.
+		NAME
+		 go-mysqld
 
-	SYNOPSIS
-	 go-mysqld [OPTIONS]
+		SYNOPSIS
+		 go-mysqld [OPTIONS]
 
-	OPTIONS
-	-v      : Enable verbose output.
-	-p      : Enable profiling.
+		OPTIONS
+		-v      : Enable verbose output.
+		-p      : Enable profiling.
 
-	RETURN VALUE
-	  Return EXIT_SUCCESS or EXIT_FAILURE
+		RETURN VALUE
+		  Return EXIT_SUCCESS or EXIT_FAILURE
 */
 package main
 
