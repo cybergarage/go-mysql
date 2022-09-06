@@ -3,6 +3,7 @@ module github.com/cybergarage/go-mysql
 go 1.18
 
 require (
+	github.com/cybergarage/go-logger v1.3.0
 	github.com/go-sql-driver/mysql v1.6.0
 	vitess.io/vitess v0.12.5
 )
@@ -11,7 +12,6 @@ require (
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20210330150358-dbd898e17899 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
-	github.com/cybergarage/go-logger v1.1.0 // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.1.0 // indirect
