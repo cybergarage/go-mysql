@@ -15,7 +15,7 @@
 package sqltest
 
 import (
-	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -34,7 +34,7 @@ func NewSQLTestFile() *SQLTestFile {
 
 // LoadFile loads the specified test file.
 func (file *SQLTestFile) LoadFile(filename string) ([]Line, error) {
-	fileBytes, err := ioutil.ReadFile(filename)
+	fileBytes, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
