@@ -24,19 +24,19 @@ import (
 
 // NewConnection is called when a connection is created.
 func (server *Server) NewConnection(c *vitess.Conn) {
-	log.Debug("NewConnection %d\n", c.ConnectionID)
+	log.Debugf("NewConnection %d\n", c.ConnectionID)
 	server.AddConn(NewConnWithConn(c))
 }
 
 // ConnectionClosed is called when a connection is closed.
 func (server *Server) ConnectionClosed(c *vitess.Conn) {
-	log.Debug("ConnectionClosed %d\n", c.ConnectionID)
+	log.Debugf("ConnectionClosed %d\n", c.ConnectionID)
 	server.DeleteConnByUID(c.ConnectionID)
 }
 
 // ComInitDB is called once at the beginning to set db name, and subsequently for every ComInitDB event.
 func (server *Server) ComInitDB(c *vitess.Conn, schemaName string) {
-	log.Debug("ComInitDB %v %d schema (%s)\n", c, c.ConnectionID, schemaName)
+	log.Debugf("ComInitDB %v %d schema (%s)\n", c, c.ConnectionID, schemaName)
 	conn, ok := server.GetConnByUID(c.ConnectionID)
 	if ok {
 		conn.Database = schemaName
@@ -62,7 +62,7 @@ func (server *Server) ComQuery(c *vitess.Conn, q string, callback func(*Result) 
 		conn = NewConnWithConn(c)
 	}
 
-	log.Debug("ComQuery %v %s query (%s)\n", conn, conn.Database, q)
+	log.Debugf("ComQuery %v %s query (%s)\n", conn, conn.Database, q)
 
 	executor := server.QueryExecutor
 	if executor != nil {

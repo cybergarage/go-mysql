@@ -101,8 +101,8 @@ func (tbl *Table) String() string {
 
 // Dump outputs all row values for debug.
 func (tbl *Table) Dump() {
-	log.Info("%s\n", tbl.GetName())
+	log.Infof("%s\n", tbl.GetName())
 	for n, row := range tbl.GetRows() {
-		log.Info("[%d] %s\n", n, row.String())
+		log.Infof("[%d] %s\n", n, row.String())
 	}
 }
