@@ -119,5 +119,5 @@ type Commit = vitess.Commit
 // Rollback represents a Rollback statement.
 type Rollback = vitess.Rollback
 
-// Explain represents an EXPLAIN statement
-// type Explain = vitess.Explain
+// ColumnDefinition describes a column in a CREATE TABLE statement
+type ColumnDefinition = vitess.ColumnDefinition
