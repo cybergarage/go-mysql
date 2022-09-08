@@ -44,7 +44,6 @@ const (
 	StmtUnknown  = vitess.StmtUnknown
 	StmtComment  = vitess.StmtComment
 	StmtPriv     = vitess.StmtPriv
-	// StmtExplain  = vitess.StmtExplain.
 )
 
 const (
@@ -61,7 +60,6 @@ const (
 	DropColVindexDDLAction    = vitess.DropColVindexDDLAction
 	AddSequenceDDLAction      = vitess.AddSequenceDDLAction
 	AddAutoIncDDLAction       = vitess.AddAutoIncDDLAction
-	// RevertDDLAction           = vitess.RevertDDLAction
 )
 
 // SelectStatement any SELECT statement.
