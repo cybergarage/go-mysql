@@ -121,3 +121,6 @@ type Rollback = vitess.Rollback
 
 // ColumnDefinition describes a column in a CREATE TABLE statement
 type ColumnDefinition = vitess.ColumnDefinition
+
+// Literal represents a fixed value.
+type Literal = vitess.Literal
