@@ -14,8 +14,6 @@
 
 package query
 
-import "fmt"
-
 // Database represents a destination or source database of query.
 type Database struct {
 	value       string
@@ -34,14 +32,10 @@ func NewDatabaseWithName(name string) *Database {
 }
 
 // NewDatabaseWithDBDDL returns a new database with the specified DBDDL.
-func NewDatabaseWithDBDDL(dbddl DBDDL) (*Database, error) {
-	ddl, ok := dbddl.(DDL)
-	if !ok {
-		return nil, fmt.Errorf(errorNotDDLStatement, dbddl)
-	}
-	db := NewDatabaseWithName(dbddl.GetDatabaseName())
-	db.ifNotExists = ddl.GetIfNotExists()
-	db.ifExists = ddl.GetIfExists()
+func NewDatabaseWithDBDDL(dbddl *DBDDL) (*Database, error) {
+	db := NewDatabaseWithName(dbddl.DBName)
+	db.ifNotExists = dbddl.IfNotExists
+	db.ifExists = dbddl.IfExists
 	return db, nil
 }
 
