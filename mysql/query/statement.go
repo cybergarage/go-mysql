@@ -101,10 +101,10 @@ type IsolationLevel = vitess.IsolationLevel
 type AccessMode = vitess.AccessMode
 
 // DBDDL represents a CREATE, DROP, or ALTER database statement.
-type DBDDL = vitess.DBDDLStatement
+type DBDDL = vitess.DBDDL
 
 // DDL represents a CREATE, ALTER, DROP, RENAME, TRUNCATE or ANALYZE statement.
-type DDL = vitess.DDLStatement
+type DDL = vitess.DDL
 
 // Show represents a show statement.
 type Show = vitess.Show
