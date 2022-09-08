@@ -18,8 +18,12 @@ import (
 	"fmt"
 	"reflect"
 
+	vitessq "vitess.io/vitess/go/vt/proto/query"
 	vitess "vitess.io/vitess/go/vt/sqlparser"
 )
+
+// Field represents a field.
+type Field = vitessq.Field
 
 const (
 	NotPrimaryKey    = -1
