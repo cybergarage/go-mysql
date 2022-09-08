@@ -61,7 +61,7 @@ const (
 	DropColVindexDDLAction    = vitess.DropColVindexDDLAction
 	AddSequenceDDLAction      = vitess.AddSequenceDDLAction
 	AddAutoIncDDLAction       = vitess.AddAutoIncDDLAction
-	RevertDDLAction           = vitess.RevertDDLAction
+	// RevertDDLAction           = vitess.RevertDDLAction
 )
 
 // SelectStatement any SELECT statement.
