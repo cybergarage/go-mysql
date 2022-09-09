@@ -14,31 +14,49 @@
 
 package mysql
 
+import (
+	"sync"
+)
+
 // ConnMap represents a connection map.
-type ConnMap map[uint32]*Conn
+type ConnMap struct {
+	m     map[uint32]*Conn
+	mutex *sync.RWMutex
+}
 
 // NewConnMap returns a connection map.
 func NewConnMap() ConnMap {
-	return ConnMap{}
+	return ConnMap{
+		m:     map[uint32]*Conn{},
+		mutex: &sync.RWMutex{},
+	}
 }
 
 // AddConn adds the specified connection.
 func (cm ConnMap) AddConn(c *Conn) {
-	cm[c.ConnectionID] = c
+	cm.mutex.Lock()
+	defer cm.mutex.Unlock()
+	cm.m[c.ConnectionID] = c
 }
 
 // GetConnByUID returns a connection and true when the specified connection exists by the connection ID, otherwise nil and false.
 func (cm ConnMap) GetConnByUID(cid uint32) (*Conn, bool) {
-	c, ok := cm[cid]
+	cm.mutex.RLock()
+	defer cm.mutex.RUnlock()
+	c, ok := cm.m[cid]
 	return c, ok
 }
 
 // DeleteConnByUID deletes the specified connection by the connection ID.
 func (cm ConnMap) DeleteConnByUID(cid uint32) {
-	delete(cm, cid)
+	cm.mutex.Lock()
+	defer cm.mutex.Unlock()
+	delete(cm.m, cid)
 }
 
 // Length returns the included connection count.
 func (cm ConnMap) Length() int {
-	return len(cm)
+	cm.mutex.RLock()
+	defer cm.mutex.RUnlock()
+	return len(cm.m)
 }
