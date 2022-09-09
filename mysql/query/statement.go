@@ -15,112 +15,94 @@
 package query
 
 import (
-	vitess "vitess.io/vitess/go/vt/sqlparser"
+	vitesssp "vitess.io/vitess/go/vt/sqlparser"
 )
 
 // Statement represents a query statement.
-type Statement = vitess.Statement
+type Statement = vitesssp.Statement
 
 // StatementType encodes the type of a SQL statement.
-type StatementType = vitess.StatementType
+type StatementType = vitesssp.StatementType
 
 // These constants are used to identify the SQL statement type.
 // Changing this list will require reviewing all calls to Preview.
 const (
-	StmtSelect   = vitess.StmtSelect
-	StmtStream   = vitess.StmtStream
-	StmtInsert   = vitess.StmtInsert
-	StmtReplace  = vitess.StmtReplace
-	StmtUpdate   = vitess.StmtUpdate
-	StmtDelete   = vitess.StmtDelete
-	StmtDDL      = vitess.StmtDDL
-	StmtBegin    = vitess.StmtBegin
-	StmtCommit   = vitess.StmtCommit
-	StmtRollback = vitess.StmtRollback
-	StmtSet      = vitess.StmtSet
-	StmtShow     = vitess.StmtShow
-	StmtUse      = vitess.StmtUse
-	StmtOther    = vitess.StmtOther
-	StmtUnknown  = vitess.StmtUnknown
-	StmtComment  = vitess.StmtComment
-	StmtPriv     = vitess.StmtPriv
-)
-
-const (
-	CreateDDLAction           = vitess.CreateDDLAction
-	AlterDDLAction            = vitess.AlterDDLAction
-	DropDDLAction             = vitess.DropDDLAction
-	RenameDDLAction           = vitess.RenameDDLAction
-	TruncateDDLAction         = vitess.TruncateDDLAction
-	CreateVindexDDLAction     = vitess.CreateVindexDDLAction
-	DropVindexDDLAction       = vitess.DropVindexDDLAction
-	AddVschemaTableDDLAction  = vitess.AddVschemaTableDDLAction
-	DropVschemaTableDDLAction = vitess.DropVschemaTableDDLAction
-	AddColVindexDDLAction     = vitess.AddColVindexDDLAction
-	DropColVindexDDLAction    = vitess.DropColVindexDDLAction
-	AddSequenceDDLAction      = vitess.AddSequenceDDLAction
-	AddAutoIncDDLAction       = vitess.AddAutoIncDDLAction
+	StmtSelect   = vitesssp.StmtSelect
+	StmtStream   = vitesssp.StmtStream
+	StmtInsert   = vitesssp.StmtInsert
+	StmtReplace  = vitesssp.StmtReplace
+	StmtUpdate   = vitesssp.StmtUpdate
+	StmtDelete   = vitesssp.StmtDelete
+	StmtDDL      = vitesssp.StmtDDL
+	StmtBegin    = vitesssp.StmtBegin
+	StmtCommit   = vitesssp.StmtCommit
+	StmtRollback = vitesssp.StmtRollback
+	StmtSet      = vitesssp.StmtSet
+	StmtShow     = vitesssp.StmtShow
+	StmtUse      = vitesssp.StmtUse
+	StmtOther    = vitesssp.StmtOther
+	StmtUnknown  = vitesssp.StmtUnknown
+	StmtComment  = vitesssp.StmtComment
+	StmtPriv     = vitesssp.StmtPriv
+	// StmtExplain  = vitesssp.StmtExplain.
 )
 
 // SelectStatement any SELECT statement.
-type SelectStatement = vitess.SelectStatement
-
-// Select represents a SELECT statement.
-type Select = vitess.Select
+type SelectStatement = vitesssp.SelectStatement
 
 // Union represents a UNION statement.
-type Union = vitess.Union
+type Union = vitesssp.Union
 
 // Stream represents a SELECT statement.
-type Stream = vitess.Stream
-
-// Insert represents an INSERT or REPLACE statement.
-type Insert = vitess.Insert
-
-// Update represents an UPDATE statement.
-type Update = vitess.Update
-
-// Delete represents a DELETE statement.
-type Delete = vitess.Delete
+type Stream = vitesssp.Stream
 
 // Set represents a SET statement.
-type Set = vitess.Set
+type Set = vitesssp.Set
 
 // SetTransaction represents a SET TRANSACTION statement.
-type SetTransaction = vitess.SetTransaction
+type SetTransaction = vitesssp.SetTransaction
 
 // Characteristic is a transaction related change.
-type Characteristic = vitess.Characteristic
+type Characteristic = vitesssp.Characteristic
 
 // IsolationLevel is self-explanatory in this context.
-type IsolationLevel = vitess.IsolationLevel
+type IsolationLevel = vitesssp.IsolationLevel
 
 // AccessMode is ReadOnly/ReadWrite.
-type AccessMode = vitess.AccessMode
+type AccessMode = vitesssp.AccessMode
 
 // DBDDL represents a CREATE, DROP, or ALTER database statement.
-type DBDDL = vitess.DBDDL
+type DBDDL = vitesssp.DBDDL
 
 // DDL represents a CREATE, ALTER, DROP, RENAME, TRUNCATE or ANALYZE statement.
-type DDL = vitess.DDL
+type DDL = vitesssp.DDL
+
+// ParenSelect is a parenthesized SELECT statement.
+type ParenSelect = vitesssp.ParenSelect
 
 // Show represents a show statement.
-type Show = vitess.Show
+type Show = vitesssp.Show
 
 // Use represents a use statement.
-type Use = vitess.Use
+type Use = vitesssp.Use
 
 // Begin represents a Begin statement.
-type Begin = vitess.Begin
+type Begin = vitesssp.Begin
 
 // Commit represents a Commit statement.
-type Commit = vitess.Commit
+type Commit = vitesssp.Commit
 
 // Rollback represents a Rollback statement.
-type Rollback = vitess.Rollback
+type Rollback = vitesssp.Rollback
 
-// ColumnDefinition describes a column in a CREATE TABLE statement
-type ColumnDefinition = vitess.ColumnDefinition
+// Explain represents an EXPLAIN statement
+//type Explain = vitesssp.Explain
+
+// ColumnDefinition describes a column in a CREATE TABLE statement.
+type ColumnDefinition = vitesssp.ColumnDefinition
+
+// UpdateExprs represents a list of update expressions.
+type UpdateExprs = vitesssp.UpdateExprs
 
 // Literal represents a fixed value.
-type Literal = vitess.Literal
+type Literal = vitesssp.Literal
