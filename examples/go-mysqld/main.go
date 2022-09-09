@@ -40,6 +40,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	mlog "github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/examples/go-mysqld/server"
 )
 
@@ -50,9 +51,13 @@ const (
 func main() {
 	// Command Line Options
 
-	//verbose := flag.Bool("v", false, "Verbose log")
-	isProfileEnabled := flag.Bool("p", false, "Enable profiling")
+	isDebugEnabled := flag.Bool("debug", false, "enable debugging log output")
+	isProfileEnabled := flag.Bool("profile", false, "enable profiling server")
 	flag.Parse()
+
+	if *isDebugEnabled {
+		mlog.SetStdoutDebugEnbled(true)
+	}
 
 	if *isProfileEnabled {
 		go func() {
