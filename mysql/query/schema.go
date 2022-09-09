@@ -71,6 +71,7 @@ func (schema *Schema) FindColumn(name string) (*ColumnDefinition, bool) {
 }
 
 // ToFields converts a column definitions to a vitess fields.
+// nolint: exhaustive
 func (schema *Schema) ToFields(db *Database) ([]*Field, error) {
 	fields := make([]*Field, 0)
 	tblName := schema.TableName()

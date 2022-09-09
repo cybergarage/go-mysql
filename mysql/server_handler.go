@@ -46,6 +46,7 @@ func (server *Server) ComInitDB(c *vitessmy.Conn, schemaName string) {
 }
 
 // ComQuery is called when a connection receives a query.
+// nolint: exhaustive
 func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result) error) error {
 	parser := query.NewParser()
 	stmt, err := parser.Parse(q)
