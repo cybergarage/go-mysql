@@ -22,8 +22,8 @@ import (
 	"github.com/cybergarage/go-mysql/mysqltest/server"
 )
 
-// TestSQLUntestedCases is a temporary debug test to check untested test cases.
-func TestSQLUntestedCases(t *testing.T) {
+// TestSQLCases is a temporary debug test to check only the specified test cases.
+func TestSQLCases(t *testing.T) {
 	testFilenames := []string{
 		// NOTE: Add your test files in 'untests' directory into the filename array
 	}
@@ -37,21 +37,24 @@ func TestSQLUntestedCases(t *testing.T) {
 	defer server.Stop()
 
 	client := client.NewDefaultClient()
+	client.SetDatabase(sqlTestDatabase)
+	err = client.CreateDatabase(sqlTestDatabase)
+	if err != nil {
+		t.Error(err)
+	}
 
 	for _, testFilename := range testFilenames {
-		t.Run(testFilename, func(t *testing.T) {
-			ct := NewSQLTest()
-			err = ct.LoadFile(path.Join(SQLTestSuiteDefaultTestDirectory, testFilename))
-			if err != nil {
-				t.Error(err)
-				return
-			}
-			ct.SetClient(client)
+		ct := NewSQLTest()
+		err = ct.LoadFile(path.Join(SQLTestSuiteDefaultTestDirectory, testFilename))
+		if err != nil {
+			t.Error(err)
+			continue
+		}
+		ct.SetClient(client)
 
-			err = ct.Run()
-			if err != nil {
-				t.Error(err)
-			}
-		})
+		err = ct.Run()
+		if err != nil {
+			t.Error(err)
+		}
 	}
 }

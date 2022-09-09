@@ -29,7 +29,7 @@ const (
 // SQLTestSuite represents a SQL test suite.
 type SQLTestSuite struct {
 	Tests  []*SQLTest
-	client client.Client
+	client *client.Client
 }
 
 // NewSQLTestSuite returns a SQL test suite instance.
@@ -48,7 +48,7 @@ func NewSQLTestSuiteWithDirectory(dir string) (*SQLTestSuite, error) {
 }
 
 // SetClient sets a client for testing.
-func (suite *SQLTestSuite) SetClient(c client.Client) {
+func (suite *SQLTestSuite) SetClient(c *client.Client) {
 	suite.client = c
 }
 
@@ -84,7 +84,7 @@ func (suite *SQLTestSuite) Run() error {
 		test.SetClient(suite.client)
 		err := test.Run()
 		if err != nil {
-			return fmt.Errorf("%s : %w", test.GetName(), err)
+			return fmt.Errorf("%s : %w", test.Name(), err)
 		}
 	}
 	return nil
