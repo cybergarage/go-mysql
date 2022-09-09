@@ -18,16 +18,18 @@ import (
 	"testing"
 )
 
-var testServerQueries []string = []string{
-	"CREATE DATABASE ycsb",
+var testQueries []string = []string{
+	"CREATE DATABASE IF NOT EXISTS ycsb",
 	"USE ycsb",
-	"CREATE TABLE usertable (YCSB_KEY VARCHAR(255) PRIMARY KEY, FIELD0 TEXT, FIELD1 TEXT, FIELD2 TEXT, FIELD3 TEXT, FIELD4 TEXT, FIELD5 TEXT, FIELD6 TEXT, FIELD7 TEXT, FIELD8 TEXT, FIELD9 TEXT)",
+	"CREATE TABLE IF NOT EXISTS usertable (YCSB_KEY VARCHAR(255) PRIMARY KEY, FIELD0 TEXT, FIELD1 TEXT, FIELD2 TEXT, FIELD3 TEXT, FIELD4 TEXT, FIELD5 TEXT, FIELD6 TEXT, FIELD7 TEXT, FIELD8 TEXT, FIELD9 TEXT)",
+	"DROP TABLE ycsb",
+	"DROP DATABASE ycsb",
 }
 
 func TestQuery(t *testing.T) {
 	parser := NewParser()
 
-	for n, query := range testServerQueries {
+	for n, query := range testQueries {
 		_, err := parser.Parse(query)
 		if err != nil {
 			t.Logf("[%d] %s", n, query)
