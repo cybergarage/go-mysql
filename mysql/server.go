@@ -14,16 +14,19 @@
 
 package mysql
 
-import "fmt"
+import (
+	"net"
+	"strconv"
+)
 
 // Server represents a MySQL compatible server.
 type Server struct {
-	*Config
 	AuthHandler
 	QueryHandler
-	QueryExecutor
-	listener *Listener
+	*Config
 	ConnMap
+	queryExecutor QueryExecutor
+	listener      *Listener
 }
 
 // NewServer returns a new server instance.
@@ -32,10 +35,9 @@ func NewServer() *Server {
 		Config:        NewDefaultConfig(),
 		AuthHandler:   NewDefaultAuthHandler(),
 		QueryHandler:  nil,
-		QueryExecutor: nil,
+		queryExecutor: nil,
 		ConnMap:       NewConnMap(),
 	}
-	server.SetQueryHandler(server)
 	return server
 }
 
@@ -44,19 +46,15 @@ func (server *Server) SetAuthHandler(h AuthHandler) {
 	server.AuthHandler = h
 }
 
-// SetQueryHandler sets a query handler.
-func (server *Server) SetQueryHandler(h QueryHandler) {
-	server.QueryHandler = h
-}
-
 // SetQueryExecutor sets a query executor.
 func (server *Server) SetQueryExecutor(e QueryExecutor) {
-	server.QueryExecutor = e
+	server.queryExecutor = e
 }
 
 // Start starts the server.
 func (server *Server) Start() error {
-	l, err := NewListener("tcp", fmt.Sprintf(":%d", server.Port), server.AuthHandler, server.QueryHandler, 0, 0, false)
+	hostPort := net.JoinHostPort(server.Host, strconv.Itoa(server.Port))
+	l, err := NewListener("tcp", hostPort, server, server, 0, 0, false)
 	if err != nil {
 		return err
 	}
@@ -78,8 +76,10 @@ func (server *Server) Stop() error {
 
 // Restart restarts the server.
 func (server *Server) Restart() error {
-	if err := server.Stop(); err != nil {
+	err := server.Stop()
+	if err != nil {
 		return err
 	}
+
 	return server.Start()
 }
