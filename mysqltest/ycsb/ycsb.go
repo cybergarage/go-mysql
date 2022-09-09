@@ -106,19 +106,22 @@ func ExecYCSBWorkload(t *testing.T, defaultWorkload string) error {
 	}
 
 	for _, ycsbWorkloadCmd := range ycsbWorkloadCmds {
-		ycsbArgs[1] = ycsbWorkloadCmd
-		cmdStr := strings.Join(ycsbArgs, " ")
-		log.Debugf("%v", cmdStr)
-		out, err := exec.Command(ycsbCmd, ycsbArgs[1:]...).CombinedOutput()
-		if err != nil {
-			return err
-		}
-		outStr := string(out)
-		if strings.Contains(outStr, "FAILED") {
-			t.Errorf("%s", outStr)
-			continue
-		}
-		t.Logf("%s", outStr)
+		t.Run(workload, func(t *testing.T) {
+			ycsbArgs[1] = ycsbWorkloadCmd
+			cmdStr := strings.Join(ycsbArgs, " ")
+			log.Debugf("%v", cmdStr)
+			out, err := exec.Command(ycsbCmd, ycsbArgs[1:]...).CombinedOutput()
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			outStr := string(out)
+			if strings.Contains(outStr, "FAILED") {
+				t.Errorf("%s", outStr)
+				return
+			}
+			t.Logf("%s", outStr)
+		})
 	}
 
 	return nil
