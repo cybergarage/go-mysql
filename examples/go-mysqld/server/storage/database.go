@@ -14,17 +14,21 @@
 
 package storage
 
+import (
+	"github.com/cybergarage/go-mysql/mysql/query"
+)
+
 // Database represents a destination or source database of query.
 type Database struct {
-	value  string
+	*query.Database
 	tables map[string]*Table
 }
 
 // NewDatabaseWithName returns a new database with the specified string.
 func NewDatabaseWithName(name string) *Database {
 	ks := &Database{
-		value:  name,
-		tables: map[string]*Table{},
+		Database: query.NewDatabaseWithName(name),
+		tables:   map[string]*Table{},
 	}
 	return ks
 }
@@ -34,14 +38,9 @@ func NewDatabase() *Database {
 	return NewDatabaseWithName("")
 }
 
-// GetName returns the database name.
-func (ks *Database) GetName() string {
-	return ks.value
-}
-
 // AddTable adds a specified table into the database.
 func (ks *Database) AddTable(table *Table) {
-	tableName := table.GetName()
+	tableName := table.Name()
 	ks.tables[tableName] = table
 }
 
@@ -52,22 +51,25 @@ func (ks *Database) AddTables(tables []*Table) {
 	}
 }
 
+// DropTable remove the specified table.
+func (ks *Database) DropTable(table *Table) bool {
+	name := table.TableName()
+	delete(ks.tables, name)
+	_, ok := ks.tables[name]
+	return !ok
+}
+
 // GetTable returns a table with the specified name.
 func (ks *Database) GetTable(name string) (*Table, bool) {
 	table, ok := ks.tables[name]
 	return table, ok
 }
 
-// GetTables returns all tables in the database.
-func (ks *Database) GetTables() []*Table {
+// Tables returns all tables in the database.
+func (ks *Database) Tables() []*Table {
 	tables := make([]*Table, 0)
 	for _, table := range ks.tables {
 		tables = append(tables, table)
 	}
 	return tables
-}
-
-// String returns the string representation.
-func (ks *Database) String() string {
-	return ks.value
 }

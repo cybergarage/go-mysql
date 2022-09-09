@@ -24,9 +24,17 @@ func NewDatabases() Databases {
 
 // AddDatabase adds a specified database.
 func (dbs Databases) AddDatabase(db *Database) error {
-	dbName := db.GetName()
+	dbName := db.Name()
 	dbs[dbName] = db
 	return nil
+}
+
+// DropDatabase remove the specified database.
+func (dbs Databases) DropDatabase(db *Database) bool {
+	name := db.Name()
+	delete(dbs, name)
+	_, ok := dbs[name]
+	return !ok
 }
 
 // GetDatabase returns a database with the specified name.
