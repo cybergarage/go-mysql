@@ -114,6 +114,7 @@ func (value *Value) SetValue(val interface{}) error {
 // setLiteralValue sets a literal value and type by the specified value, and
 // returns SetLiteralValue error when the specified value is unknown.
 // See: vitess.io/vitess/go/sqltypes::NewValue().
+// nolint: exhaustive
 func (value *Value) setLiteralValue(lv *Literal) error {
 	var v interface{}
 	var vt vitesspq.Type
@@ -146,6 +147,7 @@ func (value *Value) setLiteralValue(lv *Literal) error {
 // setSQLValue sets a query value and type by the specified value, and
 // returns an error when the specified value is unknown.
 // See: vitess.io/vitess/go/sqltypes::NewValue().
+// nolint: exhaustive
 func (value *Value) setSQLValue(sv SQLVal) error {
 	var v interface{}
 	var err error
