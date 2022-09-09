@@ -51,11 +51,13 @@ TEST_SRCS=\
 	${TEST_SRC_DIR}/util \
 	${TEST_SRC_DIR}/client \
 	${TEST_SRC_DIR}/server \
+	${TEST_SRC_DIR}/ycsb \
 	${TEST_SRC_DIR}/sqltest
 TEST_PKGS=\
 	${TEST_PKG_ROOT}/util \
 	${TEST_PKG_ROOT}/client \
 	${TEST_PKG_ROOT}/server \
+	${TEST_PKG_ROOT}/ycsb \
 	${TEST_PKG_ROOT}/sqltest
 
 ALL_ROOTS=\
