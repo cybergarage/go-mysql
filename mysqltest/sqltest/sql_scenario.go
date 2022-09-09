@@ -42,8 +42,8 @@ func NewSQLScenarioWithFile(filename string) (*SQLScenario, error) {
 	return file, err
 }
 
-// GetName returns the loaded scenario file name.
-func (file *SQLScenario) GetName() string {
+// Name returns the loaded scenario file name.
+func (file *SQLScenario) Name() string {
 	return file.Filename
 }
 
