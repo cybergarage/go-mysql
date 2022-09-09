@@ -18,12 +18,17 @@ import (
 	"fmt"
 	"reflect"
 
-	vitessq "vitess.io/vitess/go/vt/proto/query"
-	vitess "vitess.io/vitess/go/vt/sqlparser"
+	vitessst "vitess.io/vitess/go/sqltypes"
+	vitesspq "vitess.io/vitess/go/vt/proto/query"
+	vitesssp "vitess.io/vitess/go/vt/sqlparser"
 )
 
+// Type defines the various supported data types in bind vars
+// and query results.
+type ColumnType = vitesspq.Type
+
 // Field represents a field.
-type Field = vitessq.Field
+type Field = vitesspq.Field
 
 const (
 	NotPrimaryKey    = -1
@@ -40,49 +45,59 @@ const (
 // Column represents a column.
 type Column struct {
 	name  string
-	value interface{}
+	typ   ColumnType
+	value *Value
 }
 
-// NewColumn returns a column instanccol.
+// NewColumn returns a new column.
 func NewColumn() *Column {
 	return NewColumnWithName("")
 }
 
-// NewColumnWithName returns a column with the specified name.
-func NewColumnWithName(name string) *Column {
+// NewColumnWithNameAndType returns a column with the specified name and type.
+func NewColumnWithNameAndType(name string, t ColumnType) *Column {
 	col := &Column{
 		name:  name,
-		value: nil,
+		typ:   t,
+		value: NewValue(),
 	}
 	return col
+}
+
+// NewColumnWithName returns a column with the specified name.
+func NewColumnWithName(name string) *Column {
+	return NewColumnWithNameAndType(name, Unknown)
 }
 
 // NewColumnWithNameAndValue returns a column with the specified name and value.
-func NewColumnWithNameAndValue(name string, val interface{}) *Column {
+func NewColumnWithNameAndValue(name string, val interface{}) (*Column, error) {
 	col := NewColumnWithName(name)
-	col.SetValue(val)
-	return col
+	err := col.SetValue(val)
+	return col, err
 }
 
-// NewColumnWithComparisonExpr returns a column with the specified ComparisonExpr.
-func NewColumnWithComparisonExpr(expr interface{}) (*Column, error) {
-	cmpExpr, ok := expr.(*vitess.ComparisonExpr)
-	if !ok {
-		return nil, fmt.Errorf(errorInvalidComparisonExpr, expr)
+// NewColumnWithValue returns a column with the specified value.
+func NewColumnWithValue(val interface{}) (*Column, error) {
+	col := NewColumn()
+	err := col.SetValue(val)
+	return col, err
+}
+
+// NewColumnWithTypeAndValue returns a column with the specified type and value.
+func NewColumnWithTypeAndValue(typ ColumnType, val interface{}) (*Column, error) {
+	col := NewColumn()
+	col.typ = typ
+	err := col.SetValue(val)
+	return col, err
+}
+
+// NewColumnWithColumnDefinition returns a column with the specified vitess column definition.
+func NewColumnWithColumnDefinition(column *vitesssp.ColumnDefinition) *Column {
+	col := &Column{
+		name: column.Name.String(),
+		typ:  column.Type.SQLType(),
 	}
-	cmpCol, ok := cmpExpr.Left.(*vitess.ColName)
-	if !ok {
-		return nil, fmt.Errorf(errorInvalidComparisonExpr, cmpExpr)
-	}
-	cmpVal, ok := cmpExpr.Right.(*vitess.Literal)
-	if !ok {
-		return nil, fmt.Errorf(errorInvalidComparisonExpr, cmpExpr)
-	}
-	val, err := NewValueWithLiteral(cmpVal)
-	if err != nil {
-		return nil, err
-	}
-	return NewColumnWithNameAndValue(cmpCol.Name.String(), val), nil
+	return col
 }
 
 // SetName sets a column name.
@@ -96,13 +111,18 @@ func (col *Column) Name() string {
 }
 
 // SetValue sets a value.
-func (col *Column) SetValue(value interface{}) {
-	col.value = value
+func (col *Column) SetValue(val interface{}) error {
+	return col.value.SetValue(val)
 }
 
 // Value returns the value.
 func (col *Column) Value() interface{} {
-	return col.value
+	return col.value.Value()
+}
+
+// Type returns the SQL type.
+func (col *Column) Type() ColumnType {
+	return col.typ
 }
 
 // Equals returns true when the specified column is equals to this column, otherwise false.
@@ -110,8 +130,47 @@ func (col *Column) Equals(other *Column) bool {
 	if col.name != other.name {
 		return false
 	}
-	if !reflect.DeepEqual(col.value, other.value) {
+	if !reflect.DeepEqual(col.Value(), other.Value()) {
 		return false
 	}
 	return true
+}
+
+// ToValue converts a column to a vitess value.
+func (col *Column) ToValue() (vitessst.Value, error) {
+	value := col.Value()
+	switch v := value.(type) {
+	case int:
+		return vitessst.InterfaceToValue(int64(v))
+	case int8:
+		return vitessst.InterfaceToValue(int64(v))
+	case int16:
+		return vitessst.InterfaceToValue(int64(v))
+	case int32:
+		return vitessst.InterfaceToValue(int64(v))
+	case uint:
+		return vitessst.InterfaceToValue(uint64(v))
+	case uint8:
+		return vitessst.InterfaceToValue(uint64(v))
+	case uint16:
+		return vitessst.InterfaceToValue(uint64(v))
+	case uint32:
+		return vitessst.InterfaceToValue(uint64(v))
+	case float32:
+		return vitessst.InterfaceToValue(float64(v))
+	case bool:
+		if v {
+			return vitessst.InterfaceToValue(int64(1))
+		}
+		return vitessst.InterfaceToValue(int64(0))
+	}
+	return vitessst.InterfaceToValue(value)
+}
+
+// String returns the string representation.
+func (col *Column) String() string {
+	if col.value == nil {
+		return col.name
+	}
+	return fmt.Sprintf("%s:%s", col.name, col.Value())
 }
