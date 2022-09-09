@@ -15,57 +15,40 @@
 package client
 
 import (
-	"database/sql"
 	"fmt"
+
+	"github.com/cybergarage/go-mysql/mysql"
 )
 
-// baseClient represents a base client.
-type baseClient interface {
-	// SetHost sets a host address.
-	SetHost(host string)
-	// SetPort sets a listen port.
-	SetPort(port int)
-	// SetDatabase sets a host database.
-	SetDatabase(db string)
-	// Open opens a database specified by the internal configuration.
-	Open() error
-	// Close closes opens a database specified by the internal configuration.
-	Close() error
-	// Query executes a query that returns rows.
-	Query(query string, args ...interface{}) (*sql.Rows, error)
+// Client represents a client for MySQL server.
+type Client struct {
+	*mysql.Client
 }
 
-// Client represents a client.
-type Client interface {
-	baseClient
-	// CreateDatabase creates a specified database.
-	CreateDatabase(name string) error
-	// DropDatabase dtops a specified database.
-	DropDatabase(name string) error
-}
-
-type deaultClient struct {
-	baseClient
-}
-
-// NewDefaultClient returns a default client.
-func NewDefaultClient() Client {
-	client := &deaultClient{
-		baseClient: NewClientDB(),
+// NewDefaultClient returns a default client instance with the specified host and port.
+func NewDefaultClient() *Client {
+	client := &Client{
+		Client: mysql.NewClient(),
 	}
 	return client
 }
 
 // CreateDatabase creates a specified database.
-func (client *deaultClient) CreateDatabase(name string) error {
-	query := fmt.Sprintf("CREATE DATABASE %s", name)
+func (client *Client) CreateDatabase(name string) error {
+	query := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", name)
 	_, err := client.Query(query)
 	return err
 }
 
 // DropDatabase dtops a specified database.
-func (client *deaultClient) DropDatabase(name string) error {
-	query := fmt.Sprintf("DROP DATABASE %s", name)
+func (client *Client) DropDatabase(name string) error {
+	query := fmt.Sprintf("DROP DATABASE IF EXISTS %s", name)
 	_, err := client.Query(query)
 	return err
+}
+
+// Use sets a target database.
+func (client *Client) Use(name string) error {
+	client.Database = name
+	return nil
 }
