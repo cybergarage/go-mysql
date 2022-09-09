@@ -57,6 +57,7 @@ func (client *MySQLClient) Close() error {
 }
 
 // Query executes a query that returns rows.
+// nolint: staticcheck
 func (client *MySQLClient) Query(query string, args ...interface{}) (driver.Rows, error) {
 	if client.conn == nil {
 		return nil, nil
