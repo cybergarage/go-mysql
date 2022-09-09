@@ -16,23 +16,23 @@ package query
 
 import (
 	"fmt"
-	"sync"
+	"reflect"
+	"strconv"
 
-	vitess "vitess.io/vitess/go/vt/sqlparser"
+	vitesssp "vitess.io/vitess/go/vt/sqlparser"
 )
 
 // Row represents a row object which includes query execution results.
 type Row struct {
-	sync.Mutex
 	*Columns
 }
 
-// NewRow return a row.
+// NewRow return a row instance.
 func NewRow() *Row {
 	return NewRowWithColumns(NewColumns())
 }
 
-// NewRowWithColumns return a row with the specified columns.
+// NewRowWithColumns return a row instance with the specified columns.
 func NewRowWithColumns(columns *Columns) *Row {
 	row := &Row{
 		Columns: columns,
@@ -40,67 +40,147 @@ func NewRowWithColumns(columns *Columns) *Row {
 	return row
 }
 
-// NewRowWithValTuple return a row with the specified value tuple.
-func NewRowWithValTuple(valTuple vitess.ValTuple) (*Row, error) {
-	columns := NewColumns()
-	for _, val := range valTuple {
-		column, err := NewColumnWithComparisonExpr(val)
-		if err != nil {
-			return nil, err
-		}
-		columns.AddColumn(column)
+// NewRowWithInsert return a row instance with the specified INSERT statement.
+func NewRowWithInsert(stmt *Insert) (*Row, error) {
+	columns, err := stmt.Columns()
+	if err != nil {
+		return nil, err
 	}
 	return NewRowWithColumns(columns), nil
 }
 
-// Equals returns true when the specified row is equals to this row, otherwise false.
-func (row *Row) Equals(other *Row) bool {
-	return row.Columns.Equals(NewColumnsWithColumns(other.GetColumns()))
+// HasMatchedColumn returns true when the row has the specified column, otherwise false.
+func (row *Row) HasMatchedColumn(column *Column) bool {
+	foundColumn, ok := row.ColumnByName(column.Name())
+	if !ok {
+		return false
+	}
+
+	deepEqual := func(iv1 interface{}, iv2 interface{}) bool {
+		if reflect.DeepEqual(iv1, iv2) {
+			return true
+		}
+
+		switch v1 := iv1.(type) {
+		case string:
+			switch v2 := iv2.(type) {
+			case string:
+				if v1 == v2 {
+					return true
+				}
+			default:
+				sv2 := fmt.Sprintf("%v", iv2)
+				if v1 == sv2 {
+					return true
+				}
+			}
+		case int:
+			switch v2 := iv2.(type) {
+			case string:
+				iv2, err := strconv.Atoi(v2)
+				if err == nil && v1 == iv2 {
+					return true
+				}
+			case int64:
+				if v1 == int(v2) {
+					return true
+				}
+			case float64:
+				if v1 == int(v2) {
+					return true
+				}
+			}
+		case float64:
+			switch v2 := iv2.(type) {
+			case string:
+				fv2, err := strconv.ParseFloat(v2, 64)
+				if err == nil && v1 == fv2 {
+					return true
+				}
+			case int:
+				if int(v1) == v2 {
+					return true
+				}
+			}
+		}
+
+		return false
+	}
+
+	return deepEqual(foundColumn.Value(), column.Value())
 }
 
-func (row *Row) hasMatchedColumn(name string, val interface{}) bool {
-	return false
-}
-
-// IsMatched returns true when the row is satisfied with the specified condition, otherwise false.
+// IsMatched returns true when the row satisfies the specified condition, otherwise false.
 func (row *Row) IsMatched(cond *Condition) bool {
 	if cond == nil {
 		return true
 	}
 
-	isMatched := false
-	switch e := cond.Expr.(type) {
-	case *vitess.ComparisonExpr:
-		switch l := e.Left.(type) {
-		case *vitess.ColName:
-			switch r := e.Right.(type) {
-			case vitess.ValTuple:
-				for _, val := range r {
-					switch v := val.(type) {
-					case *vitess.Literal:
-						value, err := NewValueWithLiteral(v)
-						if err != nil {
-							continue
-						}
-						if row.hasMatchedColumn(l.Name.String(), value) {
-							isMatched = true
-						}
-					}
-				}
+	var isMatched func(row *Row, expr Expr) bool
+	isMatched = func(row *Row, expr Expr) bool {
+		switch v := expr.(type) {
+		case *vitesssp.ComparisonExpr:
+			col, ok := v.Left.(*ColName)
+			if !ok {
+				return false
 			}
+			val, ok := v.Right.(*Literal)
+			if !ok {
+				return false
+			}
+			c, err := NewColumnWithNameAndValue(col.Name.String(), val)
+			if err != nil {
+				return false
+			}
+			return row.HasMatchedColumn(c)
+		case *vitesssp.AndExpr:
+			l := isMatched(row, v.Left)
+			r := isMatched(row, v.Right)
+			if l && r {
+				return true
+			}
+			return false
+		case *vitesssp.OrExpr:
+			if isMatched(row, v.Left) {
+				return true
+			}
+			if isMatched(row, v.Right) {
+				return true
+			}
+			return false
 		}
+		return false
 	}
-	return isMatched
+
+	return isMatched(row, cond.Expr)
+}
+
+// Update updates row the specified columns.
+func (row *Row) Update(columns *Columns) error {
+	for _, column := range columns.Columns() {
+		name := column.Name()
+		rowColumn, ok := row.ColumnByName(name)
+		if !ok {
+			continue
+		}
+		rowColumn.SetValue(column.Value())
+	}
+	return nil
+}
+
+// Equals returns true when the specified row is equals to this row, otherwise false.
+func (row *Row) Equals(other *Row) bool {
+	return row.Columns.Equals(NewColumnsWithColumns(other.AllColumns()))
 }
 
 // String returns the string representation.
 func (row *Row) String() string {
 	str := ""
-	for n, col := range row.GetColumns() {
+	for n, col := range row.AllColumns() {
 		if 0 < n {
 			str += ", "
 		}
-		str += fmt.Sprintf("%s", col.Value())
+		str += fmt.Sprintf("%v", col.Value())
 	}
 	return str
 }
