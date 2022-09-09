@@ -33,13 +33,19 @@ func NewRowsWithRows(rawRows []*Row) *Rows {
 }
 
 // AddRow adds a row.
-func (rows *Rows) AddRow(row *Row) bool {
+func (rows *Rows) AddRow(row *Row) error {
 	rows.list = append(rows.list, row)
-	return true
+	return nil
 }
 
-// GetRows returns the all rows.
-func (rows *Rows) GetRows() []*Row {
+// AddRows adds all rows.
+func (rows *Rows) AddRows(row *Rows) error {
+	rows.list = append(rows.list, row.list...)
+	return nil
+}
+
+// Rows returns the all rows.
+func (rows *Rows) Rows() []*Row {
 	return rows.list
 }
 
@@ -54,10 +60,27 @@ func (rows *Rows) DeleteRow(targetRow *Row) int64 {
 	return 0
 }
 
-// GetRow returns a row of the specified index.
-func (rows *Rows) GetRow(n int) (*Row, bool) {
+// Row returns a row of the specified index.
+func (rows *Rows) Row(n int) (*Row, bool) {
 	if len(rows.list) <= n {
 		return nil, false
 	}
 	return rows.list[n], true
+}
+
+// FindMatchedRows returns only matched rows by the specified condition.
+func (rows *Rows) FindMatchedRows(cond *Condition) *Rows {
+	matchedRows := NewRows()
+	for _, row := range rows.Rows() {
+		if !row.IsMatched(cond) {
+			continue
+		}
+		matchedRows.AddRow(row)
+	}
+	return matchedRows
+}
+
+// Size returns the all row count.
+func (rows *Rows) Size() int {
+	return len(rows.list)
 }
