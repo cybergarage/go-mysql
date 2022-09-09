@@ -21,74 +21,81 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/query"
 )
 
+type Schema = query.Schema
 type Row = query.Row
 type Rows = query.Rows
-type Condition = query.Condition
 
 // Table represents a destination or source database of query.
 type Table struct {
 	sync.Mutex
 	value string
-	*Rows
+	*query.Schema
+	*query.Rows
 }
 
-// NewTableWithName returns a new database with the specified string.
-func NewTableWithName(name string) *Table {
+// NewTableWithNameAndSchema returns a new database with the specified string.
+func NewTableWithNameAndSchema(name string, schema *Schema) *Table {
 	tbl := &Table{
-		value: name,
-		Rows:  query.NewRows(),
+		value:  name,
+		Schema: schema,
+		Rows:   query.NewRows(),
 	}
 	return tbl
 }
 
 // NewTable returns a new database.
 func NewTable() *Table {
-	return NewTableWithName("")
+	return NewTableWithNameAndSchema("", nil)
 }
 
-// GetName returns the database name.
-func (tbl *Table) GetName() string {
+// SetSchema sets a specified schema.
+func (tbl *Table) SetSchema(schema *Schema) {
+	tbl.Schema = schema
+}
+
+// Name returns the database name.
+func (tbl *Table) Name() string {
 	return tbl.value
 }
 
 // Insert adds a row.
-func (tbl *Table) Insert(row *Row) bool {
+func (tbl *Table) Insert(row *Row) error {
 	return tbl.AddRow(row)
 }
 
-// FindMatchedRows returns only matched and rows by the specified conditions.
-func (tbl *Table) FindMatchedRows(cond *Condition) (*Rows, error) {
-	matchedRows := query.NewRows()
-	for _, row := range tbl.GetRows() {
-		if row.IsMatched(cond) {
-			matchedRows.AddRow(row)
-		}
-	}
+// Select returns only matched and projected rows by the specified conditions and the columns.
+func (tbl *Table) Select(cond *query.Condition) (*Rows, error) {
+	matchedRows := tbl.FindMatchedRows(cond)
 	return matchedRows, nil
 }
 
-// Select returns only matched and projected rows by the specified conditions and the columns.
-func (tbl *Table) Select(cond *Condition) (*Rows, error) {
-	rows, err := tbl.FindMatchedRows(cond)
-	if err != nil {
-		return nil, err
-	}
-	return rows, nil
-}
-
 // Update updates rows which are satisfied by the specified columns and conditions.
-func (tbl *Table) Update(q string) int {
-	return 0
+func (tbl *Table) Update(columns *query.Columns, cond *query.Condition) (int, error) {
+	matchedRows := tbl.FindMatchedRows(cond)
+	nUpdatedRows := 0
+	for _, matchedRow := range matchedRows.Rows() {
+		err := matchedRow.Update(columns)
+		if err != nil {
+			return 0, err
+		}
+		nUpdatedRows++
+	}
+	return nUpdatedRows, nil
 }
 
 // Delete deletes rows which are satisfied by the specified conditions.
-func (tbl *Table) Delete() int {
-	return 0
+func (tbl *Table) Delete(cond *query.Condition) (int, error) {
+	matchedRows := tbl.FindMatchedRows(cond)
+	nDeletedRows := 0
+	for _, matchedRow := range matchedRows.Rows() {
+		nDeletedRows += int(tbl.DeleteRow(matchedRow))
+	}
+	return nDeletedRows, nil
 }
 
 // DeleteAll deletes all rows in the table.
 func (tbl *Table) DeleteAll() int {
-	rows := tbl.GetRows()
+	rows := tbl.Rows.Rows()
 	nRowsCnt := len(rows)
 	tbl.Rows = query.NewRows()
 	return nRowsCnt
@@ -101,8 +108,8 @@ func (tbl *Table) String() string {
 
 // Dump outputs all row values for debug.
 func (tbl *Table) Dump() {
-	log.Infof("%s\n", tbl.GetName())
-	for n, row := range tbl.GetRows() {
-		log.Infof("[%d] %s\n", n, row.String())
+	log.Debugf("%s", tbl.Name())
+	for n, row := range tbl.Rows.Rows() {
+		log.Debugf("[%d] %s", n, row.String())
 	}
 }
