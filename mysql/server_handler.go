@@ -19,7 +19,6 @@ import (
 
 	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/mysql/query"
-
 	vitessmy "vitess.io/vitess/go/mysql"
 	vitesssp "vitess.io/vitess/go/vt/sqlparser"
 )
