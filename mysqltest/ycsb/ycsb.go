@@ -29,7 +29,7 @@ const (
 )
 
 const (
-	ycsbPathEnv         = "YCSB_ROOT_PATH"
+	ycsbRoot            = "YCSB_ROOT"
 	ycsbDBPropertiesEnv = "YCSB_DB_PROPERTIES"
 	ycsbCpEnv           = "YCSB_CP"
 	ycsbWorkloadEnv     = "YCSB_WORKLOAD"
@@ -51,7 +51,7 @@ func ExecYCSBWorkload(t *testing.T, defaultWorkload string) error {
 	}
 
 	ycsbEnvs := []string{
-		ycsbPathEnv,
+		ycsbRoot,
 		ycsbDBPropertiesEnv,
 		ycsbCpEnv,
 		ycsbWorkloadEnv,
