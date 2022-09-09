@@ -90,6 +90,7 @@ func (res *SQLResponse) Rows() (SQLResponseRows, error) {
 }
 
 // HasRow returns true when the response has a specified row, otherwise false.
+// nolint: gocyclo
 func (res *SQLResponse) HasRow(row interface{}) error {
 	rowMap, ok := row.(SQLResponseRow)
 	if !ok {
