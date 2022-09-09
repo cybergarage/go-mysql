@@ -15,7 +15,7 @@
 package query
 
 import (
-	vitesssql "vitess.io/vitess/go/vt/sqlparser"
+	vitesssp "vitess.io/vitess/go/vt/sqlparser"
 )
 
 // Parser represents a SQL parser.
@@ -29,6 +29,6 @@ func NewParser() *Parser {
 
 // Parse parses a query string and returns the statement result.
 func (parser *Parser) Parse(query string) (Statement, error) {
-	stmt, err := vitesssql.Parse(query)
+	stmt, err := vitesssp.Parse(query)
 	return stmt, err
 }

@@ -17,17 +17,17 @@ package mysql
 import (
 	"time"
 
-	vitess "vitess.io/vitess/go/mysql"
+	vitessmy "vitess.io/vitess/go/mysql"
 )
 
 // Listener is the MySQL server protocol listener.
 type Listener struct {
-	*vitess.Listener
+	*vitessmy.Listener
 }
 
 // NewListener creates a new listener.
 func NewListener(protocol, address string, authServer AuthHandler, handler QueryHandler, connReadTimeout time.Duration, connWriteTimeout time.Duration, proxyProtocol bool) (*Listener, error) {
-	l, err := vitess.NewListener(protocol, address, authServer, handler, connReadTimeout, connWriteTimeout, proxyProtocol)
+	l, err := vitessmy.NewListener(protocol, address, authServer, handler, connReadTimeout, connWriteTimeout, proxyProtocol)
 	if err != nil {
 		return nil, err
 	}
