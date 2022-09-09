@@ -78,9 +78,10 @@ func ExecYCSBWorkload(t *testing.T, defaultWorkload string) error {
 	outputYcsbParams(t, ycsbEnvs, ycsbParams)
 
 	ycsbPath := ycsbParams[0]
-	ycsbCmd := filepath.Join(ycsbPath, "bin/ycsb")
+	ycsbCmd := filepath.Join(ycsbPath, "bin/ycsb.sh")
 	_, err := os.Stat(ycsbCmd)
 	if err != nil {
+		t.Error(err)
 		return err
 	}
 
@@ -106,10 +107,11 @@ func ExecYCSBWorkload(t *testing.T, defaultWorkload string) error {
 	}
 
 	for _, ycsbWorkloadCmd := range ycsbWorkloadCmds {
-		t.Run(workload, func(t *testing.T) {
+		t.Run(ycsbWorkloadCmd, func(t *testing.T) {
 			ycsbArgs[1] = ycsbWorkloadCmd
 			cmdStr := strings.Join(ycsbArgs, " ")
 			log.Debugf("%v", cmdStr)
+			t.Logf("%v", cmdStr)
 			out, err := exec.Command(ycsbCmd, ycsbArgs[1:]...).CombinedOutput()
 			if err != nil {
 				t.Error(err)
