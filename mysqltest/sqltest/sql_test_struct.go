@@ -27,7 +27,7 @@ const (
 // SQLTest represents a SQL test.
 type SQLTest struct {
 	Scenario *SQLScenario
-	client   client.Client
+	client   *client.Client
 }
 
 // NewSQLTest returns a SQL test instance.
@@ -44,13 +44,13 @@ func NewSQLTestWithFile(filename string) (*SQLTest, error) {
 }
 
 // SetClient sets a client for testing.
-func (ct *SQLTest) SetClient(c client.Client) {
+func (ct *SQLTest) SetClient(c *client.Client) {
 	ct.client = c
 }
 
-// GetName returns the loaded senario name.
-func (ct *SQLTest) GetName() string {
-	return ct.Scenario.GetName()
+// Name returns the loaded senario name.
+func (ct *SQLTest) Name() string {
+	return ct.Scenario.Name()
 }
 
 // LoadFile loads a specified SQL test file.
@@ -87,7 +87,7 @@ func (ct *SQLTest) Run() error {
 	}
 
 	errTraceMsg := func(n int) string {
-		errTraceMsg := ct.GetName() + "\n"
+		errTraceMsg := ct.Name() + "\n"
 		for i := 0; i < n; i++ {
 			errTraceMsg += fmt.Sprintf(goodQueryPrefix, i, scenario.Queries[i])
 			errTraceMsg += "\n"
@@ -102,28 +102,67 @@ func (ct *SQLTest) Run() error {
 		}
 		defer rs.Close()
 
-		names, err := rs.Columns()
+		columns, err := rs.Columns()
 		if err != nil {
 			return err
 		}
-		columnCnt := len(names)
+		columnCnt := len(columns)
+
+		columnTypes, err := rs.ColumnTypes()
+		if err != nil {
+			return err
+		}
+
+		// NOTE: Run() supports only the following standard column types yet.
+		values := make([]interface{}, columnCnt)
+		for n, columnType := range columnTypes {
+			switch columnType.DatabaseTypeName() {
+			case "INTEGER", "INT", "SMALLINT", "TINYINT", "MEDIUMINT", "BIGINT":
+				var v int
+				values[n] = &v
+			case "FLOAT", "DOUBLE":
+				var v float64
+				values[n] = &v
+			case "TEXT", "NVARCHAR":
+				var v string
+				values[n] = &v
+			case "VARBINARY", "BINARY":
+				var v string
+				values[n] = &v
+			default:
+				var v interface{}
+				values[n] = &v
+			}
+		}
 
 		rsRows := make([]interface{}, 0)
 		for rs.Next() {
-			values := make([]interface{}, columnCnt)
-			err := rs.Scan(values...)
+			err = rs.Scan(values...)
 			if err != nil {
 				return err
 			}
+
 			row := map[string]interface{}{}
 			for i := 0; i < columnCnt; i++ {
-				row[names[i]] = values[i]
+				switch v := values[i].(type) {
+				case *int:
+					row[columns[i]] = *v
+				case *float64:
+					row[columns[i]] = *v
+				case *string:
+					row[columns[i]] = *v
+				case *interface{}:
+					row[columns[i]] = *v
+				default:
+					row[columns[i]] = values[i]
+				}
 			}
+
 			rsRows = append(rsRows, row)
 		}
 
 		expectedRes := scenario.Results[n]
-		expectedRows, err := expectedRes.GetRows()
+		expectedRows, err := expectedRes.Rows()
 		if err != nil {
 			if len(rsRows) != 0 {
 				return fmt.Errorf("%s"+errorJSONResponseHasUnexpectedRows, errTraceMsg(n), n, query, rsRows)
@@ -137,7 +176,7 @@ func (ct *SQLTest) Run() error {
 		for _, row := range rsRows {
 			err = expectedRes.HasRow(row)
 			if err != nil {
-				return fmt.Errorf("%s"+errorQueryPrefix+"%s", errTraceMsg(n), n, query, err.Error())
+				return fmt.Errorf("%s"+errorQueryPrefix+"%w", errTraceMsg(n), n, query, err)
 			}
 		}
 	}

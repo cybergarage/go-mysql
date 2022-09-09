@@ -47,7 +47,6 @@ func TestSQLTestSuite(t *testing.T) {
 	err = client.CreateDatabase(sqlTestDatabase)
 	if err != nil {
 		t.Error(err)
-		return
 	}
 
 	cs.SetClient(client)
