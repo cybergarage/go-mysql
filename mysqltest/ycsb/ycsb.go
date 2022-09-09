@@ -30,7 +30,7 @@ const (
 
 const (
 	ycsbPathEnv         = "YCSB_ROOT_PATH"
-	ycsbDbPropertiesEnv = "YCSB_DB_PROPERTIES"
+	ycsbDBPropertiesEnv = "YCSB_DB_PROPERTIES"
 	ycsbCpEnv           = "YCSB_CP"
 	ycsbWorkloadEnv     = "YCSB_WORKLOAD"
 	ycsbDatabaseName    = "ycsb"
@@ -42,7 +42,9 @@ var setUpQueries []string = []string{
 }
 
 func ExecYCSBWorkload(t *testing.T, defaultWorkload string) error {
+	t.Helper()
 	outputYcsbParams := func(t *testing.T, ycsbEnvs []string, ycsbParams []string) {
+		t.Helper()
 		for n, ycsbEnv := range ycsbEnvs {
 			t.Logf("%s = %s", ycsbEnv, ycsbParams[n])
 		}
@@ -50,7 +52,7 @@ func ExecYCSBWorkload(t *testing.T, defaultWorkload string) error {
 
 	ycsbEnvs := []string{
 		ycsbPathEnv,
-		ycsbDbPropertiesEnv,
+		ycsbDBPropertiesEnv,
 		ycsbCpEnv,
 		ycsbWorkloadEnv,
 	}
@@ -120,8 +122,4 @@ func ExecYCSBWorkload(t *testing.T, defaultWorkload string) error {
 	}
 
 	return nil
-}
-
-func ExecYCSB(t *testing.T) error {
-	return ExecYCSBWorkload(t, ycsbDefaultWorkload)
 }
