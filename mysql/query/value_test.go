@@ -17,29 +17,35 @@ package query
 import (
 	"testing"
 
-	vitess "vitess.io/vitess/go/vt/sqlparser"
+	vitessst "vitess.io/vitess/go/sqltypes"
 )
 
-func TestNewValue(t *testing.T) {
-	literals := []*vitess.Literal{
-		vitess.NewStrLiteral("hello"),
-		vitess.NewIntLiteral("1234"),
-		vitess.NewFloatLiteral("1234"),
+func TestSetValues(t *testing.T) {
+	testValues := []interface{}{
+		"hello",
+		int64(1234),
+		float64(1234),
+		vitessst.NewVarChar("hello"),
+		vitessst.NewInt64(int64(1234)),
+		vitessst.NewFloat64(float64(1234)),
 	}
 	expValues := []interface{}{
 		"hello",
 		int64(1234),
 		float64(1234),
+		"hello",
+		int64(1234),
+		float64(1234),
 	}
 
-	for n, l := range literals {
-		val, err := NewValueWithLiteral(l)
+	for n, testValue := range testValues {
+		value, err := NewValueWithValue(testValue)
 		if err != nil {
 			t.Error(err)
 			continue
 		}
-		if val != expValues[n] {
-			t.Errorf("%s != %s", val, expValues[n])
+		if value.Value() != expValues[n] {
+			t.Errorf("%s != %s", value.Value(), expValues[n])
 		}
 	}
 }

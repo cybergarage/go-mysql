@@ -15,15 +15,15 @@
 package mysql
 
 import (
-	vitess "vitess.io/vitess/go/mysql"
+	vitessmy "vitess.io/vitess/go/mysql"
 )
 
 // A AuthHandler is an interface used for the user authentication.
 type AuthHandler interface {
-	vitess.AuthServer
+	vitessmy.AuthServer
 }
 
 // A QueryHandler is an interface used for the request queries.
 type QueryHandler interface {
-	vitess.Handler
+	vitessmy.Handler
 }

@@ -15,11 +15,11 @@
 package mysql
 
 import (
-	vitess "vitess.io/vitess/go/mysql"
+	vitessmy "vitess.io/vitess/go/mysql"
 )
 
 // NewDefaultAuthHandler returns a non authentication handler.
 func NewDefaultAuthHandler() AuthHandler {
-	h := &vitess.AuthServerNone{}
+	h := &vitessmy.AuthServerNone{}
 	return h
 }

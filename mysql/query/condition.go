@@ -15,8 +15,8 @@
 package query
 
 import (
-	vitess "vitess.io/vitess/go/vt/sqlparser"
+	vitesssp "vitess.io/vitess/go/vt/sqlparser"
 )
 
-// Condition represents a query conditional expression.
-type Condition = vitess.Where
+// Condition represents a WHERE or HAVING clause.
+type Condition = vitesssp.Where

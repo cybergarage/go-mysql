@@ -18,26 +18,25 @@ import (
 	"fmt"
 	"strconv"
 
-	"vitess.io/vitess/go/sqltypes"
-	vitesstypes "vitess.io/vitess/go/sqltypes"
-	vitesspb "vitess.io/vitess/go/vt/proto/query"
-	vitesssql "vitess.io/vitess/go/vt/sqlparser"
+	vitessst "vitess.io/vitess/go/sqltypes"
+	vitesspq "vitess.io/vitess/go/vt/proto/query"
+	vitesssp "vitess.io/vitess/go/vt/sqlparser"
 )
 
 const (
-	StrVal   = vitesssql.StrVal
-	IntVal   = vitesssql.IntVal
-	FloatVal = vitesssql.FloatVal
-	HexNum   = vitesssql.HexNum
-	HexVal   = vitesssql.HexVal
-	BitVal   = vitesssql.BitVal
+	StrVal   = vitesssp.StrVal
+	IntVal   = vitesssp.IntVal
+	FloatVal = vitesssp.FloatVal
+	HexNum   = vitesssp.HexNum
+	HexVal   = vitesssp.HexVal
+	BitVal   = vitesssp.BitVal
 )
 
 // SQLVal represents a single value.
-type SQLVal = vitesstypes.Value
+type SQLVal = vitessst.Value
 
 // ValType specifies the type for SQLVal.
-type ValType = vitesspb.Type
+type ValType = vitesspq.Type
 
 // Value represents a query value.
 type Value struct {
@@ -46,28 +45,28 @@ type Value struct {
 }
 
 // Expr represents an expression.
-type Expr = vitesssql.Expr
+type Expr = vitesssp.Expr
 
 // ValTuple represents a tuple of actual values.
-type ValTuple = vitesssql.ValTuple
+type ValTuple = vitesssp.ValTuple
 
 // ColName represents a column name.
-type ColName = vitesssql.ColName
+type ColName = vitesssp.ColName
 
 // AndExpr represents an AND expression.
-type AndExpr = vitesssql.AndExpr
+type AndExpr = vitesssp.AndExpr
 
 // OrExpr represents an OR expression.
-type OrExpr = vitesssql.OrExpr
+type OrExpr = vitesssp.OrExpr
 
 // XorExpr represents an XOR expression.
-type XorExpr = vitesssql.XorExpr
+type XorExpr = vitesssp.XorExpr
 
 // NotExpr represents a NOT expression.
-type NotExpr = vitesssql.NotExpr
+type NotExpr = vitesssp.NotExpr
 
 // ComparisonExpr represents a two-value comparison expression.
-type ComparisonExpr = vitesssql.ComparisonExpr
+type ComparisonExpr = vitesssp.ComparisonExpr
 
 // NewValue creates a query value .
 func NewValue() *Value {
@@ -117,18 +116,18 @@ func (value *Value) SetValue(val interface{}) error {
 // See: vitess.io/vitess/go/sqltypes::NewValue().
 func (value *Value) setLiteralValue(lv *Literal) error {
 	var v interface{}
-	var vt vitesspb.Type
+	var vt vitesspq.Type
 	var err error
 
 	switch lv.Type {
 	case StrVal:
-		vt = sqltypes.VarBinary
+		vt = vitessst.VarBinary
 		v = string(lv.Val)
 	case IntVal:
-		vt = sqltypes.Int64
+		vt = vitessst.Int64
 		v, err = strconv.ParseInt(string(lv.Val), 0, 64)
 	case FloatVal:
-		vt = sqltypes.Float64
+		vt = vitessst.Float64
 		v, err = strconv.ParseFloat(string(lv.Val), 64)
 	default:
 		err = fmt.Errorf(errorLiteralUnknownType, lv)
@@ -153,13 +152,13 @@ func (value *Value) setSQLValue(sv SQLVal) error {
 
 	vt := sv.Type()
 	switch {
-	case vitesstypes.IsSigned(vt):
+	case vitessst.IsSigned(vt):
 		v, err = strconv.ParseInt(string(sv.Raw()), 0, 64)
-	case vitesstypes.IsUnsigned(vt):
+	case vitessst.IsUnsigned(vt):
 		v, err = strconv.ParseUint(string(sv.Raw()), 0, 64)
-	case vitesstypes.IsFloat(vt) || vt == Decimal:
+	case vitessst.IsFloat(vt) || vt == Decimal:
 		v, err = strconv.ParseFloat(string(sv.Raw()), 64)
-	case vitesstypes.IsQuoted(vt) || vt == Bit || vt == Null:
+	case vitessst.IsQuoted(vt) || vt == Bit || vt == Null:
 		v = string(sv.Raw())
 	default:
 		return fmt.Errorf(errorColumnUnexpectedType, sv.Raw(), sv.Type())
