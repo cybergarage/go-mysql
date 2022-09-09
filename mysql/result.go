@@ -15,6 +15,9 @@
 package mysql
 
 import (
+	"fmt"
+
+	"github.com/cybergarage/go-mysql/mysql/query"
 	vitessst "vitess.io/vitess/go/sqltypes"
 	vitesspq "vitess.io/vitess/go/vt/proto/query"
 )
@@ -46,4 +49,38 @@ func NewResultWithRowsAffected(n uint64) *Result {
 		RowsAffected: n,
 	}
 	return res
+}
+
+// NewResultWithRows returns a successful result with the specified rows.
+func NewResultWithRows(db *query.Database, schema *query.Schema, rows *query.Rows) (*Result, error) {
+	fields, err := schema.ToFields(db)
+	if err != nil {
+		return nil, err
+	}
+
+	res := NewResult()
+	res.Fields = fields
+
+	resRows := [][]Value{}
+	for _, row := range rows.Rows() {
+		resValues := []Value{}
+		for _, field := range res.Fields {
+			// FIXME: The current implementation have to use Row::ColumnByName()
+			// because row columns might be unordered.
+			column, ok := row.ColumnByName(field.Name)
+			if !ok {
+				return nil, fmt.Errorf("column (%s) is not found", field.Name)
+			}
+			resValue, err := column.ToValue()
+			if err != nil {
+				return nil, err
+			}
+			resValues = append(resValues, resValue)
+		}
+		resRows = append(resRows, resValues)
+	}
+
+	res.Rows = resRows
+
+	return res, nil
 }
