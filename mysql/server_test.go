@@ -16,19 +16,18 @@ package mysql
 
 import (
 	"testing"
-
-	mysqltest "github.com/cybergarage/go-mysql/mysqltest/client"
 )
 
-var testServerQueries []string = []string{
-	"CREATE DATABASE ycsb",
+var testQueries []string = []string{
+	"CREATE DATABASE IF NOT EXISTS ycsb",
 	"USE ycsb",
 	"CREATE TABLE usertable (YCSB_KEY VARCHAR(255) PRIMARY KEY, FIELD0 TEXT, FIELD1 TEXT, FIELD2 TEXT, FIELD3 TEXT, FIELD4 TEXT, FIELD5 TEXT, FIELD6 TEXT, FIELD7 TEXT, FIELD8 TEXT, FIELD9 TEXT)",
+	"DROP TABLE ycsb",
+	"DROP DATABASE ycsb",
 }
 
 func TestServer(t *testing.T) {
 	server := NewServer()
-	server.SetQueryHandler(server)
 
 	err := server.Start()
 	if err != nil {
@@ -36,7 +35,7 @@ func TestServer(t *testing.T) {
 		return
 	}
 
-	client := mysqltest.NewDefaultClient()
+	client := NewClient()
 	client.SetDatabase("ycsb")
 	err = client.Open()
 	defer client.Close()
@@ -44,12 +43,11 @@ func TestServer(t *testing.T) {
 		t.Error(err)
 	}
 
-	for n, query := range testServerQueries {
+	for n, query := range testQueries {
 		t.Logf("[%d] %s", n, query)
 		_, err := client.Query(query)
 		if err != nil {
 			t.Error(err)
-			break
 		}
 	}
 
