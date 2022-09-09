@@ -15,29 +15,35 @@
 package mysql
 
 import (
-	vitesstypes "vitess.io/vitess/go/sqltypes"
-	vitesspb "vitess.io/vitess/go/vt/proto/query"
+	vitessst "vitess.io/vitess/go/sqltypes"
+	vitesspq "vitess.io/vitess/go/vt/proto/query"
 )
 
 // Result represents a query result.
-type Result = vitesstypes.Result
+type Result = vitessst.Result
 
 // Field represents a field.
-type Field = vitesspb.Field
+type Field = vitesspq.Field
 
 // BindVariable represents a single bind variable.
-type BindVariable = vitesspb.BindVariable
-
-// Row represents a row.
-type Row = vitesspb.Value
+type BindVariable = vitesspq.BindVariable
 
 // Value represents a value.
-type Value = vitesstypes.Value
+type Value = vitessst.Value
 
-// NewResult returns a blank result.
+// NewResult returns a successful result without any data.
 func NewResult() *Result {
 	res := &Result{
 		Rows: [][]Value{},
+	}
+	return res
+}
+
+// NewResultWithRowsAffected returns a successful result with the specified rows affected count.
+func NewResultWithRowsAffected(n uint64) *Result {
+	res := &Result{
+		Rows:         [][]Value{},
+		RowsAffected: n,
 	}
 	return res
 }
