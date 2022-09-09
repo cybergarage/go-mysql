@@ -16,67 +16,22 @@ package query
 
 import (
 	"testing"
-
-	vitess "vitess.io/vitess/go/vt/sqlparser"
 )
 
 func TestColumnEquals(t *testing.T) {
+	column, err := NewColumnWithNameAndValue("a", 1)
+	if err != nil {
+		t.Error(err)
+	}
 	columns := []*Column{
 		NewColumn(),
 		NewColumnWithName("a"),
-		NewColumnWithNameAndValue("a", 1),
+		column,
 	}
 
 	for _, colum := range columns {
 		if !colum.Equals(colum) {
-			t.Errorf("%s != %s", colum, colum)
-		}
-	}
-}
-
-func TestNewColumnWithComparisonExprs(t *testing.T) {
-	cmpExprs := []*vitess.ComparisonExpr{
-		{
-			Operator: vitess.EqualOp,
-			Left:     &vitess.ColName{Name: vitess.NewColIdent("a")},
-			Right:    vitess.NewStrLiteral("hello"),
-		},
-		{
-			Operator: vitess.EqualOp,
-			Left:     &vitess.ColName{Name: vitess.NewColIdent("b")},
-			Right:    vitess.NewIntLiteral("1234"),
-		},
-		{
-			Operator: vitess.EqualOp,
-			Left:     &vitess.ColName{Name: vitess.NewColIdent("c")},
-			Right:    vitess.NewFloatLiteral("1234"),
-		},
-	}
-
-	expNames := []interface{}{
-		"a",
-		"b",
-		"c",
-	}
-
-	expValues := []interface{}{
-		"hello",
-		int64(1234),
-		float64(1234),
-	}
-
-	for n, cmpExpr := range cmpExprs {
-		col, err := NewColumnWithComparisonExpr(cmpExpr)
-		if err != nil {
-			t.Error(err)
-		}
-		name := col.Name()
-		if name != expNames[n] {
-			t.Errorf("%s != %s", name, expNames[n])
-		}
-		val := col.Value()
-		if val != expValues[n] {
-			t.Errorf("%s != %s", val, expValues[n])
+			t.Errorf("%v != %v", colum, colum)
 		}
 	}
 }
