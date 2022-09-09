@@ -65,7 +65,7 @@ func TestSQLResponseRows(t *testing.T) {
 		return
 	}
 
-	_, err = res.GetRows()
+	_, err = res.Rows()
 	if err != nil {
 		t.Error(err)
 		return

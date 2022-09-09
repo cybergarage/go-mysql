@@ -70,8 +70,8 @@ func (res *SQLResponse) ParseString(jsonStr string) error {
 	return nil
 }
 
-// GetRows returns response rows with true when the response has any rows, otherwise nil and false.
-func (res *SQLResponse) GetRows() (SQLResponseRows, error) {
+// Rows returns response rows with true when the response has any rows, otherwise nil and false.
+func (res *SQLResponse) Rows() (SQLResponseRows, error) {
 	if res.Data == nil {
 		return nil, fmt.Errorf(errorJSONResponseNotFound)
 	}
@@ -96,40 +96,55 @@ func (res *SQLResponse) HasRow(row interface{}) error {
 		return fmt.Errorf(errorJSONResponseHasNoRow, rowMap, row)
 	}
 
-	resRows, err := res.GetRows()
+	resRows, err := res.Rows()
 	if err != nil {
 		return err
 	}
 
-	deepEqual := func(iv1 interface{}, iv2 interface{}) bool {
+	var deepEqual func(iv1 interface{}, iv2 interface{}) bool
+	deepEqual = func(iv1 interface{}, iv2 interface{}) bool {
 		if reflect.DeepEqual(iv1, iv2) {
 			return true
 		}
 
-		// NOTE: DeepEqual checks the types and values strictly.
-		// Therefore, support other types if needed.
-		// fmt.Printf("%v (%T) != %v (%T)\n", iv1, iv1, iv2, iv2)
-
 		trimString := func(s string) string {
 			return strings.Trim(s, "\"'")
+		}
+
+		// NOTE: DeepEqual checks the types and values strictly.
+		// Therefore, support other types if needed.
+		//log.Debugf("deepEqual: %v (%T) != %v (%T)", iv1, iv1, iv2, iv2)
+
+		uint8sToString := func(ui8s []uint8) string {
+			bytesLen := len(ui8s)
+			bytes := make([]byte, bytesLen)
+			for n := 0; n < bytesLen; n++ {
+				bytes[n] = ui8s[n]
+			}
+			return string(bytes)
 		}
 
 		switch v1 := iv1.(type) {
 		case string:
 			switch v2 := iv2.(type) {
 			case string:
-				tv1 := trimString(v1)
-				tv2 := trimString(v2)
-				if tv1 == tv2 {
+				sv1 := trimString(v1)
+				sv2 := trimString(v2)
+				if sv1 == sv2 {
 					return true
 				}
+			case []uint8:
+				sv2 := uint8sToString(v2)
+				return deepEqual(v1, sv2)
+			case int:
+				sv2 := strconv.Itoa(v2)
+				return deepEqual(v1, sv2)
+			case float64:
+				sv2 := strconv.FormatFloat(v2, 'G', -1, 64)
+				return deepEqual(v1, sv2)
 			default:
-				tv1 := trimString(v1)
-				sv2 := fmt.Sprintf("%v", iv2)
-				tv2 := trimString(sv2)
-				if tv1 == tv2 {
-					return true
-				}
+				sv2 := fmt.Sprintf("%s", iv2)
+				return deepEqual(v1, sv2)
 			}
 		case int:
 			switch v2 := iv2.(type) {
@@ -142,6 +157,9 @@ func (res *SQLResponse) HasRow(row interface{}) error {
 				if v1 == int(v2) {
 					return true
 				}
+			case []uint8:
+				sv2 := uint8sToString(v2)
+				return deepEqual(v1, sv2)
 			}
 		case float64:
 			switch v2 := iv2.(type) {
@@ -154,7 +172,13 @@ func (res *SQLResponse) HasRow(row interface{}) error {
 				if int(v1) == v2 {
 					return true
 				}
+			case []uint8:
+				sv2 := uint8sToString(v2)
+				return deepEqual(v1, sv2)
 			}
+		case []uint8:
+			sv1 := uint8sToString(v1)
+			return deepEqual(sv1, iv2)
 		}
 
 		return false
