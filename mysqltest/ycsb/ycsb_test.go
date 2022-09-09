@@ -22,7 +22,7 @@ import (
 	"github.com/cybergarage/go-mysql/mysqltest/server"
 )
 
-func TestYCSBWorkload(t *testing.T) {
+func TestYCSB(t *testing.T) {
 	log.SetStdoutDebugEnbled(true)
 
 	server := server.NewServer()
@@ -67,8 +67,14 @@ func TestYCSBWorkload(t *testing.T) {
 
 	// Tries to execute ycsb command
 
-	err = ExecYCSB(t)
-	if err != nil {
-		t.Error(err)
+	workloads := []string{
+		"workloada",
+		"workloadb",
+	}
+
+	for _, workload := range workloads {
+		t.Run(workload, func(t *testing.T) {
+			ExecYCSBWorkload(t, workload)
+		})
 	}
 }
