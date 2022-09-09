@@ -19,9 +19,14 @@ import (
 )
 
 func TestColumnsEquals(t *testing.T) {
+	testColumn, err := NewColumnWithNameAndValue("b", 1)
+	if err != nil {
+		t.Error(err)
+	}
+
 	testColumns := []*Column{
 		NewColumnWithName("a"),
-		NewColumnWithNameAndValue("b", 1),
+		testColumn,
 	}
 
 	colums := NewColumnsWithColumns(testColumns)
