@@ -14,6 +14,8 @@
 
 package query
 
+import "strings"
+
 // Columns represents a column array.
 type Columns struct {
 	allList   []*Column
@@ -22,10 +24,8 @@ type Columns struct {
 
 // NewColumns returns a null columns.
 func NewColumns() *Columns {
-	cols := &Columns{
-		allList:   make([]*Column, 0),
-		cachedMap: map[string]*Column{},
-	}
+	cols := &Columns{}
+	cols.Clear()
 	return cols
 }
 
@@ -48,28 +48,34 @@ func (cols *Columns) AddColumns(columns []*Column) {
 	cols.allList = append(cols.allList, columns...)
 }
 
-// GetColumns returns the all columns.
-func (cols *Columns) GetColumns() []*Column {
+// AllColumns returns the all columns.
+func (cols *Columns) AllColumns() []*Column {
 	return cols.allList
 }
 
-// GetColumn returns a column of the specified index.
-func (cols *Columns) GetColumn(n int) (*Column, bool) {
+// Columns returns the all columns.
+func (cols *Columns) Columns() []*Column {
+	return cols.AllColumns()
+}
+
+// ColumnAt returns a column of the specified index.
+func (cols *Columns) ColumnAt(n int) (*Column, bool) {
 	if len(cols.allList) <= n {
 		return nil, false
 	}
 	return cols.allList[n], true
 }
 
-// GetColumnByName returns a column by the specified name.
-func (cols *Columns) GetColumnByName(name string) (*Column, bool) {
-	col, ok := cols.cachedMap[name]
+// ColumnByName returns a column by the specified name.
+func (cols *Columns) ColumnByName(name string) (*Column, bool) {
+	lowerName := strings.ToLower(name)
+	col, ok := cols.cachedMap[lowerName]
 	if ok {
 		return col, true
 	}
 	for _, col := range cols.allList {
-		if col.Name() == name {
-			cols.cachedMap[name] = col
+		if lowerName == strings.ToLower(col.Name()) {
+			cols.cachedMap[lowerName] = col
 			return col, true
 		}
 	}
@@ -78,7 +84,7 @@ func (cols *Columns) GetColumnByName(name string) (*Column, bool) {
 
 // HasColumn returns true when the query has the specified column.
 func (cols *Columns) HasColumn(name string) bool {
-	_, ok := cols.GetColumnByName(name)
+	_, ok := cols.ColumnByName(name)
 	return ok
 }
 
@@ -90,10 +96,21 @@ func (cols *Columns) IsAllColumn() bool {
 	return cols.HasColumn("*")
 }
 
+// Size returns the all column count.
+func (cols *Columns) Size() int {
+	return len(cols.allList)
+}
+
+// Clear clears all columns.
+func (cols *Columns) Clear() {
+	cols.allList = make([]*Column, 0)
+	cols.cachedMap = map[string]*Column{}
+}
+
 // Equals returns true when the specified columns are equals to this columns, otherwise false.
 func (cols *Columns) Equals(otherCols *Columns) bool {
 	for _, col := range cols.allList {
-		otherCol, ok := otherCols.GetColumnByName(col.Name())
+		otherCol, ok := otherCols.ColumnByName(col.Name())
 		if !ok {
 			return false
 		}
@@ -102,4 +119,17 @@ func (cols *Columns) Equals(otherCols *Columns) bool {
 		}
 	}
 	return true
+}
+
+// String returns the string representation.
+func (cols *Columns) String() string {
+	str := "{"
+	for n, col := range cols.allList {
+		if 0 < n {
+			str += ", "
+		}
+		str += col.String()
+	}
+	str += "}"
+	return str
 }
