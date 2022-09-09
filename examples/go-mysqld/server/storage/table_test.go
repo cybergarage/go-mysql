@@ -20,7 +20,9 @@ import (
 
 func TestNewTable(t *testing.T) {
 	tbl := NewTable()
-	if rows := tbl.GetRows(); len(rows) != 0 {
+
+	rows := tbl.Rows.Rows()
+	if len(rows) != 0 {
 		t.Errorf("%d", len(rows))
 	}
 }
