@@ -22,8 +22,8 @@ import (
 	"github.com/cybergarage/go-mysql/mysqltest/server"
 )
 
-// TestSQLCases is a temporary debug test to check only the specified test cases.
-func TestSQLCases(t *testing.T) {
+// TestSQLTest is a temporary debug test to check only the specified test cases.
+func TestSQLTest(t *testing.T) {
 	testFilenames := []string{
 		// NOTE: Add your test files in 'untests' directory into the filename array
 	}
@@ -44,17 +44,19 @@ func TestSQLCases(t *testing.T) {
 	}
 
 	for _, testFilename := range testFilenames {
-		ct := NewSQLTest()
-		err = ct.LoadFile(path.Join(SQLTestSuiteDefaultTestDirectory, testFilename))
-		if err != nil {
-			t.Error(err)
-			continue
-		}
-		ct.SetClient(client)
+		t.Run(testFilename, func(t *testing.T) {
+			ct := NewSQLTest()
+			err = ct.LoadFile(path.Join(SQLTestSuiteDefaultTestDirectory, testFilename))
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			ct.SetClient(client)
 
-		err = ct.Run()
-		if err != nil {
-			t.Error(err)
-		}
+			err = ct.Run()
+			if err != nil {
+				t.Error(err)
+			}
+		})
 	}
 }

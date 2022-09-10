@@ -51,9 +51,14 @@ func TestSQLTestSuite(t *testing.T) {
 
 	cs.SetClient(client)
 
-	err = cs.Run()
-	if err != nil {
-		t.Error(err)
+	for _, test := range cs.Tests {
+		t.Run(test.Name(), func(t *testing.T) {
+			test.SetClient(cs.client)
+			err := test.Run()
+			if err != nil {
+				t.Errorf("%s : %s", test.Name(), err.Error())
+			}
+		})
 	}
 
 	err = client.DropDatabase(sqlTestDatabase)
