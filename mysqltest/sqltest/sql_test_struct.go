@@ -17,6 +17,7 @@ package sqltest
 import (
 	"fmt"
 
+	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/mysqltest/client"
 )
 
@@ -96,6 +97,7 @@ func (ct *SQLTest) Run() error {
 	}
 
 	for n, query := range scenario.Queries {
+		log.Infof("[%d] %s", n, query)
 		rs, err := client.Query(query)
 		if err != nil {
 			return fmt.Errorf("%s%w", errTraceMsg(n), err)
