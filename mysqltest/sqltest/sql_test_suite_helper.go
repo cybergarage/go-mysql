@@ -17,21 +17,41 @@ package sqltest
 import (
 	"testing"
 
-	"github.com/cybergarage/go-logger/log"
-	"github.com/cybergarage/go-mysql/mysqltest/server"
+	"github.com/cybergarage/go-mysql/mysqltest/client"
 )
 
-// TestSQLTestSuite runs already passed scenario test files.
-func TestSQLTestSuite(t *testing.T) {
-	log.SetStdoutDebugEnbled(true)
+const sqlTestDatabase = "test"
 
-	server := server.NewServer()
-	err := server.Start()
+func RunSQLTestSuite(t *testing.T) {
+	t.Helper()
+
+	cs, err := NewSQLTestSuiteWithDirectory(SQLTestSuiteDefaultTestDirectory)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	defer server.Stop()
 
-	RunSQLTestSuite(t)
+	client := client.NewDefaultClient()
+	client.SetDatabase(sqlTestDatabase)
+	err = client.CreateDatabase(sqlTestDatabase)
+	if err != nil {
+		t.Error(err)
+	}
+
+	cs.SetClient(client)
+
+	for _, test := range cs.Tests {
+		t.Run(test.Name(), func(t *testing.T) {
+			test.SetClient(cs.client)
+			err := test.Run()
+			if err != nil {
+				t.Errorf("%s : %s", test.Name(), err.Error())
+			}
+		})
+	}
+
+	err = client.DropDatabase(sqlTestDatabase)
+	if err != nil {
+		t.Error(err)
+	}
 }
