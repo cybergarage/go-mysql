@@ -74,7 +74,7 @@ func TestYCSB(t *testing.T) {
 
 	for _, workload := range workloads {
 		t.Run(workload, func(t *testing.T) {
-			ExecYCSBWorkload(t, workload)
+			RunYCSBWorkload(t, workload)
 		})
 	}
 }

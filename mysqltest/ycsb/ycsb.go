@@ -41,7 +41,7 @@ var setUpQueries []string = []string{
 	"CREATE TABLE IF NOT EXISTS usertable (YCSB_KEY VARCHAR(255) PRIMARY KEY, FIELD0 TEXT, FIELD1 TEXT, FIELD2 TEXT, FIELD3 TEXT, FIELD4 TEXT, FIELD5 TEXT, FIELD6 TEXT, FIELD7 TEXT, FIELD8 TEXT, FIELD9 TEXT);",
 }
 
-func ExecYCSBWorkload(t *testing.T, defaultWorkload string) error {
+func RunYCSBWorkload(t *testing.T, defaultWorkload string) error {
 	t.Helper()
 	outputYcsbParams := func(t *testing.T, ycsbEnvs []string, ycsbParams []string) {
 		t.Helper()
