@@ -22,6 +22,8 @@ import (
 )
 
 func RunSQLTestFiles(t *testing.T, testFilenames []string) {
+	t.Helper()
+
 	client := client.NewDefaultClient()
 	client.SetDatabase(sqlTestDatabase)
 	err := client.CreateDatabase(sqlTestDatabase)
