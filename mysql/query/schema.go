@@ -27,11 +27,11 @@ const (
 
 // Schema represents a table schema.
 type Schema struct {
-	*DDL
+	DDL
 }
 
 // NewSchemaWithDDL returns a schema with the specified DDL.
-func NewSchemaWithDDL(ddl *DDL) *Schema {
+func NewSchemaWithDDL(ddl DDL) *Schema {
 	return &Schema{
 		DDL: ddl,
 	}
@@ -39,7 +39,7 @@ func NewSchemaWithDDL(ddl *DDL) *Schema {
 
 // NewSchemaWithName returns a schema with the specified table name.
 func NewSchemaWithName(name string) *Schema {
-	ddl := &vitesssp.DDL{
+	ddl := &vitesssp.CreateTable{
 		Table: vitesssp.TableName{Name: vitesssp.NewTableIdent(name)},
 	}
 	return NewSchemaWithDDL(ddl)
@@ -47,13 +47,13 @@ func NewSchemaWithName(name string) *Schema {
 
 // TableName returns the table name.
 func (schema *Schema) TableName() string {
-	return schema.DDL.Table.Name.String()
+	return schema.DDL.GetTable().Name.String()
 }
 
 // FindPrimaryColumn returns the specified columns definition.
 func (schema *Schema) FindPrimaryColumn() (*ColumnDefinition, bool) {
-	for _, column := range schema.DDL.TableSpec.Columns {
-		if column.Type.KeyOpt == ColKeyPrimary {
+	for _, column := range schema.DDL.GetTableSpec().Columns {
+		if column.Type.Options.KeyOpt == ColKeyPrimary {
 			return column, true
 		}
 	}
@@ -62,7 +62,7 @@ func (schema *Schema) FindPrimaryColumn() (*ColumnDefinition, bool) {
 
 // FindColumn returns the specified columns definition.
 func (schema *Schema) FindColumn(name string) (*ColumnDefinition, bool) {
-	for _, column := range schema.DDL.TableSpec.Columns {
+	for _, column := range schema.DDL.GetTableSpec().Columns {
 		if column.Name.EqualString(name) {
 			return column, true
 		}
@@ -75,7 +75,7 @@ func (schema *Schema) FindColumn(name string) (*ColumnDefinition, bool) {
 func (schema *Schema) ToFields(db *Database) ([]*Field, error) {
 	fields := make([]*Field, 0)
 	tblName := schema.TableName()
-	for _, column := range schema.DDL.TableSpec.Columns {
+	for _, column := range schema.DDL.GetTableSpec().Columns {
 		colName := column.Name.String()
 		// FIXME: Set more appreciate column length to check official MySQL implementation
 		colLen := 65535 // len(name) + 1
@@ -94,10 +94,10 @@ func (schema *Schema) ToFields(db *Database) ([]*Field, error) {
 		case vitesspq.Type_BLOB, vitesspq.Type_TEXT:
 			field.Flags = field.Flags | uint32(vitesspq.MySqlFlag_BLOB_FLAG)
 		}
-		if column.Type.NotNull {
+		if !*column.Type.Options.Null {
 			field.Flags = field.Flags | uint32(vitesspq.MySqlFlag_NOT_NULL_FLAG)
 		}
-		if column.Type.KeyOpt == ColKeyPrimary {
+		if column.Type.Options.KeyOpt == ColKeyPrimary {
 			field.Flags = field.Flags | uint32(vitesspq.MySqlFlag_PRI_KEY_FLAG)
 			field.Flags = field.Flags | uint32(vitesspq.MySqlFlag_NOT_NULL_FLAG)
 		}

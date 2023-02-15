@@ -42,7 +42,7 @@ func TestSchemaFindColumn(t *testing.T) {
 		return
 	}
 
-	ddl, ok := stmt.(*DDL)
+	ddl, ok := stmt.(DDL)
 	if !ok {
 		t.Errorf("%v", stmt)
 		return
