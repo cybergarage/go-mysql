@@ -123,13 +123,13 @@ func (value *Value) setLiteralValue(lv *Literal) error {
 	switch lv.Type {
 	case StrVal:
 		vt = vitessst.VarBinary
-		v = string(lv.Val)
+		v = lv.Val
 	case IntVal:
 		vt = vitessst.Int64
-		v, err = strconv.ParseInt(string(lv.Val), 0, 64)
+		v, err = strconv.ParseInt(lv.Val, 0, 64)
 	case FloatVal:
 		vt = vitessst.Float64
-		v, err = strconv.ParseFloat(string(lv.Val), 64)
+		v, err = strconv.ParseFloat(lv.Val, 64)
 	default:
 		err = fmt.Errorf(errorLiteralUnknownType, lv)
 	}
