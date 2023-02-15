@@ -32,10 +32,10 @@ func NewDatabaseWithName(name string) *Database {
 }
 
 // NewDatabaseWithDBDDL returns a new database with the specified DBDDL.
-func NewDatabaseWithDBDDL(dbddl *DBDDL) *Database {
-	db := NewDatabaseWithName(dbddl.DBName)
-	db.ifNotExists = dbddl.IfNotExists
-	db.ifExists = dbddl.IfExists
+func NewDatabaseWithDBDDL(dbddl DBDDL) *Database {
+	db := NewDatabaseWithName(dbddl.GetDatabaseName())
+	// db.ifNotExists = dbddl.IfNotExists
+	// db.ifExists = dbddl.IfExists
 	return db
 }
 

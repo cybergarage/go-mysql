@@ -72,13 +72,10 @@ type IsolationLevel = vitesssp.IsolationLevel
 type AccessMode = vitesssp.AccessMode
 
 // DBDDL represents a CREATE, DROP, or ALTER database statement.
-type DBDDL = vitesssp.DBDDL
+type DBDDL = vitesssp.DBDDLStatement
 
 // DDL represents a CREATE, ALTER, DROP, RENAME, TRUNCATE or ANALYZE statement.
-type DDL = vitesssp.DDL
-
-// ParenSelect is a parenthesized SELECT statement.
-type ParenSelect = vitesssp.ParenSelect
+type DDL = vitesssp.DDLStatement
 
 // Show represents a show statement.
 type Show = vitesssp.Show
@@ -96,7 +93,7 @@ type Commit = vitesssp.Commit
 type Rollback = vitesssp.Rollback
 
 // Explain represents an EXPLAIN statement
-//type Explain = vitesssp.Explain
+type Explain = vitesssp.Explain
 
 // ColumnDefinition describes a column in a CREATE TABLE statement.
 type ColumnDefinition = vitesssp.ColumnDefinition

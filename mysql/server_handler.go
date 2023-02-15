@@ -66,35 +66,37 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 	executor := server.queryExecutor
 	if executor != nil {
 		switch v := stmt.(type) {
-		case (*query.DBDDL):
-			switch v.Action {
-			case vitesssp.CreateDBDDLAction:
+		case (query.DBDDL):
+			switch v := v.(type) {
+			case *vitesssp.CreateDatabase:
 				res, err = executor.CreateDatabase(ctx, conn, query.NewDatabaseWithDBDDL(v))
-			case vitesssp.DropDBDDLAction:
+			case *vitesssp.DropDatabase:
 				res, err = executor.DropDatabase(ctx, conn, query.NewDatabaseWithDBDDL(v))
-			case vitesssp.AlterDBDDLAction:
+			case *vitesssp.AlterDatabase:
 				res, err = executor.AlterDatabase(ctx, conn, query.NewDatabaseWithDBDDL(v))
 			}
-		case (*query.DDL):
-			switch v.Action {
-			case vitesssp.CreateDDLAction:
+		case (query.DDL):
+			switch v := v.(type) {
+			case *vitesssp.CreateTable:
 				res, err = executor.CreateTable(ctx, conn, query.NewSchemaWithDDL(v))
-			case vitesssp.DropDDLAction:
+			case *vitesssp.DropTable:
 				res, err = executor.DropTable(ctx, conn, query.NewSchemaWithDDL(v))
-			case vitesssp.AlterDDLAction:
+			case *vitesssp.AlterTable:
 				res, err = executor.AlterTable(ctx, conn, query.NewSchemaWithDDL(v))
-			case vitesssp.RenameDDLAction:
+			case *vitesssp.RenameTable:
 				res, err = executor.RenameTable(ctx, conn, query.NewSchemaWithDDL(v))
-			case vitesssp.TruncateDDLAction:
+			case *vitesssp.TruncateTable:
 				res, err = executor.TruncateTable(ctx, conn, query.NewSchemaWithDDL(v))
 			}
 		case (*query.Show):
+			/* TODO: v.Type is deprecated
 			switch v.Type {
 			case "DATABASES":
 				res, err = executor.ShowDatabases(ctx, conn)
 			case "TABLES":
 				res, err = executor.ShowTables(ctx, conn, conn.Database)
 			}
+			*/
 		case (*vitesssp.Insert):
 			res, err = executor.Insert(ctx, conn, query.NewInsertWithInsert(v))
 		case (*vitesssp.Select):

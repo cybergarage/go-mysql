@@ -86,7 +86,7 @@ func (store *MemStore) CreateTable(ctx context.Context, conn *mysql.Conn, stmt *
 		table := NewTableWithNameAndSchema(tableName, stmt)
 		db.AddTable(table)
 	} else {
-		if !stmt.IfExists {
+		if !stmt.GetIfExists() {
 			return mysql.NewResult(), fmt.Errorf(errorTableFound, dbName, tableName)
 		}
 	}
