@@ -20,6 +20,6 @@ import (
 
 // NewDefaultAuthHandler returns a non authentication handler.
 func NewDefaultAuthHandler() AuthHandler {
-	h := &vitessmy.AuthServerNone{}
+	h := vitessmy.NewAuthServerNone()
 	return h
 }
