@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/cybergarage/go-logger v1.3.0
 	github.com/go-sql-driver/mysql v1.7.0
-	vitess.io/vitess v0.14.4
+	vitess.io/vitess v0.12.6
 )
 
 require (
