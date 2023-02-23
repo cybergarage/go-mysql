@@ -73,7 +73,6 @@ func (client *Client) Query(query string, args ...interface{}) (*sql.Rows, error
 		if err != nil {
 			return nil, err
 		}
-		defer client.Close()
 	}
 	return client.db.Query(query, args...)
 }
