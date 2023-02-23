@@ -51,6 +51,8 @@ func (client *Client) Open() error {
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
 
+	client.db = db
+
 	return nil
 }
 
