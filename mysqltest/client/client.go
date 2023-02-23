@@ -36,15 +36,23 @@ func NewDefaultClient() *Client {
 // CreateDatabase creates a specified database.
 func (client *Client) CreateDatabase(name string) error {
 	query := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", name)
-	_, err := client.Query(query)
-	return err
+	rows, err := client.Query(query)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	return nil
 }
 
 // DropDatabase dtops a specified database.
 func (client *Client) DropDatabase(name string) error {
 	query := fmt.Sprintf("DROP DATABASE IF EXISTS %s", name)
-	_, err := client.Query(query)
-	return err
+	rows, err := client.Query(query)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	return nil
 }
 
 // Use sets a target database.
