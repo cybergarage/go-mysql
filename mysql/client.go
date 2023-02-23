@@ -17,6 +17,7 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -44,15 +45,11 @@ func (client *Client) Open() error {
 		return err
 	}
 
-	// FIXME: Suppress unexpected EOF
-	// vitess-14.0.4/go/mysql/server.go:494 (0x183a9ad)
-	// io/vitess/go/mysql.(*Listener).handle: l.handler.ConnectionReady(c)
-	// vitess-14.0.4/go/mysql/server.go:305 (0x18397be)
-	// io/vitess/go/mysql.(*Listener).Accept.func1: l.handle(conn, connectionID, acceptTime)
-	// go/1.20.1/libexec/src/runtime/asm_amd64.s:1598 (0x106d2e0)
-	// goexit: BYTE	$0x90	// NOP
-	// [mysql] 2023/02/23 18:20:47 packets.go:37: unexpected EOF
-	db.SetConnMaxIdleTime(1000)
+	// See: https://github.com/go-sql-driver/mysql
+	// Important settings
+	db.SetConnMaxLifetime(time.Minute * 3)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(10)
 
 	return nil
 }
