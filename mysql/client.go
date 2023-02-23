@@ -20,6 +20,7 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	// "vitess.io/vitess/go/vt/vitessdriver"
 )
 
 // Client represents a client for MySQL server.
@@ -50,9 +51,14 @@ func (client *Client) Open() error {
 	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
-
-	client.db = db
-
+	/*
+		addr := fmt.Sprintf("%s:%d", client.Host, client.Port)
+		db, err := vitessdriver.Open(addr, "@primary")
+		if err != nil {
+			return err
+		}
+		client.db = db
+	*/
 	return nil
 }
 
