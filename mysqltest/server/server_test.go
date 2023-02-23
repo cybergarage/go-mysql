@@ -50,10 +50,11 @@ func TestServer(t *testing.T) {
 
 	for n, query := range testQueries {
 		t.Logf("[%d] %s", n, query)
-		_, err := client.Query(query)
+		rows, err := client.Query(query)
 		if err != nil {
 			t.Error(err)
 		}
+		defer rows.Close()
 	}
 
 	err = server.Stop()
