@@ -19,7 +19,7 @@ import (
 	"strconv"
 )
 
-// Server represents a MySQL compatible server.
+// Server represents a MySQL-compatible server.
 type Server struct {
 	AuthHandler
 	QueryHandler
