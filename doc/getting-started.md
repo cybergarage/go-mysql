@@ -1,10 +1,10 @@
 # Overview
 
-This section describes how to implement your MySQL-compatible serverusing `go-mysql`, and see  [Examples](doc/examples.md) about the sample implementation.
+This section describes how to implement your MySQL-compatible serverusing go-mysqld, and see  [Examples](doc/examples.md) about the sample implementation.
 
 ## STEP1: Inheriting Server
 
-`go-mysql` offers a core server, [mysql.Server](../mysql/server.go), and so inherit the core server in your instance as the following.
+go-mysqld offers a core server, [mysql.Server](../mysql/server.go), and so inherit the core server in your instance as the following.
 
 ```
 import (
@@ -42,7 +42,7 @@ func (server *MyServer) Insert(context.Context, *Conn, *query.Insert) (*Result, 
 ....
 ```
 
-`go-mysql` offers the stub query executor, [mysql.BaseExecutor](../mysql/executor_base.go) which returns a success status for any query requests.
+go-mysqld offers the stub query executor, [mysql.BaseExecutor](../mysql/executor_base.go) which returns a success status for any query requests.
 To inheriting the stub executor, you can start to implement only minimum query handle functions such as INSERT and SELECT.
 
 ## STEP3: Starting Server 

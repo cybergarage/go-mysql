@@ -12,7 +12,7 @@ The go-mysql handles [MySQL protocol](https://dev.mysql.com/doc/dev/mysql-server
 
 ![](doc/img/framework.png)
 
-Currentlu, the `go-mysql` is based on [Vitess](https://vitess.io) which is a sharding framework for [MySQL](https://www.mysql.com/), and the `go-mysql` makes it possible to implement your original [MySQL](https://www.mysql.com/)-compatible servers more easily reusing the binary protocol and query parser modules in [Vitess](https://vitess.io).
+Currentlu, the go-mysqld is based on [Vitess](https://vitess.io) which is a sharding framework for [MySQL](https://www.mysql.com/), and the go-mysqld makes it possible to implement your original [MySQL](https://www.mysql.com/)-compatible servers more easily reusing the binary protocol and query parser modules in [Vitess](https://vitess.io).
 
 ## Table of Contents
 
