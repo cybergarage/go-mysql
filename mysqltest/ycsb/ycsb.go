@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	ycsbTestRowCount = 10
+	ycsbTestRowCount = 1000
 )
 
 const (
