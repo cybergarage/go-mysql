@@ -31,7 +31,6 @@ const (
 const (
 	ycsbRoot            = "YCSB_ROOT"
 	ycsbDBPropertiesEnv = "YCSB_DB_PROPERTIES"
-	ycsbCpEnv           = "YCSB_CP"
 	ycsbWorkloadEnv     = "YCSB_WORKLOAD"
 	ycsbDatabaseName    = "ycsb"
 	ycsbDefaultWorkload = "workloada"
@@ -53,14 +52,12 @@ func RunYCSBWorkload(t *testing.T, defaultWorkload string) error {
 	ycsbEnvs := []string{
 		ycsbRoot,
 		ycsbDBPropertiesEnv,
-		ycsbCpEnv,
 		ycsbWorkloadEnv,
 	}
 
 	ycsbParams := []string{
 		"",
 		"db.properties",
-		"",
 		defaultWorkload,
 	}
 
@@ -85,7 +82,7 @@ func RunYCSBWorkload(t *testing.T, defaultWorkload string) error {
 		return err
 	}
 
-	workload := ycsbParams[3]
+	workload := ycsbParams[2]
 	workloadDir := filepath.Join(ycsbPath, "workloads")
 	workloadFile := filepath.Join(workloadDir, workload)
 
@@ -97,8 +94,6 @@ func RunYCSBWorkload(t *testing.T, defaultWorkload string) error {
 		workloadFile,
 		"-P",
 		ycsbParams[1],
-		"-cp",
-		ycsbParams[2],
 	}
 
 	ycsbWorkloadCmds := []string{
