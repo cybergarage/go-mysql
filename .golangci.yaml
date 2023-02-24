@@ -36,3 +36,4 @@ linters:
     - ifshort
     - nosnakecase
     - dupword
+    - interfacer
