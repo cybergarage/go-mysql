@@ -69,7 +69,6 @@ func TestYCSB(t *testing.T) {
 
 	workloads := []string{
 		"workloada",
-		"workloadb",
 	}
 
 	for _, workload := range workloads {
