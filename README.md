@@ -16,7 +16,7 @@ Currentlu, the go-mysqld is based on [Vitess](https://vitess.io) which is a shar
 
 ## Table of Contents
 
-- [How to implement a MySQL-compatible server?](doc/getting-started.md)
+- [Getting Started](doc/getting-started.md)
 
 ## Examples
 
