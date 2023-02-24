@@ -4,7 +4,7 @@
 
 The go-mysqld is a simple MySQL-compatible implementation using the go-mysqld. The sample implementation is a in-memory MySQL-compatible server, and it supports only a table and do not support any JOIN queries.
 ```
- go-mysqld is an example of implementing a compatible MySQL server using go-mysql.
+go-mysqld is an example of a compatible MySQL server implementation using go-mysql.
 	NAME
 	 go-mysqld
 
