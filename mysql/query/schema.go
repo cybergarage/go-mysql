@@ -94,7 +94,7 @@ func (schema *Schema) ToFields(db *Database) ([]*Field, error) {
 		case vitesspq.Type_BLOB, vitesspq.Type_TEXT:
 			field.Flags = field.Flags | uint32(vitesspq.MySqlFlag_BLOB_FLAG)
 		}
-		if !*column.Type.Options.Null {
+		if column.Type.Options.Null != nil && !*column.Type.Options.Null {
 			field.Flags = field.Flags | uint32(vitesspq.MySqlFlag_NOT_NULL_FLAG)
 		}
 		if column.Type.Options.KeyOpt == ColKeyPrimary {
