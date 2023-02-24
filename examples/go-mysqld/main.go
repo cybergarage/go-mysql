@@ -13,19 +13,20 @@
 // limitations under the License.
 
 /*
-	 go-mysqld is an example of implementing a compatible MySQL server using go-mysql.
-		NAME
-		 go-mysqld
+go-mysqld is an example of a compatible MySQL server implementation using go-mysql.
 
-		SYNOPSIS
-		 go-mysqld [OPTIONS]
+	NAME
+	 go-mysqld
 
-		OPTIONS
-		-v      : Enable verbose output.
-		-p      : Enable profiling.
+	SYNOPSIS
+	 go-mysqld [OPTIONS]
 
-		RETURN VALUE
-		  Return EXIT_SUCCESS or EXIT_FAILURE
+	OPTIONS
+	-v      : Enable verbose output.
+	-p      : Enable profiling.
+
+	RETURN VALUE
+	  Return EXIT_SUCCESS or EXIT_FAILURE
 */
 package main
 
@@ -33,14 +34,11 @@ import (
 	"flag"
 	"log"
 	"net/http"
-
-	// nolint
-	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"syscall"
 
-	mlog "github.com/cybergarage/go-logger/log"
+	clog "github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/examples/go-mysqld/server"
 )
 
@@ -49,18 +47,17 @@ const (
 )
 
 func main() {
-	// Command Line Options
-
 	isDebugEnabled := flag.Bool("debug", false, "enable debugging log output")
 	isProfileEnabled := flag.Bool("profile", false, "enable profiling server")
 	flag.Parse()
 
 	if *isDebugEnabled {
-		mlog.SetStdoutDebugEnbled(true)
+		clog.SetStdoutDebugEnbled(true)
 	}
 
 	if *isProfileEnabled {
 		go func() {
+			// nolint: gosec
 			log.Println(http.ListenAndServe("localhost:6060", nil))
 		}()
 	}
