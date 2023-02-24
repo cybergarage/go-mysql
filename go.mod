@@ -1,6 +1,6 @@
 module github.com/cybergarage/go-mysql
 
-go 1.18
+go 1.20
 
 require (
 	github.com/cybergarage/go-logger v1.3.0
