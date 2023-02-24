@@ -20,7 +20,7 @@ import (
 	"github.com/cybergarage/go-mysql/mysqltest/client"
 )
 
-const sqlTestDatabase = "test"
+const sqlTestDatabase = "tst"
 
 func RunSQLTestSuite(t *testing.T) {
 	t.Helper()
