@@ -1,4 +1,4 @@
-# Overview
+# Getting Started
 
 This section describes how to implement your MySQL-compatible serverusing go-mysqld, and see  [Examples](doc/examples.md) about the sample implementation.
 
