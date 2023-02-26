@@ -15,6 +15,7 @@
 package mysql
 
 import (
+	"sync"
 	"time"
 
 	vitessmy "vitess.io/vitess/go/mysql"
@@ -26,6 +27,7 @@ type Conn struct {
 	Database  string
 	UID       uint32
 	Timestamp time.Time
+	sync.Map
 }
 
 // newConn returns a connection with a default empty connection.
@@ -39,6 +41,7 @@ func NewConnWithConn(c *vitessmy.Conn) *Conn {
 		Conn:      c,
 		UID:       0,
 		Timestamp: time.Now(),
+		Map:       sync.Map{},
 	}
 
 	if c != nil {
