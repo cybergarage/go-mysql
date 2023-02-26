@@ -3,6 +3,9 @@
 ## v1.0.0 (2023-xx-xx)
 - Fix executor interfaces for major MySQL commands
 
+## v0.9.2 (2023-xx-xx)
+- Add sync.Map interface to mysql.Conn to store user data
+
 ## v0.9.1 (2023-02-23)
 - Upgrade to go 1.20
 - Upgrade to vitess v0.12.6
