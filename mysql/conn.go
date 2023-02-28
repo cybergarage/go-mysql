@@ -24,9 +24,9 @@ import (
 // Conn represents a connection of MySQL binary protocol.
 type Conn struct {
 	*vitessmy.Conn
-	Database  string
-	UID       uint32
-	Timestamp time.Time
+	db  string
+	uid uint32
+	ts  time.Time
 	sync.Map
 }
 
@@ -38,15 +38,35 @@ func newConn() *Conn {
 // NewConnWithConn returns a connection with a raw connection.
 func NewConnWithConn(c *vitessmy.Conn) *Conn {
 	conn := &Conn{
-		Conn:      c,
-		UID:       0,
-		Timestamp: time.Now(),
-		Map:       sync.Map{},
+		Conn: c,
+		uid:  0,
+		ts:   time.Now(),
+		Map:  sync.Map{},
 	}
 
 	if c != nil {
-		conn.UID = c.ConnectionID
+		conn.uid = c.ConnectionID
 	}
 
 	return conn
+}
+
+// SetDatabase sets th selected database to the connection.
+func (conn *Conn) SetDatabase(name string) {
+	conn.db = name
+}
+
+// Database returns the current selected database in the connection.
+func (conn *Conn) Database() string {
+	return conn.db
+}
+
+// ID returns the creation ID of the connection.
+func (conn *Conn) ID() uint32 {
+	return conn.uid
+}
+
+// Timestamp returns the creation time of the connection.
+func (conn *Conn) Timestamp() time.Time {
+	return conn.ts
 }
