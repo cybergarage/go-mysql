@@ -36,11 +36,11 @@ func (server *Server) ConnectionClosed(c *vitessmy.Conn) {
 }
 
 // ComInitDB is called once at the beginning to set db name, and subsequently for every ComInitDB event.
-func (server *Server) ComInitDB(c *vitessmy.Conn, schemaName string) {
-	log.Debugf("ComInitDB %v %d schema (%s)", c, c.ConnectionID, schemaName)
+func (server *Server) ComInitDB(c *vitessmy.Conn, dbName string) {
+	log.Debugf("ComInitDB %v %d schema (%s)", c, c.ConnectionID, dbName)
 	conn, ok := server.GetConnByUID(c.ConnectionID)
 	if ok {
-		conn.Database = schemaName
+		conn.SetDatabase(dbName)
 	}
 }
 
@@ -59,7 +59,7 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 		conn = NewConnWithConn(c)
 	}
 
-	log.Debugf("ComQuery %v %s query (%s)", conn, conn.Database, q)
+	log.Debugf("ComQuery %v %s query (%s)", conn, conn.Database(), q)
 
 	var res *Result
 
@@ -94,7 +94,7 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 			case "DATABASES":
 				res, err = executor.ShowDatabases(ctx, conn)
 			case "TABLES":
-				res, err = executor.ShowTables(ctx, conn, conn.Database)
+				res, err = executor.ShowTables(ctx, conn, conn.Database())
 			}
 			*/
 		case (*vitesssp.Insert):
@@ -106,7 +106,7 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 		case (*vitesssp.Delete):
 			res, err = executor.Delete(ctx, conn, query.NewDeleteWithDelete(v))
 		case (*query.Use):
-			conn.Database = v.DBName.String()
+			conn.SetDatabase(v.DBName.String())
 		}
 	}
 
