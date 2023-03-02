@@ -60,7 +60,7 @@ func (store *MemStore) AlterDatabase(ctx context.Context, conn *mysql.Conn, stmt
 
 // DropDatabase should handle a DROP database statement.
 func (store *MemStore) DropDatabase(ctx context.Context, conn *mysql.Conn, stmt *query.Database) (*mysql.Result, error) {
-	dbName := conn.Database
+	dbName := conn.Database()
 	db, ok := store.GetDatabase(dbName)
 	if !ok {
 		return nil, fmt.Errorf(errorDatabaseNotFound, dbName)
@@ -75,7 +75,7 @@ func (store *MemStore) DropDatabase(ctx context.Context, conn *mysql.Conn, stmt 
 
 // CreateTable should handle a CREATE table statement.
 func (store *MemStore) CreateTable(ctx context.Context, conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
-	dbName := conn.Database
+	dbName := conn.Database()
 	db, ok := store.GetDatabase(dbName)
 	if !ok {
 		return nil, fmt.Errorf(errorDatabaseNotFound, dbName)
@@ -101,7 +101,7 @@ func (store *MemStore) AlterTable(ctx context.Context, conn *mysql.Conn, stmt *q
 
 // DropTable should handle a DROP table statement.
 func (store *MemStore) DropTable(ctx context.Context, conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
-	dbName := conn.Database
+	dbName := conn.Database()
 	db, ok := store.GetDatabase(dbName)
 	if !ok {
 		return nil, fmt.Errorf(errorDatabaseNotFound, dbName)
@@ -134,7 +134,7 @@ func (store *MemStore) TruncateTable(ctx context.Context, conn *mysql.Conn, stmt
 // Insert should handle a INSERT statement.
 func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query.Insert) (*mysql.Result, error) {
 	log.Debugf("%v", stmt)
-	dbName := conn.Database
+	dbName := conn.Database()
 	tableName := stmt.TableName()
 	table, ok := store.GetTableWithDatabase(dbName, tableName)
 	if !ok {
@@ -159,7 +159,7 @@ func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query
 func (store *MemStore) Update(ctx context.Context, conn *mysql.Conn, stmt *query.Update) (*mysql.Result, error) {
 	log.Debugf("%v", stmt)
 
-	dbName := conn.Database
+	dbName := conn.Database()
 	cond := stmt.Where
 
 	database, ok := store.GetDatabase(dbName)
@@ -195,7 +195,7 @@ func (store *MemStore) Update(ctx context.Context, conn *mysql.Conn, stmt *query
 
 // Delete should handle a DELETE statement.
 func (store *MemStore) Delete(ctx context.Context, conn *mysql.Conn, stmt *query.Delete) (*mysql.Result, error) {
-	dbName := conn.Database
+	dbName := conn.Database()
 	cond := stmt.Where
 
 	database, ok := store.GetDatabase(dbName)
@@ -228,7 +228,7 @@ func (store *MemStore) Delete(ctx context.Context, conn *mysql.Conn, stmt *query
 func (store *MemStore) Select(ctx context.Context, conn *mysql.Conn, stmt *query.Select) (*mysql.Result, error) {
 	log.Debugf("%v", stmt)
 
-	dbName := conn.Database
+	dbName := conn.Database()
 	database, ok := store.GetDatabase(dbName)
 	if !ok {
 		return nil, fmt.Errorf(errorDatabaseFound, dbName)
