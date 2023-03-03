@@ -98,6 +98,9 @@ type Explain = vitesssp.Explain
 // ColumnDefinition describes a column in a CREATE TABLE statement.
 type ColumnDefinition = vitesssp.ColumnDefinition
 
+// IndexDefinition describes an index in a CREATE TABLE statement.
+type IndexDefinition = vitesssp.IndexDefinition
+
 // UpdateExprs represents a list of update expressions.
 type UpdateExprs = vitesssp.UpdateExprs
 
