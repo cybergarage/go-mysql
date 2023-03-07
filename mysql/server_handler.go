@@ -110,7 +110,11 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 		}
 	}
 
-	if err != nil || res == nil {
+	if err != nil {
+		return err
+	}
+
+	if res == nil {
 		res = &Result{
 			Rows: [][]Value{},
 		}
