@@ -20,3 +20,18 @@ import (
 
 // Condition represents a WHERE or HAVING clause.
 type Condition = vitesssp.Where
+
+// ComparisonExpr represents a two-value comparison expression.
+type ComparisonExpr = vitesssp.ComparisonExpr
+
+// AndExpr represents an AND expression.
+type AndExpr = vitesssp.AndExpr
+
+// OrExpr represents an OR expression.
+type OrExpr = vitesssp.OrExpr
+
+// XorExpr represents an XOR expression.
+type XorExpr = vitesssp.XorExpr
+
+// NotExpr represents a NOT expression.
+type NotExpr = vitesssp.NotExpr
