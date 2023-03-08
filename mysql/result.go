@@ -34,9 +34,9 @@ type BindVariable = vitesspq.BindVariable
 // Value represents a value.
 type Value = vitessst.Value
 
-// NewValue builds a Value using typ and val. If the value and typ
+// NewValueWith builds a Value using typ and val. If the value and typ
 // don't match, it returns an error.
-func NewValue(typ vitesspq.Type, val []byte) (Value, error) {
+func NewValueWith(typ vitesspq.Type, val []byte) (Value, error) {
 	return vitessst.NewValue(typ, val)
 }
 
