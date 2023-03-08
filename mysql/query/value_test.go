@@ -39,7 +39,8 @@ func TestSetValues(t *testing.T) {
 	}
 
 	for n, testValue := range testValues {
-		value, err := NewValueWithValue(testValue)
+		value := NewValue()
+		err := value.SetValue(testValue)
 		if err != nil {
 			t.Error(err)
 			continue

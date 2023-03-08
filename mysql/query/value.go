@@ -58,18 +58,12 @@ func NewValue() *Value {
 	return &Value{}
 }
 
-// NewValueWithType creates a query value with the specified type.
-func NewValueWithType(val interface{}, valType ValType) *Value {
+// NewValueWith creates a query value with the specified type.
+func NewValueWith(valType ValType, val interface{}) *Value {
 	return &Value{
 		typ:   valType,
 		value: val,
 	}
-}
-
-// NewValueWithValue creates a query value from the raw SQL value.
-func NewValueWithValue(val interface{}) (*Value, error) {
-	value := NewValue()
-	return value, value.SetValue(val)
 }
 
 // SetType sets a value type.
