@@ -40,6 +40,11 @@ func NewValueWith(typ vitesspq.Type, val []byte) (Value, error) {
 	return vitessst.NewValue(typ, val)
 }
 
+// NULL represents the NULL value.
+func NewNullValue() Value {
+	return vitessst.NULL
+}
+
 // NewResult returns a successful result without any data.
 func NewResult() *Result {
 	res := &Result{
