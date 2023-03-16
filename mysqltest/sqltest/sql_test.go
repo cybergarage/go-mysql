@@ -15,36 +15,25 @@
 package sqltest
 
 import (
-	"path"
 	"testing"
 
-	"github.com/cybergarage/go-mysql/mysqltest/client"
+	"github.com/cybergarage/go-mysql/mysqltest/server"
+	"github.com/cybergarage/go-sqltest/sqltest"
 )
 
-func RunSQLTestFiles(t *testing.T, testFilenames []string) {
-	t.Helper()
+// TestSQLTest is a temporary debug test to check only the specified test cases.
+func TestSQLTest(t *testing.T) {
+	testFilenames := []string{
+		// NOTE: Add your test files in 'untests' directory into the filename array
+	}
 
-	client := client.NewDefaultClient()
-	client.SetDatabase(sqlTestDatabase)
-	err := client.CreateDatabase(sqlTestDatabase)
+	server := server.NewServer()
+	err := server.Start()
 	if err != nil {
 		t.Error(err)
+		return
 	}
+	defer server.Stop()
 
-	for _, testFilename := range testFilenames {
-		t.Run(testFilename, func(t *testing.T) {
-			ct := NewSQLTest()
-			err = ct.LoadFile(path.Join(SQLTestSuiteDefaultTestDirectory, testFilename))
-			if err != nil {
-				t.Error(err)
-				return
-			}
-			ct.SetClient(client)
-
-			err = ct.Run()
-			if err != nil {
-				t.Error(err)
-			}
-		})
-	}
+	sqltest.RunSQLTestFiles(t, testFilenames)
 }

@@ -16,27 +16,23 @@ package sqltest
 
 import (
 	"testing"
+
+	"github.com/cybergarage/go-logger/log"
+	"github.com/cybergarage/go-mysql/mysqltest/server"
+	"github.com/cybergarage/go-sqltest/sqltest"
 )
 
-func TestSQLScenario(t *testing.T) {
-	testLines := []string{
-		"USE system",
-		"{",
-		"}",
-		"SELECT * FROM system.local",
-		"{",
-		"}",
-	}
+// TestSQLTestSuite runs already passed scenario test files.
+func TestSQLTestSuite(t *testing.T) {
+	log.SetStdoutDebugEnbled(true)
 
-	s := NewSQLScenario()
-	err := s.ParseLineStrings(testLines)
+	server := server.NewServer()
+	err := server.Start()
 	if err != nil {
 		t.Error(err)
 		return
 	}
+	defer server.Stop()
 
-	err = s.IsValid()
-	if err != nil {
-		t.Error(err)
-	}
+	sqltest.RunSQLTestSuite(t)
 }
