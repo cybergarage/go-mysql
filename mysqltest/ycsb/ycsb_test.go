@@ -18,8 +18,8 @@ import (
 	"testing"
 
 	"github.com/cybergarage/go-logger/log"
-	"github.com/cybergarage/go-mysql/mysqltest/client"
 	"github.com/cybergarage/go-mysql/mysqltest/server"
+	"github.com/cybergarage/go-sqltest/sqltest"
 )
 
 func TestYCSB(t *testing.T) {
@@ -35,7 +35,7 @@ func TestYCSB(t *testing.T) {
 
 	// Setup client
 
-	client := client.NewDefaultClient()
+	client := sqltest.NewClient()
 	client.SetDatabase(ycsbDatabaseName)
 	err = client.CreateDatabase(ycsbDatabaseName)
 	if err != nil {
