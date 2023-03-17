@@ -34,5 +34,5 @@ func TestSQLTestSuite(t *testing.T) {
 	}
 	defer server.Stop()
 
-	sqltest.RunSQLTestSuite(t)
+	sqltest.RunSQLTestSuite(t, sqltest.NewMySQLClient())
 }
