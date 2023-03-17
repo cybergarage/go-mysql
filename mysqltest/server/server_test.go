@@ -18,7 +18,7 @@ import (
 	"testing"
 
 	"github.com/cybergarage/go-logger/log"
-	"github.com/cybergarage/go-mysql/mysqltest/client"
+	"github.com/cybergarage/go-sqltest/sqltest"
 )
 
 var testQueries []string = []string{
@@ -40,7 +40,7 @@ func TestServer(t *testing.T) {
 		return
 	}
 
-	client := client.NewDefaultClient()
+	client := sqltest.NewClient()
 	client.SetDatabase("ycsb")
 	err = client.Open()
 	defer client.Close()
