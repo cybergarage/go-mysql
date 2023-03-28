@@ -64,10 +64,10 @@ github.com/cncf/udpa/go v0.0.0-20210930031921-04548b0d99d4/go.mod h1:6pvJx4me5XP
 github.com/cncf/xds/go v0.0.0-20210805033703-aa0b78936158/go.mod h1:eXthEFrGJvWHgFFCl3hGmgk+/aYT6PnTQLykKQRLhEs=
 github.com/cncf/xds/go v0.0.0-20210922020428-25de7278fc84/go.mod h1:eXthEFrGJvWHgFFCl3hGmgk+/aYT6PnTQLykKQRLhEs=
 github.com/cncf/xds/go v0.0.0-20211011173535-cb28da3451f1/go.mod h1:eXthEFrGJvWHgFFCl3hGmgk+/aYT6PnTQLykKQRLhEs=
-github.com/cybergarage/go-logger v1.3.2 h1:eFLeIsBS5/bRpyQoh8QoGX8sTUfdGww1P/dT41Qa9BY=
-github.com/cybergarage/go-logger v1.3.2/go.mod h1:4N4xo4/FUVjvc0mILUwFItBGhVglCPN4hSLK38zRLTk=
-github.com/cybergarage/go-sqltest v0.9.1 h1:7lYIi8Tzk5bIMjc17ZXyqPg1A2eIa1ESMZdd8e6I8M0=
-github.com/cybergarage/go-sqltest v0.9.1/go.mod h1:McSUrZEH5nC+4w3lBO1I4NBREIGJd8nUBVtBLiNZgl4=
+github.com/cybergarage/go-logger v1.3.3 h1:ppR2jxOxjo5Q47HEAZdqfKEK84hRmtrhzedbxaoHeJw=
+github.com/cybergarage/go-logger v1.3.3/go.mod h1:2iMjinHam5oqyKEGsKIzeQQmmOPxpCgro95LOlEC2ks=
+github.com/cybergarage/go-sqltest v0.9.2 h1:/pybi/2K1n0keyOkcQNyqV4wxyr63Om6lP76XHS8b7w=
+github.com/cybergarage/go-sqltest v0.9.2/go.mod h1:McSUrZEH5nC+4w3lBO1I4NBREIGJd8nUBVtBLiNZgl4=
 github.com/cyphar/filepath-securejoin v0.2.3 h1:YX6ebbZCZP7VkM3scTTokDgBL2TY741X51MTk3ycuNI=
 github.com/cyphar/filepath-securejoin v0.2.3/go.mod h1:aPGpWjXOXUn2NCNjFvBE6aRxGGx79pTxQpKOJNYHHl4=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
