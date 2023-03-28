@@ -3,7 +3,10 @@
 ## v1.0.0 (2023-xx-xx)
 - Fix executor interfaces for major MySQL commands
 
-## v0.9.2 (2023-xx-xx)
+## v0.9.3 (2023-xx-xx)
+
+## v0.9.2 (2023-03-28)
+- Update mysqltest using go-sqltest
 - Add sync.Map interface to mysql.Conn to store user data
 
 ## v0.9.1 (2023-02-23)
