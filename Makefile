@@ -18,7 +18,9 @@ PREFIX?=$(shell pwd)
 
 GIT_ROOT=github.com/cybergarage/
 PRODUCT_NAME=go-mysql
+
 PKG_NAME=mysql
+PKG_VER=$(shell git describe --abbrev=0 --tags)
 
 MODULE_ROOT=${PKG_NAME}
 MODULE_PKG_ROOT=${GIT_ROOT}${PRODUCT_NAME}/${MODULE_ROOT}
@@ -32,6 +34,7 @@ MODULE_PKGS=\
 
 EXAMPLES_ROOT=examples
 EXAMPLES_DEAMON_BIN=go-mysqld
+EXAMPLES_DOCKER_TAG=cybergarage/${EXAMPLES_DEAMON_BIN}:${PKG_VER}
 EXAMPLES_PKG_ROOT=${GIT_ROOT}${PRODUCT_NAME}/${EXAMPLES_ROOT}
 EXAMPLES_SRC_DIR=${EXAMPLES_ROOT}
 EXAMPLES_SRCS=\
@@ -91,14 +94,23 @@ vet: format
 lint: vet
 	golangci-lint run ${ALL_SRCS}
 
-build: vet
-	go build -v ${MODULE_PKGS}
-
 test: lint
 	go test -v -cover -p=1 ${ALL_PKGS}
 
+image: test
+	docker image build -t ${EXAMPLES_DOCKER_TAG} .
+
+build: test
+	go build  -v -gcflags=${GCFLAGS} ${BINARIES}
+
 install: build
 	go install -v -gcflags=${GCFLAGS} ${BINARIES}
+
+# run: image
+# 	docker container run -it --rm -p 27017:27017 ${EXAMPLES_DOCKER_TAG}
+
+run: build
+	./go-mongod
 
 clean:
 	go clean -i ${ALL_PKGS}
