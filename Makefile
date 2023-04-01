@@ -107,7 +107,7 @@ install: build
 	go install -v -gcflags=${GCFLAGS} ${BINARIES}
 
 # run: image
-# 	docker container run -it --rm -p 27017:27017 ${EXAMPLES_DOCKER_TAG}
+# 	docker container run -it --rm -p 3307:3307 ${EXAMPLES_DOCKER_TAG}
 
 run: build
 	./go-mongod
