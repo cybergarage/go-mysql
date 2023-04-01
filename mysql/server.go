@@ -16,7 +16,10 @@ package mysql
 
 import (
 	"net"
+	"os"
 	"strconv"
+
+	"github.com/cybergarage/go-logger/log"
 )
 
 // Server represents a MySQL-compatible server.
@@ -62,6 +65,8 @@ func (server *Server) Start() error {
 
 	go server.listener.Accept()
 
+	log.Infof("%s/%s (PID:%d) started", PackageName, Version, os.Getpid())
+
 	return nil
 }
 
@@ -71,6 +76,9 @@ func (server *Server) Stop() error {
 		server.listener.Close()
 		server.listener = nil
 	}
+
+	log.Infof("%s/%s (PID:%d) terminated", PackageName, Version, os.Getpid())
+
 	return nil
 }
 
