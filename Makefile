@@ -104,7 +104,7 @@ install: build
 	go install -v -gcflags=${GCFLAGS} ${BINARIES}
 
 run: build
-	./go-mongod
+	./${EXAMPLES_DEAMON_BIN}
 
 image: test
 	docker image build -t ${EXAMPLES_DOCKER_TAG} .
