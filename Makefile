@@ -81,11 +81,14 @@ ALL_PKGS=\
 
 BINARIES=${EXAMPLE_BINARIES}
 
-.PHONY: clean test
+.PHONY: version clean test
 
 all: test
 
-format:
+version:
+	@pushd ${MODULE_SRC_DIR} && ./version.gen > version.go && popd
+
+format: version
 	gofmt -s -w ${ALL_ROOTS}
 
 vet: format
