@@ -4,6 +4,8 @@
 - Fix executor interfaces for major MySQL commands
 
 ## v0.9.3 (2023-xx-xx)
+- Add connection logs
+- Add Dockerfile
 
 ## v0.9.2 (2023-03-28)
 - Update mysqltest using go-sqltest
