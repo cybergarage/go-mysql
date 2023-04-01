@@ -97,20 +97,20 @@ lint: vet
 test: lint
 	go test -v -cover -p=1 ${ALL_PKGS}
 
-image: test
-	docker image build -t ${EXAMPLES_DOCKER_TAG} .
-
 build: test
 	go build  -v -gcflags=${GCFLAGS} ${BINARIES}
 
 install: build
 	go install -v -gcflags=${GCFLAGS} ${BINARIES}
 
-# run: image
-# 	docker container run -it --rm -p 3307:3307 ${EXAMPLES_DOCKER_TAG}
-
 run: build
 	./go-mongod
+
+image: test
+	docker image build -t ${EXAMPLES_DOCKER_TAG} .
+
+rund: image
+	docker container run -it --rm -p 3307:3307 ${EXAMPLES_DOCKER_TAG}
 
 clean:
 	go clean -i ${ALL_PKGS}
