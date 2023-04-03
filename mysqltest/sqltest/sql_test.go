@@ -35,5 +35,5 @@ func TestSQLTest(t *testing.T) {
 	}
 	defer server.Stop()
 
-	sqltest.RunSQLTestFiles(t, testFilenames)
+	sqltest.RunScenarioTestFiles(t, testFilenames)
 }
