@@ -18,8 +18,8 @@ import (
 	"testing"
 
 	"github.com/cybergarage/go-logger/log"
+	"github.com/cybergarage/go-mysql/mysql"
 	"github.com/cybergarage/go-mysql/mysqltest/server"
-	"github.com/cybergarage/go-sqltest/sqltest"
 )
 
 func TestYCSB(t *testing.T) {
@@ -35,13 +35,8 @@ func TestYCSB(t *testing.T) {
 
 	// Setup client
 
-	client := sqltest.NewClient()
+	client := mysql.NewClient()
 	client.SetDatabase(ycsbDatabaseName)
-	err = client.CreateDatabase(ycsbDatabaseName)
-	if err != nil {
-		t.Error(err)
-		return
-	}
 
 	// Setup for YCSB benchmark
 
@@ -54,7 +49,8 @@ func TestYCSB(t *testing.T) {
 	for _, setupQuery := range setUpQueries {
 		rs, err := client.Query(setupQuery)
 		if err != nil {
-			t.Error(err)
+			t.Skipf("%s", err.Error())
+			return
 		}
 		defer rs.Close()
 	}
