@@ -20,10 +20,12 @@ import (
 	"strconv"
 
 	"github.com/cybergarage/go-logger/log"
+	"github.com/cybergarage/go-tracing/tracer"
 )
 
 // Server represents a MySQL-compatible server.
 type Server struct {
+	tracer.Tracer
 	AuthHandler
 	QueryHandler
 	*Config
@@ -36,12 +38,18 @@ type Server struct {
 func NewServer() *Server {
 	server := &Server{
 		Config:        NewDefaultConfig(),
+		Tracer:        nil,
 		AuthHandler:   NewDefaultAuthHandler(),
 		QueryHandler:  nil,
 		queryExecutor: nil,
 		ConnMap:       NewConnMap(),
 	}
 	return server
+}
+
+// SetTracer sets a tracing tracer.
+func (server *Server) SetTracer(t tracer.Tracer) {
+	server.Tracer = t
 }
 
 // SetAuthHandler sets a user authentication handler.
