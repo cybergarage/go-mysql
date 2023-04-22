@@ -70,6 +70,8 @@ github.com/cybergarage/go-sqltest v0.9.3 h1:/njRN6rkuc/NvTkvT/AW+0jntAd0w6Q8PHiF
 github.com/cybergarage/go-sqltest v0.9.3/go.mod h1:CQkUZIyjHsxe0YqRRSvxiWanbDgLcFYAhz/6FQP7vqs=
 github.com/cybergarage/go-tracing v0.8.0 h1:zM62QvgDMLX/yQxwiB6/J+hQCA6cAZFwmMCNRMFYsaQ=
 github.com/cybergarage/go-tracing v0.8.0/go.mod h1:KN09KvqpypNVvEUg/Tn8Id14XQbwEUlzfLFppFmnRr8=
+github.com/cybergarage/go-tracing v0.8.1 h1:Q6UbJpBp6ZDsRY5Ux7uRnKyfuEpMGC8+ZT4jHnmxNbI=
+github.com/cybergarage/go-tracing v0.8.1/go.mod h1:KN09KvqpypNVvEUg/Tn8Id14XQbwEUlzfLFppFmnRr8=
 github.com/cyphar/filepath-securejoin v0.2.3 h1:YX6ebbZCZP7VkM3scTTokDgBL2TY741X51MTk3ycuNI=
 github.com/cyphar/filepath-securejoin v0.2.3/go.mod h1:aPGpWjXOXUn2NCNjFvBE6aRxGGx79pTxQpKOJNYHHl4=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
