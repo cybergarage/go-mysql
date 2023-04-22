@@ -18,6 +18,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/cybergarage/go-tracing/tracer"
 	vitessmy "vitess.io/vitess/go/mysql"
 )
 
@@ -28,6 +29,7 @@ type Conn struct {
 	uid uint32
 	ts  time.Time
 	sync.Map
+	tracer.SpanContext
 }
 
 // newConn returns a connection with a default empty connection.
