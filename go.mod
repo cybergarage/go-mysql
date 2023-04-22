@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/cybergarage/go-logger v1.3.3
 	github.com/cybergarage/go-sqltest v0.9.3
+	github.com/cybergarage/go-tracing v0.8.0
 	github.com/go-sql-driver/mysql v1.7.0
 	vitess.io/vitess v0.12.6
 )
@@ -20,7 +21,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
 	github.com/opentracing-contrib/go-grpc v0.0.0-20180928155321-4b5a12d3ff02 // indirect
-	github.com/opentracing/opentracing-go v1.1.0 // indirect
+	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/philhofer/fwd v1.0.0 // indirect
 	github.com/pires/go-proxyproto v0.6.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
