@@ -58,9 +58,7 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 	if !ok {
 		conn = NewConnWithConn(c)
 	}
-	if server.Tracer != nil {
-		conn.SpanContext = server.Tracer.StartSpan(spanQuery)
-	}
+	conn.SpanContext = server.Tracer.StartSpan(spanQuery)
 
 	log.Debugf("ComQuery %v %s query (%s)", conn, conn.Database(), q)
 

@@ -38,7 +38,7 @@ type Server struct {
 func NewServer() *Server {
 	server := &Server{
 		Config:        NewDefaultConfig(),
-		Tracer:        nil,
+		Tracer:        tracer.NullTracer,
 		AuthHandler:   NewDefaultAuthHandler(),
 		QueryHandler:  nil,
 		queryExecutor: nil,
