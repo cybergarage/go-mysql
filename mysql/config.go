@@ -15,7 +15,7 @@
 package mysql
 
 const (
-	defaultHost = "127.0.0.1"
+	defaultHost = ""
 	defaultPort = 3306
 )
 
