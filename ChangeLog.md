@@ -3,6 +3,9 @@
 ## v1.0.0 (2023-xx-xx)
 - Fix executor interfaces for major MySQL commands
 
+## v0.9.5 (2023-xx-xx)
+- Update logger functions to output more detail messages
+
 ## v0.9.4 (2023-04-23)
 - Add tracing interface
 
