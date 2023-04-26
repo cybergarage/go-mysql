@@ -16,7 +16,6 @@ package mysql
 
 import (
 	"net"
-	"os"
 	"strconv"
 
 	"github.com/cybergarage/go-logger/log"
@@ -73,7 +72,7 @@ func (server *Server) Start() error {
 
 	go server.listener.Accept()
 
-	log.Infof("%s/%s (PID:%d) started", PackageName, Version, os.Getpid())
+	log.Infof("%s/%s (%s) started", PackageName, Version, hostPort)
 
 	return nil
 }
@@ -85,7 +84,8 @@ func (server *Server) Stop() error {
 		server.listener = nil
 	}
 
-	log.Infof("%s/%s (PID:%d) terminated", PackageName, Version, os.Getpid())
+	hostPort := net.JoinHostPort(server.Address, strconv.Itoa(server.Port))
+	log.Infof("%s/%s (%s) terminated", PackageName, Version, hostPort)
 
 	return nil
 }
