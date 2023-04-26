@@ -21,7 +21,7 @@ const (
 
 // Config stores server configuration parammeters.
 type Config struct {
-	Host     string
+	Address  string
 	Port     int
 	Database string
 }
@@ -29,15 +29,15 @@ type Config struct {
 // NewDefaultConfig returns a default configuration instance.
 func NewDefaultConfig() *Config {
 	config := &Config{
-		Host: defaultHost,
-		Port: defaultPort,
+		Address: defaultHost,
+		Port:    defaultPort,
 	}
 	return config
 }
 
-// SetHost sets a host address.
-func (config *Config) SetHost(host string) {
-	config.Host = host
+// SetAddress sets a listen address.
+func (config *Config) SetAddress(host string) {
+	config.Address = host
 }
 
 // SetPort sets a listen port.

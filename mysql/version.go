@@ -15,5 +15,5 @@
 package mysql
 
 const (
-	Version = "v0.9.5"
+	Version = "v0.9.4"
 )

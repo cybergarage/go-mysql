@@ -64,7 +64,7 @@ func (server *Server) SetQueryExecutor(e QueryExecutor) {
 
 // Start starts the server.
 func (server *Server) Start() error {
-	hostPort := net.JoinHostPort(server.Host, strconv.Itoa(server.Port))
+	hostPort := net.JoinHostPort(server.Address, strconv.Itoa(server.Port))
 	l, err := NewListener("tcp", hostPort, server, server, 0, 0, false)
 	if err != nil {
 		return err
