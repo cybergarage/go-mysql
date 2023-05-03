@@ -15,7 +15,7 @@
 package mysql
 
 const (
-	defaultHost = ""
+	defaultAddr = ""
 	defaultPort = 3306
 )
 
@@ -29,7 +29,7 @@ type Config struct {
 // NewDefaultConfig returns a default configuration instance.
 func NewDefaultConfig() *Config {
 	config := &Config{
-		Address: defaultHost,
+		Address: defaultAddr,
 		Port:    defaultPort,
 	}
 	return config
