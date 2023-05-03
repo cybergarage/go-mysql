@@ -1,9 +1,10 @@
 # Changelog
 
-## v1.0.0 (2023-xx-xx)
-- Fix executor interfaces for major MySQL commands
+## v1.1.0 (2023-xx-xx)
+- Update executor interfaces for major MySQL commands
 
-## v0.9.5 (2023-xx-xx)
+## v1.0.0 (2023-05-04)
+- Fix executor interfaces for basic MySQL commands
 - Update logger functions to output more detail messages
 
 ## v0.9.4 (2023-04-23)
