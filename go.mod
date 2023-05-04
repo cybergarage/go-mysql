@@ -3,7 +3,7 @@ module github.com/cybergarage/go-mysql
 go 1.20
 
 require (
-	github.com/cybergarage/go-logger v1.3.3
+	github.com/cybergarage/go-logger v1.3.4
 	github.com/cybergarage/go-sqltest v0.9.4
 	github.com/cybergarage/go-tracing v1.0.0
 	github.com/go-sql-driver/mysql v1.7.0
@@ -34,6 +34,7 @@ require (
 	github.com/tinylib/msgp v1.1.1 // indirect
 	github.com/uber/jaeger-client-go v2.30.0+incompatible // indirect
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
+	go.uber.org/atomic v1.10.0 // indirect
 	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/sys v0.7.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
