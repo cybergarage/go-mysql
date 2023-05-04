@@ -15,8 +15,6 @@
 package mysql
 
 import (
-	"context"
-
 	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/mysql/query"
 )
@@ -35,85 +33,85 @@ func NewBaseExecutor() *BaseExecutor {
 }
 
 // CreateDatabase should handle a CREATE database statement.
-func (executor *BaseExecutor) CreateDatabase(ctx context.Context, conn *Conn, stmt *query.Database) (*Result, error) {
+func (executor *BaseExecutor) CreateDatabase(conn *Conn, stmt *query.Database) (*Result, error) {
 	log.Debugf(baseExecutorNotImplemented, stmt)
 	return NewResult(), nil
 }
 
 // AlterDatabase should handle a ALTER database statement.
-func (executor *BaseExecutor) AlterDatabase(ctx context.Context, conn *Conn, stmt *query.Database) (*Result, error) {
+func (executor *BaseExecutor) AlterDatabase(conn *Conn, stmt *query.Database) (*Result, error) {
 	log.Debugf(baseExecutorNotImplemented, stmt)
 	return NewResult(), nil
 }
 
 // DropDatabase should handle a DROP database statement.
-func (executor *BaseExecutor) DropDatabase(ctx context.Context, conn *Conn, stmt *query.Database) (*Result, error) {
+func (executor *BaseExecutor) DropDatabase(conn *Conn, stmt *query.Database) (*Result, error) {
 	log.Debugf(baseExecutorNotImplemented, stmt)
 	return NewResult(), nil
 }
 
 // CreateTable should handle a CREATE table statement.
-func (executor *BaseExecutor) CreateTable(ctx context.Context, conn *Conn, stmt *query.Schema) (*Result, error) {
+func (executor *BaseExecutor) CreateTable(conn *Conn, stmt *query.Schema) (*Result, error) {
 	log.Debugf(baseExecutorNotImplemented, stmt)
 	return NewResult(), nil
 }
 
 // AlterTable should handle a ALTER table statement.
-func (executor *BaseExecutor) AlterTable(ctx context.Context, conn *Conn, stmt *query.Schema) (*Result, error) {
+func (executor *BaseExecutor) AlterTable(conn *Conn, stmt *query.Schema) (*Result, error) {
 	log.Debugf(baseExecutorNotImplemented, stmt)
 	return NewResult(), nil
 }
 
 // DropTable should handle a DROP table statement.
-func (executor *BaseExecutor) DropTable(ctx context.Context, conn *Conn, stmt *query.Schema) (*Result, error) {
+func (executor *BaseExecutor) DropTable(conn *Conn, stmt *query.Schema) (*Result, error) {
 	log.Debugf(baseExecutorNotImplemented, stmt)
 	return NewResult(), nil
 }
 
 // RenameTable should handle a RENAME table statement.
-func (executor *BaseExecutor) RenameTable(ctx context.Context, conn *Conn, stmt *query.Schema) (*Result, error) {
+func (executor *BaseExecutor) RenameTable(conn *Conn, stmt *query.Schema) (*Result, error) {
 	log.Debugf(baseExecutorNotImplemented, stmt)
 	return NewResult(), nil
 }
 
 // TruncateTable should handle a TRUNCATE table statement.
-func (executor *BaseExecutor) TruncateTable(ctx context.Context, conn *Conn, stmt *query.Schema) (*Result, error) {
+func (executor *BaseExecutor) TruncateTable(conn *Conn, stmt *query.Schema) (*Result, error) {
 	log.Debugf(baseExecutorNotImplemented, stmt)
 	return NewResult(), nil
 }
 
 // Insert should handle a INSERT statement.
-func (executor *BaseExecutor) Insert(ctx context.Context, conn *Conn, stmt *query.Insert) (*Result, error) {
+func (executor *BaseExecutor) Insert(conn *Conn, stmt *query.Insert) (*Result, error) {
 	log.Debugf(baseExecutorNotImplemented, stmt)
 	return NewResult(), nil
 }
 
 // Update should handle a UPDATE statement.
-func (executor *BaseExecutor) Update(ctx context.Context, conn *Conn, stmt *query.Update) (*Result, error) {
+func (executor *BaseExecutor) Update(conn *Conn, stmt *query.Update) (*Result, error) {
 	log.Debugf(baseExecutorNotImplemented, stmt)
 	return NewResult(), nil
 }
 
 // Delete should handle a DELETE statement.
-func (executor *BaseExecutor) Delete(ctx context.Context, conn *Conn, stmt *query.Delete) (*Result, error) {
+func (executor *BaseExecutor) Delete(conn *Conn, stmt *query.Delete) (*Result, error) {
 	log.Debugf(baseExecutorNotImplemented, stmt)
 	return NewResult(), nil
 }
 
 // Select should handle a SELECT statement.
-func (executor *BaseExecutor) Select(ctx context.Context, conn *Conn, stmt *query.Select) (*Result, error) {
+func (executor *BaseExecutor) Select(conn *Conn, stmt *query.Select) (*Result, error) {
 	log.Debugf(baseExecutorNotImplemented, stmt)
 	return NewResult(), nil
 }
 
 // ShowDatabases should handle a SHOW DATABASES statement.
-func (executor *BaseExecutor) ShowDatabases(ctx context.Context, conn *Conn) (*Result, error) {
+func (executor *BaseExecutor) ShowDatabases(conn *Conn) (*Result, error) {
 	log.Debugf(baseExecutorNotImplemented, "ShowDatabases")
 	return NewResult(), nil
 }
 
 // ShowTables should handle a SHOW TABLES statement.
-func (executor *BaseExecutor) ShowTables(ctx context.Context, conn *Conn, database string) (*Result, error) {
+func (executor *BaseExecutor) ShowTables(conn *Conn, database string) (*Result, error) {
 	log.Debugf(baseExecutorNotImplemented, "ShowTables")
 	return NewResult(), nil
 }
