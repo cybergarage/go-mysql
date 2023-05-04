@@ -5,6 +5,7 @@
 
 ## v1.0.1 (2023-05-04)
 - Update Conn interface
+- Remove debug log messages
 
 ## v1.0.0 (2023-05-04)
 - Fix executor interfaces for basic MySQL commands
