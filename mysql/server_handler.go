@@ -16,13 +16,15 @@ package mysql
 
 import (
 	"github.com/cybergarage/go-mysql/mysql/query"
+	"github.com/cybergarage/go-tracing/tracer"
 	vitessmy "vitess.io/vitess/go/mysql"
 	vitesssp "vitess.io/vitess/go/vt/sqlparser"
 )
 
 // NewConnection is called when a connection is created.
 func (server *Server) NewConnection(c *vitessmy.Conn) {
-	server.AddConn(NewConnWithConn(c))
+	conn := NewConnWith(tracer.NewNullTracer().StartSpan(""), c)
+	server.AddConn(conn)
 }
 
 // ConnectionClosed is called when a connection is closed.
@@ -41,19 +43,23 @@ func (server *Server) ComInitDB(c *vitessmy.Conn, dbName string) {
 // ComQuery is called when a connection receives a query.
 // nolint: exhaustive
 func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result) error) error {
+	spanCtx := server.Tracer.StartSpan(PackageName)
+	defer spanCtx.Span().Finish()
+
+	conn, ok := server.GetConnByUID(c.ConnectionID)
+	if ok {
+		conn.SetSpanContext(spanCtx)
+	} else {
+		conn = NewConnWith(spanCtx, c)
+	}
+
+	conn.StartSpan("parse")
 	parser := query.NewParser()
 	stmt, err := parser.Parse(q)
+	conn.FinishSpan()
 	if err != nil {
 		return err
 	}
-
-	conn, ok := server.GetConnByUID(c.ConnectionID)
-	if !ok {
-		conn = NewConnWithConn(c)
-	}
-	span := server.Tracer.StartSpan(PackageName)
-	conn.SetSpanContext(span)
-	defer span.Span().Finish()
 
 	var res *Result
 
@@ -63,39 +69,39 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 		case (query.DBDDL):
 			switch v := v.(type) {
 			case *vitesssp.CreateDatabase:
-				s := conn.SpanContext().Span().StartSpan("CreateDatabase")
-				defer s.Span().Finish()
+				conn.StartSpan("CreateDatabase")
+				defer conn.FinishSpan()
 				res, err = executor.CreateDatabase(conn, query.NewDatabaseWithDBDDL(v))
 			case *vitesssp.DropDatabase:
-				s := conn.SpanContext().Span().StartSpan("DropDatabase")
-				defer s.Span().Finish()
+				conn.StartSpan("DropDatabase")
+				defer conn.FinishSpan()
 				res, err = executor.DropDatabase(conn, query.NewDatabaseWithDBDDL(v))
 			case *vitesssp.AlterDatabase:
-				s := conn.SpanContext().Span().StartSpan("AlterDatabase")
-				defer s.Span().Finish()
+				conn.StartSpan("AlterDatabase")
+				defer conn.FinishSpan()
 				res, err = executor.AlterDatabase(conn, query.NewDatabaseWithDBDDL(v))
 			}
 		case (query.DDL):
 			switch v := v.(type) {
 			case *vitesssp.CreateTable:
-				s := conn.SpanContext().Span().StartSpan("CreateTable")
-				defer s.Span().Finish()
+				conn.StartSpan("CreateTable")
+				defer conn.FinishSpan()
 				res, err = executor.CreateTable(conn, query.NewSchemaWithDDL(v))
 			case *vitesssp.DropTable:
-				s := conn.SpanContext().Span().StartSpan("DropTable")
-				defer s.Span().Finish()
+				conn.StartSpan("DropTable")
+				defer conn.FinishSpan()
 				res, err = executor.DropTable(conn, query.NewSchemaWithDDL(v))
 			case *vitesssp.AlterTable:
-				s := conn.SpanContext().Span().StartSpan("AlterTable")
-				defer s.Span().Finish()
+				conn.StartSpan("AlterTable")
+				defer conn.FinishSpan()
 				res, err = executor.AlterTable(conn, query.NewSchemaWithDDL(v))
 			case *vitesssp.RenameTable:
-				s := conn.SpanContext().Span().StartSpan("RenameTable")
-				defer s.Span().Finish()
+				conn.StartSpan("RenameTable")
+				defer conn.FinishSpan()
 				res, err = executor.RenameTable(conn, query.NewSchemaWithDDL(v))
 			case *vitesssp.TruncateTable:
-				s := conn.SpanContext().Span().StartSpan("TruncateTable")
-				defer s.Span().Finish()
+				conn.StartSpan("TruncateTable")
+				defer conn.FinishSpan()
 				res, err = executor.TruncateTable(conn, query.NewSchemaWithDDL(v))
 			}
 		case (*query.Show):
@@ -108,24 +114,24 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 			}
 			*/
 		case (*vitesssp.Insert):
-			s := conn.SpanContext().Span().StartSpan("Insert")
-			defer s.Span().Finish()
+			conn.StartSpan("Insert")
+			defer conn.FinishSpan()
 			res, err = executor.Insert(conn, query.NewInsertWithInsert(v))
 		case (*vitesssp.Select):
-			s := conn.SpanContext().Span().StartSpan("Select")
-			defer s.Span().Finish()
+			conn.StartSpan("Select")
+			defer conn.FinishSpan()
 			res, err = executor.Select(conn, query.NewSelectWithSelect(v))
 		case (*vitesssp.Update):
-			s := conn.SpanContext().Span().StartSpan("Update")
-			defer s.Span().Finish()
+			conn.StartSpan("Update")
+			defer conn.FinishSpan()
 			res, err = executor.Update(conn, query.NewUpdateWithUpdate(v))
 		case (*vitesssp.Delete):
-			s := conn.SpanContext().Span().StartSpan("Delete")
-			defer s.Span().Finish()
+			conn.StartSpan("Delete")
+			defer conn.FinishSpan()
 			res, err = executor.Delete(conn, query.NewDeleteWithDelete(v))
 		case (*query.Use):
-			s := conn.SpanContext().Span().StartSpan("Use")
-			defer s.Span().Finish()
+			conn.StartSpan("Use")
+			defer conn.FinishSpan()
 			conn.SetDatabase(v.DBName.String())
 		}
 	}
@@ -140,7 +146,9 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 		}
 	}
 
+	conn.StartSpan("response")
 	err = callback(res)
+	conn.FinishSpan()
 
 	return err
 }
