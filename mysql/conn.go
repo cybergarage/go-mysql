@@ -29,7 +29,7 @@ type Conn struct {
 	uid uint32
 	ts  time.Time
 	sync.Map
-	tracer.SpanContext
+	span tracer.SpanContext
 }
 
 // newConn returns a connection with a default empty connection.
@@ -71,4 +71,14 @@ func (conn *Conn) ID() uint32 {
 // Timestamp returns the creation time of the connection.
 func (conn *Conn) Timestamp() time.Time {
 	return conn.ts
+}
+
+// SetSpanContext sets a span context to the connection.
+func (conn *Conn) SetSpanContext(span tracer.SpanContext) {
+	conn.span = span
+}
+
+// SpanContext returns the span context of the connection.
+func (conn *Conn) SpanContext() tracer.SpanContext {
+	return conn.span
 }
