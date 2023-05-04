@@ -29,21 +29,25 @@ type Conn struct {
 	uid uint32
 	ts  time.Time
 	sync.Map
-	span tracer.SpanContext
+	tracer.Context
 }
 
 // newConn returns a connection with a default empty connection.
 func newConn() *Conn {
-	return NewConnWithConn(&vitessmy.Conn{})
+	return NewConnWith(
+		tracer.NewNullTracer().StartSpan(""),
+		&vitessmy.Conn{},
+	)
 }
 
-// NewConnWithConn returns a connection with a raw connection.
-func NewConnWithConn(c *vitessmy.Conn) *Conn {
+// NewConnWith returns a connection with a raw connection.
+func NewConnWith(ctx tracer.Context, c *vitessmy.Conn) *Conn {
 	conn := &Conn{
-		Conn: c,
-		uid:  0,
-		ts:   time.Now(),
-		Map:  sync.Map{},
+		Conn:    c,
+		uid:     0,
+		ts:      time.Now(),
+		Map:     sync.Map{},
+		Context: ctx,
 	}
 
 	if c != nil {
@@ -73,12 +77,12 @@ func (conn *Conn) Timestamp() time.Time {
 	return conn.ts
 }
 
-// SetSpanContext sets a span context to the connection.
-func (conn *Conn) SetSpanContext(span tracer.SpanContext) {
-	conn.span = span
+// SetSpanContext sets the tracer span context to the connection.
+func (conn *Conn) SetSpanContext(span tracer.Context) {
+	conn.Context = span
 }
 
-// SpanContext returns the span context of the connection.
-func (conn *Conn) SpanContext() tracer.SpanContext {
-	return conn.span
+// SpanContext returns the tracer span context of the connection.
+func (conn *Conn) SpanContext() tracer.Context {
+	return conn.Context
 }

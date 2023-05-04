@@ -19,5 +19,5 @@ import (
 )
 
 func TestNewConnWithConn(t *testing.T) {
-	NewConnWithConn(nil)
+	NewConnWith(nil, nil)
 }
