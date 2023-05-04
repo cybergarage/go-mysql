@@ -35,7 +35,7 @@ func NewMyServer() *MyServer {
     return myserver
 }
 
-func (server *MyServer) Insert(context.Context, *Conn, *query.Insert) (*Result, error) {
+func (server *MyServer) Insert(*Conn, *query.Insert) (*Result, error) {
     .....
 }
 
