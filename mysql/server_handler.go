@@ -15,7 +15,6 @@
 package mysql
 
 import (
-	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/mysql/query"
 	vitessmy "vitess.io/vitess/go/mysql"
 	vitesssp "vitess.io/vitess/go/vt/sqlparser"
@@ -23,19 +22,16 @@ import (
 
 // NewConnection is called when a connection is created.
 func (server *Server) NewConnection(c *vitessmy.Conn) {
-	log.Debugf("NewConnection %d", c.ConnectionID)
 	server.AddConn(NewConnWithConn(c))
 }
 
 // ConnectionClosed is called when a connection is closed.
 func (server *Server) ConnectionClosed(c *vitessmy.Conn) {
-	log.Debugf("ConnectionClosed %d", c.ConnectionID)
 	server.DeleteConnByUID(c.ConnectionID)
 }
 
 // ComInitDB is called once at the beginning to set db name, and subsequently for every ComInitDB event.
 func (server *Server) ComInitDB(c *vitessmy.Conn, dbName string) {
-	log.Debugf("ComInitDB %v %d schema (%s)", c, c.ConnectionID, dbName)
 	conn, ok := server.GetConnByUID(c.ConnectionID)
 	if ok {
 		conn.SetDatabase(dbName)
@@ -58,8 +54,6 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 	span := server.Tracer.StartSpan(PackageName)
 	conn.SetSpanContext(span)
 	defer span.Span().Finish()
-
-	log.Debugf("ComQuery %v %s query (%s)", conn, conn.Database(), q)
 
 	var res *Result
 
