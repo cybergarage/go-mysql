@@ -3,6 +3,10 @@
 ## v1.1.0 (2023-xx-xx)
 - Update executor interfaces for major MySQL commands
 
+## v1.0.2 (2023-05-04)
+- Update Conn to embed tracer context
+- Update tracer spans
+
 ## v1.0.1 (2023-05-04)
 - Update Conn interface
 - Remove debug log messages
