@@ -15,7 +15,6 @@
 package storage
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/cybergarage/go-logger/log"
@@ -38,7 +37,7 @@ func NewMemStore() *MemStore {
 }
 
 // CreateDatabase should handle a CREATE database statement.
-func (store *MemStore) CreateDatabase(ctx context.Context, conn *mysql.Conn, stmt *query.Database) (*mysql.Result, error) {
+func (store *MemStore) CreateDatabase(conn *mysql.Conn, stmt *query.Database) (*mysql.Result, error) {
 	log.Debugf("%v", stmt)
 	dbName := stmt.Name()
 	_, ok := store.GetDatabase(dbName)
@@ -53,13 +52,13 @@ func (store *MemStore) CreateDatabase(ctx context.Context, conn *mysql.Conn, stm
 }
 
 // AlterDatabase should handle a ALTER database statement.
-func (store *MemStore) AlterDatabase(ctx context.Context, conn *mysql.Conn, stmt *query.Database) (*mysql.Result, error) {
+func (store *MemStore) AlterDatabase(conn *mysql.Conn, stmt *query.Database) (*mysql.Result, error) {
 	log.Debugf("%v", stmt)
 	return mysql.NewResult(), nil
 }
 
 // DropDatabase should handle a DROP database statement.
-func (store *MemStore) DropDatabase(ctx context.Context, conn *mysql.Conn, stmt *query.Database) (*mysql.Result, error) {
+func (store *MemStore) DropDatabase(conn *mysql.Conn, stmt *query.Database) (*mysql.Result, error) {
 	dbName := conn.Database()
 	db, ok := store.GetDatabase(dbName)
 	if !ok {
@@ -74,7 +73,7 @@ func (store *MemStore) DropDatabase(ctx context.Context, conn *mysql.Conn, stmt 
 }
 
 // CreateTable should handle a CREATE table statement.
-func (store *MemStore) CreateTable(ctx context.Context, conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
+func (store *MemStore) CreateTable(conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
 	dbName := conn.Database()
 	db, ok := store.GetDatabase(dbName)
 	if !ok {
@@ -94,13 +93,13 @@ func (store *MemStore) CreateTable(ctx context.Context, conn *mysql.Conn, stmt *
 }
 
 // AlterTable should handle a ALTER table statement.
-func (store *MemStore) AlterTable(ctx context.Context, conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
+func (store *MemStore) AlterTable(conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
 	log.Debugf("%v", stmt)
 	return mysql.NewResult(), nil
 }
 
 // DropTable should handle a DROP table statement.
-func (store *MemStore) DropTable(ctx context.Context, conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
+func (store *MemStore) DropTable(conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
 	dbName := conn.Database()
 	db, ok := store.GetDatabase(dbName)
 	if !ok {
@@ -120,19 +119,19 @@ func (store *MemStore) DropTable(ctx context.Context, conn *mysql.Conn, stmt *qu
 }
 
 // RenameTable should handle a RENAME table statement.
-func (store *MemStore) RenameTable(ctx context.Context, conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
+func (store *MemStore) RenameTable(conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
 	log.Debugf("%v", stmt)
 	return mysql.NewResult(), nil
 }
 
 // TruncateTable should handle a TRUNCATE table statement.
-func (store *MemStore) TruncateTable(ctx context.Context, conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
+func (store *MemStore) TruncateTable(conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
 	log.Debugf("%v", stmt)
 	return mysql.NewResult(), nil
 }
 
 // Insert should handle a INSERT statement.
-func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query.Insert) (*mysql.Result, error) {
+func (store *MemStore) Insert(conn *mysql.Conn, stmt *query.Insert) (*mysql.Result, error) {
 	log.Debugf("%v", stmt)
 	dbName := conn.Database()
 	tableName := stmt.TableName()
@@ -156,7 +155,7 @@ func (store *MemStore) Insert(ctx context.Context, conn *mysql.Conn, stmt *query
 }
 
 // Update should handle a UPDATE statement.
-func (store *MemStore) Update(ctx context.Context, conn *mysql.Conn, stmt *query.Update) (*mysql.Result, error) {
+func (store *MemStore) Update(conn *mysql.Conn, stmt *query.Update) (*mysql.Result, error) {
 	log.Debugf("%v", stmt)
 
 	dbName := conn.Database()
@@ -194,7 +193,7 @@ func (store *MemStore) Update(ctx context.Context, conn *mysql.Conn, stmt *query
 }
 
 // Delete should handle a DELETE statement.
-func (store *MemStore) Delete(ctx context.Context, conn *mysql.Conn, stmt *query.Delete) (*mysql.Result, error) {
+func (store *MemStore) Delete(conn *mysql.Conn, stmt *query.Delete) (*mysql.Result, error) {
 	dbName := conn.Database()
 	cond := stmt.Where
 
@@ -225,7 +224,7 @@ func (store *MemStore) Delete(ctx context.Context, conn *mysql.Conn, stmt *query
 }
 
 // Select should handle a SELECT statement.
-func (store *MemStore) Select(ctx context.Context, conn *mysql.Conn, stmt *query.Select) (*mysql.Result, error) {
+func (store *MemStore) Select(conn *mysql.Conn, stmt *query.Select) (*mysql.Result, error) {
 	log.Debugf("%v", stmt)
 
 	dbName := conn.Database()
@@ -258,11 +257,11 @@ func (store *MemStore) Select(ctx context.Context, conn *mysql.Conn, stmt *query
 }
 
 // ShowDatabases should handle a SHOW DATABASES statement.
-func (store *MemStore) ShowDatabases(ctx context.Context, conn *mysql.Conn) (*mysql.Result, error) {
+func (store *MemStore) ShowDatabases(conn *mysql.Conn) (*mysql.Result, error) {
 	return mysql.NewResult(), nil
 }
 
 // ShowTables should handle a SHOW TABLES statement.
-func (store *MemStore) ShowTables(ctx context.Context, conn *mysql.Conn, database string) (*mysql.Result, error) {
+func (store *MemStore) ShowTables(conn *mysql.Conn, database string) (*mysql.Result, error) {
 	return mysql.NewResult(), nil
 }

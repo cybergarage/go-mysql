@@ -15,8 +15,6 @@
 package mysql
 
 import (
-	"context"
-
 	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/mysql/query"
 	vitessmy "vitess.io/vitess/go/mysql"
@@ -53,7 +51,6 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 		return err
 	}
 
-	ctx := context.Background()
 	conn, ok := server.GetConnByUID(c.ConnectionID)
 	if !ok {
 		conn = NewConnWithConn(c)
@@ -73,64 +70,64 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 			case *vitesssp.CreateDatabase:
 				s := conn.SpanContext.Span().StartSpan("CreateDatabase")
 				defer s.Span().Finish()
-				res, err = executor.CreateDatabase(ctx, conn, query.NewDatabaseWithDBDDL(v))
+				res, err = executor.CreateDatabase(conn, query.NewDatabaseWithDBDDL(v))
 			case *vitesssp.DropDatabase:
 				s := conn.SpanContext.Span().StartSpan("DropDatabase")
 				defer s.Span().Finish()
-				res, err = executor.DropDatabase(ctx, conn, query.NewDatabaseWithDBDDL(v))
+				res, err = executor.DropDatabase(conn, query.NewDatabaseWithDBDDL(v))
 			case *vitesssp.AlterDatabase:
 				s := conn.SpanContext.Span().StartSpan("AlterDatabase")
 				defer s.Span().Finish()
-				res, err = executor.AlterDatabase(ctx, conn, query.NewDatabaseWithDBDDL(v))
+				res, err = executor.AlterDatabase(conn, query.NewDatabaseWithDBDDL(v))
 			}
 		case (query.DDL):
 			switch v := v.(type) {
 			case *vitesssp.CreateTable:
 				s := conn.SpanContext.Span().StartSpan("CreateTable")
 				defer s.Span().Finish()
-				res, err = executor.CreateTable(ctx, conn, query.NewSchemaWithDDL(v))
+				res, err = executor.CreateTable(conn, query.NewSchemaWithDDL(v))
 			case *vitesssp.DropTable:
 				s := conn.SpanContext.Span().StartSpan("DropTable")
 				defer s.Span().Finish()
-				res, err = executor.DropTable(ctx, conn, query.NewSchemaWithDDL(v))
+				res, err = executor.DropTable(conn, query.NewSchemaWithDDL(v))
 			case *vitesssp.AlterTable:
 				s := conn.SpanContext.Span().StartSpan("AlterTable")
 				defer s.Span().Finish()
-				res, err = executor.AlterTable(ctx, conn, query.NewSchemaWithDDL(v))
+				res, err = executor.AlterTable(conn, query.NewSchemaWithDDL(v))
 			case *vitesssp.RenameTable:
 				s := conn.SpanContext.Span().StartSpan("RenameTable")
 				defer s.Span().Finish()
-				res, err = executor.RenameTable(ctx, conn, query.NewSchemaWithDDL(v))
+				res, err = executor.RenameTable(conn, query.NewSchemaWithDDL(v))
 			case *vitesssp.TruncateTable:
 				s := conn.SpanContext.Span().StartSpan("TruncateTable")
 				defer s.Span().Finish()
-				res, err = executor.TruncateTable(ctx, conn, query.NewSchemaWithDDL(v))
+				res, err = executor.TruncateTable(conn, query.NewSchemaWithDDL(v))
 			}
 		case (*query.Show):
 			/* TODO: v.Type is deprecated
 			switch v.Type {
 			case "DATABASES":
-				res, err = executor.ShowDatabases(ctx, conn)
+				res, err = executor.ShowDatabases(conn)
 			case "TABLES":
-				res, err = executor.ShowTables(ctx, conn, conn.Database())
+				res, err = executor.ShowTables(conn, conn.Database())
 			}
 			*/
 		case (*vitesssp.Insert):
 			s := conn.SpanContext.Span().StartSpan("Insert")
 			defer s.Span().Finish()
-			res, err = executor.Insert(ctx, conn, query.NewInsertWithInsert(v))
+			res, err = executor.Insert(conn, query.NewInsertWithInsert(v))
 		case (*vitesssp.Select):
 			s := conn.SpanContext.Span().StartSpan("Select")
 			defer s.Span().Finish()
-			res, err = executor.Select(ctx, conn, query.NewSelectWithSelect(v))
+			res, err = executor.Select(conn, query.NewSelectWithSelect(v))
 		case (*vitesssp.Update):
 			s := conn.SpanContext.Span().StartSpan("Update")
 			defer s.Span().Finish()
-			res, err = executor.Update(ctx, conn, query.NewUpdateWithUpdate(v))
+			res, err = executor.Update(conn, query.NewUpdateWithUpdate(v))
 		case (*vitesssp.Delete):
 			s := conn.SpanContext.Span().StartSpan("Delete")
 			defer s.Span().Finish()
-			res, err = executor.Delete(ctx, conn, query.NewDeleteWithDelete(v))
+			res, err = executor.Delete(conn, query.NewDeleteWithDelete(v))
 		case (*query.Use):
 			s := conn.SpanContext.Span().StartSpan("Use")
 			defer s.Span().Finish()
