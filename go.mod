@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/cybergarage/go-logger v1.3.4
 	github.com/cybergarage/go-sqltest v0.9.4
-	github.com/cybergarage/go-tracing v1.1.0
+	github.com/cybergarage/go-tracing v1.1.1
 	github.com/go-sql-driver/mysql v1.7.0
 	vitess.io/vitess v0.12.6
 )
