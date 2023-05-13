@@ -5,6 +5,7 @@
 
 ## v1.0.3 (2023-xx-xx)
 - Update go-tracing package
+- Add orderby and limit aliases
 
 ## v1.0.2 (2023-05-04)
 - Update Conn to embed tracer context
