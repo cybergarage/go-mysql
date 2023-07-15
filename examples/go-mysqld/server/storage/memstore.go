@@ -82,7 +82,7 @@ func (store *MemStore) CreateTable(conn *mysql.Conn, stmt *query.Schema) (*mysql
 	tableName := stmt.TableName()
 	_, ok = db.GetTable(tableName)
 	if !ok {
-		table := NewTableWit(tableName, stmt)
+		table := NewTableWith(tableName, stmt)
 		db.AddTable(table)
 	} else {
 		if !stmt.GetIfExists() {
