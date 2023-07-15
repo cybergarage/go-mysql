@@ -104,7 +104,7 @@ func (file *File) ListFilesWithRegexp(re *regexp.Regexp) ([]*File, error) {
 		if info.IsDir() {
 			return nil
 		}
-		if !re.Match([]byte(path)) {
+		if !re.Match([]byte(path)) { // nolint: mirror
 			return nil
 		}
 		files = append(files, NewFileWithPath(path))
