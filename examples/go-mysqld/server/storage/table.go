@@ -33,8 +33,8 @@ type Table struct {
 	*query.Rows
 }
 
-// NewTableWithNameAndSchema returns a new database with the specified string.
-func NewTableWithNameAndSchema(name string, schema *Schema) *Table {
+// NewTableWit returns a new database with the specified string.
+func NewTableWit(name string, schema *Schema) *Table {
 	tbl := &Table{
 		value:  name,
 		Schema: schema,
@@ -45,7 +45,7 @@ func NewTableWithNameAndSchema(name string, schema *Schema) *Table {
 
 // NewTable returns a new database.
 func NewTable() *Table {
-	return NewTableWithNameAndSchema("", nil)
+	return NewTableWit("", nil)
 }
 
 // SetSchema sets a specified schema.
