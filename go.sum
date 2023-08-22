@@ -68,6 +68,8 @@ github.com/cybergarage/go-logger v1.3.4 h1:UTgYZr/LwQtYVOncS3NJ64We5kCe7ce6L85y/
 github.com/cybergarage/go-logger v1.3.4/go.mod h1:2iMjinHam5oqyKEGsKIzeQQmmOPxpCgro95LOlEC2ks=
 github.com/cybergarage/go-sqltest v0.9.4 h1:Sxhp6MPZbTn0Zmmsgc7sY2t1WZXWzywmwhTiz7C6wek=
 github.com/cybergarage/go-sqltest v0.9.4/go.mod h1:CQkUZIyjHsxe0YqRRSvxiWanbDgLcFYAhz/6FQP7vqs=
+github.com/cybergarage/go-sqltest v1.0.0 h1:45ECK3Z5ZGrIWl22/5NcXb/k6+2HL+/BHJ5ZDxeAEpo=
+github.com/cybergarage/go-sqltest v1.0.0/go.mod h1:ba4Ijw/KfNsHQW8N7jHVgZOoEfVjvGIeKmCgeC0GiGk=
 github.com/cybergarage/go-tracing v1.1.0 h1:E/cpfE9Pdehik0u+IQTg9htRhyfUU2TFfi/ETAznLbQ=
 github.com/cybergarage/go-tracing v1.1.0/go.mod h1:smRez9HytS4YklbMMq5QoOu6l75ClrO4x+3UaRiSg5I=
 github.com/cybergarage/go-tracing v1.1.1 h1:Nyqeu+YR6bxyr1YbT5YAajIAUg12WzGmn9wsvGY2vVc=
