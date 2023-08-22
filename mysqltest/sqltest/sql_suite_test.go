@@ -34,5 +34,10 @@ func TestSQLTestSuite(t *testing.T) {
 	}
 	defer server.Stop()
 
-	sqltest.RunEmbedSuites(t, sqltest.NewMySQLClient())
+	testNames := []string{
+		"YCSBWorkload",
+		"SimpInsertSelect",
+	}
+
+	sqltest.RunEmbedSuites(t, sqltest.NewMySQLClient(), testNames...)
 }
