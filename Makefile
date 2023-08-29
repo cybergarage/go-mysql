@@ -15,6 +15,8 @@
 SHELL := bash
 
 PREFIX?=$(shell pwd)
+GOBIN := $(shell go env GOPATH)/bin
+PATH := $(GOBIN):$(PATH)
 
 GIT_ROOT=github.com/cybergarage/
 PRODUCT_NAME=go-mysql
@@ -104,8 +106,8 @@ build: test
 install: build
 	go install -v -gcflags=${GCFLAGS} ${BINARIES}
 
-run: build
-	./${EXAMPLES_DEAMON_BIN}
+run: install
+	$(GOBIN)/${EXAMPLES_DEAMON_BIN}
 
 image: test
 	docker image build -t ${EXAMPLES_DOCKER_TAG} .
