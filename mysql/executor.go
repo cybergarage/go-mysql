@@ -62,6 +62,16 @@ type DAOExecutor interface {
 	ShowTables(*Conn, string) (*Result, error)
 }
 
+// TxnExecutor defines a executor interface for TXN (Transaction Operations).
+type TxnExecutor interface {
+	// Begin should handle a BEGIN statement.
+	Begin(*Conn) (*Result, error)
+	// Commit should handle a COMMIT statement.
+	Commit(*Conn) (*Result, error)
+	// Rollback should handle a ROLLBACK statement.
+	Rollback(*Conn) (*Result, error)
+}
+
 // QueryExecutor represents an interface to execute all SQL queries.
 type QueryExecutor interface {
 	DDOExecutor
