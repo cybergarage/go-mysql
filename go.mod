@@ -1,11 +1,11 @@
 module github.com/cybergarage/go-mysql
 
-go 1.20
+go 1.21
 
 require (
 	github.com/cybergarage/go-logger v1.3.4
-	github.com/cybergarage/go-sqltest v1.0.0
-	github.com/cybergarage/go-tracing v1.1.2
+	github.com/cybergarage/go-sqltest v1.2.4
+	github.com/cybergarage/go-tracing v1.1.3
 	github.com/go-sql-driver/mysql v1.7.0
 	vitess.io/vitess v0.12.6
 )
@@ -14,6 +14,7 @@ require (
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20211102141018-f7be0cbad29c // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/cybergarage/go-safecast v1.2.3 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.3 // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
