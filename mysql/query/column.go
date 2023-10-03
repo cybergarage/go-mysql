@@ -17,10 +17,15 @@ package query
 import (
 	"fmt"
 	"reflect"
+	"time"
 
 	vitessst "vitess.io/vitess/go/sqltypes"
 	vitesspq "vitess.io/vitess/go/vt/proto/query"
 	vitesssp "vitess.io/vitess/go/vt/sqlparser"
+)
+
+const (
+	timestampFormat = "2006-01-02 15:04:05.999999"
 )
 
 // Type defines the various supported data types in bind vars
@@ -158,6 +163,8 @@ func (col *Column) ToValue() (vitessst.Value, error) {
 		return vitessst.InterfaceToValue(uint64(v))
 	case float32:
 		return vitessst.InterfaceToValue(float64(v))
+	case time.Time:
+		return vitessst.InterfaceToValue([]byte(v.Format(timestampFormat)))
 	case bool:
 		if v {
 			return vitessst.InterfaceToValue(int64(1))
