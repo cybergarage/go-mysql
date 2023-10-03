@@ -3,9 +3,11 @@
 ## v1.1.0 (2023-xx-xx)
 - Updated executor interfaces to support major MySQL commands
 
-## v1.0.3 (2023-10-03)
-- Updated go-tracing package
+## v1.0.4 (2023-10-03)
 - Updated connection to retrieve the UUID
+- Updated go-tracing package
+
+## v1.0.3 (2023-05-13)
 - Added orderby and limit aliases
 
 ## v1.0.2 (2023-05-04)
