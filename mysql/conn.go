@@ -19,15 +19,17 @@ import (
 	"time"
 
 	"github.com/cybergarage/go-tracing/tracer"
+	"github.com/google/uuid"
 	vitessmy "vitess.io/vitess/go/mysql"
 )
 
 // Conn represents a connection of MySQL binary protocol.
 type Conn struct {
 	*vitessmy.Conn
-	db  string
-	uid uint32
-	ts  time.Time
+	db   string
+	uid  uint32
+	uuid uuid.UUID
+	ts   time.Time
 	sync.Map
 	tracer.Context
 }
@@ -46,6 +48,7 @@ func NewConnWith(ctx tracer.Context, c *vitessmy.Conn) *Conn {
 		Conn:    c,
 		uid:     0,
 		ts:      time.Now(),
+		uuid:    uuid.New(),
 		Map:     sync.Map{},
 		Context: ctx,
 	}
@@ -70,6 +73,11 @@ func (conn *Conn) Database() string {
 // ID returns the creation ID of the connection.
 func (conn *Conn) ID() uint32 {
 	return conn.uid
+}
+
+// UUID returns the UUID of the connection.
+func (conn *Conn) UUID() uuid.UUID {
+	return conn.uuid
 }
 
 // Timestamp returns the creation time of the connection.
