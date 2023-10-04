@@ -16,7 +16,11 @@ package query
 
 import (
 	vitessst "vitess.io/vitess/go/sqltypes"
+	vitessstpq "vitess.io/vitess/go/vt/proto/query"
 )
+
+// SQLType defines the various supported data types in bind vars.
+type SQLType = vitessstpq.Type
 
 // Vitess data types. These are idiomatically
 // named synonyms for the vitess.Type values.
