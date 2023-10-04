@@ -113,6 +113,18 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 				res, err = executor.ShowTables(conn, conn.Database())
 			}
 			*/
+		case (*vitesssp.Begin):
+			conn.StartSpan("Begin")
+			defer conn.FinishSpan()
+			res, err = executor.Begin(conn, v)
+		case (*vitesssp.Commit):
+			conn.StartSpan("Commit")
+			defer conn.FinishSpan()
+			res, err = executor.Commit(conn, v)
+		case (*vitesssp.Rollback):
+			conn.StartSpan("Rollback")
+			defer conn.FinishSpan()
+			res, err = executor.Rollback(conn, v)
 		case (*vitesssp.Insert):
 			conn.StartSpan("Insert")
 			defer conn.FinishSpan()
