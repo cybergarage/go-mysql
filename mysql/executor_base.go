@@ -32,6 +32,24 @@ func NewBaseExecutor() *BaseExecutor {
 	return &BaseExecutor{}
 }
 
+// Begin should handle a BEGIN statement.
+func (executor *BaseExecutor) Begin(conn *Conn, stmt *query.Begin) (*Result, error) {
+	log.Debugf(baseExecutorNotImplemented, stmt)
+	return NewResult(), nil
+}
+
+// Commit should handle a COMMIT statement.
+func (executor *BaseExecutor) Commit(conn *Conn, stmt *query.Commit) (*Result, error) {
+	log.Debugf(baseExecutorNotImplemented, stmt)
+	return NewResult(), nil
+}
+
+// Rollback should handle a ROLLBACK statement.
+func (executor *BaseExecutor) Rollback(conn *Conn, stmt *query.Rollback) (*Result, error) {
+	log.Debugf(baseExecutorNotImplemented, stmt)
+	return NewResult(), nil
+}
+
 // CreateDatabase should handle a CREATE database statement.
 func (executor *BaseExecutor) CreateDatabase(conn *Conn, stmt *query.Database) (*Result, error) {
 	log.Debugf(baseExecutorNotImplemented, stmt)

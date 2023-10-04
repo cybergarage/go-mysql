@@ -36,6 +36,24 @@ func NewMemStore() *MemStore {
 	return store
 }
 
+// Begin should handle a BEGIN statement.
+func (store *MemStore) Begin(conn *mysql.Conn, stmt *query.Begin) (*mysql.Result, error) {
+	log.Debugf("%v", stmt)
+	return mysql.NewResult(), nil
+}
+
+// Commit should handle a COMMIT statement.
+func (store *MemStore) Commit(conn *mysql.Conn, stmt *query.Commit) (*mysql.Result, error) {
+	log.Debugf("%v", stmt)
+	return mysql.NewResult(), nil
+}
+
+// Rollback should handle a ROLLBACK statement.
+func (store *MemStore) Rollback(conn *mysql.Conn, stmt *query.Rollback) (*mysql.Result, error) {
+	log.Debugf("%v", stmt)
+	return mysql.NewResult(), nil
+}
+
 // CreateDatabase should handle a CREATE database statement.
 func (store *MemStore) CreateDatabase(conn *mysql.Conn, stmt *query.Database) (*mysql.Result, error) {
 	log.Debugf("%v", stmt)
