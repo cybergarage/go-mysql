@@ -82,7 +82,7 @@ func NewResultWithRows(db *query.Database, schema *query.Schema, rows *query.Row
 			if !ok {
 				return nil, fmt.Errorf("column (%s) is not found", field.Name)
 			}
-			resValue, err := column.ToValue()
+			resValue, err := column.ForValue(field.Type)
 			if err != nil {
 				return nil, err
 			}
