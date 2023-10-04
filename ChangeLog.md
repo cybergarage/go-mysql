@@ -1,7 +1,10 @@
 # Changelog
 
-## v1.1.0 (2023-xx-xx)
+## v1.2.0 (2023-xx-xx)
 - Updated executor interfaces to support major MySQL commands
+
+## v1.1.0 (2023-10-xx)
+- Added transaction executor interface
 
 ## v1.0.4 (2023-10-03)
 - Updated connection to retrieve the UUID
