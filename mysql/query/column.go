@@ -19,13 +19,14 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/cybergarage/go-safecast/safecast"
 	vitessst "vitess.io/vitess/go/sqltypes"
 	vitesspq "vitess.io/vitess/go/vt/proto/query"
 	vitesssp "vitess.io/vitess/go/vt/sqlparser"
 )
 
 const (
-	timestampFormat = "2006-01-02 15:04:05.999999"
+	timestampFormat = "2006-01-02 15:04:05.000000"
 )
 
 // Type defines the various supported data types in bind vars
@@ -164,7 +165,8 @@ func (col *Column) ToValue() (vitessst.Value, error) {
 	case float32:
 		return vitessst.InterfaceToValue(float64(v))
 	case time.Time:
-		return vitessst.InterfaceToValue([]byte(v.Format(timestampFormat)))
+		tv := v.Format(timestampFormat)
+		return vitessst.InterfaceToValue([]byte(tv))
 	case bool:
 		if v {
 			return vitessst.InterfaceToValue(int64(1))
@@ -172,6 +174,20 @@ func (col *Column) ToValue() (vitessst.Value, error) {
 		return vitessst.InterfaceToValue(int64(0))
 	}
 	return vitessst.InterfaceToValue(value)
+}
+
+// ForValue converts a column to a vitess value for the specified SQL type.
+func (col *Column) ForValue(t SQLType) (vitessst.Value, error) {
+	switch t {
+	case Timestamp:
+		var v time.Time
+		err := safecast.ToTime(col.Value(), &v)
+		if err == nil {
+			tv := v.Format(timestampFormat)
+			return vitessst.InterfaceToValue([]byte(tv))
+		}
+	}
+	return col.ToValue()
 }
 
 // String returns the string representation.
