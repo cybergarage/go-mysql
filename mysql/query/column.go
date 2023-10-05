@@ -25,10 +25,6 @@ import (
 	vitesssp "vitess.io/vitess/go/vt/sqlparser"
 )
 
-const (
-	timestampFormat = "2006-01-02 15:04:05.000000"
-)
-
 // Type defines the various supported data types in bind vars
 // and query results.
 type ColumnType = vitesspq.Type
@@ -42,10 +38,9 @@ const (
 )
 
 const (
-	// ISO8601DateFormat is a data format for SQL primitive.
-	ISO8601DateFormat = "2006-01-02"
-	// ISO8601TimestampFormat is a timestamp format for SQL primitive.
-	ISO8601TimestampFormat = "2006-01-02T15:04:05-0700"
+	timestampFormat   = "2006-01-02 15:04:05"
+	timestampFormatP3 = "2006-01-02 15:04:05.000"
+	timestampFormatP6 = "2006-01-02 15:04:05.000000"
 )
 
 // Column represents a column.
@@ -179,12 +174,12 @@ func (col *Column) ToValue() (vitessst.Value, error) {
 // ForValue converts a column to a vitess value for the specified SQL type.
 func (col *Column) ForValue(t SQLType) (vitessst.Value, error) {
 	switch t {
-	case Timestamp:
+	case Timestamp, Datetime:
 		var v time.Time
 		err := safecast.ToTime(col.Value(), &v)
 		if err == nil {
-			tv := v.Format(timestampFormat)
-			return vitessst.InterfaceToValue([]byte(tv))
+			ts := v.Format(timestampFormatP6)
+			return vitessst.InterfaceToValue([]byte(ts))
 		}
 	}
 	return col.ToValue()
