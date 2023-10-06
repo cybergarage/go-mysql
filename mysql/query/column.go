@@ -173,7 +173,7 @@ func (col *Column) ToValue() (vitessst.Value, error) {
 
 // ForValue converts a column to a vitess value for the specified SQL type.
 func (col *Column) ForValue(t SQLType) (vitessst.Value, error) {
-	switch t {
+	switch t { // nolint: exhaustive
 	case Timestamp, Datetime:
 		var v time.Time
 		err := safecast.ToTime(col.Value(), &v)
