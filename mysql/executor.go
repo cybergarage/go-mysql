@@ -62,8 +62,8 @@ type DAOExecutor interface {
 	ShowTables(*Conn, string) (*Result, error)
 }
 
-// TxnExecutor defines a executor interface for TXN (Transaction Operations).
-type TxnExecutor interface {
+// TCLExecutor defines a executor interface for TXN (Transaction Operations).
+type TCLExecutor interface {
 	// Begin should handle a BEGIN statement.
 	Begin(*Conn, *query.Begin) (*Result, error)
 	// Commit should handle a COMMIT statement.
@@ -78,5 +78,5 @@ type QueryExecutor interface {
 	DMOExecutor
 	DCOExecutor
 	DAOExecutor
-	TxnExecutor
+	TCLExecutor
 }
