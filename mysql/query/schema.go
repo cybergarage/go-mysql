@@ -15,6 +15,7 @@
 package query
 
 import (
+	vitesspq "vitess.io/vitess/go/vt/proto/query"
 	vitesssp "vitess.io/vitess/go/vt/sqlparser"
 )
 
