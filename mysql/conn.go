@@ -60,6 +60,21 @@ func NewConnWith(ctx tracer.Context, c *vitessmy.Conn) *Conn {
 	return conn
 }
 
+// SetDeadline sets the read and write deadlines associated with the connection.
+func (conn *Conn) SetDeadline(t time.Time) error {
+	return conn.GetRawConn().SetDeadline(t)
+}
+
+// SetReadDeadline sets the deadline for future Read calls.
+func (conn *Conn) SetReadDeadline(t time.Time) error {
+	return conn.GetRawConn().SetReadDeadline(t)
+}
+
+// SetWriteDeadline sets the deadline for future Write calls.
+func (conn *Conn) SetWriteDeadline(t time.Time) error {
+	return conn.GetRawConn().SetWriteDeadline(t)
+}
+
 // SetDatabase sets th selected database to the connection.
 func (conn *Conn) SetDatabase(name string) {
 	conn.db = name
