@@ -42,3 +42,4 @@ linters:
     - interfacer
     - rowserrcheck
     - depguard
+    - inamedparam
