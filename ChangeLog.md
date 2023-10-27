@@ -6,6 +6,11 @@
 ## v1.1.0 (2023-10-xx)
 - Added transaction executor interface
 
+## v1.0.5 (2023-10-27)
+- Updated
+  - Connection
+    - Add deadline methods to Conn
+
 ## v1.0.4 (2023-10-03)
 - Updated connection to retrieve the UUID
 - Updated go-tracing package
