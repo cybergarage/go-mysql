@@ -2,7 +2,7 @@
 
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/cybergarage/go-mysql)
 [![test](https://github.com/cybergarage/go-mysql/actions/workflows/make.yml/badge.svg)](https://github.com/cybergarage/go-mysql/actions/workflows/make.yml)
-[![Go Reference](https://pkg.go.dev/badge/github.com/cybergarage/go-mysql.svg)](https://pkg.go.dev/github.com/cybergarage/go-mysql)
+[![Go Reference](https://pkg.go.dev/badge/github.com/cybergarage/go-mysql.svg)](https://pkg.go.dev/github.com/cybergarage/go-mysql) [![codecov](https://codecov.io/gh/cybergarage/go-mysql/graph/badge.svg?token=2RYOJPQRDM)](https://codecov.io/gh/cybergarage/go-mysql)
 
 The go-mysql is a database framework for implementing a [MySQL](https://www.mysql.com/)-compatible server using Go easily.
 
