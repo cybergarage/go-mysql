@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/cybergarage/go-logger v1.3.4
 	github.com/cybergarage/go-safecast v1.2.3
-	github.com/cybergarage/go-sqltest v1.2.4
+	github.com/cybergarage/go-sqltest v1.3.0
 	github.com/cybergarage/go-tracing v1.1.3
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/google/uuid v1.1.2
