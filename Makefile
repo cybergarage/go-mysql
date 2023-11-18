@@ -15,69 +15,32 @@
 SHELL := bash
 
 PREFIX?=$(shell pwd)
+
 GOBIN := $(shell go env GOPATH)/bin
 PATH := $(GOBIN):$(PATH)
 
 GIT_ROOT=github.com/cybergarage/
 PRODUCT_NAME=go-mysql
+MODULE_ROOT=${GIT_ROOT}/${PRODUCT_NAME}
 
 PKG_NAME=mysql
 PKG_VER=$(shell git describe --abbrev=0 --tags)
+PKG_COVER=${PKG_NAME}-cover
+PKG_SRC_ROOT=${PKG_NAME}
+PKG=${MODULE_ROOT}/${PKG_SRC_ROOT}
 
-MODULE_ROOT=${PKG_NAME}
-MODULE_PKG_ROOT=${GIT_ROOT}${PRODUCT_NAME}/${MODULE_ROOT}
-MODULE_SRC_DIR=${PKG_NAME}
-MODULE_SRCS=\
-	${MODULE_SRC_DIR} \
-	${MODULE_SRC_DIR}/query
-MODULE_PKGS=\
-	${MODULE_PKG_ROOT} \
-	${MODULE_PKG_ROOT}/query
+TEST_SRC_ROOT=${PKG_NAME}test
+TEST_PKG=${MODULE_ROOT}/${TEST_SRC_ROOT}
 
 EXAMPLES_ROOT=examples
+EXAMPLES_SRC_ROOT=${EXAMPLES_ROOT}
 EXAMPLES_DEAMON_BIN=go-mysqld
 EXAMPLES_DOCKER_TAG=cybergarage/${EXAMPLES_DEAMON_BIN}:${PKG_VER}
 EXAMPLES_PKG_ROOT=${GIT_ROOT}${PRODUCT_NAME}/${EXAMPLES_ROOT}
-EXAMPLES_SRC_DIR=${EXAMPLES_ROOT}
-EXAMPLES_SRCS=\
-	${EXAMPLES_SRC_DIR}/${EXAMPLES_DEAMON_BIN} \
-	${EXAMPLES_SRC_DIR}/${EXAMPLES_DEAMON_BIN}/server \
-	${EXAMPLES_SRC_DIR}/${EXAMPLES_DEAMON_BIN}/server/storage
+EXAMPLES_SRC_ROOT=${EXAMPLES_ROOT}
 EXAMPLES_DEAMON_ROOT=${EXAMPLES_PKG_ROOT}/
-EXAMPLES_PKGS=\
-	${EXAMPLES_DEAMON_ROOT}/${EXAMPLES_DEAMON_BIN}/server \
-	${EXAMPLES_DEAMON_ROOT}/${EXAMPLES_DEAMON_BIN}/server/storage
 EXAMPLE_BINARIES=\
 	${EXAMPLES_DEAMON_ROOT}/${EXAMPLES_DEAMON_BIN}
-
-TEST_ROOT=${PKG_NAME}test
-TEST_PKG_ROOT=${GIT_ROOT}${PRODUCT_NAME}/${TEST_ROOT}
-TEST_SRC_DIR=${TEST_ROOT}
-TEST_SRCS=\
-	${TEST_SRC_DIR}/util \
-	${TEST_SRC_DIR}/server \
-	${TEST_SRC_DIR}/ycsb \
-	${TEST_SRC_DIR}/sqltest
-TEST_PKGS=\
-	${TEST_PKG_ROOT}/util \
-	${TEST_PKG_ROOT}/server \
-	${TEST_PKG_ROOT}/ycsb \
-	${TEST_PKG_ROOT}/sqltest
-
-ALL_ROOTS=\
-	${MODULE_ROOT} \
-	${EXAMPLES_ROOT} \
-	${TEST_ROOT}
-
-ALL_SRCS=\
-	${MODULE_SRCS} \
-	${EXAMPLES_SRCS} \
-	${TEST_SRCS}
-
-ALL_PKGS=\
-	${MODULE_PKGS} \
-	${EXAMPLES_PKGS} \
-	${TEST_PKGS}
 
 BINARIES=${EXAMPLE_BINARIES}
 
@@ -86,19 +49,20 @@ BINARIES=${EXAMPLE_BINARIES}
 all: test
 
 version:
-	@pushd ${MODULE_SRC_DIR} && ./version.gen > version.go && popd
+	@pushd ${PKG_SRC_ROOT} && ./version.gen > version.go && popd
 
 format: version
-	gofmt -s -w ${ALL_ROOTS}
+	gofmt -s -w ${PKG_SRC_ROOT} ${TEST_SRC_ROOT} ${EXAMPLES_SRC_ROOT}
 
 vet: format
-	go vet ${ALL_PKGS}
+	go vet ${PKG}
 
 lint: vet
-	golangci-lint run ${ALL_SRCS}
+	golangci-lint run ${PKG_SRC_ROOT}/... ${TEST_SRC_ROOT}/... ${EXAMPLES_SRC_ROOT}/...
 
 test: lint
-	go test -v -cover -p=1 ${ALL_PKGS}
+	go test -v -p 1 -timeout 10m -cover -coverpkg=${PKG}/... -coverprofile=${PKG_COVER}.out ${PKG}/... ${TEST_PKG}/...
+	go tool cover -html=${PKG_COVER}.out -o ${PKG_COVER}.html
 
 build: test
 	go build  -v -gcflags=${GCFLAGS} ${BINARIES}
@@ -116,4 +80,4 @@ rund: image
 	docker container run -it --rm -p 3307:3307 ${EXAMPLES_DOCKER_TAG}
 
 clean:
-	go clean -i ${ALL_PKGS}
+	go clean -i ${PKG}
