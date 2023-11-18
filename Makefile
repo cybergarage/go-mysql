@@ -19,7 +19,7 @@ PREFIX?=$(shell pwd)
 GOBIN := $(shell go env GOPATH)/bin
 PATH := $(GOBIN):$(PATH)
 
-GIT_ROOT=github.com/cybergarage/
+GIT_ROOT=github.com/cybergarage
 PRODUCT_NAME=go-mysql
 MODULE_ROOT=${GIT_ROOT}/${PRODUCT_NAME}
 
