@@ -14,6 +14,10 @@
 
 package auth
 
+import (
+	vitessmy "vitess.io/vitess/go/mysql"
+)
+
 // AuthManager represents a manager for the user authentication.
 type AuthManager struct {
 	methods []AuthMethod
@@ -21,15 +25,24 @@ type AuthManager struct {
 
 // NewAuthManager returns a new manager.
 func NewAuthManager() *AuthManager {
-	return &AuthManager{}
+	return &AuthManager{
+		methods: make([]AuthMethod, 0),
+	}
 }
 
 // AddAuthMethod adds a new authentication method.
-func (manager *AuthManager) AddAuthMethod(method AuthMethod) {
-	manager.methods = append(manager.methods, method)
+func (mgr *AuthManager) AddAuthMethod(method AuthMethod) {
+	mgr.methods = append(mgr.methods, method)
 }
 
-// AuthMethods returns all authentication methods.
-func (manager *AuthManager) AuthMethods() []AuthMethod {
-	return manager.methods
+// AuthMethods returns the list of registered auth methods
+// implemented by this auth server.
+func (mgr *AuthManager) AuthMethods() []AuthMethod {
+	return mgr.methods
+}
+
+// DefaultAuthMethodDescription returns MysqlNativePassword as the default
+// authentication method for the auth server implementation.
+func (mgr *AuthManager) DefaultAuthMethodDescription() AuthMethodDescription {
+	return vitessmy.MysqlNativePassword
 }
