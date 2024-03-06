@@ -46,9 +46,10 @@ func newConn() *Conn {
 func NewConnWith(ctx tracer.Context, c *vitessmy.Conn) *Conn {
 	conn := &Conn{
 		Conn:    c,
+		db:      "",
 		uid:     0,
-		ts:      time.Now(),
 		uuid:    uuid.New(),
+		ts:      time.Now(),
 		Map:     sync.Map{},
 		Context: ctx,
 	}

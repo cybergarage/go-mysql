@@ -95,8 +95,9 @@ func NewColumnWithTypeAndValue(typ ColumnType, val interface{}) (*Column, error)
 // NewColumnWithColumnDefinition returns a column with the specified vitess column definition.
 func NewColumnWithColumnDefinition(column *vitesssp.ColumnDefinition) *Column {
 	col := &Column{
-		name: column.Name.String(),
-		typ:  column.Type.SQLType(),
+		name:  column.Name.String(),
+		typ:   column.Type.SQLType(),
+		value: NewValue(),
 	}
 	return col
 }
