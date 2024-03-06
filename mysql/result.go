@@ -78,11 +78,11 @@ func NewResultWithRows(db *query.Database, schema *query.Schema, rows *query.Row
 		for _, field := range res.Fields {
 			// FIXME: The current implementation have to use Row::ColumnByName()
 			// because row columns might be unordered.
-			column, ok := row.ColumnByName(field.Name)
+			column, ok := row.ColumnByName(field.GetName())
 			if !ok {
-				return nil, fmt.Errorf("column (%s) is not found", field.Name)
+				return nil, fmt.Errorf("column (%s) is not found", field.GetName())
 			}
-			resValue, err := column.ForValue(field.Type)
+			resValue, err := column.ForValue(field.GetType())
 			if err != nil {
 				return nil, err
 			}
