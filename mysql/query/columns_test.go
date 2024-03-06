@@ -30,7 +30,7 @@ func TestColumnsEquals(t *testing.T) {
 	}
 
 	colums := NewColumnsWithColumns(testColumns)
-	if !colums.Equals(colums) {
+	if !colums.Equals(colums) { // nolint: gocritic
 		t.Errorf("%v != %v", colums, colums)
 	}
 }
