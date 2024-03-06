@@ -38,7 +38,7 @@ func (stmt *Insert) TableName() string {
 // Columns returns all column values with nil when the all columns can be converted, otherwith with a last error.
 func (stmt *Insert) Columns() (*Columns, error) {
 	rows, ok := stmt.Rows.(vitesssp.Values)
-	if !ok || len(rows) <= 0 {
+	if !ok || len(rows) == 0 {
 		return nil, fmt.Errorf(errorColumnNotFound, rows)
 	}
 
