@@ -153,7 +153,7 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 	}
 
 	if res == nil {
-		res = &Result{
+		res = &Result{ // nolint: exhaustruct
 			Rows: [][]Value{},
 		}
 	}

@@ -38,7 +38,7 @@ type Conn struct {
 func newConn() *Conn {
 	return NewConnWith(
 		tracer.NewNullTracer().StartSpan(""),
-		&vitessmy.Conn{},
+		&vitessmy.Conn{}, // nolint: exhaustruct
 	)
 }
 

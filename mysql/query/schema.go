@@ -39,8 +39,8 @@ func NewSchemaWithDDL(ddl DDL) *Schema {
 
 // NewSchemaWithName returns a schema with the specified table name.
 func NewSchemaWithName(name string) *Schema {
-	ddl := &vitesssp.CreateTable{
-		Table: vitesssp.TableName{Name: vitesssp.NewTableIdent(name)},
+	ddl := &vitesssp.CreateTable{ // nolint: exhaustruct
+		Table: vitesssp.TableName{Name: vitesssp.NewTableIdent(name)}, // nolint: exhaustruct
 	}
 	return NewSchemaWithDDL(ddl)
 }
@@ -78,8 +78,8 @@ func (schema *Schema) ToFields(db *Database) ([]*Field, error) {
 	for _, column := range schema.DDL.GetTableSpec().Columns {
 		colName := column.Name.String()
 		// FIXME: Set more appreciate column length to check official MySQL implementation
-		colLen := 65535 // len(name) + 1
-		field := &Field{
+		colLen := 65535  // len(name) + 1
+		field := &Field{ // nolint: exhaustruct
 			Database:     db.Name(),
 			Table:        tblName,
 			OrgTable:     tblName,
