@@ -46,8 +46,8 @@ func NewNullValue() Value {
 }
 
 // NewResult returns a successful result without any data.
-func NewResult() *Result {
-	res := &Result{
+func NewResult() *Result { // nolint: exhaustruct
+	res := &Result{ // nolint: exhaustruct
 		Rows: [][]Value{},
 	}
 	return res
@@ -55,7 +55,7 @@ func NewResult() *Result {
 
 // NewResultWithRowsAffected returns a successful result with the specified rows affected count.
 func NewResultWithRowsAffected(n uint64) *Result {
-	res := &Result{
+	res := &Result{ // nolint: exhaustruct
 		Rows:         [][]Value{},
 		RowsAffected: n,
 	}

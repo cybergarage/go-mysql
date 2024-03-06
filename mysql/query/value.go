@@ -55,7 +55,7 @@ type ColName = vitesssp.ColName
 
 // NewValue creates a query value .
 func NewValue() *Value {
-	return &Value{}
+	return &Value{} // nolint: exhaustruct
 }
 
 // NewValueWith creates a query value with the specified type.
