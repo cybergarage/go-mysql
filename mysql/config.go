@@ -29,8 +29,9 @@ type Config struct {
 // NewDefaultConfig returns a default configuration instance.
 func NewDefaultConfig() *Config {
 	config := &Config{
-		Address: defaultAddr,
-		Port:    defaultPort,
+		Address:  defaultAddr,
+		Port:     defaultPort,
+		Database: "",
 	}
 	return config
 }

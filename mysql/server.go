@@ -25,10 +25,10 @@ import (
 // Server represents a MySQL-compatible server.
 type Server struct {
 	tracer.Tracer
-	AuthHandler
-	QueryHandler
 	*Config
 	ConnMap
+	AuthHandler
+	QueryHandler
 	queryExecutor QueryExecutor
 	listener      *Listener
 }
@@ -36,12 +36,13 @@ type Server struct {
 // NewServer returns a new server instance.
 func NewServer() *Server {
 	server := &Server{
-		Config:        NewDefaultConfig(),
 		Tracer:        tracer.NullTracer,
+		Config:        NewDefaultConfig(),
+		ConnMap:       NewConnMap(),
 		AuthHandler:   NewDefaultAuthHandler(),
 		QueryHandler:  nil,
 		queryExecutor: nil,
-		ConnMap:       NewConnMap(),
+		listener:      nil,
 	}
 	return server
 }
