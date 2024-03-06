@@ -89,22 +89,22 @@ func (schema *Schema) ToFields(db *Database) ([]*Field, error) {
 			Charset:      255, // utf8mb4,
 			Type:         column.Type.SQLType(),
 		}
-		switch field.Type {
+		switch field.GetType() {
 		case Int8, Int16, Int24, Int32, Int64:
-			field.Flags = field.Flags | uint32(vitesspq.MySqlFlag_NUM_FLAG)
+			field.Flags = field.GetFlags() | uint32(vitesspq.MySqlFlag_NUM_FLAG)
 		case Uint8, Uint16, Uint24, Uint32, Uint64:
-			field.Flags = field.Flags | uint32(vitesspq.MySqlFlag_NUM_FLAG|vitesspq.MySqlFlag_UNSIGNED_FLAG)
+			field.Flags = field.GetFlags() | uint32(vitesspq.MySqlFlag_NUM_FLAG|vitesspq.MySqlFlag_UNSIGNED_FLAG)
 		case Blob, Binary, VarBinary, Bit:
-			field.Flags = field.Flags | uint32(vitesspq.MySqlFlag_BINARY_FLAG)
+			field.Flags = field.GetFlags() | uint32(vitesspq.MySqlFlag_BINARY_FLAG)
 		case Timestamp, Datetime, Date, Time:
-			field.Flags = field.Flags | uint32(vitesspq.MySqlFlag_BINARY_FLAG)
+			field.Flags = field.GetFlags() | uint32(vitesspq.MySqlFlag_BINARY_FLAG)
 		}
 		if column.Type.Options.Null != nil && !*column.Type.Options.Null {
-			field.Flags = field.Flags | uint32(vitesspq.MySqlFlag_NOT_NULL_FLAG)
+			field.Flags = field.GetFlags() | uint32(vitesspq.MySqlFlag_NOT_NULL_FLAG)
 		}
 		if column.Type.Options.KeyOpt == ColKeyPrimary {
-			field.Flags = field.Flags | uint32(vitesspq.MySqlFlag_PRI_KEY_FLAG)
-			field.Flags = field.Flags | uint32(vitesspq.MySqlFlag_NOT_NULL_FLAG)
+			field.Flags = field.GetFlags() | uint32(vitesspq.MySqlFlag_PRI_KEY_FLAG)
+			field.Flags = field.GetFlags() | uint32(vitesspq.MySqlFlag_NOT_NULL_FLAG)
 		}
 		fields = append(fields, field)
 	}
