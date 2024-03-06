@@ -24,8 +24,10 @@ type Columns struct {
 
 // NewColumns returns a null columns.
 func NewColumns() *Columns {
-	cols := &Columns{}
-	cols.Clear()
+	cols := &Columns{
+		allList:   make([]*Column, 0),
+		cachedMap: map[string]*Column{},
+	}
 	return cols
 }
 
