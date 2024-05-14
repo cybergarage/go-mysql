@@ -6,6 +6,10 @@
 ## v1.1.0 (2023-10-xx)
 - Added transaction executor interface
 
+
+## v1.0.6 (2024-05-14)
+- Fixed dependabot alerts
+- 
 ## v1.0.5 (2023-10-27)
 - Updated
   - Connection
