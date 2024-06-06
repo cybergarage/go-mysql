@@ -18,10 +18,10 @@ import (
 	"testing"
 )
 
-func TestNewConnMap(t *testing.T) {
+func TestNewConnManager(t *testing.T) {
 	TestLoopCnt := 10
 
-	cm := NewConnMap()
+	cm := NewConnManager()
 	if cm.Length() != 0 {
 		t.Errorf("%d != %d", cm.Length(), 0)
 	}
