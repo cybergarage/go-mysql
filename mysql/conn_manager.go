@@ -18,29 +18,29 @@ import (
 	"sync"
 )
 
-// ConnMap represents a connection map.
-type ConnMap struct {
+// ConnManager represents a connection map.
+type ConnManager struct {
 	m     map[uint32]*Conn
 	mutex *sync.RWMutex
 }
 
-// NewConnMap returns a connection map.
-func NewConnMap() ConnMap {
-	return ConnMap{
+// NewConnManager returns a connection map.
+func NewConnManager() ConnManager {
+	return ConnManager{
 		m:     map[uint32]*Conn{},
 		mutex: &sync.RWMutex{},
 	}
 }
 
 // AddConn adds the specified connection.
-func (cm ConnMap) AddConn(c *Conn) {
+func (cm ConnManager) AddConn(c *Conn) {
 	cm.mutex.Lock()
 	defer cm.mutex.Unlock()
 	cm.m[c.ConnectionID] = c
 }
 
 // GetConnByUID returns a connection and true when the specified connection exists by the connection ID, otherwise nil and false.
-func (cm ConnMap) GetConnByUID(cid uint32) (*Conn, bool) {
+func (cm ConnManager) GetConnByUID(cid uint32) (*Conn, bool) {
 	cm.mutex.RLock()
 	defer cm.mutex.RUnlock()
 	c, ok := cm.m[cid]
@@ -48,14 +48,14 @@ func (cm ConnMap) GetConnByUID(cid uint32) (*Conn, bool) {
 }
 
 // DeleteConnByUID deletes the specified connection by the connection ID.
-func (cm ConnMap) DeleteConnByUID(cid uint32) {
+func (cm ConnManager) DeleteConnByUID(cid uint32) {
 	cm.mutex.Lock()
 	defer cm.mutex.Unlock()
 	delete(cm.m, cid)
 }
 
 // Length returns the included connection count.
-func (cm ConnMap) Length() int {
+func (cm ConnManager) Length() int {
 	cm.mutex.RLock()
 	defer cm.mutex.RUnlock()
 	return len(cm.m)

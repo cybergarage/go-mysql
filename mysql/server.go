@@ -26,7 +26,7 @@ import (
 type Server struct {
 	tracer.Tracer
 	*Config
-	ConnMap
+	ConnManager
 	AuthHandler
 	QueryHandler
 	queryExecutor QueryExecutor
@@ -38,7 +38,7 @@ func NewServer() *Server {
 	server := &Server{
 		Tracer:        tracer.NullTracer,
 		Config:        NewDefaultConfig(),
-		ConnMap:       NewConnMap(),
+		ConnManager:   NewConnManager(),
 		AuthHandler:   NewDefaultAuthHandler(),
 		QueryHandler:  nil,
 		queryExecutor: nil,
