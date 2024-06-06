@@ -18,7 +18,7 @@ import (
 	"testing"
 )
 
-func TestNewConnManager(t *testing.T) {
+func TestConnManager(t *testing.T) {
 	TestLoopCnt := 10
 
 	cm := NewConnManager()
