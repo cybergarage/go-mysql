@@ -19,6 +19,8 @@ PREFIX?=$(shell pwd)
 GOBIN := $(shell go env GOPATH)/bin
 PATH := $(GOBIN):$(PATH)
 
+LDFLAGS=-checklinkname=0
+
 GIT_ROOT=github.com/cybergarage
 PRODUCT_NAME=go-mysql
 MODULE_ROOT=${GIT_ROOT}/${PRODUCT_NAME}
@@ -61,14 +63,14 @@ lint: vet
 	golangci-lint run ${PKG_SRC_ROOT}/... ${TEST_SRC_ROOT}/... ${EXAMPLES_SRC_ROOT}/...
 
 test: lint
-	go test -v -p 1 -timeout 10m -cover -coverpkg=${PKG}/... -coverprofile=${PKG_COVER}.out ${PKG}/... ${TEST_PKG}/...
+	go test -v -p 1 -timeout 10m -ldflags=-checklinkname=0 -cover -coverpkg=${PKG}/... -coverprofile=${PKG_COVER}.out ${PKG}/... ${TEST_PKG}/...
 	go tool cover -html=${PKG_COVER}.out -o ${PKG_COVER}.html
 
 build: test
-	go build  -v -gcflags=${GCFLAGS} ${BINARIES}
+	go build -v -gcflags=${GCFLAGS} -ldflags=-${LDFLAGS} ${BINARIES}
 
 install: build
-	go install -v -gcflags=${GCFLAGS} ${BINARIES}
+	go install -v -gcflags=${GCFLAGS} -ldflags=-${LDFLAGS} ${BINARIES}
 
 run: install
 	$(GOBIN)/${EXAMPLES_DEAMON_BIN}
