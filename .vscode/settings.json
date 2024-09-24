@@ -1,0 +1,5 @@
+{
+    "go.toolsEnvVars": {
+      "CGO_LDFLAGS": "-checklinkname=0",
+    },
+}
