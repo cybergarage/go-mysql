@@ -25,7 +25,6 @@ import (
 // MySQL: Protocol::HandshakeV10
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase_packets_protocol_handshake_v10.html
 
-type ProtocolVersion
 // Handshake represents a MySQL Handshake message.
 type Handshake struct {
 	*Message
@@ -39,7 +38,7 @@ func NewHandshakeWith(reader io.Reader) (*Handshake, error) {
 	}
 
 	// Read payload
-	
+
 	return &Handshake{
 		Message: msg,
 	}, nil
