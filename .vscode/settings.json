@@ -1,5 +1,5 @@
 {
-    "go.toolsEnvVars": {
-      "CGO_LDFLAGS": "-checklinkname=0",
-    },
+  "go.buildFlags":[
+     "-ldflags=-checklinkname=0"
+  ]
 }
