@@ -14,8 +14,14 @@
 
 package protocol
 
+import (
+	"io"
+)
+
 // MySQL: Protocol Basics
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basics.html
+// MySQL: MySQL Packets
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_packets.html
 // MySQL: Messages
 // https://dev.mysql.com/doc/dev/mysql-server/latest/mysqlx_protocol_messages.html
 // MariaDB protocol difference with MySQL - MariaDB Knowledge Base
@@ -23,11 +29,46 @@ package protocol
 
 // Message represents a MySQL message.
 type Message struct {
-	*Header
-	payload []byte
+	*Reader
+	payloadLength uint32
+	sequenceID    SequenceID
 }
 
-// Payload returns the message payload.
-func (msg *Message) Payload() []byte {
-	return msg.payload
+type SequenceID uint8
+
+// NewMessage returns a new MySQL message.
+func NewMessageWith(reader io.Reader) (*Message, error) {
+	msg := &Message{
+		Reader:        NewReaderWith(reader),
+		payloadLength: 0,
+		sequenceID:    SequenceID(0),
+	}
+
+	// Read the payload length
+
+	payloadLengthBuf := make([]byte, 3)
+	_, err := msg.ReadBytes(payloadLengthBuf)
+	if err != nil {
+		return nil, err
+	}
+	msg.payloadLength = uint32(payloadLengthBuf[0]) | uint32(payloadLengthBuf[1])<<8 | uint32(payloadLengthBuf[2])<<16
+
+	// Read the sequence ID
+	seqIDByte, err := msg.ReadByte()
+	if err != nil {
+		return nil, err
+	}
+	msg.sequenceID = SequenceID(seqIDByte)
+
+	return msg, nil
+}
+
+// PayloadLength returns the message payload length.
+func (msg *Message) PayloadLength() uint32 {
+	return msg.payloadLength
+}
+
+// SequenceID returns the message sequence ID.
+func (msg *Message) SequenceID() SequenceID {
+	return msg.sequenceID
 }
