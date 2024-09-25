@@ -1,4 +1,4 @@
-// Copyright (C) 2020 The go-mysql Authors. All rights reserved.
+// Copyright (C) 2024 The go-mysql Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,12 @@
 
 package protocol
 
+// MySQL: Protocol Basics
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basics.html
 // MySQL: Messages
 // https://dev.mysql.com/doc/dev/mysql-server/latest/mysqlx_protocol_messages.html
+// MariaDB protocol difference with MySQL - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/mariadb-protocol-difference-with-mysql/
 
 // Header represents a MySQL message header.
 type Header struct {
