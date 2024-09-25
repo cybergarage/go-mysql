@@ -25,23 +25,23 @@ func TestReader(t *testing.T) {
 
 	// Test PeekInt32 and ReadInt32
 	reader := NewReaderWith(bytes.NewBuffer(buf))
-	expectedInt32 := int32(0x61626364)
-	actualInt32, err := reader.PeekInt32()
+	expectedInt32 := uint(0x64636261)
+	actualInt32, err := reader.PeekInt4()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 	if actualInt32 != expectedInt32 {
 		t.Errorf("Expected %v, but got %v", expectedInt32, actualInt32)
 	}
-	actualInt32, err = reader.ReadInt32()
+	actualInt32, err = reader.ReadInt4()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 	if actualInt32 != expectedInt32 {
 		t.Errorf("Expected %v, but got %v", expectedInt32, actualInt32)
 	}
-	expectedInt32 = int32(0x65666768)
-	actualInt32, err = reader.ReadInt32()
+	expectedInt32 = uint(0x68676665)
+	actualInt32, err = reader.ReadInt4()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
@@ -49,10 +49,21 @@ func TestReader(t *testing.T) {
 		t.Errorf("Expected %v, but got %v", expectedInt32, actualInt32)
 	}
 
-	// Test ReadInt16
+	// Test ReadInt3
 	reader = NewReaderWith(bytes.NewBuffer(buf))
-	expectedInt16 := int16(0x6162)
-	actualInt16, err := reader.ReadInt16()
+	expectedInt24 := uint(0x636261)
+	actualInt24, err := reader.ReadInt3()
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	if actualInt24 != expectedInt24 {
+		t.Errorf("Expected %v, but got %v", expectedInt24, actualInt24)
+	}
+
+	// Test ReadInt2
+	reader = NewReaderWith(bytes.NewBuffer(buf))
+	expectedInt16 := uint(0x6261)
+	actualInt16, err := reader.ReadInt2()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}

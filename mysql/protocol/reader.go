@@ -75,17 +75,17 @@ func (reader *Reader) PeekBytes(n int) ([]byte, error) {
 	return buf, nil
 }
 
-// PeekInt32 reads a 32-bit integer.
-func (reader *Reader) PeekInt32() (int32, error) {
+// PeekInt4 reads a 32-bit integer.
+func (reader *Reader) PeekInt4() (uint, error) {
 	int32Bytes, err := reader.PeekBytes(4)
 	if err != nil {
 		return 0, err
 	}
-	return util.BytesToInt32(int32Bytes), nil
+	return uint(util.BytesToUint32(int32Bytes)), nil
 }
 
-// ReadInt32 reads a 32-bit integer.
-func (reader *Reader) ReadInt32() (int32, error) {
+// ReadInt4 reads a 32-bit integer.
+func (reader *Reader) ReadInt4() (uint, error) {
 	int32Bytes := make([]byte, 4)
 	nRead, err := reader.ReadBytes(int32Bytes)
 	if err != nil {
@@ -94,11 +94,11 @@ func (reader *Reader) ReadInt32() (int32, error) {
 	if nRead != 4 {
 		return 0, newShortMessageError(4, nRead)
 	}
-	return util.BytesToInt32(int32Bytes), nil
+	return uint(util.BytesToUint32(int32Bytes)), nil
 }
 
-// ReadInt16 reads a 16-bit integer.
-func (reader *Reader) ReadInt16() (int16, error) {
+// ReadInt2 reads a 16-bit integer.
+func (reader *Reader) ReadInt2() (uint, error) {
 	int16Bytes := make([]byte, 2)
 	nRead, err := reader.ReadBytes(int16Bytes)
 	if err != nil {
@@ -107,7 +107,20 @@ func (reader *Reader) ReadInt16() (int16, error) {
 	if nRead != 2 {
 		return 0, newShortMessageError(2, nRead)
 	}
-	return util.BytesToInt16(int16Bytes), nil
+	return uint(util.BytesToUint16(int16Bytes)), nil
+}
+
+// ReadInt3 reads a 24-bit integer.
+func (reader *Reader) ReadInt3() (uint, error) {
+	int24Bytes := make([]byte, 3)
+	nRead, err := reader.ReadBytes(int24Bytes)
+	if err != nil {
+		return 0, err
+	}
+	if nRead != 3 {
+		return 0, newShortMessageError(3, nRead)
+	}
+	return uint(util.BytesToUint24(int24Bytes)), nil
 }
 
 func (reader *Reader) ReadBytesUntil(delim byte) ([]byte, error) {
