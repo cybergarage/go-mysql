@@ -17,7 +17,7 @@ package protocol
 import (
 	"io"
 
-	util "github.com/cybergarage/go-postgresql/postgresql/encoding/bytes"
+	util "github.com/cybergarage/go-mysql/mysql/encoding/bytes"
 )
 
 // Reader represents a message reader.
