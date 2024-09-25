@@ -47,6 +47,7 @@ EXAMPLE_BINARIES=\
 BINARIES=${EXAMPLE_BINARIES}
 
 .PHONY: version clean test
+.IGNORE: lint
 
 all: test
 
