@@ -14,8 +14,12 @@
 
 package protocol
 
+// MySQL: Protocol Basics
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basics.html
 // MySQL: Messages
 // https://dev.mysql.com/doc/dev/mysql-server/latest/mysqlx_protocol_messages.html
+// MariaDB protocol difference with MySQL - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/mariadb-protocol-difference-with-mysql/
 
 // Message represents a MySQL message.
 type Message struct {
