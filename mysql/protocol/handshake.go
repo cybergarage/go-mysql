@@ -28,18 +28,80 @@ import (
 // Handshake represents a MySQL Handshake message.
 type Handshake struct {
 	*Message
+	protocolVersion  uint8
+	serverVersion    string
+	connectionID     uint32
+	authPluginData   string
+	capabilityFlags1 uint16
+	characterSet     uint8
+	statusFlags      uint16
+	capabilityFlags2 uint16
+	authPluginName   string
 }
 
 // NewHandshake returns a new MySQL Handshake message.
 func NewHandshakeWith(reader io.Reader) (*Handshake, error) {
+	var err error
+
 	msg, err := NewMessageWith(reader)
 	if err != nil {
 		return nil, err
 	}
 
-	// Read payload
-
-	return &Handshake{
+	h := &Handshake{
 		Message: msg,
-	}, nil
+	}
+
+	h.protocolVersion, err = h.ReadByte()
+	if err != nil {
+		return nil, err
+	}
+
+	h.serverVersion, err = h.ReadNullTerminatedString()
+	if err != nil {
+		return nil, err
+	}
+
+	h.connectionID, err = h.ReadInt4()
+	if err != nil {
+		return nil, err
+	}
+
+	h.authPluginData, err = h.ReadNullTerminatedString()
+	if err != nil {
+		return nil, err
+	}
+
+	h.ReadByte() // Filler
+
+	h.capabilityFlags1, err = h.ReadInt2()
+	if err != nil {
+		return nil, err
+	}
+
+	h.characterSet, err = h.ReadByte()
+	if err != nil {
+		return nil, err
+	}
+
+	h.statusFlags, err = h.ReadInt2()
+	if err != nil {
+		return nil, err
+	}
+
+	h.capabilityFlags2, err = h.ReadInt2()
+	if err != nil {
+		return nil, err
+	}
+
+	authPluginDataLen, err := h.ReadByte()
+	if err != nil {
+		return nil, err
+	}
+
+	h.ReadByte() // Filler
+
+	h.authPluginName, err = h.ReadNullTerminatedString()
+
+	return h, err
 }
