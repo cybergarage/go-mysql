@@ -177,3 +177,8 @@ func (reader *Reader) ReadFixedLengthString(n int) (string, error) {
 	}
 	return string(b), nil
 }
+
+// ReadVariableLengthString reads a string.
+func (reader *Reader) ReadVariableLengthString(n int) (string, error) {
+	return reader.ReadFixedLengthString(n)
+}
