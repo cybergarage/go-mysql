@@ -87,7 +87,7 @@ func (reader *Reader) PeekInt4() (uint, error) {
 }
 
 // ReadInt4 reads a 32-bit integer.
-func (reader *Reader) ReadInt4() (uint, error) {
+func (reader *Reader) ReadInt4() (uint32, error) {
 	int32Bytes := make([]byte, 4)
 	nRead, err := reader.ReadBytes(int32Bytes)
 	if err != nil {
@@ -96,11 +96,11 @@ func (reader *Reader) ReadInt4() (uint, error) {
 	if nRead != 4 {
 		return 0, newShortMessageError(4, nRead)
 	}
-	return uint(util.BytesToUint32(int32Bytes)), nil
+	return util.BytesToUint32(int32Bytes), nil
 }
 
 // ReadInt2 reads a 16-bit integer.
-func (reader *Reader) ReadInt2() (uint, error) {
+func (reader *Reader) ReadInt2() (uint16, error) {
 	int16Bytes := make([]byte, 2)
 	nRead, err := reader.ReadBytes(int16Bytes)
 	if err != nil {
@@ -109,11 +109,11 @@ func (reader *Reader) ReadInt2() (uint, error) {
 	if nRead != 2 {
 		return 0, newShortMessageError(2, nRead)
 	}
-	return uint(util.BytesToUint16(int16Bytes)), nil
+	return util.BytesToUint16(int16Bytes), nil
 }
 
 // ReadInt3 reads a 24-bit integer.
-func (reader *Reader) ReadInt3() (uint, error) {
+func (reader *Reader) ReadInt3() (uint32, error) {
 	int24Bytes := make([]byte, 3)
 	nRead, err := reader.ReadBytes(int24Bytes)
 	if err != nil {
@@ -122,7 +122,7 @@ func (reader *Reader) ReadInt3() (uint, error) {
 	if nRead != 3 {
 		return 0, newShortMessageError(3, nRead)
 	}
-	return uint(util.BytesToUint24(int24Bytes)), nil
+	return util.BytesToUint24(int24Bytes), nil
 }
 
 // ReadBytesUntil reads a byte array until the specified delimiter.
