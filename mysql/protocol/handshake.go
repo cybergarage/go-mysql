@@ -27,7 +27,7 @@ import (
 
 // Handshake represents a MySQL Handshake message.
 type Handshake struct {
-	*Message
+	*message
 	protocolVersion  uint8
 	serverVersion    string
 	connectionID     uint32
@@ -49,7 +49,7 @@ func NewHandshakeWith(reader io.Reader) (*Handshake, error) {
 	}
 
 	h := &Handshake{
-		Message: msg,
+		message: msg,
 	}
 
 	h.protocolVersion, err = h.ReadByte()
@@ -94,14 +94,14 @@ func NewHandshakeWith(reader io.Reader) (*Handshake, error) {
 		return nil, err
 	}
 
-	authPluginDataLen, err := h.ReadByte()
-	if err != nil {
-		return nil, err
-	}
+	// authPluginDataLen, err := h.ReadByte()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	h.ReadByte() // Filler
+	// h.ReadByte() // Filler
 
-	h.authPluginName, err = h.ReadNullTerminatedString()
+	// h.authPluginName, err = h.ReadNullTerminatedString()
 
 	return h, err
 }

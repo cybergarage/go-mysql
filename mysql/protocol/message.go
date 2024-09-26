@@ -28,17 +28,23 @@ import (
 // https://mariadb.com/kb/en/mariadb-protocol-difference-with-mysql/
 
 // Message represents a MySQL message.
-type Message struct {
+type Message interface {
+	Bytes() []byte
+}
+
+// SequenceID represents a MySQL message sequence ID.
+type SequenceID uint8
+
+// message represents a MySQL message.
+type message struct {
 	*Reader
 	payloadLength uint32
 	sequenceID    SequenceID
 }
 
-type SequenceID uint8
-
 // NewMessage returns a new MySQL message.
-func NewMessageWith(reader io.Reader) (*Message, error) {
-	msg := &Message{
+func NewMessageWith(reader io.Reader) (*message, error) {
+	msg := &message{
 		Reader:        NewReaderWith(reader),
 		payloadLength: 0,
 		sequenceID:    SequenceID(0),
@@ -64,11 +70,11 @@ func NewMessageWith(reader io.Reader) (*Message, error) {
 }
 
 // PayloadLength returns the message payload length.
-func (msg *Message) PayloadLength() uint32 {
+func (msg *message) PayloadLength() uint32 {
 	return msg.payloadLength
 }
 
 // SequenceID returns the message sequence ID.
-func (msg *Message) SequenceID() SequenceID {
+func (msg *message) SequenceID() SequenceID {
 	return msg.sequenceID
 }
