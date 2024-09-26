@@ -34,6 +34,7 @@ func NewReaderWith(reader io.Reader) *Reader {
 	}
 }
 
+// ReadBytes reads a byte array.
 func (reader *Reader) ReadBytes(buf []byte) (int, error) {
 	nBufSize := len(buf)
 	nReadBuf := 0
@@ -138,11 +139,24 @@ func (reader *Reader) ReadBytesUntil(delim byte) ([]byte, error) {
 	return buf, nil
 }
 
-// ReadString reads a string.
-func (reader *Reader) ReadString() (string, error) {
+// ReadNullTerminatedString reads a string.
+func (reader *Reader) ReadNullTerminatedString() (string, error) {
 	strBytes, err := reader.ReadBytesUntil(0x00)
 	if err != nil {
 		return "", err
 	}
 	return string(strBytes[:len(strBytes)-1]), nil
+}
+
+// ReadFixedLengthString reads a string.
+func (reader *Reader) ReadFixedLengthString(n int) (string, error) {
+	b := make([]byte, n)
+	nRead, err := reader.ReadBytes(b)
+	if err != nil {
+		return "", err
+	}
+	if nRead != n {
+		return "", newShortMessageError(n, nRead)
+	}
+	return string(b), nil
 }
