@@ -16,9 +16,9 @@ package protocol
 
 import (
 	_ "embed"
-	"strings"
 	"testing"
 
+	"github.com/cybergarage/go-logger/log/hexdump"
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
@@ -33,7 +33,12 @@ func TestHandshakeMessage(t *testing.T) {
 		{"handshake", handshakeMsg001},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			_, err := protocol.NewHandshakeWith(strings.NewReader(test.data))
+			reader, err := hexdump.NewReaderWithString(test.data)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			_, err = protocol.NewHandshakeWith(reader)
 			if err != nil {
 				t.Error(err)
 			}
