@@ -15,6 +15,7 @@
 package protocol
 
 import (
+	"errors"
 	"io"
 
 	util "github.com/cybergarage/go-mysql/mysql/encoding/bytes"
@@ -124,6 +125,7 @@ func (reader *Reader) ReadInt3() (uint, error) {
 	return uint(util.BytesToUint24(int24Bytes)), nil
 }
 
+// ReadBytesUntil reads a byte array until the specified delimiter.
 func (reader *Reader) ReadBytesUntil(delim byte) ([]byte, error) {
 	buf := make([]byte, 0)
 	for {
@@ -139,13 +141,28 @@ func (reader *Reader) ReadBytesUntil(delim byte) ([]byte, error) {
 	return buf, nil
 }
 
-// ReadNullTerminatedString reads a string.
+// ReadNullTerminatedString reads a string until NULL.
 func (reader *Reader) ReadNullTerminatedString() (string, error) {
 	strBytes, err := reader.ReadBytesUntil(0x00)
 	if err != nil {
 		return "", err
 	}
 	return string(strBytes[:len(strBytes)-1]), nil
+}
+
+// ReadEOFTerminatedString reads a string until EOF.
+func (reader *Reader) ReadEOFTerminatedString() (string, error) {
+	buf := make([]byte, 0)
+	for {
+		b, err := reader.ReadByte()
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				return string(buf), nil
+			}
+			return "", err
+		}
+		buf = append(buf, b)
+	}
 }
 
 // ReadFixedLengthString reads a string.
