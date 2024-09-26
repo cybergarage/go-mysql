@@ -114,4 +114,15 @@ func TestReader(t *testing.T) {
 	if actualString != expectedString {
 		t.Errorf("Expected %v, but got %v", expectedString, actualString)
 	}
+
+	// Test ReadVariableLengthString
+	reader = NewReaderWith(bytes.NewBuffer(buf))
+	expectedString = "\x61\x62\x63\x64"
+	actualString, err = reader.ReadVariableLengthString(4)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	if actualString != expectedString {
+		t.Errorf("Expected %v, but got %v", expectedString, actualString)
+	}
 }
