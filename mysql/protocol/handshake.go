@@ -25,6 +25,13 @@ import (
 // MySQL: Protocol::HandshakeV10
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase_packets_protocol_handshake_v10.html
 
+// ProtocolVersion represents a MySQL Protocol Version.
+type ProtocolVersion uint8
+
+const (
+	ProtocolVersion10 ProtocolVersion = 10
+)
+
 // Handshake represents a MySQL Handshake message.
 type Handshake struct {
 	*message
@@ -104,4 +111,40 @@ func NewHandshakeWith(reader io.Reader) (*Handshake, error) {
 	// h.authPluginName, err = h.ReadNullTerminatedString()
 
 	return h, err
+}
+
+func (h *Handshake) ProtocolVersion() ProtocolVersion {
+	return ProtocolVersion(h.protocolVersion)
+}
+
+func (h *Handshake) ServerVersion() string {
+	return h.serverVersion
+}
+
+func (h *Handshake) ConnectionID() uint32 {
+	return h.connectionID
+}
+
+func (h *Handshake) AuthPluginData() string {
+	return h.authPluginData
+}
+
+func (h *Handshake) CapabilityFlags1() uint16 {
+	return h.capabilityFlags1
+}
+
+func (h *Handshake) CharacterSet() uint8 {
+	return h.characterSet
+}
+
+func (h *Handshake) StatusFlags() uint16 {
+	return h.statusFlags
+}
+
+func (h *Handshake) CapabilityFlags2() uint16 {
+	return h.capabilityFlags2
+}
+
+func (h *Handshake) AuthPluginName() string {
+	return h.authPluginName
 }
