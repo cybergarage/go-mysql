@@ -26,11 +26,36 @@ import (
 var handshakeMsg001 string
 
 func TestHandshakeMessage(t *testing.T) {
+	// Protocol: 10
+	// Version: 5.7.9-vitess-12.0.6
+	// Thread ID: 1
+	// Salt: Dn+\vB\x0En\x03
+	// Server Capabilities: 0xa20f
+	// Server Language: utf8mb3 COLLATE utf8mb3_general_ci (33)
+	// Server Status: 0x0000
+	// Extended Server Capabilities: 0x013b
+	// Authentication Plugin Length: 21
+	// Unused: 00000000000000000000
+	// Salt: 2\x1Eg\ayx&\x18R\x1D\x01P
+	// Authentication Plugin: mysql_native_password
+
+	type expected struct {
+		protocolVer protocol.ProtocolVersion
+		serverVer   string
+	}
 	for _, test := range []struct {
 		name string
 		data string
+		expected
 	}{
-		{"handshake", handshakeMsg001},
+		{
+			"handshake",
+			handshakeMsg001,
+			expected{
+				protocolVer: protocol.ProtocolVersion10,
+				serverVer:   "5.7.9-vitess-12.0.6",
+			},
+		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			reader, err := hexdump.NewReaderWithString(test.data)
@@ -38,9 +63,17 @@ func TestHandshakeMessage(t *testing.T) {
 				t.Error(err)
 				return
 			}
-			_, err = protocol.NewHandshakeWith(reader)
+			msg, err := protocol.NewHandshakeWith(reader)
 			if err != nil {
 				t.Error(err)
+			}
+
+			if msg.ProtocolVersion() != test.expected.protocolVer {
+				t.Errorf("expected %d, got %d", test.expected.protocolVer, msg.ProtocolVersion())
+			}
+
+			if msg.ServerVersion() != test.expected.serverVer {
+				t.Errorf("expected %s, got %s", test.expected.serverVer, msg.ServerVersion())
 			}
 		})
 	}
