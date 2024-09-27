@@ -40,6 +40,7 @@ func TestHandshakeMessage(t *testing.T) {
 	// Authentication Plugin: mysql_native_password
 
 	type expected struct {
+		seqID       protocol.SequenceID
 		protocolVer protocol.ProtocolVersion
 		serverVer   string
 	}
@@ -52,6 +53,7 @@ func TestHandshakeMessage(t *testing.T) {
 			"handshake",
 			handshakeMsg001,
 			expected{
+				seqID:       protocol.SequenceID(0),
 				protocolVer: protocol.ProtocolVersion10,
 				serverVer:   "5.7.9-vitess-12.0.6",
 			},
@@ -66,6 +68,10 @@ func TestHandshakeMessage(t *testing.T) {
 			msg, err := protocol.NewHandshakeWith(reader)
 			if err != nil {
 				t.Error(err)
+			}
+
+			if msg.SequenceID() != test.expected.seqID {
+				t.Errorf("expected %d, got %d", test.expected.seqID, msg.SequenceID())
 			}
 
 			if msg.ProtocolVersion() != test.expected.protocolVer {
