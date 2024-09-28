@@ -71,7 +71,7 @@ func TestHandshakeMessage(t *testing.T) {
 				t.Error(err)
 				return
 			}
-			msg, err := protocol.NewHandshakeWith(reader)
+			msg, err := protocol.NewHandshakeFromReader(reader)
 			if err != nil {
 				t.Error(err)
 			}

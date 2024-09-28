@@ -46,8 +46,8 @@ type Handshake struct {
 	authPluginName  string
 }
 
-// NewHandshake returns a new MySQL Handshake message.
-func NewHandshakeWith(reader io.Reader) (*Handshake, error) {
+// NewHandshakeFromReader returns a new MySQL Handshake message from the specified reader.
+func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	var err error
 
 	msg, err := NewMessageWith(reader)
