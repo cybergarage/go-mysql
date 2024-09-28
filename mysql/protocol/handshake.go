@@ -35,15 +35,14 @@ const (
 // Handshake represents a MySQL Handshake message.
 type Handshake struct {
 	*message
-	protocolVersion  uint8
-	serverVersion    string
-	connectionID     uint32
-	authPluginData   string
-	capabilityFlags1 uint16
-	characterSet     uint8
-	statusFlags      uint16
-	capabilityFlags2 uint16
-	authPluginName   string
+	protocolVersion uint8
+	serverVersion   string
+	connectionID    uint32
+	authPluginData  string
+	capabilityFlags uint32
+	characterSet    uint8
+	statusFlags     uint16
+	authPluginName  string
 }
 
 // NewHandshake returns a new MySQL Handshake message.
@@ -81,10 +80,11 @@ func NewHandshakeWith(reader io.Reader) (*Handshake, error) {
 
 	h.ReadByte() // Filler
 
-	h.capabilityFlags1, err = h.ReadInt2()
+	iv2, err := h.ReadInt2()
 	if err != nil {
 		return nil, err
 	}
+	h.capabilityFlags = uint32(iv2)
 
 	h.characterSet, err = h.ReadByte()
 	if err != nil {
@@ -96,10 +96,11 @@ func NewHandshakeWith(reader io.Reader) (*Handshake, error) {
 		return nil, err
 	}
 
-	h.capabilityFlags2, err = h.ReadInt2()
+	iv2, err = h.ReadInt2()
 	if err != nil {
 		return nil, err
 	}
+	h.capabilityFlags &= (uint32(iv2) << 16)
 
 	// authPluginDataLen, err := h.ReadByte()
 	// if err != nil {
@@ -129,8 +130,8 @@ func (h *Handshake) AuthPluginData() string {
 	return h.authPluginData
 }
 
-func (h *Handshake) CapabilityFlags1() uint16 {
-	return h.capabilityFlags1
+func (h *Handshake) CapabilityFlags() CapabilityFlag {
+	return CapabilityFlag(h.capabilityFlags)
 }
 
 func (h *Handshake) CharacterSet() uint8 {
@@ -139,10 +140,6 @@ func (h *Handshake) CharacterSet() uint8 {
 
 func (h *Handshake) StatusFlags() uint16 {
 	return h.statusFlags
-}
-
-func (h *Handshake) CapabilityFlags2() uint16 {
-	return h.capabilityFlags2
 }
 
 func (h *Handshake) AuthPluginName() string {
