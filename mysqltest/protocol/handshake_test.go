@@ -43,6 +43,9 @@ func TestHandshakeMessage(t *testing.T) {
 		seqID       protocol.SequenceID
 		protocolVer protocol.ProtocolVersion
 		serverVer   string
+		conID       uint32
+		capFlags    protocol.CapabilityFlag
+		charSet     protocol.CharacterSet
 	}
 	for _, test := range []struct {
 		name string
@@ -56,6 +59,9 @@ func TestHandshakeMessage(t *testing.T) {
 				seqID:       protocol.SequenceID(0),
 				protocolVer: protocol.ProtocolVersion10,
 				serverVer:   "5.7.9-vitess-12.0.6",
+				conID:       1,
+				capFlags:    protocol.CapabilityFlag(0),
+				charSet:     protocol.CharacterSet(protocol.CharacterSetUTF8),
 			},
 		},
 	} {
@@ -80,6 +86,14 @@ func TestHandshakeMessage(t *testing.T) {
 
 			if msg.ServerVersion() != test.expected.serverVer {
 				t.Errorf("expected %s, got %s", test.expected.serverVer, msg.ServerVersion())
+			}
+
+			if msg.ConnectionID() != test.expected.conID {
+				t.Errorf("expected %d, got %d", test.expected.conID, msg.ConnectionID())
+			}
+
+			if msg.CapabilityFlags() != test.expected.capFlags {
+				t.Errorf("expected %d, got %d", test.expected.capFlags, msg.CapabilityFlags())
 			}
 		})
 	}
