@@ -79,13 +79,17 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 		return nil, err
 	}
 
-	h.ReadByte() // Filler
+	_, err = h.ReadByte() // Filler
+	if err != nil {
+		return nil, err
+	}
 
 	iv2, err := h.ReadInt2()
 	if err != nil {
 		return nil, err
 	}
-	h.capabilityFlags = uint32(iv2)
+	// h.capabilityFlags = uint32(iv2)
+	h.capabilityFlags = (uint32(iv2) << 16)
 
 	h.characterSet, err = h.ReadByte()
 	if err != nil {
@@ -101,7 +105,8 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.capabilityFlags &= (uint32(iv2) << 16)
+	// h.capabilityFlags |= (uint32(iv2) << 16)
+	h.capabilityFlags |= uint32(iv2)
 
 	hasClientPluginAuthFlag := (CapabilityFlag(h.capabilityFlags) & CapabilityFlagClientPluginAuth) != 0
 	authPluginDataLen := uint8(0)
@@ -118,10 +123,12 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 		return nil, err
 	}
 
-	authPluginDataLen = max(13, authPluginDataLen-8)
-	h.authPluginData2, err = h.ReadFixedLengthString(int(authPluginDataLen))
-	if err != nil {
-		return nil, err
+	if 0 < authPluginDataLen {
+		authPluginDataLen = max(13, authPluginDataLen-8)
+		h.authPluginData2, err = h.ReadFixedLengthString(int(authPluginDataLen))
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if hasClientPluginAuthFlag {
