@@ -42,13 +42,18 @@ type message struct {
 	sequenceID    SequenceID
 }
 
-// NewMessage returns a new MySQL message.
-func NewMessageWith(reader io.Reader) (*message, error) {
-	msg := &message{
-		Reader:        NewReaderWith(reader),
+func newMessage() *message {
+	return &message{
+		Reader:        nil,
 		payloadLength: 0,
 		sequenceID:    SequenceID(0),
 	}
+}
+
+// NewMessage returns a new MySQL message.
+func NewMessageWith(reader io.Reader) (*message, error) {
+	msg := newMessage()
+	msg.Reader = NewReaderWith(reader)
 
 	// Read the payload length
 

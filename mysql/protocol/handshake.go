@@ -46,6 +46,18 @@ type Handshake struct {
 	authPluginName  string
 }
 
+func newHandshakeWithMessage(msg *message) *Handshake {
+	return &Handshake{
+		message: msg,
+	}
+}
+
+// NewHandshake returns a new MySQL Handshake message.
+func NewHandshake() (*Handshake, error) {
+	h := newHandshakeWithMessage(newMessage())
+	return h, nil
+}
+
 // NewHandshakeFromReader returns a new MySQL Handshake message from the specified reader.
 func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	var err error
@@ -55,9 +67,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 		return nil, err
 	}
 
-	h := &Handshake{
-		message: msg,
-	}
+	h := newHandshakeWithMessage(msg)
 
 	h.protocolVersion, err = h.ReadByte()
 	if err != nil {
