@@ -29,6 +29,15 @@ import (
 
 // Message represents a MySQL message.
 type Message interface {
+	// SetSequenceID sets the message sequence ID.
+	SetSequenceID(n SequenceID)
+	// PayloadLength returns the message payload length.
+	PayloadLength() uint32
+	// SequenceID returns the message sequence ID.
+	SequenceID() SequenceID
+	// Payload returns the message payload.
+	Payload() []byte
+	// Bytes returns the message bytes.
 	Bytes() []byte
 }
 
@@ -102,4 +111,15 @@ func (msg *message) SequenceID() SequenceID {
 // Payload returns the message payload.
 func (msg *message) Payload() []byte {
 	return msg.payload
+}
+
+// Bytes returns the message bytes.
+func (msg *message) Bytes() []byte {
+	payloadLengthBuf := []byte{
+		byte(msg.payloadLength),
+		byte(msg.payloadLength >> 8),
+		byte(msg.payloadLength >> 16),
+	}
+	seqIDByte := byte(msg.sequenceID)
+	return append(append(payloadLengthBuf, seqIDByte), msg.payload...)
 }
