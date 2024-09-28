@@ -38,10 +38,11 @@ type Handshake struct {
 	protocolVersion uint8
 	serverVersion   string
 	connectionID    uint32
-	authPluginData  string
+	authPluginData1 string
 	capabilityFlags uint32
 	characterSet    uint8
 	statusFlags     uint16
+	authPluginData2 string
 	authPluginName  string
 }
 
@@ -73,7 +74,7 @@ func NewHandshakeWith(reader io.Reader) (*Handshake, error) {
 		return nil, err
 	}
 
-	h.authPluginData, err = h.ReadNullTerminatedString()
+	h.authPluginData1, err = h.ReadNullTerminatedString()
 	if err != nil {
 		return nil, err
 	}
@@ -102,14 +103,33 @@ func NewHandshakeWith(reader io.Reader) (*Handshake, error) {
 	}
 	h.capabilityFlags &= (uint32(iv2) << 16)
 
-	// authPluginDataLen, err := h.ReadByte()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	hasClientPluginAuthFlag := (CapabilityFlag(h.capabilityFlags) & CapabilityFlagClientPluginAuth) != 0
+	authPluginDataLen := uint8(0)
+	iv1, err := h.ReadByte()
+	if err != nil {
+		return nil, err
+	}
+	if hasClientPluginAuthFlag {
+		authPluginDataLen = iv1
+	}
 
-	// h.ReadByte() // Filler
+	_, err = h.ReadFixedLengthString(10) // Reserved
+	if err != nil {
+		return nil, err
+	}
 
-	// h.authPluginName, err = h.ReadNullTerminatedString()
+	authPluginDataLen = max(13, authPluginDataLen-8)
+	h.authPluginData2, err = h.ReadFixedLengthString(int(authPluginDataLen))
+	if err != nil {
+		return nil, err
+	}
+
+	if hasClientPluginAuthFlag {
+		h.authPluginName, err = h.ReadNullTerminatedString()
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return h, err
 }
@@ -127,7 +147,7 @@ func (h *Handshake) ConnectionID() uint32 {
 }
 
 func (h *Handshake) AuthPluginData() string {
-	return h.authPluginData
+	return h.authPluginData1
 }
 
 func (h *Handshake) CapabilityFlags() CapabilityFlag {
