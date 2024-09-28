@@ -51,7 +51,7 @@ func newMessage() *message {
 }
 
 // NewMessage returns a new MySQL message.
-func NewMessageWith(reader io.Reader) (*message, error) {
+func NewMessageWithReader(reader io.Reader) (*message, error) {
 	msg := newMessage()
 	msg.Reader = NewReaderWith(reader)
 

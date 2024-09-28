@@ -62,7 +62,7 @@ func NewHandshake() (*Handshake, error) {
 func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	var err error
 
-	msg, err := NewMessageWith(reader)
+	msg, err := NewMessageWithReader(reader)
 	if err != nil {
 		return nil, err
 	}
