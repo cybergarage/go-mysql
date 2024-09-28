@@ -182,3 +182,32 @@ func (h *Handshake) StatusFlags() uint16 {
 func (h *Handshake) AuthPluginName() string {
 	return h.authPluginName
 }
+
+// Bytes returns the message bytes.
+func (h *Handshake) Bytes() []byte {
+	payload := make([]byte, 0)
+	payload = append(payload, h.protocolVersion)
+	payload = append(payload, []byte(h.serverVersion)...)
+	payload = append(payload, 0x00)
+	payload = append(payload, Uint32ToBytes(h.connectionID)...)
+	payload = append(payload, []byte(h.authPluginData1)...)
+	payload = append(payload, 0x00)
+	payload = append(payload, 0x00)
+	payload = append(payload, Uint16ToBytes(h.statusFlags)...)
+	payload = append(payload, Uint16ToBytes(uint16(h.capabilityFlags>>16))...)
+	if (CapabilityFlag(h.capabilityFlags) & CapabilityFlagClientPluginAuth) != 0 {
+		payload = append(payload, uint8(len(h.authPluginData2)+8))
+	} else {
+		payload = append(payload, 0x00)
+	}
+	payload = append(payload, make([]byte, 10)...)
+	if 0 < len(h.authPluginData2) {
+		payload = append(payload, []byte(h.authPluginData2)...)
+	}
+	if (CapabilityFlag(h.capabilityFlags) & CapabilityFlagClientPluginAuth) != 0 {
+		payload = append(payload, []byte(h.authPluginName)...)
+		payload = append(payload, 0x00)
+	}
+	h.message = NewMessageWithPayload(payload)
+	return h.message.Bytes()
+}
