@@ -38,7 +38,7 @@ type Message interface {
 	// Payload returns the message payload.
 	Payload() []byte
 	// Bytes returns the message bytes.
-	Bytes() []byte
+	Bytes() ([]byte, error)
 }
 
 // SequenceID represents a MySQL message sequence ID.
@@ -114,12 +114,12 @@ func (msg *message) Payload() []byte {
 }
 
 // Bytes returns the message bytes.
-func (msg *message) Bytes() []byte {
+func (msg *message) Bytes() ([]byte, error) {
 	payloadLengthBuf := []byte{
 		byte(msg.payloadLength),
 		byte(msg.payloadLength >> 8),
 		byte(msg.payloadLength >> 16),
 	}
 	seqIDByte := byte(msg.sequenceID)
-	return append(append(payloadLengthBuf, seqIDByte), msg.payload...)
+	return append(append(payloadLengthBuf, seqIDByte), msg.payload...), nil
 }
