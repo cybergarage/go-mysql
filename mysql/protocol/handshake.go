@@ -120,13 +120,12 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	}
 	h.capabilityFlags |= (uint32(iv2) << 16)
 
-	hasClientPluginAuthFlag := (CapabilityFlag(h.capabilityFlags) & CapabilityFlagClientPluginAuth) != 0
 	authPluginDataLen := uint8(0)
 	iv1, err := h.ReadByte()
 	if err != nil {
 		return nil, err
 	}
-	if hasClientPluginAuthFlag {
+	if h.CapabilityFlags().HasClientPluginAuth() {
 		authPluginDataLen = iv1
 	}
 
@@ -143,7 +142,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 		}
 	}
 
-	if hasClientPluginAuthFlag {
+	if h.CapabilityFlags().HasClientPluginAuth() {
 		h.authPluginName, err = h.ReadNullTerminatedString()
 		if err != nil {
 			return nil, err
