@@ -40,12 +40,14 @@ func TestHandshakeMessage(t *testing.T) {
 	// Authentication Plugin: mysql_native_password
 
 	type expected struct {
-		seqID       protocol.SequenceID
-		protocolVer protocol.ProtocolVersion
-		serverVer   string
-		conID       uint32
-		capFlags    protocol.CapabilityFlag
-		charSet     protocol.CharacterSet
+		seqID          protocol.SequenceID
+		protocolVer    protocol.ProtocolVersion
+		serverVer      string
+		conID          uint32
+		capFlags       protocol.CapabilityFlag
+		charSet        protocol.CharacterSet
+		statusFlags    protocol.StatusFlag
+		authPluginName string
 	}
 	for _, test := range []struct {
 		name string
@@ -56,12 +58,14 @@ func TestHandshakeMessage(t *testing.T) {
 			"handshake",
 			handshakeMsg001,
 			expected{
-				seqID:       protocol.SequenceID(0),
-				protocolVer: protocol.ProtocolVersion10,
-				serverVer:   "5.7.9-vitess-12.0.6",
-				conID:       1,
-				capFlags:    protocol.CapabilityFlag(0),
-				charSet:     protocol.CharacterSet(protocol.CharacterSetUTF8),
+				seqID:          protocol.SequenceID(0),
+				protocolVer:    protocol.ProtocolVersion10,
+				serverVer:      "5.7.9-vitess-12.0.6",
+				conID:          1,
+				capFlags:       protocol.CapabilityFlag(0),
+				charSet:        protocol.CharacterSet(protocol.CharacterSetUTF8),
+				statusFlags:    protocol.StatusFlag(0),
+				authPluginName: "mysql_native_password",
 			},
 		},
 	} {
@@ -96,9 +100,13 @@ func TestHandshakeMessage(t *testing.T) {
 				t.Errorf("expected %d, got %d", test.expected.charSet, msg.CharacterSet())
 			}
 
-			// if msg.CapabilityFlags() != test.expected.capFlags {
-			// 	t.Errorf("expected %d, got %d", test.expected.capFlags, msg.CapabilityFlags())
-			// }
+			if msg.StatusFlags() != test.expected.statusFlags {
+				t.Errorf("expected %d, got %d", test.expected.statusFlags, msg.StatusFlags())
+			}
+
+			if msg.AuthPluginName() != test.expected.authPluginName {
+				t.Errorf("expected %s, got %s", test.expected.authPluginName, msg.AuthPluginName())
+			}
 		})
 	}
 }
