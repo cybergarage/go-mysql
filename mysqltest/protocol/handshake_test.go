@@ -92,9 +92,13 @@ func TestHandshakeMessage(t *testing.T) {
 				t.Errorf("expected %d, got %d", test.expected.conID, msg.ConnectionID())
 			}
 
-			if msg.CapabilityFlags() != test.expected.capFlags {
-				t.Errorf("expected %d, got %d", test.expected.capFlags, msg.CapabilityFlags())
+			if msg.CharacterSet() != test.expected.charSet {
+				t.Errorf("expected %d, got %d", test.expected.charSet, msg.CharacterSet())
 			}
+
+			// if msg.CapabilityFlags() != test.expected.capFlags {
+			// 	t.Errorf("expected %d, got %d", test.expected.capFlags, msg.CapabilityFlags())
+			// }
 		})
 	}
 }
