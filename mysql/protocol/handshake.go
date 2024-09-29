@@ -32,6 +32,10 @@ const (
 	ProtocolVersion10 ProtocolVersion = 10
 )
 
+const (
+	authPluginDataPart1Len = 8
+)
+
 // Handshake represents a MySQL Handshake message.
 type Handshake struct {
 	*message
@@ -84,7 +88,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 		return nil, err
 	}
 
-	h.authPluginData1, err = h.ReadNullTerminatedString()
+	h.authPluginData1, err = h.ReadFixedLengthString(authPluginDataPart1Len)
 	if err != nil {
 		return nil, err
 	}
@@ -98,8 +102,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	if err != nil {
 		return nil, err
 	}
-	// h.capabilityFlags = uint32(iv2)
-	h.capabilityFlags = (uint32(iv2) << 16)
+	h.capabilityFlags = uint32(iv2)
 
 	h.characterSet, err = h.ReadByte()
 	if err != nil {
@@ -115,8 +118,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	if err != nil {
 		return nil, err
 	}
-	// h.capabilityFlags |= (uint32(iv2) << 16)
-	h.capabilityFlags |= uint32(iv2)
+	h.capabilityFlags |= (uint32(iv2) << 16)
 
 	hasClientPluginAuthFlag := (CapabilityFlag(h.capabilityFlags) & CapabilityFlagClientPluginAuth) != 0
 	authPluginDataLen := uint8(0)
@@ -171,12 +173,12 @@ func (h *Handshake) CapabilityFlags() CapabilityFlag {
 	return CapabilityFlag(h.capabilityFlags)
 }
 
-func (h *Handshake) CharacterSet() uint8 {
-	return h.characterSet
+func (h *Handshake) CharacterSet() CharacterSet {
+	return CharacterSet(h.characterSet)
 }
 
-func (h *Handshake) StatusFlags() uint16 {
-	return h.statusFlags
+func (h *Handshake) StatusFlags() StatusFlag {
+	return StatusFlag(h.statusFlags)
 }
 
 func (h *Handshake) AuthPluginName() string {
@@ -184,30 +186,29 @@ func (h *Handshake) AuthPluginName() string {
 }
 
 // Bytes returns the message bytes.
-func (h *Handshake) Bytes() []byte {
-	payload := make([]byte, 0)
-	payload = append(payload, h.protocolVersion)
-	payload = append(payload, []byte(h.serverVersion)...)
-	payload = append(payload, 0x00)
-	payload = append(payload, Uint32ToBytes(h.connectionID)...)
-	payload = append(payload, []byte(h.authPluginData1)...)
-	payload = append(payload, 0x00)
-	payload = append(payload, 0x00)
-	payload = append(payload, Uint16ToBytes(h.statusFlags)...)
-	payload = append(payload, Uint16ToBytes(uint16(h.capabilityFlags>>16))...)
-	if (CapabilityFlag(h.capabilityFlags) & CapabilityFlagClientPluginAuth) != 0 {
-		payload = append(payload, uint8(len(h.authPluginData2)+8))
-	} else {
-		payload = append(payload, 0x00)
+func (h *Handshake) Bytes() ([]byte, error) {
+	w := NewWriter()
+	if err := w.WriteByte(h.protocolVersion); err != nil {
+		return nil, err
 	}
-	payload = append(payload, make([]byte, 10)...)
-	if 0 < len(h.authPluginData2) {
-		payload = append(payload, []byte(h.authPluginData2)...)
+	if err := w.WriteNullTerminatedString(h.serverVersion); err != nil {
+		return nil, err
 	}
-	if (CapabilityFlag(h.capabilityFlags) & CapabilityFlagClientPluginAuth) != 0 {
-		payload = append(payload, []byte(h.authPluginName)...)
-		payload = append(payload, 0x00)
+	if err := w.WriteInt4(h.connectionID); err != nil {
+		return nil, err
 	}
-	h.message = NewMessageWithPayload(payload)
+	if err := w.WriteFixedLengthString(h.authPluginData1, authPluginDataPart1Len); err != nil {
+		return nil, err
+	}
+	if err := w.WriteByte(0x00); err != nil {
+		return nil, err
+	}
+	if err := w.WriteByte(0x00); err != nil {
+		return nil, err
+	}
+	if err := w.WriteInt2(h.statusFlags); err != nil {
+		return nil, err
+	}
+	h.message = NewMessageWithPayload(w.Bytes())
 	return h.message.Bytes()
 }
