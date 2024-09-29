@@ -84,3 +84,13 @@ const (
 	// CapabilityClientRemenberOptions represents the CLIENT_REMENBER_OPTIONS capability flag.
 	CapabilityRemenberOptions CapabilityFlag = 1073741824
 )
+
+// Has returns true if the specified flag is set.
+func (cap CapabilityFlag) Has(flag CapabilityFlag) bool {
+	return (*cap & flag) != 0
+}
+
+// HasClientPluginAuth returns true if the CLIENT_PLUGIN_AUTH flag is set.
+func (cap CapabilityFlag) HasClientPluginAuth() bool {
+	return cap.Has(CapabilityFlagClientPluginAuth)
+}
