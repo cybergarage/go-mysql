@@ -16,6 +16,7 @@ package protocol
 
 import (
 	"bytes"
+	"strings"
 )
 
 type Writer struct {
@@ -116,8 +117,14 @@ func (w *Writer) WriteEOFTerminatedString(s string) error {
 }
 
 // WriteFixedLengthString writes a fixed length string.
-func (w *Writer) WriteFixedLengthString(s string) error {
-	_, err := w.WriteString(s)
+func (w *Writer) WriteFixedLengthString(s string, n int) error {
+	var fs string
+	if n <= len(s) {
+		fs = s[:n]
+	} else {
+		fs = s + strings.Repeat(" ", n-len(s))
+	}
+	_, err := w.WriteString(fs)
 	if err != nil {
 		return err
 	}
