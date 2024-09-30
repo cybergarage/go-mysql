@@ -67,9 +67,81 @@ func newHandshakeWithMessage(msg *message) *Handshake {
 	}
 }
 
+// HandshakeOption represents a MySQL Handshake option.
+type HandshakeOption func(*Handshake) error
+
+// WithHandshakeProtocolVersion sets the protocol version.
+func WithHandshakeProtocolVersion(v ProtocolVersion) HandshakeOption {
+	return func(h *Handshake) error {
+		h.protocolVersion = uint8(v)
+		return nil
+	}
+}
+
+// WithHandshakeServerVersion sets the server version.
+func WithHandshakeServerVersion(v string) HandshakeOption {
+	return func(h *Handshake) error {
+		h.serverVersion = v
+		return nil
+	}
+}
+
+// WithHandshakeConnectionID sets the connection ID.
+func WithHandshakeConnectionID(v uint32) HandshakeOption {
+	return func(h *Handshake) error {
+		h.connectionID = v
+		return nil
+	}
+}
+
+// WithHandshakeCapabilityFlags sets the capability flags.
+func WithHandshakeCapabilityFlags(v CapabilityFlag) HandshakeOption {
+	return func(h *Handshake) error {
+		h.capabilityFlags = uint32(v)
+		return nil
+	}
+}
+
+// WithHandshakeCharacterSet sets the character set.
+func WithHandshakeCharacterSet(v CharacterSet) HandshakeOption {
+	return func(h *Handshake) error {
+		h.characterSet = uint8(v)
+		return nil
+	}
+}
+
+// WithHandshakeStatusFlags sets the status flags.
+func WithHandshakeStatusFlags(v StatusFlag) HandshakeOption {
+	return func(h *Handshake) error {
+		h.statusFlags = uint16(v)
+		return nil
+	}
+}
+
+// WithHandshakeAuthPluginData1 sets the auth plugin data.
+func WithHandshakeAuthPluginData(v []byte) HandshakeOption {
+	return func(h *Handshake) error {
+		h.authPluginData1 = v
+		return nil
+	}
+}
+
+// WithHandshakeAuthPluginData2 sets the auth plugin name.
+func WithHandshakeAuthPluginName(v string) HandshakeOption {
+	return func(h *Handshake) error {
+		h.authPluginName = v
+		return nil
+	}
+}
+
 // NewHandshake returns a new MySQL Handshake message.
-func NewHandshake() (*Handshake, error) {
+func NewHandshake(opts ...HandshakeOption) (*Handshake, error) {
 	h := newHandshakeWithMessage(newMessage())
+	for _, opt := range opts {
+		if err := opt(h); err != nil {
+			return nil, err
+		}
+	}
 	return h, nil
 }
 
