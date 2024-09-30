@@ -87,7 +87,7 @@ const (
 
 // Has returns true if the specified flag is set.
 func (cap CapabilityFlag) Has(flag CapabilityFlag) bool {
-	return (*cap & flag) != 0
+	return (cap & flag) != 0
 }
 
 // HasClientPluginAuth returns true if the CLIENT_PLUGIN_AUTH flag is set.
