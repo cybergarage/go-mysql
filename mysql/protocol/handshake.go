@@ -33,8 +33,9 @@ const (
 )
 
 const (
-	authPluginDataPart1Len = 8
-	handshakeReservedLen   = 10
+	authPluginDataPartMaxLen = 13
+	authPluginDataPart1Len   = 8
+	handshakeReservedLen     = 10
 )
 
 // Handshake represents a MySQL Handshake message.
@@ -121,7 +122,17 @@ func WithHandshakeStatusFlags(v StatusFlag) HandshakeOption {
 // WithHandshakeAuthPluginData1 sets the auth plugin data.
 func WithHandshakeAuthPluginData(v []byte) HandshakeOption {
 	return func(h *Handshake) error {
-		h.authPluginData1 = v
+		if authPluginDataPartMaxLen < len(v) {
+			return newInvalidLengthError("auth-plugin-data", len(v))
+		}
+		h.authPluginDataLen = uint8(len(v))
+		if len(v) <= authPluginDataPart1Len {
+			h.authPluginData1 = v
+			h.authPluginData2 = nil
+			return nil
+		}
+		h.authPluginData1 = v[:authPluginDataPart1Len]
+		h.authPluginData2 = v[authPluginDataPart1Len:]
 		return nil
 	}
 }
