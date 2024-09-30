@@ -26,18 +26,68 @@ import (
 var handshakeMsg001 string
 
 func TestHandshakeMessage(t *testing.T) {
-	// Protocol: 10
-	// Version: 5.7.9-vitess-12.0.6
-	// Thread ID: 1
-	// Salt: Dn+\vB\x0En\x03
-	// Server Capabilities: 0xa20f
-	// Server Language: utf8mb3 COLLATE utf8mb3_general_ci (33)
-	// Server Status: 0x0000
-	// Extended Server Capabilities: 0x013b
-	// Authentication Plugin Length: 21
-	// Unused: 00000000000000000000
-	// Salt: 2\x1Eg\ayx&\x18R\x1D\x01P
-	// Authentication Plugin: mysql_native_password
+	// Packet Length: 87
+	// Packet Number: 0
+	// Server Greeting
+	// 	Protocol: 10
+	// 	Version: 5.7.9-vitess-12.0.6
+	// 	Thread ID: 1
+	// 	Salt: Dn+\vB\x0En\x03
+	// 	Server Capabilities: 0xa20f
+	// 		.... .... .... ...1 = Long Password: Set
+	// 		.... .... .... ..1. = Found Rows: Set
+	// 		.... .... .... .1.. = Long Column Flags: Set
+	// 		.... .... .... 1... = Connect With Database: Set
+	// 		.... .... ...0 .... = Don't Allow database.table.column: Not set
+	// 		.... .... ..0. .... = Can use compression protocol: Not set
+	// 		.... .... .0.. .... = ODBC Client: Not set
+	// 		.... .... 0... .... = Can Use LOAD DATA LOCAL: Not set
+	// 		.... ...0 .... .... = Ignore Spaces before '(': Not set
+	// 		.... ..1. .... .... = Speaks 4.1 protocol (new flag): Set
+	// 		.... .0.. .... .... = Interactive Client: Not set
+	// 		.... 0... .... .... = Switch to SSL after handshake: Not set
+	// 		...0 .... .... .... = Ignore sigpipes: Not set
+	// 		..1. .... .... .... = Knows about transactions: Set
+	// 		.0.. .... .... .... = Speaks 4.1 protocol (old flag): Not set
+	// 		1... .... .... .... = Can do 4.1 authentication: Set
+	// 	Server Language: utf8mb3 COLLATE utf8mb3_general_ci (33)
+	// 	Server Status: 0x0000
+	// 		.... .... .... ...0 = In transaction: Not set
+	// 		.... .... .... ..0. = AUTO_COMMIT: Not set
+	// 		.... .... .... .0.. = Multi query / Unused: Not set
+	// 		.... .... .... 0... = More results: Not set
+	// 		.... .... ...0 .... = Bad index used: Not set
+	// 		.... .... ..0. .... = No index used: Not set
+	// 		.... .... .0.. .... = Cursor exists: Not set
+	// 		.... .... 0... .... = Last row sent: Not set
+	// 		.... ...0 .... .... = Database dropped: Not set
+	// 		.... ..0. .... .... = No backslash escapes: Not set
+	// 		.... .0.. .... .... = Metadata changed: Not set
+	// 		.... 0... .... .... = Query was slow: Not set
+	// 		...0 .... .... .... = PS Out Params: Not set
+	// 		..0. .... .... .... = In Trans Readonly: Not set
+	// 		.0.. .... .... .... = Session state changed: Not set
+	// 	Extended Server Capabilities: 0x013b
+	// 		.... .... .... ...1 = Multiple statements: Set
+	// 		.... .... .... ..1. = Multiple results: Set
+	// 		.... .... .... .0.. = PS Multiple results: Not set
+	// 		.... .... .... 1... = Plugin Auth: Set
+	// 		.... .... ...1 .... = Connect attrs: Set
+	// 		.... .... ..1. .... = Plugin Auth LENENC Client Data: Set
+	// 		.... .... .0.. .... = Client can handle expired passwords: Not set
+	// 		.... .... 0... .... = Session variable tracking: Not set
+	// 		.... ...1 .... .... = Deprecate EOF: Set
+	// 		.... ..0. .... .... = Client can handle optional resultset metadata: Not set
+	// 		.... .0.. .... .... = ZSTD Compression Algorithm: Not set
+	// 		.... 0... .... .... = Query Attributes: Not set
+	// 		...0 .... .... .... = Multifactor Authentication: Not set
+	// 		..0. .... .... .... = Capability Extension: Not set
+	// 		.0.. .... .... .... = Client verifies server's TLS/SSL certificate: Not set
+	// 		0... .... .... .... = Unused: 0x0
+	// 	Authentication Plugin Length: 21
+	// 	Unused: 00000000000000000000
+	// 	Salt: 2\x1Eg\ayx&\x18R\x1D\x01P
+	// 	Authentication Plugin: mysql_native_password
 
 	type expected struct {
 		seqID          protocol.SequenceID
