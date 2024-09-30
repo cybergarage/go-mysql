@@ -147,7 +147,7 @@ func (reader *Reader) ReadNullTerminatedString() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return string(strBytes[:len(strBytes)-1]), nil
+	return string(strBytes), nil
 }
 
 // ReadEOFTerminatedString reads a string until EOF.
@@ -165,15 +165,24 @@ func (reader *Reader) ReadEOFTerminatedString() (string, error) {
 	}
 }
 
-// ReadFixedLengthString reads a string.
-func (reader *Reader) ReadFixedLengthString(n int) (string, error) {
+// ReadFixedLengthBytes reads a fixed bytes.
+func (reader *Reader) ReadFixedLengthBytes(n int) ([]byte, error) {
 	b := make([]byte, n)
 	nRead, err := reader.ReadBytes(b)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	if nRead != n {
-		return "", newShortMessageError(n, nRead)
+		return nil, newShortMessageError(n, nRead)
+	}
+	return b, nil
+}
+
+// ReadFixedLengthString reads a fixd string.
+func (reader *Reader) ReadFixedLengthString(n int) (string, error) {
+	b, err := reader.ReadFixedLengthBytes(n)
+	if err != nil {
+		return "", err
 	}
 	return string(b), nil
 }
