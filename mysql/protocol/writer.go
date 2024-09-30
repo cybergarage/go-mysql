@@ -16,7 +16,6 @@ package protocol
 
 import (
 	"bytes"
-	"strings"
 )
 
 type Writer struct {
@@ -116,19 +115,27 @@ func (w *Writer) WriteEOFTerminatedString(s string) error {
 	return nil
 }
 
-// WriteFixedLengthString writes a fixed length string.
-func (w *Writer) WriteFixedLengthString(s string, n int) error {
-	var fs string
-	if n <= len(s) {
-		fs = s[:n]
-	} else {
-		fs = s + strings.Repeat(" ", n-len(s))
+// WriteFixedLengthString writes a fixed length bytes.
+func (w *Writer) WriteFixedLengthBytes(b []byte, n int) error {
+	var fb []byte
+	switch {
+	case b == nil:
+		fb = bytes.Repeat([]byte{0x00}, n)
+	case n <= len(b):
+		fb = b[:n]
+	default:
+		fb = append(b, bytes.Repeat([]byte{0x00}, n-len(b))...)
 	}
-	_, err := w.WriteString(fs)
+	_, err := w.WriteBytes(fb)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+// WriteFixedLengthString writes a fixed length string.
+func (w *Writer) WriteFixedLengthString(s string, n int) error {
+	return w.WriteFixedLengthBytes([]byte(s), n)
 }
 
 // WriteVariableLengthString writes a variable length string.
