@@ -34,25 +34,36 @@ const (
 
 const (
 	authPluginDataPart1Len = 8
+	handshakeReservedLen   = 10
 )
 
 // Handshake represents a MySQL Handshake message.
 type Handshake struct {
 	*message
-	protocolVersion uint8
-	serverVersion   string
-	connectionID    uint32
-	authPluginData1 string
-	capabilityFlags uint32
-	characterSet    uint8
-	statusFlags     uint16
-	authPluginData2 string
-	authPluginName  string
+	protocolVersion   uint8
+	serverVersion     string
+	connectionID      uint32
+	capabilityFlags   uint32
+	characterSet      uint8
+	statusFlags       uint16
+	authPluginDataLen uint8
+	authPluginData1   []byte
+	authPluginData2   []byte
+	authPluginName    string
 }
 
 func newHandshakeWithMessage(msg *message) *Handshake {
 	return &Handshake{
-		message: msg,
+		message:         msg,
+		protocolVersion: uint8(ProtocolVersion10),
+		serverVersion:   "",
+		connectionID:    0,
+		capabilityFlags: 0,
+		characterSet:    uint8(CharacterSetUTF8),
+		statusFlags:     0,
+		authPluginData1: nil,
+		authPluginData2: nil,
+		authPluginName:  "",
 	}
 }
 
@@ -88,7 +99,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 		return nil, err
 	}
 
-	h.authPluginData1, err = h.ReadFixedLengthString(authPluginDataPart1Len)
+	h.authPluginData1, err = h.ReadFixedLengthBytes(authPluginDataPart1Len)
 	if err != nil {
 		return nil, err
 	}
@@ -120,23 +131,23 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	}
 	h.capabilityFlags |= (uint32(iv2) << 16)
 
-	authPluginDataLen := uint8(0)
+	h.authPluginDataLen = 0
 	iv1, err := h.ReadByte()
 	if err != nil {
 		return nil, err
 	}
 	if h.CapabilityFlags().HasClientPluginAuth() {
-		authPluginDataLen = iv1
+		h.authPluginDataLen = iv1
 	}
 
-	_, err = h.ReadFixedLengthString(10) // Reserved
+	_, err = h.ReadFixedLengthString(handshakeReservedLen) // Reserved
 	if err != nil {
 		return nil, err
 	}
 
-	if 0 < authPluginDataLen {
-		authPluginDataLen = max(13, authPluginDataLen-8)
-		h.authPluginData2, err = h.ReadFixedLengthString(int(authPluginDataLen))
+	if 0 < h.authPluginDataLen {
+		authPluginDataLen := max(13, h.authPluginDataLen-8)
+		h.authPluginData2, err = h.ReadFixedLengthBytes(int(authPluginDataLen))
 		if err != nil {
 			return nil, err
 		}
@@ -164,8 +175,8 @@ func (h *Handshake) ConnectionID() uint32 {
 	return h.connectionID
 }
 
-func (h *Handshake) AuthPluginData() string {
-	return h.authPluginData1
+func (h *Handshake) AuthPluginData() []byte {
+	return append(h.authPluginData1, h.authPluginData2...)
 }
 
 func (h *Handshake) CapabilityFlags() CapabilityFlag {
@@ -196,18 +207,47 @@ func (h *Handshake) Bytes() ([]byte, error) {
 	if err := w.WriteInt4(h.connectionID); err != nil {
 		return nil, err
 	}
-	if err := w.WriteFixedLengthString(h.authPluginData1, authPluginDataPart1Len); err != nil {
+	if err := w.WriteFixedLengthBytes(h.authPluginData1, authPluginDataPart1Len); err != nil {
 		return nil, err
 	}
 	if err := w.WriteByte(0x00); err != nil {
 		return nil, err
 	}
-	if err := w.WriteByte(0x00); err != nil {
+	if err := w.WriteInt2(uint16(h.capabilityFlags & 0xFFFF)); err != nil {
+		return nil, err
+	}
+	if err := w.WriteByte(h.characterSet); err != nil {
 		return nil, err
 	}
 	if err := w.WriteInt2(h.statusFlags); err != nil {
 		return nil, err
 	}
+	if err := w.WriteInt2(uint16(h.capabilityFlags >> 16)); err != nil {
+		return nil, err
+	}
+	if h.CapabilityFlags().HasClientPluginAuth() {
+		if err := w.WriteByte(uint8(len(h.authPluginData2) + authPluginDataPart1Len)); err != nil {
+			return nil, err
+		}
+	} else {
+		if err := w.WriteByte(0x00); err != nil {
+			return nil, err
+		}
+	}
+	if err := w.WriteFixedLengthString("", handshakeReservedLen); err != nil {
+		return nil, err
+	}
+	if 0 < len(h.authPluginData2) {
+		if err := w.WriteFixedLengthBytes(h.authPluginData2, len(h.authPluginData2)); err != nil {
+			return nil, err
+		}
+	}
+	if h.CapabilityFlags().HasClientPluginAuth() {
+		if err := w.WriteNullTerminatedString(h.authPluginName); err != nil {
+			return nil, err
+		}
+	}
+
 	h.message = NewMessageWithPayload(w.Bytes())
 	return h.message.Bytes()
 }
