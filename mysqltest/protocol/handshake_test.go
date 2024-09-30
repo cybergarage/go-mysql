@@ -22,7 +22,7 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-//go:embed data/handshake001.hex
+//go:embed data/handshake-001.hex
 var handshakeMsg001 string
 
 func TestHandshakeMessage(t *testing.T) {
