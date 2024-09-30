@@ -35,16 +35,8 @@ func newShortMessageError(expected int, actual int) error {
 	return fmt.Errorf("%w short message : %d < %d", ErrInvalid, actual, expected)
 }
 
-func newColumnTypeNotSuppotedError(v any) error {
-	return fmt.Errorf("column value type: %T is %w", v, ErrNotSupported)
-}
-
-func newInvalidLengthError(v int) error {
-	return fmt.Errorf("%d is %w length", v, ErrInvalid)
-}
-
-func newErrInvalidSSLRequestCode(v int32) error {
-	return fmt.Errorf("SSL request code (%d) is %w", v, ErrInvalid)
+func newInvalidLengthError(name string, v int) error {
+	return fmt.Errorf("%s is %w length (%d)", name, ErrInvalid, v)
 }
 
 // NewErrMessageNotSuppoted returns a new message not supported error.
