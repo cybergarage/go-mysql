@@ -133,10 +133,10 @@ func (reader *Reader) ReadBytesUntil(delim byte) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		buf = append(buf, b)
 		if b == delim {
 			break
 		}
+		buf = append(buf, b)
 	}
 	return buf, nil
 }
