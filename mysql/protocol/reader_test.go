@@ -25,55 +25,48 @@ func TestReader(t *testing.T) {
 
 	// Test PeekInt32 and ReadInt32
 	reader := NewReaderWith(bytes.NewBuffer(buf))
-	expectedInt32 := uint(0x64636261)
-	actualInt32, err := reader.PeekInt4()
+	expectedInt4 := uint32(0x64636261)
+	actualInt4, err := reader.ReadInt4()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-	if actualInt32 != expectedInt32 {
-		t.Errorf("Expected %v, but got %v", expectedInt32, actualInt32)
+	if actualInt4 != expectedInt4 {
+		t.Errorf("Expected %v, but got %v", expectedInt4, actualInt4)
 	}
-	actualInt32, err = reader.ReadInt4()
+	expectedInt4 = uint32(0x68676665)
+	actualInt4, err = reader.ReadInt4()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-	if actualInt32 != expectedInt32 {
-		t.Errorf("Expected %v, but got %v", expectedInt32, actualInt32)
-	}
-	expectedInt32 = uint(0x68676665)
-	actualInt32, err = reader.ReadInt4()
-	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
-	}
-	if actualInt32 != expectedInt32 {
-		t.Errorf("Expected %v, but got %v", expectedInt32, actualInt32)
+	if actualInt4 != expectedInt4 {
+		t.Errorf("Expected %v, but got %v", expectedInt4, actualInt4)
 	}
 
 	// Test ReadInt3
 	reader = NewReaderWith(bytes.NewBuffer(buf))
-	expectedInt24 := uint(0x636261)
-	actualInt24, err := reader.ReadInt3()
+	expectedInt3 := uint32(0x636261)
+	actualInt3, err := reader.ReadInt3()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-	if actualInt24 != expectedInt24 {
-		t.Errorf("Expected %v, but got %v", expectedInt24, actualInt24)
+	if actualInt3 != expectedInt3 {
+		t.Errorf("Expected %v, but got %v", expectedInt3, actualInt3)
 	}
 
 	// Test ReadInt2
 	reader = NewReaderWith(bytes.NewBuffer(buf))
-	expectedInt16 := uint(0x6261)
-	actualInt16, err := reader.ReadInt2()
+	expectedInt2 := uint16(0x6261)
+	actualInt2, err := reader.ReadInt2()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-	if actualInt16 != expectedInt16 {
-		t.Errorf("Expected %v, but got %v", expectedInt16, actualInt16)
+	if actualInt2 != expectedInt2 {
+		t.Errorf("Expected %v, but got %v", expectedInt2, actualInt2)
 	}
 
 	// Test ReadBytesUntil
 	reader = NewReaderWith(bytes.NewBuffer(buf))
-	expectedBytes := []byte{0x61, 0x62, 0x63, 0x64}
+	expectedBytes := []byte{0x61, 0x62, 0x63}
 	actualBytes, err := reader.ReadBytesUntil(0x64)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
