@@ -86,6 +86,6 @@ const (
 )
 
 // IsEnabled returns true if the specified flag is set.
-func (cap CapabilityFlag) IsEnabled(flag CapabilityFlag) bool {
-	return (cap & flag) != 0
+func (capFlg CapabilityFlag) IsEnabled(flag CapabilityFlag) bool {
+	return (capFlg & flag) != 0
 }
