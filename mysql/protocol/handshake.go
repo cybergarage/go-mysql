@@ -219,7 +219,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	if err != nil {
 		return nil, err
 	}
-	if h.CapabilityFlags().IsEnabled(CapabilityFlagClientPluginAuth) {
+	if h.CapabilityFlags().IsEnabled(ClientPluginAuth) {
 		h.authPluginDataLen = iv1
 	}
 
@@ -236,7 +236,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 		}
 	}
 
-	if h.CapabilityFlags().IsEnabled(CapabilityFlagClientPluginAuth) {
+	if h.CapabilityFlags().IsEnabled(ClientPluginAuth) {
 		h.authPluginName, err = h.ReadNullTerminatedString()
 		if err != nil {
 			return nil, err
@@ -316,7 +316,7 @@ func (h *Handshake) Bytes() ([]byte, error) {
 	if err := w.WriteInt2(uint16(h.capabilityFlags >> 16)); err != nil {
 		return nil, err
 	}
-	if h.CapabilityFlags().IsEnabled(CapabilityFlagClientPluginAuth) {
+	if h.CapabilityFlags().IsEnabled(ClientPluginAuth) {
 		if err := w.WriteByte(uint8(len(h.authPluginData2) + authPluginDataPart1Len)); err != nil {
 			return nil, err
 		}
@@ -333,7 +333,7 @@ func (h *Handshake) Bytes() ([]byte, error) {
 			return nil, err
 		}
 	}
-	if h.CapabilityFlags().IsEnabled(CapabilityFlagClientPluginAuth) {
+	if h.CapabilityFlags().IsEnabled(ClientPluginAuth) {
 		if err := w.WriteNullTerminatedString(h.authPluginName); err != nil {
 			return nil, err
 		}
