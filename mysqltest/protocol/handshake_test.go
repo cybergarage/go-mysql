@@ -15,6 +15,7 @@
 package protocol
 
 import (
+	"bytes"
 	_ "embed"
 	"testing"
 
@@ -105,7 +106,7 @@ func TestHandshakeMessage(t *testing.T) {
 		expected
 	}{
 		{
-			"handshake",
+			"handshake001",
 			handshakeMsg001,
 			expected{
 				seqID:          protocol.SequenceID(0),
@@ -120,11 +121,13 @@ func TestHandshakeMessage(t *testing.T) {
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			reader, err := hexdump.NewReaderWithString(test.data)
+			testBytes, err := hexdump.NewBytesWithHexdumpString(test.data)
 			if err != nil {
 				t.Error(err)
 				return
 			}
+			reader := bytes.NewReader(testBytes)
+
 			msg, err := protocol.NewHandshakeFromReader(reader)
 			if err != nil {
 				t.Error(err)
@@ -156,6 +159,18 @@ func TestHandshakeMessage(t *testing.T) {
 
 			if msg.AuthPluginName() != test.expected.authPluginName {
 				t.Errorf("expected %s, got %s", test.expected.authPluginName, msg.AuthPluginName())
+			}
+
+			// Compare the message bytes
+
+			msgBytes, err := msg.Bytes()
+			if err != nil {
+				t.Error(err)
+				return
+			}
+
+			if !bytes.Equal(msgBytes, testBytes) {
+				t.Errorf("expected %v, got %v", test.data, testBytes)
 			}
 		})
 	}
