@@ -23,62 +23,58 @@ import (
 func TestWriter(t *testing.T) {
 	w := NewWriter()
 
-	// Test WriteInt1
 	expectedInt1 := uint8(0x61)
 	err := w.WriteInt1(expectedInt1)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	// Test WriteInt2
 	expectedInt2 := uint16(0x6261)
 	err = w.WriteInt2(expectedInt2)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	// Test WriteInt3
 	expectedInt3 := uint32(0x636261)
 	err = w.WriteInt3(expectedInt3)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	// Test WriteInt4
 	expectedInt4 := uint32(0x64636261)
 	err = w.WriteInt4(expectedInt4)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	// Test WriteInt8
 	expectedInt8 := uint64(0x6867666564636261)
 	err = w.WriteInt8(expectedInt8)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	// Test WriteBytes
 	expectedBytes := []byte{0x69, 0x6A, 0x6B, 0x6C}
 	_, err = w.WriteBytes(expectedBytes)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	// Test WriteNullTerminatedString
+	err = w.WriteFixedLengthBytes(expectedBytes, 20)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
 	expectedString := "mnop"
 	err = w.WriteNullTerminatedString(expectedString)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	// Test WriteFixedLengthString
 	err = w.WriteFixedLengthString(expectedString, 20)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	// Test WriteEOFTerminatedString
 	_, err = w.WriteBytes([]byte(expectedString))
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
@@ -136,6 +132,14 @@ func TestWriter(t *testing.T) {
 	}
 	if !bytes.Equal(actualBytes, expectedBytes) {
 		t.Errorf("Expected %v, but got %v", expectedBytes, actualBytes)
+	}
+
+	actualBytes, err = reader.ReadFixedLengthBytes(20)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	if bytes.HasPrefix(actualBytes, expectedBytes) == false {
+		t.Errorf("Expected %v, but got %v", expectedString, actualBytes)
 	}
 
 	actualString, err := reader.ReadNullTerminatedString()
