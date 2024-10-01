@@ -39,7 +39,7 @@ func newErrInvalidLength(name string, v int) error {
 	return fmt.Errorf("%s is %w length (%d)", name, ErrInvalid, v)
 }
 
-func newNotSupportedError(v any) error {
+func newErrNotSupported(v any) error {
 	return fmt.Errorf("%v is %w", v, ErrNotSupported)
 }
 
