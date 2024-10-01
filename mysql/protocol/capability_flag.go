@@ -25,8 +25,8 @@ const (
 	CapabilityFlagClientLongPassword CapabilityFlag = 1
 	// CapabilityFlagClientFoundRows represents the CLIENT_FOUND_ROWS capability flag.
 	CapabilityFlagClientFoundRows CapabilityFlag = 2
-	// CapabilityFlagClientLongFlag represents the CLIENT_LONG_FLAG capability flag.
-	CapabilityFlagClientLongFlag CapabilityFlag = 4
+	// CapabilityFlagClientLongColumnFlag represents the CLIENT_LONG_FLAG capability flag.
+	CapabilityFlagClientLongColumnFlag CapabilityFlag = 4
 	// CapabilityFlagClientConnectWithDB represents the CLIENT_CONNECT_WITH_DB capability flag.
 	CapabilityFlagClientConnectWithDB CapabilityFlag = 8
 	// CapabilityFlagClientNoSchema represents the CLIENT_NO_SCHEMA capability flag.
