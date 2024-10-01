@@ -83,10 +83,27 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 
 	res := newHandshakeResponseWithMessage(msg)
 
-	res.capabilityFlags, err = res.ReadInt4()
+	capabilityFlags, err := res.ReadInt2()
 	if err != nil {
 		return nil, err
 	}
+	res.capabilityFlags = uint32(capabilityFlags)
+
+	if !res.CapabilityFlags().IsEnabled(ClientProtocol41) {
+		return nil, newErrNotSupported("HandshakeResponse320")
+	}
+
+	capabilityFlags3, err := res.ReadInt1()
+	if err != nil {
+		return nil, err
+	}
+	res.capabilityFlags |= (uint32)(capabilityFlags3) << 16
+
+	capabilityFlags4, err := res.ReadInt1()
+	if err != nil {
+		return nil, err
+	}
+	res.capabilityFlags |= (uint32)(capabilityFlags4) << 24
 
 	res.maxPacketSize, err = res.ReadInt4()
 	if err != nil {
