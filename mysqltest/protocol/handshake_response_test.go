@@ -55,14 +55,15 @@ func TestHandshakeResponseMessage(t *testing.T) {
 	//     Client Auth Plugin: mysql_native_password
 
 	type expected struct {
-		seqID          protocol.SequenceID
-		protocolVer    protocol.ProtocolVersion
-		serverVer      string
-		conID          uint32
-		capFlags       protocol.CapabilityFlag
-		charSet        protocol.CharacterSet
-		statusFlags    protocol.StatusFlag
-		authPluginName string
+		capFlags   protocol.CapabilityFlag
+		maxPkt     uint32
+		charSet    uint8
+		username   string
+		authRes    string
+		database   string
+		pluginName string
+		attrs      map[string]string
+		zstdLevel  uint8
 	}
 	for _, test := range []struct {
 		name string
@@ -70,17 +71,18 @@ func TestHandshakeResponseMessage(t *testing.T) {
 		expected
 	}{
 		{
-			"handshake",
-			handshakeMsg001,
+			"handshake-response-001",
+			handshakeResponseMsg001,
 			expected{
-				seqID:          protocol.SequenceID(0),
-				protocolVer:    protocol.ProtocolVersion10,
-				serverVer:      "5.7.9-vitess-12.0.6",
-				conID:          1,
-				capFlags:       protocol.CapabilityFlag(0),
-				charSet:        protocol.CharacterSet(protocol.CharacterSetUTF8),
-				statusFlags:    protocol.StatusFlag(0),
-				authPluginName: "mysql_native_password",
+				capFlags:   protocol.CapabilityFlag(0xa28d),
+				maxPkt:     0,
+				charSet:    45,
+				username:   "skonno",
+				authRes:    "",
+				database:   "sqltest1727254524366662000",
+				pluginName: "mysql_native_password",
+				attrs:      map[string]string{},
+				zstdLevel:  0,
 			},
 		},
 	} {
@@ -95,32 +97,8 @@ func TestHandshakeResponseMessage(t *testing.T) {
 				t.Error(err)
 			}
 
-			if msg.SequenceID() != test.expected.seqID {
-				t.Errorf("expected %d, got %d", test.expected.seqID, msg.SequenceID())
-			}
-
-			if msg.ProtocolVersion() != test.expected.protocolVer {
-				t.Errorf("expected %d, got %d", test.expected.protocolVer, msg.ProtocolVersion())
-			}
-
-			if msg.ServerVersion() != test.expected.serverVer {
-				t.Errorf("expected %s, got %s", test.expected.serverVer, msg.ServerVersion())
-			}
-
-			if msg.ConnectionID() != test.expected.conID {
-				t.Errorf("expected %d, got %d", test.expected.conID, msg.ConnectionID())
-			}
-
-			if msg.CharacterSet() != test.expected.charSet {
-				t.Errorf("expected %d, got %d", test.expected.charSet, msg.CharacterSet())
-			}
-
-			if msg.StatusFlags() != test.expected.statusFlags {
-				t.Errorf("expected %d, got %d", test.expected.statusFlags, msg.StatusFlags())
-			}
-
-			if msg.AuthPluginName() != test.expected.authPluginName {
-				t.Errorf("expected %s, got %s", test.expected.authPluginName, msg.AuthPluginName())
+			if msg.CapabilityFlags() != test.expected.capFlags {
+				t.Errorf("expected %d, got %d", test.expected.capFlags, msg.CapabilityFlags())
 			}
 		})
 	}
