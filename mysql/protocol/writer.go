@@ -102,13 +102,17 @@ func (w *Writer) WriteNullTerminatedString(s string) error {
 	return nil
 }
 
-// WriteEOFTerminatedString writes a EOF terminated string.
-func (w *Writer) WriteEOFTerminatedString(s string) error {
-	_, err := w.WriteString(s)
-	if err != nil {
-		return err
+func (w *Writer) writeFixedLengthBytes(b []byte, fb byte, n int) error {
+	var wb []byte
+	switch {
+	case b == nil:
+		wb = bytes.Repeat([]byte{fb}, n)
+	case n <= len(b):
+		wb = b[:n]
+	default:
+		wb = append(b, bytes.Repeat([]byte{fb}, n-len(b))...)
 	}
-	err = w.WriteByte(0xfe)
+	_, err := w.WriteBytes(wb)
 	if err != nil {
 		return err
 	}
@@ -117,25 +121,12 @@ func (w *Writer) WriteEOFTerminatedString(s string) error {
 
 // WriteFixedLengthString writes a fixed length bytes.
 func (w *Writer) WriteFixedLengthBytes(b []byte, n int) error {
-	var fb []byte
-	switch {
-	case b == nil:
-		fb = bytes.Repeat([]byte{0x00}, n)
-	case n <= len(b):
-		fb = b[:n]
-	default:
-		fb = append(b, bytes.Repeat([]byte{0x00}, n-len(b))...)
-	}
-	_, err := w.WriteBytes(fb)
-	if err != nil {
-		return err
-	}
-	return nil
+	return w.writeFixedLengthBytes(b, 0x00, n)
 }
 
 // WriteFixedLengthString writes a fixed length string.
 func (w *Writer) WriteFixedLengthString(s string, n int) error {
-	return w.WriteFixedLengthBytes([]byte(s), n)
+	return w.writeFixedLengthBytes([]byte(s), 0x20, n)
 }
 
 // WriteVariableLengthString writes a variable length string.
