@@ -90,12 +90,17 @@ func (cap CapabilityFlag) Has(flag CapabilityFlag) bool {
 	return (cap & flag) != 0
 }
 
-// HasClientPluginAuth returns true if the CLIENT_PLUGIN_AUTH flag is set.
-func (cap CapabilityFlag) HasClientPluginAuth() bool {
+// IsClientProtocol41Enabled returns true if the CLIENT_PROTOCOL_41 flag is set.
+func (cap CapabilityFlag) IsClientProtocol41Enabled() bool {
+	return cap.Has(CapabilityFlagClientProtocol41)
+}
+
+// IsClientPluginAuthEnabled returns true if the CLIENT_PLUGIN_AUTH flag is set.
+func (cap CapabilityFlag) IsClientPluginAuthEnabled() bool {
 	return cap.Has(CapabilityFlagClientPluginAuth)
 }
 
-// HasClientConnectWithDB returns true if the CLIENT_CONNECT_WITH_DB flag is set.
-func (cap CapabilityFlag) HasClientConnectWithDB() bool {
+// IsClientConnectWithDBEnabled returns true if the CLIENT_CONNECT_WITH_DB flag is set.
+func (cap CapabilityFlag) IsClientConnectWithDBEnabled() bool {
 	return cap.Has(CapabilityFlagClientConnectWithDB)
 }
