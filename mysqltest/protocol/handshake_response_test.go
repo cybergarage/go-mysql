@@ -85,7 +85,7 @@ func TestHandshakeResponseMessage(t *testing.T) {
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			reader, err := hexdump.NewReaderWithString(test.data)
+			reader, err := hexdump.NewReaderFromHexdumpString(test.data)
 			if err != nil {
 				t.Error(err)
 				return
