@@ -108,7 +108,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		return nil, err
 	}
 
-	if res.CapabilityFlags().IsEnabled(CapabilityFlagClientPluginAuthLenencClientData) {
+	if res.CapabilityFlags().IsEnabled(ClientPluginAuthLenencClientData) {
 		res.authResponse, err = res.ReadNullTerminatedString()
 		if err != nil {
 			return nil, err
@@ -124,7 +124,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		}
 	}
 
-	if res.CapabilityFlags().IsEnabled(CapabilityFlagClientConnectWithDB) {
+	if res.CapabilityFlags().IsEnabled(ClientConnectWithDB) {
 		res.authResponse, err = res.ReadNullTerminatedString()
 		if err != nil {
 			return nil, err

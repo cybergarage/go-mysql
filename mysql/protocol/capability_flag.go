@@ -21,68 +21,68 @@ package protocol
 type CapabilityFlag uint32
 
 const (
-	// CapabilityFlagClientLongPassword represents the CLIENT_LONG_PASSWORD capability flag.
-	CapabilityFlagClientLongPassword CapabilityFlag = 1
-	// CapabilityFlagClientFoundRows represents the CLIENT_FOUND_ROWS capability flag.
-	CapabilityFlagClientFoundRows CapabilityFlag = 2
-	// CapabilityFlagClientLongColumnFlag represents the CLIENT_LONG_FLAG capability flag.
-	CapabilityFlagClientLongColumnFlag CapabilityFlag = 4
-	// CapabilityFlagClientConnectWithDB represents the CLIENT_CONNECT_WITH_DB capability flag.
-	CapabilityFlagClientConnectWithDB CapabilityFlag = 8
-	// CapabilityFlagClientNoSchema represents the CLIENT_NO_SCHEMA capability flag.
-	CapabilityFlagClientNoSchema CapabilityFlag = 16
-	// CapabilityFlagClientCompress represents the CLIENT_COMPRESS capability flag.
-	CapabilityFlagClientCompress CapabilityFlag = 32
-	// CapabilityFlagClientODBC represents the CLIENT_ODBC capability flag.
-	CapabilityFlagClientODBC CapabilityFlag = 64
-	// CapabilityFlagClientLocalFiles represents the CLIENT_LOCAL_FILES capability flag.
-	CapabilityFlagClientLocalFiles CapabilityFlag = 128
-	// CapabilityFlagClientIgnoreSpace represents the CLIENT_IGNORE_SPACE capability flag.
-	CapabilityFlagClientIgnoreSpace CapabilityFlag = 256
-	// CapabilityFlagClientProtocol41 represents the CLIENT_PROTOCOL_41 capability flag.
-	CapabilityFlagClientProtocol41 CapabilityFlag = 512
-	// CapabilityFlagClientInteractive represents the CLIENT_INTERACTIVE capability flag.
-	CapabilityFlagClientInteractive CapabilityFlag = 1024
-	// CapabilityFlagClientSSL represents the CLIENT_SSL capability flag.
-	CapabilityFlagClientSSL CapabilityFlag = 2048
-	// CapabilityFlagClientIgnoreSIGPIPE represents the CLIENT_IGNORE_SIGPIPE capability flag.
-	CapabilityFlagClientIgnoreSIGPIPE CapabilityFlag = 4096
-	// CapabilityFlagClientTransactions represents the CLIENT_TRANSACTIONS capability flag.
-	CapabilityFlagClientTransactions CapabilityFlag = 8192
-	// CapabilityFlagClientReserved represents the CLIENT_RESERVED capability flag.
-	CapabilityFlagClientReserved CapabilityFlag = 16384
-	// CapabilityFlagClientSecureConnection represents the CLIENT_SECURE_CONNECTION capability flag.
-	CapabilityFlagClientSecureConnection CapabilityFlag = 32768
-	// CapabilityFlagClientMultiStatements represents the CLIENT_MULTI_STATEMENTS capability flag.
-	CapabilityFlagClientMultiStatements CapabilityFlag = 65536
-	// CapabilityFlagClientMultiResults represents the CLIENT_MULTI_RESULTS capability flag.
-	CapabilityFlagClientMultiResults CapabilityFlag = 131072
-	// CapabilityFlagClientPSMultiResults represents the CLIENT_PS_MULTI_RESULTS capability flag.
-	CapabilityFlagClientPSMultiResults CapabilityFlag = 262144
-	// CapabilityFlagClientPluginAuth represents the CLIENT_PLUGIN_AUTH capability flag.
-	CapabilityFlagClientPluginAuth CapabilityFlag = 524288
-	// CapabilityFlagClientConnectAttrs represents the CLIENT_CONNECT_ATTRS capability flag.
-	CapabilityFlagClientConnectAttrs CapabilityFlag = 1048576
-	// CapabilityFlagClientPluginAuthLenencClientData represents the CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA capability flag.
-	CapabilityFlagClientPluginAuthLenencClientData CapabilityFlag = 2097152
-	// CapabilityFlagClientCanHandleExpiredPasswords represents the CLIENT_CAN_HANDLE_EXPIRED_PASSWORDS capability flag.
-	CapabilityFlagClientCanHandleExpiredPasswords CapabilityFlag = 4194304
-	// CapabilityFlagClientSessionTrack represents the CLIENT_SESSION_TRACK capability flag.
-	CapabilityFlagClientSessionTrack CapabilityFlag = 8388608
-	// CapabilityFlagClientDeprecateEOF represents the CLIENT_DEPRECATE_EOF capability flag.
-	CapabilityFlagClientDeprecateEOF CapabilityFlag = 16777216
-	// CapabilityFlagClientCapabilitiyClientOptionalResultsetMetadata represents the CLIENT_OPTIONAL_RESULTSET_METADATA capability flag.
-	CapabilitiyClientOptionalResultsetMetadata CapabilityFlag = 33554432
-	// CapabilityFlagClientZstdCompressionAlgorithms represents the CLIENT_ZSTD_COMPRESSION_ALGORITHMS capability flag.
-	CapabilityClientQueryAttributes CapabilityFlag = 67108864
+	// ClientLongPassword represents the CLIENT_LONG_PASSWORD capability flag.
+	ClientLongPassword CapabilityFlag = 1
+	// ClientFoundRows represents the CLIENT_FOUND_ROWS capability flag.
+	ClientFoundRows CapabilityFlag = 2
+	// ClientLongColumnFlag represents the CLIENT_LONG_FLAG capability flag.
+	ClientLongColumnFlag CapabilityFlag = 4
+	// ClientConnectWithDB represents the CLIENT_CONNECT_WITH_DB capability flag.
+	ClientConnectWithDB CapabilityFlag = 8
+	// ClientNoSchema represents the CLIENT_NO_SCHEMA capability flag.
+	ClientNoSchema CapabilityFlag = 16
+	// ClientCompress represents the CLIENT_COMPRESS capability flag.
+	ClientCompress CapabilityFlag = 32
+	// ClientODBC represents the CLIENT_ODBC capability flag.
+	ClientODBC CapabilityFlag = 64
+	// ClientLocalFiles represents the CLIENT_LOCAL_FILES capability flag.
+	ClientLocalFiles CapabilityFlag = 128
+	// ClientIgnoreSpace represents the CLIENT_IGNORE_SPACE capability flag.
+	ClientIgnoreSpace CapabilityFlag = 256
+	// ClientProtocol41 represents the CLIENT_PROTOCOL_41 capability flag.
+	ClientProtocol41 CapabilityFlag = 512
+	// ClientInteractive represents the CLIENT_INTERACTIVE capability flag.
+	ClientInteractive CapabilityFlag = 1024
+	// ClientSSL represents the CLIENT_SSL capability flag.
+	ClientSSL CapabilityFlag = 2048
+	// ClientIgnoreSIGPIPE represents the CLIENT_IGNORE_SIGPIPE capability flag.
+	ClientIgnoreSIGPIPE CapabilityFlag = 4096
+	// ClientTransactions represents the CLIENT_TRANSACTIONS capability flag.
+	ClientTransactions CapabilityFlag = 8192
+	// ClientReserved represents the CLIENT_RESERVED capability flag.
+	ClientReserved CapabilityFlag = 16384
+	// ClientSecureConnection represents the CLIENT_SECURE_CONNECTION capability flag.
+	ClientSecureConnection CapabilityFlag = 32768
+	// ClientMultiStatements represents the CLIENT_MULTI_STATEMENTS capability flag.
+	ClientMultiStatements CapabilityFlag = 65536
+	// ClientMultiResults represents the CLIENT_MULTI_RESULTS capability flag.
+	ClientMultiResults CapabilityFlag = 131072
+	// ClientPSMultiResults represents the CLIENT_PS_MULTI_RESULTS capability flag.
+	ClientPSMultiResults CapabilityFlag = 262144
+	// ClientPluginAuth represents the CLIENT_PLUGIN_AUTH capability flag.
+	ClientPluginAuth CapabilityFlag = 524288
+	// ClientConnectAttrs represents the CLIENT_CONNECT_ATTRS capability flag.
+	ClientConnectAttrs CapabilityFlag = 1048576
+	// ClientPluginAuthLenencClientData represents the CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA capability flag.
+	ClientPluginAuthLenencClientData CapabilityFlag = 2097152
+	// ClientCanHandleExpiredPasswords represents the CLIENT_CAN_HANDLE_EXPIRED_PASSWORDS capability flag.
+	ClientCanHandleExpiredPasswords CapabilityFlag = 4194304
+	// ClientSessionTrack represents the CLIENT_SESSION_TRACK capability flag.
+	ClientSessionTrack CapabilityFlag = 8388608
+	// ClientDeprecateEOF represents the CLIENT_DEPRECATE_EOF capability flag.
+	ClientDeprecateEOF CapabilityFlag = 16777216
+	// ClientCapabilitiyClientOptionalResultsetMetadata represents the CLIENT_OPTIONAL_RESULTSET_METADATA capability flag.
+	ClientOptionalResultsetMetadata CapabilityFlag = 33554432
+	// ClientZstdCompressionAlgorithms represents the CLIENT_ZSTD_COMPRESSION_ALGORITHMS capability flag.
+	ClientZstdCompressionAlgorithms CapabilityFlag = 67108864
 	// CapabilityMultiFactoryAuth represents the CLIENT_MULTI_FACTORY_AUTH capability flag.
 	CapabilityMultiFactoryAuth CapabilityFlag = 134217728
-	// CapabilityClientCapabilityExtension represents the CLIENT_CAPABILITY_EXTENSION capability flag.
-	CapabilityClientCapabilityExtension CapabilityFlag = 268435456
-	// CapabilityClientSSLVerifyServerCert represents the CLIENT_SSL_VERIFY_SERVER_CERT capability flag.
-	CapabilityClientSSLVerifyServerCert CapabilityFlag = 536870912
-	// CapabilityClientRemenberOptions represents the CLIENT_REMENBER_OPTIONS capability flag.
-	CapabilityRemenberOptions CapabilityFlag = 1073741824
+	// ClientCapabilityExtension represents the CLIENT_CAPABILITY_EXTENSION capability flag.
+	ClientCapabilityExtension CapabilityFlag = 268435456
+	// ClientSSLVerifyServerCert represents the CLIENT_SSL_VERIFY_SERVER_CERT capability flag.
+	ClientSSLVerifyServerCert CapabilityFlag = 536870912
+	// ClientRemenberOptions represents the CLIENT_REMENBER_OPTIONS capability flag.
+	ClientRemenberOptions CapabilityFlag = 1073741824
 )
 
 // IsEnabled returns true if the specified flag is set.

@@ -15,11 +15,11 @@
 package protocol
 
 const (
-	DefaultServerCapabilities = CapabilityFlagClientLongPassword |
-		CapabilityFlagClientFoundRows |
-		CapabilityFlagClientLongColumnFlag |
-		CapabilityFlagClientConnectWithDB |
-		CapabilityFlagClientProtocol41
+	DefaultServerCapabilities = ClientLongPassword |
+		ClientFoundRows |
+		ClientLongColumnFlag |
+		ClientConnectWithDB |
+		ClientProtocol41
 
 	DefaultServerStatus = 0x0000
 )
