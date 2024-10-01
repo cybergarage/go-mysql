@@ -219,7 +219,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	if err != nil {
 		return nil, err
 	}
-	if h.CapabilityFlags().IsClientPluginAuthEnabled() {
+	if h.CapabilityFlags().IsEnabled(CapabilityFlagClientPluginAuth) {
 		h.authPluginDataLen = iv1
 	}
 
@@ -236,7 +236,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 		}
 	}
 
-	if h.CapabilityFlags().IsClientPluginAuthEnabled() {
+	if h.CapabilityFlags().IsEnabled(CapabilityFlagClientPluginAuth) {
 		h.authPluginName, err = h.ReadNullTerminatedString()
 		if err != nil {
 			return nil, err
@@ -246,34 +246,42 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	return h, err
 }
 
+// ProtocolVersion returns the protocol version.
 func (h *Handshake) ProtocolVersion() ProtocolVersion {
 	return ProtocolVersion(h.protocolVersion)
 }
 
+// ServerVersion returns the server version.
 func (h *Handshake) ServerVersion() string {
 	return h.serverVersion
 }
 
+// ConnectionID returns the connection ID.
 func (h *Handshake) ConnectionID() uint32 {
 	return h.connectionID
 }
 
+// AuthPluginData returns the auth plugin data.
 func (h *Handshake) AuthPluginData() []byte {
 	return append(h.authPluginData1, h.authPluginData2...)
 }
 
+// CapabilityFlags returns the capability flags.
 func (h *Handshake) CapabilityFlags() CapabilityFlag {
 	return CapabilityFlag(h.capabilityFlags)
 }
 
+// CharacterSet returns the character set.
 func (h *Handshake) CharacterSet() CharacterSet {
 	return CharacterSet(h.characterSet)
 }
 
+// StatusFlags returns the status flags.
 func (h *Handshake) StatusFlags() StatusFlag {
 	return StatusFlag(h.statusFlags)
 }
 
+// AuthPluginName returns the auth plugin name.
 func (h *Handshake) AuthPluginName() string {
 	return h.authPluginName
 }
@@ -308,7 +316,7 @@ func (h *Handshake) Bytes() ([]byte, error) {
 	if err := w.WriteInt2(uint16(h.capabilityFlags >> 16)); err != nil {
 		return nil, err
 	}
-	if h.CapabilityFlags().IsClientPluginAuthEnabled() {
+	if h.CapabilityFlags().IsEnabled(CapabilityFlagClientPluginAuth) {
 		if err := w.WriteByte(uint8(len(h.authPluginData2) + authPluginDataPart1Len)); err != nil {
 			return nil, err
 		}
@@ -325,7 +333,7 @@ func (h *Handshake) Bytes() ([]byte, error) {
 			return nil, err
 		}
 	}
-	if h.CapabilityFlags().IsClientPluginAuthEnabled() {
+	if h.CapabilityFlags().IsEnabled(CapabilityFlagClientPluginAuth) {
 		if err := w.WriteNullTerminatedString(h.authPluginName); err != nil {
 			return nil, err
 		}

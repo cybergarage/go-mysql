@@ -23,14 +23,38 @@ import (
 // MySQL: Protocol::HandshakeResponse
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase_packets_protocol_handshake_response.html
 
+const (
+	handshakeResponseFillerLen = 23
+)
+
 // HandshakeResponse represents a MySQL Handshake Response message.
 type HandshakeResponse struct {
 	*message
+	capabilityFlags      uint32
+	maxPacketSize        uint32
+	chanteSet            uint8
+	username             string
+	authResponseLength   uint8
+	authResponse         string
+	database             string
+	clientPluginName     string
+	attributes           map[string]string
+	zstdCompressionLevel uint8
 }
 
 func newHandshakeResponseWithMessage(msg *message) *HandshakeResponse {
 	return &HandshakeResponse{
-		message: msg,
+		message:              msg,
+		capabilityFlags:      0,
+		maxPacketSize:        0,
+		chanteSet:            0,
+		username:             "",
+		authResponseLength:   0,
+		authResponse:         "",
+		database:             "",
+		clientPluginName:     "",
+		attributes:           make(map[string]string),
+		zstdCompressionLevel: 0,
 	}
 }
 
@@ -59,12 +83,110 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 
 	res := newHandshakeResponseWithMessage(msg)
 
+	res.capabilityFlags, err = res.ReadInt4()
+	if err != nil {
+		return nil, err
+	}
+
+	res.maxPacketSize, err = res.ReadInt4()
+	if err != nil {
+		return nil, err
+	}
+
+	res.chanteSet, err = res.ReadByte()
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = res.ReadFixedLengthBytes(handshakeResponseFillerLen)
+	if err != nil {
+		return nil, err
+	}
+
+	res.username, err = res.ReadNullTerminatedString()
+	if err != nil {
+		return nil, err
+	}
+
+	if res.CapabilityFlags().IsEnabled(CapabilityFlagClientPluginAuthLenencClientData) {
+		res.authResponse, err = res.ReadNullTerminatedString()
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		res.authResponseLength, err = res.ReadByte()
+		if err != nil {
+			return nil, err
+		}
+		res.authResponse, err = res.ReadFixedLengthString(int(res.authResponseLength))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if res.CapabilityFlags().IsEnabled(CapabilityFlagClientConnectWithDB) {
+		res.authResponse, err = res.ReadNullTerminatedString()
+		if err != nil {
+			return nil, err
+		}
+		res.database, err = res.ReadNullTerminatedString()
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		res.authResponse, err = res.ReadEOFTerminatedString()
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return res, err
+}
+
+// CapabilityFlags returns the capability flags.
+func (res *HandshakeResponse) CapabilityFlags() CapabilityFlag {
+	return CapabilityFlag(res.capabilityFlags)
+}
+
+// MaxPacketSize returns the max packet size.
+func (res *HandshakeResponse) MaxPacketSize() uint32 {
+	return res.maxPacketSize
+}
+
+// Username returns the username.
+func (res *HandshakeResponse) Username() string {
+	return res.username
+}
+
+// AuthResponse returns the auth response.
+func (res *HandshakeResponse) AuthResponse() string {
+	return res.authResponse
+}
+
+// Database returns the database.
+func (res *HandshakeResponse) Database() string {
+	return res.database
 }
 
 // Bytes returns the message bytes.
 func (res *HandshakeResponse) Bytes() ([]byte, error) {
 	w := NewWriter()
+
+	if err := w.WriteInt4(res.capabilityFlags); err != nil {
+		return nil, err
+	}
+
+	if err := w.WriteInt4(res.maxPacketSize); err != nil {
+		return nil, err
+	}
+
+	if err := w.WriteByte(res.chanteSet); err != nil {
+		return nil, err
+	}
+
+	if err := w.WriteFixedLengthBytes([]byte{}, handshakeResponseFillerLen); err != nil {
+		return nil, err
+	}
 
 	res.message = NewMessageWithPayload(w.Bytes())
 	return res.message.Bytes()
