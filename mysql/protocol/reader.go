@@ -15,6 +15,7 @@
 package protocol
 
 import (
+	"bytes"
 	"errors"
 	"io"
 
@@ -27,12 +28,17 @@ type Reader struct {
 	peekBuf []byte
 }
 
-// NewReader returns a new message reader.
-func NewReaderWith(reader io.Reader) *Reader {
+// NewReaderWithReader returns a new message reader with the specified reader.
+func NewReaderWithReader(reader io.Reader) *Reader {
 	return &Reader{
 		Reader:  reader,
 		peekBuf: make([]byte, 0),
 	}
+}
+
+// NewReaderWithBytes returns a new message reader with the specified byte array.
+func NewReaderWithBytes(buf []byte) *Reader {
+	return NewReaderWithReader(bytes.NewReader(buf))
 }
 
 // ReadBytes reads a byte array.
@@ -86,17 +92,13 @@ func (reader *Reader) PeekInt4() (uint, error) {
 	return uint(util.BytesToUint32(int32Bytes)), nil
 }
 
-// ReadInt4 reads a 32-bit integer.
-func (reader *Reader) ReadInt4() (uint32, error) {
-	int32Bytes := make([]byte, 4)
-	nRead, err := reader.ReadBytes(int32Bytes)
+// ReadInt1 reads a 8-bit integer.
+func (reader *Reader) ReadInt1() (uint8, error) {
+	b, err := reader.ReadByte()
 	if err != nil {
 		return 0, err
 	}
-	if nRead != 4 {
-		return 0, newShortMessageError(4, nRead)
-	}
-	return util.BytesToUint32(int32Bytes), nil
+	return uint8(b), nil
 }
 
 // ReadInt2 reads a 16-bit integer.
@@ -123,6 +125,32 @@ func (reader *Reader) ReadInt3() (uint32, error) {
 		return 0, newShortMessageError(3, nRead)
 	}
 	return util.BytesToUint24(int24Bytes), nil
+}
+
+// ReadInt4 reads a 32-bit integer.
+func (reader *Reader) ReadInt4() (uint32, error) {
+	int32Bytes := make([]byte, 4)
+	nRead, err := reader.ReadBytes(int32Bytes)
+	if err != nil {
+		return 0, err
+	}
+	if nRead != 4 {
+		return 0, newShortMessageError(4, nRead)
+	}
+	return util.BytesToUint32(int32Bytes), nil
+}
+
+// ReadInt8 reads a 64-bit integer.
+func (reader *Reader) ReadInt8() (uint64, error) {
+	int64Bytes := make([]byte, 8)
+	nRead, err := reader.ReadBytes(int64Bytes)
+	if err != nil {
+		return 0, err
+	}
+	if nRead != 8 {
+		return 0, newShortMessageError(8, nRead)
+	}
+	return util.BytesToUint64(int64Bytes), nil
 }
 
 // ReadBytesUntil reads a byte array until the specified delimiter.

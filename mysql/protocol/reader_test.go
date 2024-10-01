@@ -24,7 +24,7 @@ func TestReader(t *testing.T) {
 	buf := []byte{0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68}
 
 	// Test PeekInt32 and ReadInt32
-	reader := NewReaderWith(bytes.NewBuffer(buf))
+	reader := NewReaderWithReader(bytes.NewBuffer(buf))
 	expectedInt4 := uint32(0x64636261)
 	actualInt4, err := reader.ReadInt4()
 	if err != nil {
@@ -43,7 +43,7 @@ func TestReader(t *testing.T) {
 	}
 
 	// Test ReadInt3
-	reader = NewReaderWith(bytes.NewBuffer(buf))
+	reader = NewReaderWithReader(bytes.NewBuffer(buf))
 	expectedInt3 := uint32(0x636261)
 	actualInt3, err := reader.ReadInt3()
 	if err != nil {
@@ -54,7 +54,7 @@ func TestReader(t *testing.T) {
 	}
 
 	// Test ReadInt2
-	reader = NewReaderWith(bytes.NewBuffer(buf))
+	reader = NewReaderWithReader(bytes.NewBuffer(buf))
 	expectedInt2 := uint16(0x6261)
 	actualInt2, err := reader.ReadInt2()
 	if err != nil {
@@ -65,7 +65,7 @@ func TestReader(t *testing.T) {
 	}
 
 	// Test ReadBytesUntil
-	reader = NewReaderWith(bytes.NewBuffer(buf))
+	reader = NewReaderWithReader(bytes.NewBuffer(buf))
 	expectedBytes := []byte{0x61, 0x62, 0x63}
 	actualBytes, err := reader.ReadBytesUntil(0x64)
 	if err != nil {
@@ -76,7 +76,7 @@ func TestReader(t *testing.T) {
 	}
 
 	// Test ReadNullTerminatedString
-	reader = NewReaderWith(bytes.NewBuffer(append(buf, 0x00)))
+	reader = NewReaderWithReader(bytes.NewBuffer(append(buf, 0x00)))
 	expectedString := "\x61\x62\x63\x64\x65\x66\x67\x68"
 	actualString, err := reader.ReadNullTerminatedString()
 	if err != nil {
@@ -87,7 +87,7 @@ func TestReader(t *testing.T) {
 	}
 
 	// Test ReadEOFTerminatedString
-	reader = NewReaderWith(bytes.NewBuffer(buf))
+	reader = NewReaderWithReader(bytes.NewBuffer(buf))
 	expectedString = "\x61\x62\x63\x64\x65\x66\x67\x68"
 	actualString, err = reader.ReadEOFTerminatedString()
 	if err != nil {
@@ -98,7 +98,7 @@ func TestReader(t *testing.T) {
 	}
 
 	// Test ReadFixedLengthString
-	reader = NewReaderWith(bytes.NewBuffer(buf))
+	reader = NewReaderWithReader(bytes.NewBuffer(buf))
 	expectedString = "\x61\x62\x63\x64"
 	actualString, err = reader.ReadFixedLengthString(4)
 	if err != nil {
@@ -109,7 +109,7 @@ func TestReader(t *testing.T) {
 	}
 
 	// Test ReadVariableLengthString
-	reader = NewReaderWith(bytes.NewBuffer(buf))
+	reader = NewReaderWithReader(bytes.NewBuffer(buf))
 	expectedString = "\x61\x62\x63\x64"
 	actualString, err = reader.ReadVariableLengthString(4)
 	if err != nil {
