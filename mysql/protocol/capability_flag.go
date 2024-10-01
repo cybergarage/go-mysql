@@ -94,3 +94,8 @@ func (cap CapabilityFlag) Has(flag CapabilityFlag) bool {
 func (cap CapabilityFlag) HasClientPluginAuth() bool {
 	return cap.Has(CapabilityFlagClientPluginAuth)
 }
+
+// HasClientConnectWithDB returns true if the CLIENT_CONNECT_WITH_DB flag is set.
+func (cap CapabilityFlag) HasClientConnectWithDB() bool {
+	return cap.Has(CapabilityFlagClientConnectWithDB)
+}
