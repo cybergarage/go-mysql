@@ -74,7 +74,7 @@ func TestHandshakeResponseMessage(t *testing.T) {
 			"handshake-response-001",
 			handshakeResponseMsg001,
 			expected{
-				capFlags:   protocol.CapabilityFlag(0xa28d),
+				capFlags:   protocol.CapabilityFlag(0x000aa28d),
 				maxPkt:     0,
 				charSet:    45,
 				username:   "skonno",
@@ -92,13 +92,13 @@ func TestHandshakeResponseMessage(t *testing.T) {
 				t.Error(err)
 				return
 			}
-			msg, err := protocol.NewHandshakeFromReader(reader)
+			msg, err := protocol.NewHandshakeResponseFromReader(reader)
 			if err != nil {
 				t.Error(err)
 			}
 
 			if msg.CapabilityFlags() != test.expected.capFlags {
-				t.Errorf("expected %d, got %d", test.expected.capFlags, msg.CapabilityFlags())
+				t.Errorf("expected %04X, got %04X", test.expected.capFlags, msg.CapabilityFlags())
 			}
 		})
 	}
