@@ -31,30 +31,22 @@ var ErrNotExist = errors.New("not exist")
 // ErrExist is returned when the specified object is exist.
 var ErrExist = errors.New("exist")
 
-func newShortMessageError(expected int, actual int) error {
+func newErrShortMessage(expected int, actual int) error {
 	return fmt.Errorf("%w short message : %d < %d", ErrInvalid, actual, expected)
 }
 
-func newInvalidLengthError(name string, v int) error {
+func newErrInvalidLength(name string, v int) error {
 	return fmt.Errorf("%s is %w length (%d)", name, ErrInvalid, v)
 }
 
-// NewErrMessageNotSuppoted returns a new message not supported error.
-func NewErrMessageNotSuppoted(t Type) error {
-	return fmt.Errorf("message type (%c:%02X) is %w", t, uint8(t), ErrNotSupported)
+func newNotSupportedError(v any) error {
+	return fmt.Errorf("%v is %w", v, ErrNotSupported)
 }
 
-// NewErrExist returns a new exist error.
-func NewErrExist(v any) error {
+func newErrExist(v any) error {
 	return fmt.Errorf("%v is %w", v, ErrExist)
 }
 
-// NewErrNotExist returns a new not exist error.
-func NewErrNotExist(v any) error {
+func newErrNotExist(v any) error {
 	return fmt.Errorf("%v is %w", v, ErrNotExist)
-}
-
-// NewErrInvalidMessage eturns a new message not supported error.
-func NewErrInvalidMessage(t Type) error {
-	return fmt.Errorf("message type (%c:%02X) is %w", t, uint8(t), ErrInvalid)
 }

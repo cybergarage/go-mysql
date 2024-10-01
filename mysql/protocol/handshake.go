@@ -123,7 +123,7 @@ func WithHandshakeStatusFlags(v StatusFlag) HandshakeOption {
 func WithHandshakeAuthPluginData(v []byte) HandshakeOption {
 	return func(h *Handshake) error {
 		if authPluginDataPartMaxLen < len(v) {
-			return newInvalidLengthError("auth-plugin-data", len(v))
+			return newErrInvalidLength("auth-plugin-data", len(v))
 		}
 		h.authPluginDataLen = uint8(len(v))
 		if len(v) <= authPluginDataPart1Len {
