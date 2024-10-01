@@ -72,7 +72,7 @@ func NewMessageWithPayload(payload []byte) *message {
 // NewMessage returns a new MySQL message.
 func NewMessageWithReader(reader io.Reader) (*message, error) {
 	msg := newMessage()
-	msg.Reader = NewReaderWith(reader)
+	msg.Reader = NewReaderWithReader(reader)
 
 	// Read the payload length
 
