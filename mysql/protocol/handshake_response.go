@@ -126,7 +126,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 	}
 
 	if res.CapabilityFlags().IsEnabled(ClientPluginAuthLenencClientData) {
-		res.authResponse, err = res.ReadNullTerminatedString()
+		res.authResponse, err = res.ReadLengthEncodedString()
 		if err != nil {
 			return nil, err
 		}
@@ -142,16 +142,39 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 	}
 
 	if res.CapabilityFlags().IsEnabled(ClientConnectWithDB) {
-		res.authResponse, err = res.ReadNullTerminatedString()
-		if err != nil {
-			return nil, err
-		}
 		res.database, err = res.ReadNullTerminatedString()
 		if err != nil {
 			return nil, err
 		}
-	} else {
-		res.authResponse, err = res.ReadEOFTerminatedString()
+	}
+
+	if res.CapabilityFlags().IsEnabled(ClientPluginAuth) {
+		res.clientPluginName, err = res.ReadNullTerminatedString()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if res.CapabilityFlags().IsEnabled(ClientConnectAttrs) {
+		nmap, err := res.ReadLengthEncodedInt()
+		if err != nil {
+			return nil, err
+		}
+		for i := uint64(0); i < nmap; i++ {
+			key, err := res.ReadLengthEncodedString()
+			if err != nil {
+				return nil, err
+			}
+			value, err := res.ReadLengthEncodedString()
+			if err != nil {
+				return nil, err
+			}
+			res.attributes[key] = value
+		}
+	}
+
+	if res.CapabilityFlags().IsEnabled(ClientZstdCompressionAlgorithm) {
+		res.zstdCompressionLevel, err = res.ReadByte()
 		if err != nil {
 			return nil, err
 		}
@@ -205,6 +228,60 @@ func (res *HandshakeResponse) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	res.message = NewMessageWithPayload(w.Bytes())
+	if err := w.WriteNullTerminatedString(res.username); err != nil {
+		return nil, err
+	}
+
+	if res.CapabilityFlags().IsEnabled(ClientPluginAuthLenencClientData) {
+		if err := w.WriteLengthEncodedString(res.authResponse); err != nil {
+			return nil, err
+		}
+
+	} else {
+		if err := w.WriteByte(res.authResponseLength); err != nil {
+			return nil, err
+		}
+		if err := w.WriteFixedLengthString(res.authResponse, int(res.authResponseLength)); err != nil {
+			return nil, err
+		}
+	}
+
+	if res.CapabilityFlags().IsEnabled(ClientConnectWithDB) {
+		if err := w.WriteNullTerminatedString(res.database); err != nil {
+			return nil, err
+		}
+	}
+
+	if res.CapabilityFlags().IsEnabled(ClientPluginAuth) {
+		if err := w.WriteNullTerminatedString(res.clientPluginName); err != nil {
+			return nil, err
+		}
+	}
+
+	if res.CapabilityFlags().IsEnabled(ClientConnectAttrs) {
+		if err := w.WriteLengthEncodedInt(uint64(len(res.attributes))); err != nil {
+			return nil, err
+		}
+		for key, value := range res.attributes {
+			if err := w.WriteLengthEncodedString(key); err != nil {
+				return nil, err
+			}
+			if err := w.WriteLengthEncodedString(value); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	if res.CapabilityFlags().IsEnabled(ClientZstdCompressionAlgorithm) {
+		if err := w.WriteByte(res.zstdCompressionLevel); err != nil {
+			return nil, err
+		}
+	}
+
+	res.message = NewMessage(
+		MessageWithSequenceID(res.message.SequenceID()),
+		MessageWithPayload(w.Bytes()),
+	)
+
 	return res.message.Bytes()
 }
