@@ -15,6 +15,7 @@
 package protocol
 
 import (
+	"bytes"
 	_ "embed"
 	"testing"
 
@@ -87,11 +88,13 @@ func TestHandshakeResponseMessage(t *testing.T) {
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			reader, err := hexdump.NewReaderFromHexdumpString(test.data)
+			testBytes, err := hexdump.NewBytesWithHexdumpString(test.data)
 			if err != nil {
 				t.Error(err)
 				return
 			}
+			reader := bytes.NewReader(testBytes)
+
 			msg, err := protocol.NewHandshakeResponseFromReader(reader)
 			if err != nil {
 				t.Error(err)
@@ -99,6 +102,18 @@ func TestHandshakeResponseMessage(t *testing.T) {
 
 			if msg.CapabilityFlags() != test.expected.capFlags {
 				t.Errorf("expected %04X, got %04X", test.expected.capFlags, msg.CapabilityFlags())
+			}
+
+			// Compare the message bytes
+
+			msgBytes, err := msg.Bytes()
+			if err != nil {
+				t.Error(err)
+				return
+			}
+
+			if !bytes.Equal(msgBytes, testBytes) {
+				t.Errorf("expected %v, got %v", testBytes, msgBytes)
 			}
 		})
 	}
