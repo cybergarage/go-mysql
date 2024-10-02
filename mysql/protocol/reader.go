@@ -41,6 +41,16 @@ func NewReaderWithBytes(buf []byte) *Reader {
 	return NewReaderWithReader(bytes.NewReader(buf))
 }
 
+// ReadByte reads a byte.
+func (reader *Reader) ReadByte() (byte, error) {
+	b := make([]byte, 1)
+	_, err := reader.ReadBytes(b)
+	if err != nil {
+		return 0, err
+	}
+	return b[0], nil
+}
+
 // ReadBytes reads a byte array.
 func (reader *Reader) ReadBytes(buf []byte) (int, error) {
 	nBufSize := len(buf)
@@ -61,15 +71,7 @@ func (reader *Reader) ReadBytes(buf []byte) (int, error) {
 	return nReadBuf, err
 }
 
-func (reader *Reader) ReadByte() (byte, error) {
-	b := make([]byte, 1)
-	_, err := reader.ReadBytes(b)
-	if err != nil {
-		return 0, err
-	}
-	return b[0], nil
-}
-
+// PeekBytes peeks a byte array.
 func (reader *Reader) PeekBytes(n int) ([]byte, error) {
 	buf := make([]byte, n)
 	nRead, err := reader.ReadBytes(buf)
@@ -83,22 +85,31 @@ func (reader *Reader) PeekBytes(n int) ([]byte, error) {
 	return buf, nil
 }
 
-// PeekInt4 reads a 32-bit integer.
-func (reader *Reader) PeekInt4() (uint, error) {
-	int32Bytes, err := reader.PeekBytes(4)
-	if err != nil {
-		return 0, err
-	}
-	return uint(util.BytesToUint32(int32Bytes)), nil
-}
-
-// ReadInt1 reads a 8-bit integer.
+// ReadInt1 peeks a 8-bit integer.
 func (reader *Reader) ReadInt1() (uint8, error) {
 	b, err := reader.ReadByte()
 	if err != nil {
 		return 0, err
 	}
 	return uint8(b), nil
+}
+
+// PeekInt2 reads a 16-bit integer.
+func (reader *Reader) PeekInt2() (uint16, error) {
+	int16Bytes, err := reader.PeekBytes(2)
+	if err != nil {
+		return 0, err
+	}
+	return util.BytesToUint16(int16Bytes), nil
+}
+
+// PeekInt4 peeks a 32-bit integer.
+func (reader *Reader) PeekInt4() (uint32, error) {
+	int32Bytes, err := reader.PeekBytes(4)
+	if err != nil {
+		return 0, err
+	}
+	return util.BytesToUint32(int32Bytes), nil
 }
 
 // ReadInt2 reads a 16-bit integer.
@@ -151,6 +162,29 @@ func (reader *Reader) ReadInt8() (uint64, error) {
 		return 0, newErrShortMessage(8, nRead)
 	}
 	return util.BytesToUint64(int64Bytes), nil
+}
+
+// ReadLengthEncodedInt reads a length encoded integer.
+func (reader *Reader) ReadLengthEncodedInt() (uint64, error) {
+	firstByte, err := reader.ReadByte()
+	if err != nil {
+		return 0, err
+	}
+	switch {
+	case firstByte <= 0xFB:
+		return uint64(firstByte), nil
+	case firstByte == 0xFC:
+		v, err := reader.ReadInt2()
+		return uint64(v), err
+	case firstByte == 0xFD:
+		v, err := reader.ReadInt3()
+		return uint64(v), err
+	case firstByte == 0xFE:
+		v, err := reader.ReadInt8()
+		return uint64(v), err
+	default:
+		return 0, newErrInvalidCode("length encoded integer", uint(firstByte))
+	}
 }
 
 // ReadBytesUntil reads a byte array until the specified delimiter.
