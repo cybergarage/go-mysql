@@ -75,6 +75,11 @@ func TestWriter(t *testing.T) {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
+	err = w.WriteLengthEncodedString(expectedString)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
 	_, err = w.WriteBytes([]byte(expectedString))
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
@@ -155,6 +160,14 @@ func TestWriter(t *testing.T) {
 		t.Errorf("Unexpected error: %v", err)
 	}
 	if strings.HasPrefix(actualString, expectedString) == false {
+		t.Errorf("Expected %v, but got %v", expectedString, actualString)
+	}
+
+	actualString, err = reader.ReadLengthEncodedString()
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	if actualString != expectedString {
 		t.Errorf("Expected %v, but got %v", expectedString, actualString)
 	}
 

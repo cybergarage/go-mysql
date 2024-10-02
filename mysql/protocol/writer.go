@@ -16,6 +16,8 @@ package protocol
 
 import (
 	"bytes"
+
+	"github.com/cybergarage/go-safecast/safecast"
 )
 
 type Writer struct {
@@ -126,7 +128,7 @@ func (w *Writer) WriteFixedLengthBytes(b []byte, n int) error {
 
 // WriteFixedLengthString writes a fixed length string.
 func (w *Writer) WriteFixedLengthString(s string, n int) error {
-	return w.writeFixedLengthBytes([]byte(s), 0x20, n)
+	return w.writeFixedLengthBytes([]byte(s), 0x00, n)
 }
 
 // WriteVariableLengthString writes a variable length string.
@@ -136,6 +138,19 @@ func (w *Writer) WriteVariableLengthString(s string) error {
 		return err
 	}
 	return nil
+}
+
+// WriteLengthEncodedString writes a length encoded string.
+func (w *Writer) WriteLengthEncodedString(s string) error {
+	var n uint8
+	err := safecast.ToUint8(len(s), &n)
+	if err != nil {
+		return err
+	}
+	if err := w.WriteInt1(n); err != nil {
+		return err
+	}
+	return w.WriteFixedLengthString(s, int(n))
 }
 
 // Bytes returns the written bytes.
