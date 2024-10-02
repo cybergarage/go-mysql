@@ -31,14 +31,6 @@ var ErrNotExist = errors.New("not exist")
 // ErrExist is returned when the specified object is exist.
 var ErrExist = errors.New("exist")
 
-func newErrShortMessage(expected int, actual int) error {
-	return fmt.Errorf("%w short message : %d < %d", ErrInvalid, actual, expected)
-}
-
-func newErrInvalidLength(name string, v int) error {
-	return fmt.Errorf("%s is %w length (%d)", name, ErrInvalid, v)
-}
-
 func newErrNotSupported(v any) error {
 	return fmt.Errorf("%v is %w", v, ErrNotSupported)
 }
@@ -49,4 +41,16 @@ func newErrExist(v any) error {
 
 func newErrNotExist(v any) error {
 	return fmt.Errorf("%v is %w", v, ErrNotExist)
+}
+
+func newErrShortMessage(expected int, actual int) error {
+	return fmt.Errorf("%w short message : %d < %d", ErrInvalid, actual, expected)
+}
+
+func newErrInvalidCode(name string, v uint) error {
+	return fmt.Errorf("%s is %w code (%X)", name, ErrInvalid, v)
+}
+
+func newErrInvalidLength(name string, v int) error {
+	return fmt.Errorf("%s is %w length (%d)", name, ErrInvalid, v)
 }
