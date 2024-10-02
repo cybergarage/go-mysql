@@ -219,3 +219,12 @@ func (reader *Reader) ReadFixedLengthString(n int) (string, error) {
 func (reader *Reader) ReadVariableLengthString(n int) (string, error) {
 	return reader.ReadFixedLengthString(n)
 }
+
+// ReadLengthEncodedInt reads a length encoded integer.
+func (reader *Reader) ReadLengthEncodedString() (string, error) {
+	n, err := reader.ReadInt1()
+	if err != nil {
+		return "", err
+	}
+	return reader.ReadFixedLengthString(int(n))
+}
