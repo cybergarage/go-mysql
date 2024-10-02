@@ -31,6 +31,8 @@ import (
 type Message interface {
 	// SetSequenceID sets the message sequence ID.
 	SetSequenceID(n SequenceID)
+	// SetPayload sets the message payload.
+	SetPayload(payload []byte)
 	// PayloadLength returns the message payload length.
 	PayloadLength() uint32
 	// SequenceID returns the message sequence ID.
@@ -61,11 +63,29 @@ func newMessage() *message {
 	}
 }
 
+// MessageOption represents a message option.
+type MessageOption func(Message)
+
+// MessageWithPayload returns a message option to set the payload.
+func MessageWithPayload(payload []byte) MessageOption {
+	return func(msg Message) {
+		msg.SetPayload(payload)
+	}
+}
+
+// MessageWithSequenceID returns a message option to set the sequence ID.
+func MessageWithSequenceID(n SequenceID) MessageOption {
+	return func(msg Message) {
+		msg.SetSequenceID(n)
+	}
+}
+
 // NewMessage returns a new MySQL message.
-func NewMessageWithPayload(payload []byte) *message {
+func NewMessage(opts ...MessageOption) *message {
 	msg := newMessage()
-	msg.payloadLength = uint32(len(payload))
-	msg.payload = payload
+	for _, opt := range opts {
+		opt(msg)
+	}
 	return msg
 }
 
@@ -91,6 +111,12 @@ func NewMessageWithReader(reader io.Reader) (*message, error) {
 	msg.sequenceID = SequenceID(seqIDByte)
 
 	return msg, nil
+}
+
+// SetPayload sets the message payload.
+func (msg *message) SetPayload(payload []byte) {
+	msg.payload = payload
+	msg.payloadLength = uint32(len(payload))
 }
 
 // SetSequenceID sets the message sequence ID.

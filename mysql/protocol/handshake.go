@@ -339,6 +339,10 @@ func (h *Handshake) Bytes() ([]byte, error) {
 		}
 	}
 
-	h.message = NewMessageWithPayload(w.Bytes())
+	h.message = NewMessage(
+		MessageWithSequenceID(h.message.SequenceID()),
+		MessageWithPayload(w.Bytes()),
+	)
+
 	return h.message.Bytes()
 }
