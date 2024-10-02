@@ -73,8 +73,8 @@ const (
 	ClientDeprecateEOF CapabilityFlag = 16777216
 	// ClientCapabilitiyClientOptionalResultsetMetadata represents the CLIENT_OPTIONAL_RESULTSET_METADATA capability flag.
 	ClientOptionalResultsetMetadata CapabilityFlag = 33554432
-	// ClientZstdCompressionAlgorithms represents the CLIENT_ZSTD_COMPRESSION_ALGORITHMS capability flag.
-	ClientZstdCompressionAlgorithms CapabilityFlag = 67108864
+	// ClientZstdCompressionAlgorithm represents the CLIENT_ZSTD_COMPRESSION_ALGORITHMS capability flag.
+	ClientZstdCompressionAlgorithm CapabilityFlag = 67108864
 	// CapabilityMultiFactoryAuth represents the CLIENT_MULTI_FACTORY_AUTH capability flag.
 	CapabilityMultiFactoryAuth CapabilityFlag = 134217728
 	// ClientCapabilityExtension represents the CLIENT_CAPABILITY_EXTENSION capability flag.
