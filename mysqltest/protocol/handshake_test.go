@@ -170,7 +170,7 @@ func TestHandshakeMessage(t *testing.T) {
 			}
 
 			if !bytes.Equal(msgBytes, testBytes) {
-				t.Errorf("expected %v, got %v", test.data, testBytes)
+				t.Errorf("expected %v, got %v", testBytes, msgBytes)
 			}
 		})
 	}
