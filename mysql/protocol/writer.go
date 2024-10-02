@@ -91,6 +91,29 @@ func (w *Writer) WriteInt8(v uint64) error {
 	return err
 }
 
+// WriteLengthEncodedInt writes a length encoded integer.
+func (w *Writer) WriteLengthEncodedInt(v uint64) error {
+	switch {
+	case v < 251:
+		return w.WriteInt1(uint8(v))
+	case v < 65536:
+		if err := w.WriteInt1(0xFC); err != nil {
+			return err
+		}
+		return w.WriteInt2(uint16(v))
+	case v < 16777216:
+		if err := w.WriteInt1(0xFD); err != nil {
+			return err
+		}
+		return w.WriteInt3(uint32(v))
+	default:
+		if err := w.WriteInt1(0xFE); err != nil {
+			return err
+		}
+		return w.WriteInt8(v)
+	}
+}
+
 // WriteNullTerminatedString writes a null terminated string.
 func (w *Writer) WriteNullTerminatedString(s string) error {
 	_, err := w.WriteString(s)
