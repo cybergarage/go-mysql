@@ -53,6 +53,30 @@ func TestWriter(t *testing.T) {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
+	expectedLengthEncodedInt1 := uint64(250)
+	err = w.WriteLengthEncodedInt(expectedLengthEncodedInt1)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	expectedLengthEncodedInt2 := uint64(65535)
+	err = w.WriteLengthEncodedInt(expectedLengthEncodedInt2)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	expectedLengthEncodedInt3 := uint64(16777215)
+	err = w.WriteLengthEncodedInt(expectedLengthEncodedInt3)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	expectedLengthEncodedInt8 := uint64(16777216)
+	err = w.WriteLengthEncodedInt(expectedLengthEncodedInt8)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
 	expectedBytes := []byte{0x69, 0x6A, 0x6B, 0x6C}
 	_, err = w.WriteBytes(expectedBytes)
 	if err != nil {
@@ -89,7 +113,8 @@ func TestWriter(t *testing.T) {
 	// Test written bytes
 	//
 
-	reader := NewReaderWithBytes(w.Bytes())
+	writerBytes := w.Bytes()
+	reader := NewReaderWithBytes(writerBytes)
 	actualInt1, err := reader.ReadInt1()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
@@ -128,6 +153,38 @@ func TestWriter(t *testing.T) {
 	}
 	if actualInt8 != expectedInt8 {
 		t.Errorf("Expected %v, but got %v", expectedInt8, actualInt8)
+	}
+
+	actualLengthEncodedInt1, err := reader.ReadLengthEncodedInt()
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	if actualLengthEncodedInt1 != expectedLengthEncodedInt1 {
+		t.Errorf("Expected %v, but got %v", expectedLengthEncodedInt1, actualLengthEncodedInt1)
+	}
+
+	actualLengthEncodedInt2, err := reader.ReadLengthEncodedInt()
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	if actualLengthEncodedInt2 != expectedLengthEncodedInt2 {
+		t.Errorf("Expected %v, but got %v", expectedLengthEncodedInt2, actualLengthEncodedInt2)
+	}
+
+	actualLengthEncodedInt3, err := reader.ReadLengthEncodedInt()
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	if actualLengthEncodedInt3 != expectedLengthEncodedInt3 {
+		t.Errorf("Expected %v, but got %v", expectedLengthEncodedInt3, actualLengthEncodedInt3)
+	}
+
+	actualLengthEncodedInt8, err := reader.ReadLengthEncodedInt()
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	if actualLengthEncodedInt8 != expectedLengthEncodedInt8 {
+		t.Errorf("Expected %v, but got %v", expectedLengthEncodedInt8, actualLengthEncodedInt8)
 	}
 
 	actualBytes := make([]byte, len(expectedBytes))
