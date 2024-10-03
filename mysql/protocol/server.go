@@ -145,19 +145,33 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		conn.Close()
 	}()
 
+	reader := conn.MessageReader()
+
 	// MySQL: Connection Phase
 	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase.html
+
+	// MySQL: Protocol::Handshake
+
+	handshakeMsg, err := NewHandshake(
+		WithHandshakeServerVersion(server.ServerVersion()))
+	if err != nil {
+		return err
+	}
+
+	err = conn.ResponseMessage(handshakeMsg)
+	if err != nil {
+		return err
+	}
+
+	// MySQL: Command Phase
+	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_command_phase.html
 
 	server.AddConn(conn)
 	defer func() {
 		server.RemoveConn(conn)
 	}()
 
-	// MySQL: Command Phase
-	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_command_phase.html
-
 	for {
-
 		loopSpan := server.Tracer.StartSpan("")
 		conn.SetSpanContext(loopSpan)
 		conn.StartSpan("")
