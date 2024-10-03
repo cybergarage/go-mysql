@@ -26,7 +26,7 @@ import (
 // ConnOption represents a connection option.
 type ConnOption = func(*Conn)
 
-// Conn represents a connection of MySQL binary
+// Conn represents a connection of MySQL binary.
 type Conn struct {
 	net.Conn
 	isClosed  bool
@@ -134,7 +134,7 @@ func (conn *Conn) MessageReader() *MessageReader {
 	return conn.msgReader
 }
 
-// ResponseMessage sends a response
+// ResponseMessage sends a response.
 func (conn *Conn) ResponseMessage(resMsg Message) error {
 	if resMsg == nil {
 		return nil
