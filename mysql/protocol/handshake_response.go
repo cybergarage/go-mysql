@@ -236,7 +236,6 @@ func (res *HandshakeResponse) Bytes() ([]byte, error) {
 		if err := w.WriteLengthEncodedString(res.authResponse); err != nil {
 			return nil, err
 		}
-
 	} else {
 		if err := w.WriteByte(res.authResponseLength); err != nil {
 			return nil, err
