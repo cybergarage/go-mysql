@@ -14,9 +14,11 @@
 
 package protocol
 
+import "fmt"
+
 const (
-	defaultAddr = ""
-	defaultPort = DefaultPort
+	DefaultAddr      = ""
+	SupportedVersion = "5.7.9"
 )
 
 // Config stores server configuration parammeters.
@@ -24,16 +26,28 @@ type Config struct {
 	addr string
 	port int
 	*TLSConf
+	productName    string
+	productVersion string
 }
 
 // NewDefaultConfig returns a default configuration instance.
 func NewDefaultConfig() *Config {
 	config := &Config{
-		addr:    defaultAddr,
-		port:    defaultPort,
+		addr:    DefaultAddr,
+		port:    DefaultPort,
 		TLSConf: NewTLSConf(),
 	}
 	return config
+}
+
+// SetProuctName sets a product name to the configuration.
+func (config *Config) SetProductName(v string) {
+	config.productName = v
+}
+
+// SetProductVersion sets a product version to the configuration.
+func (config *Config) SetProductVersion(v string) {
+	config.productVersion = v
 }
 
 // SetAddress sets a listen address to the configuration.
@@ -54,4 +68,19 @@ func (config *Config) Address() string {
 // Port returns the listen port from the configuration.
 func (config *Config) Port() int {
 	return config.port
+}
+
+// ProductName returns the product name from the configuration.
+func (config *Config) ProductName() string {
+	return config.productName
+}
+
+// ProductVersion returns the product version from the configuration.
+func (config *Config) ProductVersion() string {
+	return config.productVersion
+}
+
+// ServerVersion returns the server version for the handshake.
+func (config *Config) ServerVersion() string {
+	return fmt.Sprintf("%s-%s-%s", SupportedVersion, config.productName, config.productVersion)
 }
