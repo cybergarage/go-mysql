@@ -15,6 +15,8 @@
 package protocol
 
 const (
+	DefaultPort = 3306
+
 	DefaultServerCapabilities = ClientLongPassword |
 		ClientFoundRows |
 		ClientLongColumnFlag |
