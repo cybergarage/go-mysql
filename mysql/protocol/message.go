@@ -48,7 +48,7 @@ type SequenceID uint8
 
 // message represents a MySQL message.
 type message struct {
-	*Reader
+	*MessageReader
 	payloadLength uint32
 	sequenceID    SequenceID
 	payload       []byte
@@ -56,7 +56,7 @@ type message struct {
 
 func newMessage() *message {
 	return &message{
-		Reader:        nil,
+		MessageReader: nil,
 		payloadLength: 0,
 		sequenceID:    SequenceID(0),
 		payload:       nil,
@@ -92,7 +92,7 @@ func NewMessage(opts ...MessageOption) *message {
 // NewMessage returns a new MySQL message.
 func NewMessageWithReader(reader io.Reader) (*message, error) {
 	msg := newMessage()
-	msg.Reader = NewReaderWithReader(reader)
+	msg.MessageReader = NewMessageReaderWith(reader)
 
 	// Read the payload length
 
