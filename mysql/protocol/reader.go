@@ -22,13 +22,13 @@ import (
 	util "github.com/cybergarage/go-mysql/mysql/encoding/bytes"
 )
 
-// Reader represents a message reader.
+// Reader represents a packet reader.
 type Reader struct {
 	io.Reader
 	peekBuf []byte
 }
 
-// NewReaderWithReader returns a new message reader with the specified reader.
+// NewReaderWithReader returns a new packet reader with the specified reader.
 func NewReaderWithReader(reader io.Reader) *Reader {
 	return &Reader{
 		Reader:  reader,
@@ -36,7 +36,7 @@ func NewReaderWithReader(reader io.Reader) *Reader {
 	}
 }
 
-// NewReaderWithBytes returns a new message reader with the specified byte array.
+// NewReaderWithBytes returns a new packet reader with the specified byte array.
 func NewReaderWithBytes(buf []byte) *Reader {
 	return NewReaderWithReader(bytes.NewReader(buf))
 }
@@ -79,7 +79,7 @@ func (reader *Reader) PeekBytes(n int) ([]byte, error) {
 		return nil, err
 	}
 	if nRead != n {
-		return nil, newErrShortMessage(n, nRead)
+		return nil, newErrShortPacket(n, nRead)
 	}
 	reader.peekBuf = append(reader.peekBuf, buf...)
 	return buf, nil
@@ -139,7 +139,7 @@ func (reader *Reader) ReadInt2() (uint16, error) {
 		return 0, err
 	}
 	if nRead != 2 {
-		return 0, newErrShortMessage(2, nRead)
+		return 0, newErrShortPacket(2, nRead)
 	}
 	return util.BytesToUint16(int16Bytes), nil
 }
@@ -152,7 +152,7 @@ func (reader *Reader) ReadInt3() (uint32, error) {
 		return 0, err
 	}
 	if nRead != 3 {
-		return 0, newErrShortMessage(3, nRead)
+		return 0, newErrShortPacket(3, nRead)
 	}
 	return util.BytesToUint24(int24Bytes), nil
 }
@@ -165,7 +165,7 @@ func (reader *Reader) ReadInt4() (uint32, error) {
 		return 0, err
 	}
 	if nRead != 4 {
-		return 0, newErrShortMessage(4, nRead)
+		return 0, newErrShortPacket(4, nRead)
 	}
 	return util.BytesToUint32(int32Bytes), nil
 }
@@ -178,7 +178,7 @@ func (reader *Reader) ReadInt8() (uint64, error) {
 		return 0, err
 	}
 	if nRead != 8 {
-		return 0, newErrShortMessage(8, nRead)
+		return 0, newErrShortPacket(8, nRead)
 	}
 	return util.BytesToUint64(int64Bytes), nil
 }
@@ -254,7 +254,7 @@ func (reader *Reader) ReadFixedLengthBytes(n int) ([]byte, error) {
 		return nil, err
 	}
 	if nRead != n {
-		return nil, newErrShortMessage(n, nRead)
+		return nil, newErrShortPacket(n, nRead)
 	}
 	return b, nil
 }

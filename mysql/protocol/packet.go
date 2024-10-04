@@ -1,0 +1,167 @@
+// Copyright (C) 2024 The go-mysql Authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package protocol
+
+import (
+	"io"
+)
+
+// MySQL: Protocol Basics
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basics.html
+// MySQL: MySQL Packets
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_packets.html
+// MySQL: Packets
+// https://dev.mysql.com/doc/dev/mysql-server/latest/mysqlx_protocol_packets.html
+// MariaDB protocol difference with MySQL - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/mariadb-protocol-difference-with-mysql/
+
+// Packet represents a MySQL packet.
+type Packet interface {
+	// SetSequenceID sets the packet sequence ID.
+	SetSequenceID(n SequenceID)
+	// SetPayload sets the packet payload.
+	SetPayload(payload []byte)
+	// PayloadLength returns the packet payload length.
+	PayloadLength() uint32
+	// SetCapabilityFlags sets the packet capability flags.
+	SetCapabilityFlags(CapabilityFlag)
+	// SequenceID returns the packet sequence ID.
+	SequenceID() SequenceID
+	// Payload returns the packet payload.
+	Payload() []byte
+	// CapabilityFlags returns the packet capability flags.
+	CapabilityFlags() CapabilityFlag
+	// Bytes returns the packet bytes.
+	Bytes() ([]byte, error)
+}
+
+// SequenceID represents a MySQL packet sequence ID.
+type SequenceID uint8
+
+// packet represents a MySQL packet.
+type packet struct {
+	*PacketReader
+	payloadLength   uint32
+	sequenceID      SequenceID
+	payload         []byte
+	capabilityFlags CapabilityFlag
+}
+
+func newPacket() *packet {
+	return &packet{
+		PacketReader:    nil,
+		payloadLength:   0,
+		sequenceID:      SequenceID(0),
+		payload:         nil,
+		capabilityFlags: 0,
+	}
+}
+
+// PacketOption represents a packet option.
+type PacketOption func(Packet)
+
+// PacketWithPayload returns a packet option to set the payload.
+func PacketWithPayload(payload []byte) PacketOption {
+	return func(pkt Packet) {
+		pkt.SetPayload(payload)
+	}
+}
+
+// PacketWithSequenceID returns a packet option to set the sequence ID.
+func PacketWithSequenceID(n SequenceID) PacketOption {
+	return func(pkt Packet) {
+		pkt.SetSequenceID(n)
+	}
+}
+
+// NewPacket returns a new MySQL packet.
+func NewPacket(opts ...PacketOption) *packet {
+	pkt := newPacket()
+	for _, opt := range opts {
+		opt(pkt)
+	}
+	return pkt
+}
+
+// NewPacket returns a new MySQL packet.
+func NewPacketWithReader(reader io.Reader) (*packet, error) {
+	pkt := newPacket()
+	pkt.PacketReader = NewPacketReaderWith(reader)
+
+	// Read the payload length
+
+	payloadLengthBuf := make([]byte, 3)
+	_, err := pkt.ReadBytes(payloadLengthBuf)
+	if err != nil {
+		return nil, err
+	}
+	pkt.payloadLength = uint32(payloadLengthBuf[0]) | uint32(payloadLengthBuf[1])<<8 | uint32(payloadLengthBuf[2])<<16
+
+	// Read the sequence ID
+	seqIDByte, err := pkt.ReadByte()
+	if err != nil {
+		return nil, err
+	}
+	pkt.sequenceID = SequenceID(seqIDByte)
+
+	return pkt, nil
+}
+
+// SetPayload sets the packet payload.
+func (pkt *packet) SetPayload(payload []byte) {
+	pkt.payload = payload
+	pkt.payloadLength = uint32(len(payload))
+}
+
+// SetSequenceID sets the packet sequence ID.
+func (pkt *packet) SetSequenceID(n SequenceID) {
+	pkt.sequenceID = n
+}
+
+// PayloadLength returns the packet payload length.
+func (pkt *packet) PayloadLength() uint32 {
+	return pkt.payloadLength
+}
+
+// SequenceID returns the packet sequence ID.
+func (pkt *packet) SequenceID() SequenceID {
+	return pkt.sequenceID
+}
+
+// Payload returns the packet payload.
+func (pkt *packet) Payload() []byte {
+	return pkt.payload
+}
+
+// SetCapabilityFlags sets the packet capability flags.
+func (pkt *packet) SetCapabilityFlags(flags CapabilityFlag) {
+	pkt.capabilityFlags = flags
+}
+
+// CapabilityFlags returns the packet capability flags.
+func (pkt *packet) CapabilityFlags() CapabilityFlag {
+	return 0
+}
+
+// Bytes returns the packet bytes.
+func (pkt *packet) Bytes() ([]byte, error) {
+	payloadLengthBuf := []byte{
+		byte(pkt.payloadLength),
+		byte(pkt.payloadLength >> 8),
+		byte(pkt.payloadLength >> 16),
+	}
+	seqIDByte := byte(pkt.sequenceID)
+	return append(append(payloadLengthBuf, seqIDByte), pkt.payload...), nil
+}

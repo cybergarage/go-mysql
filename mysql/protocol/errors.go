@@ -19,10 +19,10 @@ import (
 	"fmt"
 )
 
-// ErrInvalid is returned when the message is invalid.
+// ErrInvalid is returned when the packet is invalid.
 var ErrInvalid = errors.New("invalid")
 
-// ErrNotSupported is returned when the message is not supported.
+// ErrNotSupported is returned when the packet is not supported.
 var ErrNotSupported = errors.New("not supported")
 
 // ErrNotExist is returned when the specified object is not exist.
@@ -43,8 +43,8 @@ func newErrNotExist(v any) error {
 	return fmt.Errorf("%v is %w", v, ErrNotExist)
 }
 
-func newErrShortMessage(expected int, actual int) error {
-	return fmt.Errorf("%w short message : %d < %d", ErrInvalid, actual, expected)
+func newErrShortPacket(expected int, actual int) error {
+	return fmt.Errorf("%w short packet : %d < %d", ErrInvalid, actual, expected)
 }
 
 func newErrInvalidCode(name string, v uint) error {

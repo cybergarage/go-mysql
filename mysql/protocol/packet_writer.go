@@ -14,20 +14,20 @@
 
 package protocol
 
-// MessageWriter represents a message writer of MySQL protocol.
-type MessageWriter struct {
+// PacketWriter represents a packet writer of MySQL protocol.
+type PacketWriter struct {
 	*Writer
 }
 
-// NewMessageWriter returns a new message writer.
-func NewMessageWriter() *MessageWriter {
-	return &MessageWriter{
+// NewPacketWriter returns a new packet writer.
+func NewPacketWriter() *PacketWriter {
+	return &PacketWriter{
 		Writer: NewWriter(),
 	}
 }
 
 // WriteCapabilityFlags writes the capability flags.
-func (w *MessageWriter) WriteCapabilityFlags(c CapabilityFlag) error {
+func (w *PacketWriter) WriteCapabilityFlags(c CapabilityFlag) error {
 	if c.IsEnabled(ClientProtocol41) {
 		return w.WriteInt4(uint32(c))
 	}
@@ -35,7 +35,7 @@ func (w *MessageWriter) WriteCapabilityFlags(c CapabilityFlag) error {
 }
 
 // WriteFillerBytes writes the filler bytes.
-func (w *MessageWriter) WriteFillerBytes(b byte, n int) error {
+func (w *PacketWriter) WriteFillerBytes(b byte, n int) error {
 	for i := 0; i < n; i++ {
 		if err := w.WriteByte(b); err != nil {
 			return err

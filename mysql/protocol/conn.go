@@ -30,7 +30,7 @@ type ConnOption = func(*Conn)
 type Conn struct {
 	net.Conn
 	isClosed  bool
-	msgReader *MessageReader
+	msgReader *PacketReader
 	db        string
 	ts        time.Time
 	uuid      uuid.UUID
@@ -43,7 +43,7 @@ func NewConnWith(netConn net.Conn, opts ...ConnOption) *Conn {
 	conn := &Conn{
 		Conn:      netConn,
 		isClosed:  false,
-		msgReader: NewMessageReaderWith(netConn),
+		msgReader: NewPacketReaderWith(netConn),
 		db:        "",
 		ts:        time.Now(),
 		uuid:      uuid.New(),
@@ -129,13 +129,13 @@ func (conn *Conn) TLSConnectionState() (*tls.ConnectionState, bool) {
 	return conn.tlsState, conn.tlsState != nil
 }
 
-// MessageReader returns a message reader.
-func (conn *Conn) MessageReader() *MessageReader {
+// PacketReader returns a packet reader.
+func (conn *Conn) PacketReader() *PacketReader {
 	return conn.msgReader
 }
 
-// ResponseMessage sends a response.
-func (conn *Conn) ResponseMessage(resMsg Message) error {
+// ResponsePacket sends a response.
+func (conn *Conn) ResponsePacket(resMsg Packet) error {
 	if resMsg == nil {
 		return nil
 	}
@@ -149,13 +149,13 @@ func (conn *Conn) ResponseMessage(resMsg Message) error {
 	return nil
 }
 
-// ResponseMessages sends response messages.
-func (conn *Conn) ResponseMessages(resMsgs []Message) error {
+// ResponsePackets sends response packets.
+func (conn *Conn) ResponsePackets(resMsgs []Packet) error {
 	if len(resMsgs) == 0 {
 		return nil
 	}
 	for _, resMsg := range resMsgs {
-		err := conn.ResponseMessage(resMsg)
+		err := conn.ResponsePacket(resMsg)
 		if err != nil {
 			return err
 		}
