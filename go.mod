@@ -8,12 +8,13 @@ require (
 	github.com/cybergarage/go-sqlparser v1.3.0
 	github.com/cybergarage/go-sqltest v1.4.1
 	github.com/cybergarage/go-tracing v1.1.3
-	github.com/go-sql-driver/mysql v1.7.0
+	github.com/go-sql-driver/mysql v1.8.1
 	github.com/google/uuid v1.6.0
 	vitess.io/vitess v0.13.3
 )
 
 require (
+	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20211102141018-f7be0cbad29c // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
