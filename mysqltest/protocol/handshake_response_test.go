@@ -26,7 +26,7 @@ import (
 //go:embed data/handshake-response-001.hex
 var handshakeResponseMsg001 string
 
-func TestHandshakeResponseMessage(t *testing.T) {
+func TestHandshakeResponsePacket(t *testing.T) {
 	// Packet Length: 89
 	// Packet Number: 1
 	// Login Request
@@ -104,7 +104,7 @@ func TestHandshakeResponseMessage(t *testing.T) {
 				t.Errorf("expected %04X, got %04X", test.expected.capFlags, msg.CapabilityFlags())
 			}
 
-			// Compare the message bytes
+			// Compare the packet bytes
 
 			msgBytes, err := msg.Bytes()
 			if err != nil {

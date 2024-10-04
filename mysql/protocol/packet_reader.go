@@ -18,20 +18,20 @@ import (
 	"io"
 )
 
-// MessageReader represents a message reader of MySQL protocol.
-type MessageReader struct {
+// PacketReader represents a packet reader of MySQL protocol.
+type PacketReader struct {
 	*Reader
 }
 
-// NewMessageReader returns a new message reader.
-func NewMessageReaderWith(reader io.Reader) *MessageReader {
-	return &MessageReader{
+// NewPacketReader returns a new packet reader.
+func NewPacketReaderWith(reader io.Reader) *PacketReader {
+	return &PacketReader{
 		Reader: NewReaderWithReader(reader),
 	}
 }
 
 // ReadCapabilityFlags reads the capability flags.
-func (reader *MessageReader) ReadCapabilityFlags() (CapabilityFlag, error) {
+func (reader *PacketReader) ReadCapabilityFlags() (CapabilityFlag, error) {
 	capabilityFlags := CapabilityFlag(0)
 	v, err := reader.ReadInt2()
 	if err != nil {
@@ -59,7 +59,7 @@ func (reader *MessageReader) ReadCapabilityFlags() (CapabilityFlag, error) {
 }
 
 // PeekCapabilityFlags reads the capability flags.
-func (reader *MessageReader) PeekCapabilityFlags() (CapabilityFlag, error) {
+func (reader *PacketReader) PeekCapabilityFlags() (CapabilityFlag, error) {
 	capabilityFlags := CapabilityFlag(0)
 	v, err := reader.PeekInt2()
 	if err != nil {

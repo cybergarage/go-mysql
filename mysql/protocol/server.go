@@ -131,7 +131,7 @@ func (server *Server) serve() error {
 	return nil
 }
 
-// receive handles client messages.
+// receive handles client packets.
 func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintidx
 	defer func() {
 		netConn.Close()
@@ -145,7 +145,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		conn.Close()
 	}()
 
-	reader := conn.MessageReader()
+	reader := conn.PacketReader()
 
 	// MySQL: Connection Phase
 	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase.html
@@ -158,7 +158,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		return err
 	}
 
-	err = conn.ResponseMessage(handshakeMsg)
+	err = conn.ResponsePacket(handshakeMsg)
 	if err != nil {
 		return err
 	}

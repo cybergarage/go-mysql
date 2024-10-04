@@ -29,17 +29,17 @@ const (
 	sslRequestFillerLen = 23
 )
 
-// SSLRequest represents a MySQL SSLRequest message.
+// SSLRequest represents a MySQL SSLRequest packet.
 type SSLRequest struct {
-	*message
+	*packet
 	capabilityFlags CapabilityFlag
 	characterSet    uint8
 	maxPacketSize   uint32
 }
 
-func newSSLRequestWithMessage(msg *message) *SSLRequest {
+func newSSLRequestWithPacket(msg *packet) *SSLRequest {
 	return &SSLRequest{
-		message:         msg,
+		packet:          msg,
 		capabilityFlags: DefaultSSLRequestCapabilities,
 		characterSet:    uint8(DefaultCharset),
 		maxPacketSize:   DefaultMaxPacketSize,
@@ -65,9 +65,9 @@ func WithSSLRequestCharacterSet(v CharacterSet) SSLRequestOption {
 	}
 }
 
-// NewSSLRequest returns a new MySQL SSLRequest message.
+// NewSSLRequest returns a new MySQL SSLRequest packet.
 func NewSSLRequest(opts ...SSLRequestOption) (*SSLRequest, error) {
-	h := newSSLRequestWithMessage(newMessage())
+	h := newSSLRequestWithPacket(newPacket())
 	for _, opt := range opts {
 		if err := opt(h); err != nil {
 			return nil, err
@@ -76,85 +76,85 @@ func NewSSLRequest(opts ...SSLRequestOption) (*SSLRequest, error) {
 	return h, nil
 }
 
-// NewSSLRequestFromReader returns a new MySQL SSLRequest message from the specified reader.
+// NewSSLRequestFromReader returns a new MySQL SSLRequest packet from the specified reader.
 func NewSSLRequestFromReader(reader io.Reader) (*SSLRequest, error) {
 	var err error
 
-	msg, err := NewMessageWithReader(reader)
+	msg, err := NewPacketWithReader(reader)
 	if err != nil {
 		return nil, err
 	}
 
-	req := newSSLRequestWithMessage(msg)
+	pkt := newSSLRequestWithPacket(msg)
 
-	req.capabilityFlags, err = req.ReadCapabilityFlags()
+	pkt.capabilityFlags, err = pkt.ReadCapabilityFlags()
 	if err != nil {
 		return nil, err
 	}
 
-	if req.capabilityFlags.IsEnabled(ClientProtocol41) {
-		req.maxPacketSize, err = req.ReadInt4()
+	if pkt.capabilityFlags.IsEnabled(ClientProtocol41) {
+		pkt.maxPacketSize, err = pkt.ReadInt4()
 		if err != nil {
 			return nil, err
 		}
 
-		req.characterSet, err = req.ReadInt1()
+		pkt.characterSet, err = pkt.ReadInt1()
 		if err != nil {
 			return nil, err
 		}
 
-		err = req.SkipBytes(sslRequestFillerLen)
+		err = pkt.SkipBytes(sslRequestFillerLen)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		req.maxPacketSize, err = req.ReadInt3()
+		pkt.maxPacketSize, err = pkt.ReadInt3()
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	return req, err
+	return pkt, err
 }
 
 // CapabilityFlags returns the capability flags.
-func (req *SSLRequest) CapabilityFlags() CapabilityFlag {
-	return CapabilityFlag(req.capabilityFlags)
+func (pkt *SSLRequest) CapabilityFlags() CapabilityFlag {
+	return CapabilityFlag(pkt.capabilityFlags)
 }
 
 // CharacterSet returns the character set.
-func (req *SSLRequest) CharacterSet() CharacterSet {
-	return CharacterSet(req.characterSet)
+func (pkt *SSLRequest) CharacterSet() CharacterSet {
+	return CharacterSet(pkt.characterSet)
 }
 
-// Bytes returns the message bytes.
-func (req *SSLRequest) Bytes() ([]byte, error) {
-	w := NewMessageWriter()
+// Bytes returns the packet bytes.
+func (pkt *SSLRequest) Bytes() ([]byte, error) {
+	w := NewPacketWriter()
 
-	if err := w.WriteCapabilityFlags(req.capabilityFlags); err != nil {
+	if err := w.WriteCapabilityFlags(pkt.capabilityFlags); err != nil {
 		return nil, err
 	}
 
-	if req.CapabilityFlags().IsEnabled(ClientProtocol41) {
-		if err := w.WriteInt4(req.maxPacketSize); err != nil {
+	if pkt.CapabilityFlags().IsEnabled(ClientProtocol41) {
+		if err := w.WriteInt4(pkt.maxPacketSize); err != nil {
 			return nil, err
 		}
-		if err := w.WriteInt1(req.characterSet); err != nil {
+		if err := w.WriteInt1(pkt.characterSet); err != nil {
 			return nil, err
 		}
 		if err := w.WriteFillerBytes(0x00, sslRequestFillerLen); err != nil {
 			return nil, err
 		}
 	} else {
-		if err := w.WriteInt3(req.maxPacketSize); err != nil {
+		if err := w.WriteInt3(pkt.maxPacketSize); err != nil {
 			return nil, err
 		}
 	}
 
-	req.message = NewMessage(
-		MessageWithSequenceID(req.message.SequenceID()),
-		MessageWithPayload(w.Bytes()),
+	pkt.packet = NewPacket(
+		PacketWithSequenceID(pkt.packet.SequenceID()),
+		PacketWithPayload(w.Bytes()),
 	)
 
-	return req.message.Bytes()
+	return pkt.packet.Bytes()
 }

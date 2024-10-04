@@ -27,9 +27,9 @@ const (
 	handshakeResponseFillerLen = 23
 )
 
-// HandshakeResponse represents a MySQL Handshake Response message.
+// HandshakeResponse represents a MySQL Handshake Response packet.
 type HandshakeResponse struct {
-	*message
+	*packet
 	capabilityFlags      CapabilityFlag
 	maxPacketSize        uint32
 	chanteSet            uint8
@@ -42,9 +42,9 @@ type HandshakeResponse struct {
 	zstdCompressionLevel uint8
 }
 
-func newHandshakeResponseWithMessage(msg *message) *HandshakeResponse {
+func newHandshakeResponseWithPacket(msg *packet) *HandshakeResponse {
 	return &HandshakeResponse{
-		message:              msg,
+		packet:               msg,
 		capabilityFlags:      0,
 		maxPacketSize:        0,
 		chanteSet:            0,
@@ -63,7 +63,7 @@ type HandshakeResponseOption func(*HandshakeResponse) error
 
 // NewHandshakeResponse returns a new HandshakeResponse.
 func NewHandshakeResponse(opts ...HandshakeResponseOption) (*HandshakeResponse, error) {
-	h := newHandshakeResponseWithMessage(newMessage())
+	h := newHandshakeResponseWithPacket(newPacket())
 	for _, opt := range opts {
 		if err := opt(h); err != nil {
 			return nil, err
@@ -76,138 +76,138 @@ func NewHandshakeResponse(opts ...HandshakeResponseOption) (*HandshakeResponse, 
 func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error) {
 	var err error
 
-	msg, err := NewMessageWithReader(reader)
+	msg, err := NewPacketWithReader(reader)
 	if err != nil {
 		return nil, err
 	}
 
-	res := newHandshakeResponseWithMessage(msg)
+	pkt := newHandshakeResponseWithPacket(msg)
 
-	res.capabilityFlags, err = res.ReadCapabilityFlags()
+	pkt.capabilityFlags, err = pkt.ReadCapabilityFlags()
 	if err != nil {
 		return nil, err
 	}
 
-	if !res.CapabilityFlags().IsEnabled(ClientProtocol41) {
+	if !pkt.CapabilityFlags().IsEnabled(ClientProtocol41) {
 		return nil, newErrNotSupported("HandshakeResponse320")
 	}
 
-	res.maxPacketSize, err = res.ReadInt4()
+	pkt.maxPacketSize, err = pkt.ReadInt4()
 	if err != nil {
 		return nil, err
 	}
 
-	res.chanteSet, err = res.ReadByte()
+	pkt.chanteSet, err = pkt.ReadByte()
 	if err != nil {
 		return nil, err
 	}
 
-	err = res.SkipBytes(handshakeResponseFillerLen)
+	err = pkt.SkipBytes(handshakeResponseFillerLen)
 	if err != nil {
 		return nil, err
 	}
 
-	res.username, err = res.ReadNullTerminatedString()
+	pkt.username, err = pkt.ReadNullTerminatedString()
 	if err != nil {
 		return nil, err
 	}
 
-	if res.CapabilityFlags().IsEnabled(ClientPluginAuthLenencClientData) {
-		res.authResponse, err = res.ReadLengthEncodedString()
+	if pkt.CapabilityFlags().IsEnabled(ClientPluginAuthLenencClientData) {
+		pkt.authResponse, err = pkt.ReadLengthEncodedString()
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		res.authResponseLength, err = res.ReadByte()
+		pkt.authResponseLength, err = pkt.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		res.authResponse, err = res.ReadFixedLengthString(int(res.authResponseLength))
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if res.CapabilityFlags().IsEnabled(ClientConnectWithDB) {
-		res.database, err = res.ReadNullTerminatedString()
+		pkt.authResponse, err = pkt.ReadFixedLengthString(int(pkt.authResponseLength))
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if res.CapabilityFlags().IsEnabled(ClientPluginAuth) {
-		res.clientPluginName, err = res.ReadNullTerminatedString()
+	if pkt.CapabilityFlags().IsEnabled(ClientConnectWithDB) {
+		pkt.database, err = pkt.ReadNullTerminatedString()
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if res.CapabilityFlags().IsEnabled(ClientConnectAttrs) {
-		nmap, err := res.ReadLengthEncodedInt()
+	if pkt.CapabilityFlags().IsEnabled(ClientPluginAuth) {
+		pkt.clientPluginName, err = pkt.ReadNullTerminatedString()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if pkt.CapabilityFlags().IsEnabled(ClientConnectAttrs) {
+		nmap, err := pkt.ReadLengthEncodedInt()
 		if err != nil {
 			return nil, err
 		}
 		for i := uint64(0); i < nmap; i++ {
-			key, err := res.ReadLengthEncodedString()
+			key, err := pkt.ReadLengthEncodedString()
 			if err != nil {
 				return nil, err
 			}
-			value, err := res.ReadLengthEncodedString()
+			value, err := pkt.ReadLengthEncodedString()
 			if err != nil {
 				return nil, err
 			}
-			res.attributes[key] = value
+			pkt.attributes[key] = value
 		}
 	}
 
-	if res.CapabilityFlags().IsEnabled(ClientZstdCompressionAlgorithm) {
-		res.zstdCompressionLevel, err = res.ReadByte()
+	if pkt.CapabilityFlags().IsEnabled(ClientZstdCompressionAlgorithm) {
+		pkt.zstdCompressionLevel, err = pkt.ReadByte()
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	return res, err
+	return pkt, err
 }
 
 // CapabilityFlags returns the capability flags.
-func (res *HandshakeResponse) CapabilityFlags() CapabilityFlag {
-	return CapabilityFlag(res.capabilityFlags)
+func (pkt *HandshakeResponse) CapabilityFlags() CapabilityFlag {
+	return CapabilityFlag(pkt.capabilityFlags)
 }
 
 // MaxPacketSize returns the max packet size.
-func (res *HandshakeResponse) MaxPacketSize() uint32 {
-	return res.maxPacketSize
+func (pkt *HandshakeResponse) MaxPacketSize() uint32 {
+	return pkt.maxPacketSize
 }
 
 // Username returns the username.
-func (res *HandshakeResponse) Username() string {
-	return res.username
+func (pkt *HandshakeResponse) Username() string {
+	return pkt.username
 }
 
 // AuthResponse returns the auth response.
-func (res *HandshakeResponse) AuthResponse() string {
-	return res.authResponse
+func (pkt *HandshakeResponse) AuthResponse() string {
+	return pkt.authResponse
 }
 
 // Database returns the database.
-func (res *HandshakeResponse) Database() string {
-	return res.database
+func (pkt *HandshakeResponse) Database() string {
+	return pkt.database
 }
 
-// Bytes returns the message bytes.
-func (res *HandshakeResponse) Bytes() ([]byte, error) {
-	w := NewMessageWriter()
+// Bytes returns the packet bytes.
+func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
+	w := NewPacketWriter()
 
-	if err := w.WriteCapabilityFlags(res.capabilityFlags); err != nil {
+	if err := w.WriteCapabilityFlags(pkt.capabilityFlags); err != nil {
 		return nil, err
 	}
 
-	if err := w.WriteInt4(res.maxPacketSize); err != nil {
+	if err := w.WriteInt4(pkt.maxPacketSize); err != nil {
 		return nil, err
 	}
 
-	if err := w.WriteByte(res.chanteSet); err != nil {
+	if err := w.WriteByte(pkt.chanteSet); err != nil {
 		return nil, err
 	}
 
@@ -215,40 +215,40 @@ func (res *HandshakeResponse) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	if err := w.WriteNullTerminatedString(res.username); err != nil {
+	if err := w.WriteNullTerminatedString(pkt.username); err != nil {
 		return nil, err
 	}
 
-	if res.CapabilityFlags().IsEnabled(ClientPluginAuthLenencClientData) {
-		if err := w.WriteLengthEncodedString(res.authResponse); err != nil {
+	if pkt.CapabilityFlags().IsEnabled(ClientPluginAuthLenencClientData) {
+		if err := w.WriteLengthEncodedString(pkt.authResponse); err != nil {
 			return nil, err
 		}
 	} else {
-		if err := w.WriteByte(res.authResponseLength); err != nil {
+		if err := w.WriteByte(pkt.authResponseLength); err != nil {
 			return nil, err
 		}
-		if err := w.WriteFixedLengthString(res.authResponse, int(res.authResponseLength)); err != nil {
-			return nil, err
-		}
-	}
-
-	if res.CapabilityFlags().IsEnabled(ClientConnectWithDB) {
-		if err := w.WriteNullTerminatedString(res.database); err != nil {
+		if err := w.WriteFixedLengthString(pkt.authResponse, int(pkt.authResponseLength)); err != nil {
 			return nil, err
 		}
 	}
 
-	if res.CapabilityFlags().IsEnabled(ClientPluginAuth) {
-		if err := w.WriteNullTerminatedString(res.clientPluginName); err != nil {
+	if pkt.CapabilityFlags().IsEnabled(ClientConnectWithDB) {
+		if err := w.WriteNullTerminatedString(pkt.database); err != nil {
 			return nil, err
 		}
 	}
 
-	if res.CapabilityFlags().IsEnabled(ClientConnectAttrs) {
-		if err := w.WriteLengthEncodedInt(uint64(len(res.attributes))); err != nil {
+	if pkt.CapabilityFlags().IsEnabled(ClientPluginAuth) {
+		if err := w.WriteNullTerminatedString(pkt.clientPluginName); err != nil {
 			return nil, err
 		}
-		for key, value := range res.attributes {
+	}
+
+	if pkt.CapabilityFlags().IsEnabled(ClientConnectAttrs) {
+		if err := w.WriteLengthEncodedInt(uint64(len(pkt.attributes))); err != nil {
+			return nil, err
+		}
+		for key, value := range pkt.attributes {
 			if err := w.WriteLengthEncodedString(key); err != nil {
 				return nil, err
 			}
@@ -258,16 +258,16 @@ func (res *HandshakeResponse) Bytes() ([]byte, error) {
 		}
 	}
 
-	if res.CapabilityFlags().IsEnabled(ClientZstdCompressionAlgorithm) {
-		if err := w.WriteByte(res.zstdCompressionLevel); err != nil {
+	if pkt.CapabilityFlags().IsEnabled(ClientZstdCompressionAlgorithm) {
+		if err := w.WriteByte(pkt.zstdCompressionLevel); err != nil {
 			return nil, err
 		}
 	}
 
-	res.message = NewMessage(
-		MessageWithSequenceID(res.message.SequenceID()),
-		MessageWithPayload(w.Bytes()),
+	pkt.packet = NewPacket(
+		PacketWithSequenceID(pkt.packet.SequenceID()),
+		PacketWithPayload(w.Bytes()),
 	)
 
-	return res.message.Bytes()
+	return pkt.packet.Bytes()
 }

@@ -14,5 +14,5 @@
 
 package protocol
 
-// Type represents a message type.
+// Type represents a packet type.
 type Type byte
