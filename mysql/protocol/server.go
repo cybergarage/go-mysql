@@ -150,7 +150,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	// MySQL: Connection Phase
 	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase.html
 
-	// MySQL: Protocol::Handshake
+	// Initial Handshake Packet
 
 	handshakeMsg, err := NewHandshake(
 		WithHandshakeServerVersion(server.ServerVersion()))
@@ -159,6 +159,26 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	}
 
 	err = conn.ResponseMessage(handshakeMsg)
+	if err != nil {
+		return err
+	}
+
+	capFlags, err := reader.PeekCapabilityFlags()
+	if err != nil {
+		return err
+	}
+
+	if capFlags.IsEnabled(ClientSSL) {
+		// SSL Connection Request Packet
+		_, err := NewSSLRequestFromReader(reader)
+		if err != nil {
+			return err
+		}
+		// SSL exchange
+	}
+
+	// Handshake Response Packet
+	_, err = NewHandshakeResponseFromReader(reader)
 	if err != nil {
 		return err
 	}
