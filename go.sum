@@ -649,3 +649,5 @@ sigs.k8s.io/yaml v1.1.0/go.mod h1:UJmg0vDUVViEyp3mgSv9WPwZCDxu4rQW1olrI1uml+o=
 sigs.k8s.io/yaml v1.2.0/go.mod h1:yfXDCHCao9+ENCvLSE62v9VSji2MKu5jeNfTrofGhJc=
 vitess.io/vitess v0.12.6 h1:T3Jb+C7VcxsEeO2RxEFlgDKn6Y5IFzTnxqZZ80xAMg8=
 vitess.io/vitess v0.12.6/go.mod h1:QKt1VKLbuFqSi39giZa3z2i+ZG7/uSasnahoYjSB/go=
+vitess.io/vitess v0.13.3 h1:AJKQvoS7LE4whuePZq8WZ9H7M/LzEGIKCpuve+EjA9Q=
+vitess.io/vitess v0.13.3/go.mod h1:ZMLpsNhCdp0HrWMLtUrfOp/czjXrg0MmdmxYtSK8avc=
