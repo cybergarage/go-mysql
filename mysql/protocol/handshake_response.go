@@ -30,7 +30,7 @@ const (
 // HandshakeResponse represents a MySQL Handshake Response message.
 type HandshakeResponse struct {
 	*message
-	capabilityFlags      uint32
+	capabilityFlags      CapabilityFlag
 	maxPacketSize        uint32
 	chanteSet            uint8
 	username             string
@@ -83,27 +83,14 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 
 	res := newHandshakeResponseWithMessage(msg)
 
-	capabilityFlags, err := res.ReadInt2()
+	res.capabilityFlags, err = res.ReadCapabilityFlags()
 	if err != nil {
 		return nil, err
 	}
-	res.capabilityFlags = uint32(capabilityFlags)
 
 	if !res.CapabilityFlags().IsEnabled(ClientProtocol41) {
 		return nil, newErrNotSupported("HandshakeResponse320")
 	}
-
-	capabilityFlags3, err := res.ReadInt1()
-	if err != nil {
-		return nil, err
-	}
-	res.capabilityFlags |= (uint32)(capabilityFlags3) << 16
-
-	capabilityFlags4, err := res.ReadInt1()
-	if err != nil {
-		return nil, err
-	}
-	res.capabilityFlags |= (uint32)(capabilityFlags4) << 24
 
 	res.maxPacketSize, err = res.ReadInt4()
 	if err != nil {
@@ -115,7 +102,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		return nil, err
 	}
 
-	_, err = res.ReadFixedLengthBytes(handshakeResponseFillerLen)
+	err = res.SkipBytes(handshakeResponseFillerLen)
 	if err != nil {
 		return nil, err
 	}
@@ -210,9 +197,9 @@ func (res *HandshakeResponse) Database() string {
 
 // Bytes returns the message bytes.
 func (res *HandshakeResponse) Bytes() ([]byte, error) {
-	w := NewWriter()
+	w := NewMessageWriter()
 
-	if err := w.WriteInt4(res.capabilityFlags); err != nil {
+	if err := w.WriteCapabilityFlags(res.capabilityFlags); err != nil {
 		return nil, err
 	}
 
@@ -224,7 +211,7 @@ func (res *HandshakeResponse) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	if err := w.WriteFixedLengthBytes([]byte{}, handshakeResponseFillerLen); err != nil {
+	if err := w.WriteFillerBytes(0x00, handshakeResponseFillerLen); err != nil {
 		return nil, err
 	}
 

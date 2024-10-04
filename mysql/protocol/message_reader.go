@@ -29,3 +29,59 @@ func NewMessageReaderWith(reader io.Reader) *MessageReader {
 		Reader: NewReaderWithReader(reader),
 	}
 }
+
+// ReadCapabilityFlags reads the capability flags.
+func (reader *MessageReader) ReadCapabilityFlags() (CapabilityFlag, error) {
+	capabilityFlags := CapabilityFlag(0)
+	v, err := reader.ReadInt2()
+	if err != nil {
+		return 0, err
+	}
+	capabilityFlags = CapabilityFlag(v)
+
+	if !capabilityFlags.IsEnabled(ClientProtocol41) {
+		return capabilityFlags, nil
+	}
+
+	capabilityFlags3, err := reader.ReadInt1()
+	if err != nil {
+		return 0, err
+	}
+	capabilityFlags |= (CapabilityFlag)(capabilityFlags3) << 16
+
+	capabilityFlags4, err := reader.ReadInt1()
+	if err != nil {
+		return 0, err
+	}
+	capabilityFlags |= (CapabilityFlag)(capabilityFlags4) << 24
+
+	return capabilityFlags, nil
+}
+
+// PeekCapabilityFlags reads the capability flags.
+func (reader *MessageReader) PeekCapabilityFlags() (CapabilityFlag, error) {
+	capabilityFlags := CapabilityFlag(0)
+	v, err := reader.PeekInt2()
+	if err != nil {
+		return 0, err
+	}
+	capabilityFlags = CapabilityFlag(v)
+
+	if !capabilityFlags.IsEnabled(ClientProtocol41) {
+		return capabilityFlags, nil
+	}
+
+	capabilityFlags3, err := reader.PeekInt1()
+	if err != nil {
+		return 0, err
+	}
+	capabilityFlags |= (CapabilityFlag)(capabilityFlags3) << 16
+
+	capabilityFlags4, err := reader.PeekInt1()
+	if err != nil {
+		return 0, err
+	}
+	capabilityFlags |= (CapabilityFlag)(capabilityFlags4) << 24
+
+	return capabilityFlags, nil
+}
