@@ -36,5 +36,5 @@ type XorExpr = vitesssp.XorExpr
 // NotExpr represents a NOT expression.
 type NotExpr = vitesssp.NotExpr
 
-// RangeCond represents a BETWEEN or a NOT BETWEEN expression.
-type RangeCond = vitesssp.RangeCond
+// BetweenExpr represents a BETWEEN or a NOT BETWEEN expression.
+type BetweenExpr = vitesssp.BetweenExpr
