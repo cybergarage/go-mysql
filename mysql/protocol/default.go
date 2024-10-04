@@ -15,13 +15,20 @@
 package protocol
 
 const (
-	DefaultPort = 3306
+	DefaultPort          = 3306
+	DefaultMaxPacketSize = 0
+	DefaultCharset       = CharacterSetUTF8
 
 	DefaultServerCapabilities = ClientLongPassword |
 		ClientFoundRows |
 		ClientLongColumnFlag |
-		ClientConnectWithDB |
 		ClientProtocol41
+
+	DefaultHandshakeServerCapabilities = DefaultServerCapabilities |
+		ClientConnectWithDB
+
+	DefaultSSLRequestCapabilities = DefaultServerCapabilities |
+		ClientSSL
 
 	DefaultServerStatus = 0x0000
 )
