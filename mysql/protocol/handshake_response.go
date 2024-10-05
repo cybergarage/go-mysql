@@ -76,12 +76,12 @@ func NewHandshakeResponse(opts ...HandshakeResponseOption) (*HandshakeResponse, 
 func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error) {
 	var err error
 
-	msg, err := NewPacketWithReader(reader)
+	pktReader, err := NewPacketWithReader(reader)
 	if err != nil {
 		return nil, err
 	}
 
-	pkt := newHandshakeResponseWithPacket(msg)
+	pkt := newHandshakeResponseWithPacket(pktReader)
 
 	pkt.capabilityFlags, err = pkt.ReadCapabilityFlags()
 	if err != nil {
