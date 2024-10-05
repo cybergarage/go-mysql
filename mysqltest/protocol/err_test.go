@@ -30,8 +30,8 @@ func TestErrPacket(t *testing.T) {
 	type expected struct {
 		seqID       protocol.SequenceID
 		errCode     uint16
-		stateMarker string
-		state       string
+		stateMarker protocol.ErrClass
+		state       protocol.ErrCode
 		errMsg      string
 	}
 	for _, test := range []struct {
