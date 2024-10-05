@@ -95,18 +95,18 @@ func TestHandshakeResponsePacket(t *testing.T) {
 			}
 			reader := bytes.NewReader(testBytes)
 
-			msg, err := protocol.NewHandshakeResponseFromReader(reader)
+			pkt, err := protocol.NewHandshakeResponseFromReader(reader)
 			if err != nil {
 				t.Error(err)
 			}
 
-			if msg.CapabilityFlags() != test.expected.capFlags {
-				t.Errorf("expected %04X, got %04X", test.expected.capFlags, msg.CapabilityFlags())
+			if pkt.CapabilityFlags() != test.expected.capFlags {
+				t.Errorf("expected %04X, got %04X", test.expected.capFlags, pkt.CapabilityFlags())
 			}
 
 			// Compare the packet bytes
 
-			msgBytes, err := msg.Bytes()
+			msgBytes, err := pkt.Bytes()
 			if err != nil {
 				t.Error(err)
 				return
