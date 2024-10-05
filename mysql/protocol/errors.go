@@ -54,3 +54,7 @@ func newErrInvalidCode(name string, v uint) error {
 func newErrInvalidLength(name string, v int) error {
 	return fmt.Errorf("%s is %w length (%d)", name, ErrInvalid, v)
 }
+
+func newErrInvalitHeader(name string, v byte) error {
+	return fmt.Errorf("%s is %w header (%X)", name, ErrInvalid, v)
+}
