@@ -127,6 +127,15 @@ func (w *Writer) WriteNullTerminatedString(s string) error {
 	return nil
 }
 
+// WriteEOFTerminatedString writes a EOF terminated string.
+func (w *Writer) WriteEOFTerminatedString(s string) error {
+	_, err := w.WriteString(s)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (w *Writer) writeFixedLengthBytes(b []byte, fb byte, n int) error {
 	var wb []byte
 	switch {
