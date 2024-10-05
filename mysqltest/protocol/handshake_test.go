@@ -128,42 +128,42 @@ func TestHandshakePacket(t *testing.T) {
 			}
 			reader := bytes.NewReader(testBytes)
 
-			msg, err := protocol.NewHandshakeFromReader(reader)
+			pkt, err := protocol.NewHandshakeFromReader(reader)
 			if err != nil {
 				t.Error(err)
 			}
 
-			if msg.SequenceID() != test.expected.seqID {
-				t.Errorf("expected %d, got %d", test.expected.seqID, msg.SequenceID())
+			if pkt.SequenceID() != test.expected.seqID {
+				t.Errorf("expected %d, got %d", test.expected.seqID, pkt.SequenceID())
 			}
 
-			if msg.ProtocolVersion() != test.expected.protocolVer {
-				t.Errorf("expected %d, got %d", test.expected.protocolVer, msg.ProtocolVersion())
+			if pkt.ProtocolVersion() != test.expected.protocolVer {
+				t.Errorf("expected %d, got %d", test.expected.protocolVer, pkt.ProtocolVersion())
 			}
 
-			if msg.ServerVersion() != test.expected.serverVer {
-				t.Errorf("expected %s, got %s", test.expected.serverVer, msg.ServerVersion())
+			if pkt.ServerVersion() != test.expected.serverVer {
+				t.Errorf("expected %s, got %s", test.expected.serverVer, pkt.ServerVersion())
 			}
 
-			if msg.ConnectionID() != test.expected.conID {
-				t.Errorf("expected %d, got %d", test.expected.conID, msg.ConnectionID())
+			if pkt.ConnectionID() != test.expected.conID {
+				t.Errorf("expected %d, got %d", test.expected.conID, pkt.ConnectionID())
 			}
 
-			if msg.CharacterSet() != test.expected.charSet {
-				t.Errorf("expected %d, got %d", test.expected.charSet, msg.CharacterSet())
+			if pkt.CharacterSet() != test.expected.charSet {
+				t.Errorf("expected %d, got %d", test.expected.charSet, pkt.CharacterSet())
 			}
 
-			if msg.StatusFlags() != test.expected.statusFlags {
-				t.Errorf("expected %d, got %d", test.expected.statusFlags, msg.StatusFlags())
+			if pkt.StatusFlags() != test.expected.statusFlags {
+				t.Errorf("expected %d, got %d", test.expected.statusFlags, pkt.StatusFlags())
 			}
 
-			if msg.AuthPluginName() != test.expected.authPluginName {
-				t.Errorf("expected %s, got %s", test.expected.authPluginName, msg.AuthPluginName())
+			if pkt.AuthPluginName() != test.expected.authPluginName {
+				t.Errorf("expected %s, got %s", test.expected.authPluginName, pkt.AuthPluginName())
 			}
 
 			// Compare the packet bytes
 
-			msgBytes, err := msg.Bytes()
+			msgBytes, err := pkt.Bytes()
 			if err != nil {
 				t.Error(err)
 				return
