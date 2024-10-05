@@ -16,6 +16,8 @@ package protocol
 
 import (
 	"io"
+
+	sql "github.com/cybergarage/go-sqlparser/sql/errors"
 )
 
 // MySQL: ERR_Packet
@@ -25,12 +27,18 @@ const (
 	errPacketHeader = 0xFF
 )
 
+// ErrClass represents a standard error class.
+type ErrClass = sql.Class
+
+// ErrCode represents a standard error code.
+type ErrCode = sql.Code
+
 // ERR represents a MySQL ERR packet.
 type ERR struct {
 	*packet
 	code        uint16
-	stateMarker string
-	state       string
+	stateMarker ErrClass
+	state       ErrCode
 	errMsg      string
 }
 
@@ -64,7 +72,7 @@ func WithErrCode(code uint16) ERROption {
 // WithStateMarker sets the state marker.
 func WithStateMarker(stateMarker string) ERROption {
 	return func(pkt *ERR) error {
-		pkt.stateMarker = stateMarker
+		pkt.stateMarker = ErrClass(stateMarker)
 		return nil
 	}
 }
@@ -72,7 +80,7 @@ func WithStateMarker(stateMarker string) ERROption {
 // WithState sets the state.
 func WithState(state string) ERROption {
 	return func(pkt *ERR) error {
-		pkt.state = state
+		pkt.state = ErrCode(state)
 		return nil
 	}
 }
@@ -134,15 +142,17 @@ func NewERRFromReader(reader io.Reader, opts ...ERROption) (*ERR, error) {
 	// sql_state_marker, sql_state
 	if pkt.CapabilityFlags().IsEnabled(ClientProtocol41) {
 		// sql_state_marker
-		pkt.stateMarker, err = pkt.ReadFixedLengthString(1)
+		v, err := pkt.ReadFixedLengthString(1)
 		if err != nil {
 			return nil, err
 		}
+		pkt.stateMarker = ErrClass(v)
 		// sql_state
-		pkt.state, err = pkt.ReadFixedLengthString(5)
+		v, err = pkt.ReadFixedLengthString(5)
 		if err != nil {
 			return nil, err
 		}
+		pkt.state = ErrCode(v)
 	}
 
 	// error_message
@@ -160,12 +170,12 @@ func (pkt *ERR) Code() uint16 {
 }
 
 // StateMarker returns the state marker.
-func (pkt *ERR) StateMarker() string {
+func (pkt *ERR) StateMarker() ErrClass {
 	return pkt.stateMarker
 }
 
 // State returns the state.
-func (pkt *ERR) State() string {
+func (pkt *ERR) State() ErrCode {
 	return pkt.state
 }
 
@@ -191,11 +201,11 @@ func (pkt *ERR) Bytes() ([]byte, error) {
 	// sql_state_marker, sql_state
 	if pkt.CapabilityFlags().IsEnabled(ClientProtocol41) {
 		// sql_state_marker
-		if err := w.WriteFixedLengthString(pkt.stateMarker, 1); err != nil {
+		if err := w.WriteFixedLengthString(string(pkt.stateMarker), 1); err != nil {
 			return nil, err
 		}
 		// sql_state
-		if err := w.WriteFixedLengthString(pkt.state, 5); err != nil {
+		if err := w.WriteFixedLengthString(string(pkt.state), 5); err != nil {
 			return nil, err
 		}
 	}
