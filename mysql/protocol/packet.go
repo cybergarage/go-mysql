@@ -89,6 +89,7 @@ func PacketWithSequenceID(n SequenceID) PacketOption {
 // NewPacket returns a new MySQL packet.
 func NewPacket(opts ...PacketOption) *packet {
 	pkt := newPacket()
+	pkt.SetCapabilityEnabled(ClientProtocol41)
 	for _, opt := range opts {
 		opt(pkt)
 	}
@@ -152,7 +153,17 @@ func (pkt *packet) SetCapabilityFlags(flags CapabilityFlag) {
 
 // CapabilityFlags returns the packet capability flags.
 func (pkt *packet) CapabilityFlags() CapabilityFlag {
-	return 0
+	return pkt.capabilityFlags
+}
+
+// SetEnabled sets the specified flag.
+func (pkt *packet) SetCapabilityEnabled(flag CapabilityFlag) {
+	pkt.capabilityFlags |= flag
+}
+
+// SetDisabled unsets the specified flag.
+func (pkt *packet) SetCapabilityDisabled(flag CapabilityFlag) {
+	pkt.capabilityFlags &^= flag
 }
 
 // Bytes returns the packet bytes.
