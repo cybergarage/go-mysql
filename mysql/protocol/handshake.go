@@ -160,12 +160,12 @@ func NewHandshake(opts ...HandshakeOption) (*Handshake, error) {
 func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	var err error
 
-	msg, err := NewPacketWithReader(reader)
+	pktReader, err := NewPacketWithReader(reader)
 	if err != nil {
 		return nil, err
 	}
 
-	pkt := newHandshakeWithPacket(msg)
+	pkt := newHandshakeWithPacket(pktReader)
 
 	pkt.protocolVersion, err = pkt.ReadByte()
 	if err != nil {
