@@ -35,11 +35,13 @@ func TestOKPacket(t *testing.T) {
 	for _, test := range []struct {
 		name string
 		data string
+		opts []protocol.OKOption
 		expected
 	}{
 		{
 			"ok001",
 			okPkt001,
+			[]protocol.OKOption{protocol.WithOKCapability(protocol.ClientProtocol41)},
 			expected{
 				seqID:        protocol.SequenceID(2),
 				affectedRows: 0,
@@ -55,11 +57,10 @@ func TestOKPacket(t *testing.T) {
 			}
 			reader := bytes.NewReader(testBytes)
 
-			pkt, err := protocol.NewOKFromReader(reader, protocol.WithOKCapability(protocol.ClientProtocol41))
+			pkt, err := protocol.NewOKFromReader(reader, test.opts...)
 			if err != nil {
 				t.Error(err)
 			}
-			pkt.SetCapabilityEnabled(protocol.ClientProtocol41)
 
 			if pkt.SequenceID() != test.expected.seqID {
 				t.Errorf("expected %d, got %d", test.expected.seqID, pkt.SequenceID())
