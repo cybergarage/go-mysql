@@ -33,9 +33,11 @@ type Config struct {
 // NewDefaultConfig returns a default configuration instance.
 func NewDefaultConfig() *Config {
 	config := &Config{
-		addr:    DefaultAddr,
-		port:    DefaultPort,
-		TLSConf: NewTLSConf(),
+		addr:           DefaultAddr,
+		port:           DefaultPort,
+		TLSConf:        NewTLSConf(),
+		productName:    "",
+		productVersion: "",
 	}
 	return config
 }

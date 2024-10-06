@@ -37,7 +37,9 @@ type EOFOption func(*EOF) error
 
 func newEOFPacket(p *packet, opts ...EOFOption) (*EOF, error) {
 	pkt := &EOF{
-		packet: p,
+		packet:   p,
+		warnings: 0,
+		status:   0,
 	}
 	for _, opt := range opts {
 		if err := opt(pkt); err != nil {
