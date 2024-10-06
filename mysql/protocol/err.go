@@ -67,18 +67,11 @@ func WithErrCode(code uint16) ERROption {
 	}
 }
 
-// WithErrStateMarker sets the state marker.
-func WithErrStateMarker(stateMarker string) ERROption {
-	return func(pkt *ERR) error {
-		pkt.stateMarker = ErrClass(stateMarker)
-		return nil
-	}
-}
-
 // WithErrState sets the state.
 func WithErrState(state string) ERROption {
 	return func(pkt *ERR) error {
 		pkt.state = ErrCode(state)
+		pkt.errMsg = pkt.state.String()
 		return nil
 	}
 }
