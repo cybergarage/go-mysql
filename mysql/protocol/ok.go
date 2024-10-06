@@ -114,7 +114,6 @@ func NewOKFromReader(reader io.Reader, opts ...OKOption) (*OK, error) {
 			return nil, err
 		}
 		pkt.status = uint16(v)
-
 		// warnings
 		pkt.warnings, err = pkt.ReadInt2()
 		if err != nil {
@@ -199,6 +198,50 @@ func (pkt *OK) Bytes() ([]byte, error) {
 	// header
 	if err := w.WriteByte(errPacketHeader); err != nil {
 		return nil, err
+	}
+
+	// affectedRows
+	if err := w.WriteLengthEncodedInt(pkt.affectedRows); err != nil {
+		return nil, err
+	}
+
+	// lastInsertID
+	if err := w.WriteLengthEncodedInt(pkt.lastInsertID); err != nil {
+		return nil, err
+	}
+
+	if pkt.CapabilityFlags().IsEnabled(ClientProtocol41) {
+		// status
+		if err := w.WriteInt2(uint16(pkt.status)); err != nil {
+			return nil, err
+		}
+		// warnings
+		if err := w.WriteInt2(pkt.warnings); err != nil {
+			return nil, err
+		}
+	} else if pkt.CapabilityFlags().IsEnabled(ClientTransactions) {
+		// status
+		if err := w.WriteInt2(pkt.status); err != nil {
+			return nil, err
+		}
+	}
+
+	if pkt.CapabilityFlags().IsEnabled(ClientSessionTrack) {
+		// info
+		if err := w.WriteLengthEncodedString(pkt.info); err != nil {
+			return nil, err
+		}
+		if pkt.Status().IsEnabled(StatusSessionStateChanged) {
+			// sessionStateInfo
+			if err := w.WriteLengthEncodedString(pkt.sessionStateInfo); err != nil {
+				return nil, err
+			}
+		}
+	} else {
+		// info
+		if err := w.WriteEOFTerminatedString(pkt.info); err != nil {
+			return nil, err
+		}
 	}
 
 	pkt.packet = NewPacket(
