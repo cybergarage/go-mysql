@@ -47,10 +47,10 @@ func newEOFPacket(p *packet, opts ...EOFOption) (*EOF, error) {
 	return pkt, nil
 }
 
-// WithEofCapability returns a EOFOption that sets the capability flag.
-func WithEofCapability(cap CapabilityFlag) EOFOption {
+// WithEOFCapability returns a EOFOption that sets the capability flag.
+func WithEOFCapability(c CapabilityFlag) EOFOption {
 	return func(pkt *EOF) error {
-		pkt.SetCapabilityEnabled(cap)
+		pkt.SetCapabilityEnabled(c)
 		return nil
 	}
 }

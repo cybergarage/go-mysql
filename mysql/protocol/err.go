@@ -94,9 +94,9 @@ func WithErrMsg(errMsg string) ERROption {
 }
 
 // WithErrCapability sets the error capability.
-func WithErrCapability(cap CapabilityFlag) ERROption {
+func WithErrCapability(c CapabilityFlag) ERROption {
 	return func(pkt *ERR) error {
-		pkt.SetCapabilityEnabled(cap)
+		pkt.SetCapabilityEnabled(c)
 		return nil
 	}
 }
