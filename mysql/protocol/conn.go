@@ -162,3 +162,12 @@ func (conn *Conn) ResponsePackets(resMsgs []Packet) error {
 	}
 	return nil
 }
+
+// ResponseError sends an error response.
+func (conn *Conn) ResponseError(err error) error {
+	pkt, err := NewERRWithError(err)
+	if err != nil {
+		return err
+	}
+	return conn.ResponsePacket(pkt)
+}
