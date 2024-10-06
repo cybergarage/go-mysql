@@ -165,7 +165,7 @@ func (conn *Conn) ResponsePackets(resMsgs []Packet) error {
 
 // ResponseError sends an error response.
 func (conn *Conn) ResponseError(err error) error {
-	pkt, err := NewERRWithError(err)
+	pkt, err := NewERRFromError(err)
 	if err != nil {
 		return err
 	}
