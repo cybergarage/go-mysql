@@ -151,6 +151,11 @@ func NewOKFromReader(reader io.Reader, opts ...OKOption) (*OK, error) {
 	return pkt, err
 }
 
+// Header returns the header.
+func (pkt *OK) Header() uint8 {
+	return pkt.header
+}
+
 // OK returns true if the packet is an OK packet.
 func (pkt *OK) OK() bool {
 	return pkt.header == okPacketHeader
@@ -196,7 +201,7 @@ func (pkt *OK) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
 	// header
-	if err := w.WriteByte(errPacketHeader); err != nil {
+	if err := w.WriteByte(pkt.header); err != nil {
 		return nil, err
 	}
 
