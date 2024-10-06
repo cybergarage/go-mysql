@@ -21,14 +21,12 @@ import (
 )
 
 // MySQL: ERR_Packet
-// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_ok_packet.html
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_err_packet.html
 
 const (
 	errPacketHeader = 0xFF
+	stateMarker     = "#"
 )
-
-// ErrClass represents a standard error class.
-type ErrClass = sql.Class
 
 // ErrCode represents a standard error code.
 type ErrCode = sql.Code
@@ -37,7 +35,7 @@ type ErrCode = sql.Code
 type ERR struct {
 	*packet
 	code        uint16
-	stateMarker ErrClass
+	stateMarker string
 	state       ErrCode
 	errMsg      string
 }
@@ -49,7 +47,7 @@ func newERRPacket(p *packet, opts ...ERROption) (*ERR, error) {
 	pkt := &ERR{
 		packet:      p,
 		code:        0,
-		stateMarker: "",
+		stateMarker: stateMarker,
 		state:       "",
 		errMsg:      "",
 	}
