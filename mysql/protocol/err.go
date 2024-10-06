@@ -101,6 +101,18 @@ func NewERR(opts ...ERROption) (*ERR, error) {
 	return pkt, nil
 }
 
+// NewERRFromError returns a new ERR packet with the error.
+func NewERRFromError(err error, opts ...ERROption) (*ERR, error) {
+	code := uint16(0)
+	state := ""
+	errMsg := err.Error()
+	opts = append(opts,
+		WithErrCode(code),
+		WithErrState(state),
+		WithErrMsg(errMsg))
+	return NewERR(opts...)
+}
+
 // NewERRFromReader returns a new ERR packet from the reader.
 func NewERRFromReader(reader io.Reader, opts ...ERROption) (*ERR, error) {
 	var err error
@@ -133,13 +145,12 @@ func NewERRFromReader(reader io.Reader, opts ...ERROption) (*ERR, error) {
 	// sql_state_marker, sql_state
 	if pkt.CapabilityFlags().IsEnabled(ClientProtocol41) {
 		// sql_state_marker
-		v, err := pkt.ReadFixedLengthString(1)
+		pkt.stateMarker, err = pkt.ReadFixedLengthString(1)
 		if err != nil {
 			return nil, err
 		}
-		pkt.stateMarker = ErrClass(v)
 		// sql_state
-		v, err = pkt.ReadFixedLengthString(5)
+		v, err := pkt.ReadFixedLengthString(5)
 		if err != nil {
 			return nil, err
 		}
@@ -161,7 +172,7 @@ func (pkt *ERR) Code() uint16 {
 }
 
 // StateMarker returns the state marker.
-func (pkt *ERR) StateMarker() ErrClass {
+func (pkt *ERR) StateMarker() string {
 	return pkt.stateMarker
 }
 
