@@ -20,7 +20,7 @@ import (
 	"testing"
 )
 
-func TestWriter(t *testing.T) {
+func TestWriter(t *testing.T) { //nolint:maintidx
 	w := NewWriter()
 
 	expectedInt1 := uint8(0x61)
