@@ -28,7 +28,7 @@ const (
 	StatusQueryNoIndexUsed     StatusFlag = 32
 	StatusCursorExists         StatusFlag = 64
 	StatusLastRowSent          StatusFlag = 128
-	StatusDbDropped            StatusFlag = 256
+	StatusDBDropped            StatusFlag = 256
 	StatusNoBackslashEscapes   StatusFlag = 512
 	StatusMetadataChanged      StatusFlag = 1024
 	StatusQueryWasSlow         StatusFlag = 2048
