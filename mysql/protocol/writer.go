@@ -16,6 +16,7 @@ package protocol
 
 import (
 	"bytes"
+	"slices"
 
 	"github.com/cybergarage/go-safecast/safecast"
 )
@@ -144,7 +145,7 @@ func (w *Writer) writeFixedLengthBytes(b []byte, fb byte, n int) error {
 	case n <= len(b):
 		wb = b[:n]
 	default:
-		wb = append(b, bytes.Repeat([]byte{fb}, n-len(b))...)
+		wb = slices.Concat(b, bytes.Repeat([]byte{fb}, n-len(b)))
 	}
 	_, err := w.WriteBytes(wb)
 	if err != nil {
