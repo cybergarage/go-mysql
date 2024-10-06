@@ -55,16 +55,17 @@ type Handshake struct {
 
 func newHandshakeWithPacket(msg *packet) *Handshake {
 	return &Handshake{
-		packet:          msg,
-		protocolVersion: uint8(ProtocolVersion10),
-		serverVersion:   "",
-		connectionID:    0,
-		capabilityFlags: uint32(DefaultServerCapabilities),
-		characterSet:    uint8(CharacterSetUTF8),
-		statusFlags:     uint16(DefaultServerCapabilities),
-		authPluginData1: nil,
-		authPluginData2: nil,
-		authPluginName:  "",
+		packet:            msg,
+		protocolVersion:   uint8(ProtocolVersion10),
+		serverVersion:     "",
+		connectionID:      0,
+		capabilityFlags:   uint32(DefaultServerCapabilities),
+		characterSet:      uint8(CharacterSetUTF8),
+		statusFlags:       uint16(DefaultServerCapabilities),
+		authPluginDataLen: 0,
+		authPluginData1:   nil,
+		authPluginData2:   nil,
+		authPluginName:    "",
 	}
 }
 
