@@ -36,3 +36,8 @@ const (
 	StatusInTransReadOnly      StatusFlag = 8192
 	StatusSessionStateChanged  StatusFlag = 1 << 14
 )
+
+// IsEnabled returns true if the status flag is enabled.
+func (statFlag StatusFlag) IsEnabled(flag StatusFlag) bool {
+	return (statFlag & flag) != 0
+}
