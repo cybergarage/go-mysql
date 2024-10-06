@@ -19,3 +19,20 @@ package protocol
 
 // StatusFlag represents a MySQL Status Flag.
 type StatusFlag uint16
+
+const (
+	StatusInTrans              StatusFlag = 1
+	StatusAutoCommit           StatusFlag = 2
+	StatusMoreResultsExists    StatusFlag = 8
+	StatusQueryNoGoodIndexUsed StatusFlag = 16
+	StatusQueryNoIndexUsed     StatusFlag = 32
+	StatusCursorExists         StatusFlag = 64
+	StatusLastRowSent          StatusFlag = 128
+	StatusDbDropped            StatusFlag = 256
+	StatusNoBackslashEscapes   StatusFlag = 512
+	StatusMetadataChanged      StatusFlag = 1024
+	StatusQueryWasSlow         StatusFlag = 2048
+	StatusPsOutParams          StatusFlag = 4096
+	StatusInTransReadOnly      StatusFlag = 8192
+	StatusSessionStateChanged  StatusFlag = 1 << 14
+)
