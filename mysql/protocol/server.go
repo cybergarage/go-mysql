@@ -15,6 +15,7 @@
 package protocol
 
 import (
+	"crypto/tls"
 	"net"
 	"strconv"
 
@@ -175,6 +176,18 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			return err
 		}
 		// SSL exchange
+		tlsConfig, err := server.Config.TLSConfig()
+		if err != nil {
+			conn.ResponseError(err)
+			return err
+		}
+		tlsConn := tls.Server(conn, tlsConfig)
+		if err := tlsConn.Handshake(); err != nil {
+			conn.ResponseError(err)
+			return err
+		}
+		tlsConnState := tlsConn.ConnectionState()
+		conn = NewConnWith(tlsConn, WithTLSConnectionState(&tlsConnState))
 	}
 
 	// Handshake Response Packet
