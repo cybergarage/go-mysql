@@ -55,7 +55,7 @@ func TestEOFPacket(t *testing.T) {
 			}
 			reader := bytes.NewReader(testBytes)
 
-			pkt, err := protocol.NewEOFFromReader(reader, protocol.WithEofCapability(protocol.ClientProtocol41))
+			pkt, err := protocol.NewEOFFromReader(reader, protocol.WithEOFCapability(protocol.ClientProtocol41))
 			if err != nil {
 				t.Error(err)
 			}

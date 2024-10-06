@@ -41,9 +41,9 @@ type OK struct {
 type OKOption func(*OK) error
 
 // WithOKCapability returns a OKOption that sets the capability flag.
-func WithOKCapability(cap CapabilityFlag) OKOption {
+func WithOKCapability(c CapabilityFlag) OKOption {
 	return func(pkt *OK) error {
-		pkt.SetCapabilityEnabled(cap)
+		pkt.SetCapabilityEnabled(c)
 		return nil
 	}
 }
