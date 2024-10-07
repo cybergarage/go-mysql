@@ -143,6 +143,11 @@ func (conn *Conn) TLSConnectionState() (*tls.ConnectionState, bool) {
 	return conn.tlsState, conn.tlsState != nil
 }
 
+// SetCapabilities sets the capabilities.
+func (conn *Conn) SetCapabilities(c CapabilityFlag) {
+	conn.capabilities = c
+}
+
 // Capabilities returns the capabilities.
 func (conn *Conn) Capabilities() CapabilityFlag {
 	return conn.capabilities
