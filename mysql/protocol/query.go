@@ -88,6 +88,11 @@ func NewQueryFromCommand(cmd Command) (*Query, error) {
 	return pkt, err
 }
 
+// Query returns the query.
+func (pkt *Query) Query() string {
+	return pkt.query
+}
+
 // Bytes returns the packet bytes.
 func (pkt *Query) Bytes() ([]byte, error) {
 	w := NewWriter()
