@@ -28,6 +28,10 @@ type Command interface {
 	IsType(t CommandType) error
 	// SkipPayload skips the payload.
 	SkipPayload() error
+	// SetCapabilities sets the capabilities.
+	SetCapabilities(CapabilityFlag)
+	// Capabilities returns the capabilities.
+	Capabilities() CapabilityFlag
 }
 
 // CommandType represents a MySQL command type.
@@ -130,13 +134,15 @@ func (t CommandType) String() string {
 type command struct {
 	cmdType CommandType
 	Packet
+	capFlags CapabilityFlag
 }
 
 // NewCommandWith returns a new command with the specified type and packet.
 func NewCommandWith(cmdType CommandType, pkt Packet) Command {
 	return &command{
-		cmdType: cmdType,
-		Packet:  pkt,
+		cmdType:  cmdType,
+		Packet:   pkt,
+		capFlags: 0,
 	}
 }
 
@@ -177,6 +183,16 @@ func (cmd *command) IsType(t CommandType) error {
 		return newErrInvalidCommandType(cmd.cmdType, t)
 	}
 	return nil
+}
+
+// SetCapabilities sets the capabilities.
+func (cmd *command) SetCapabilities(c CapabilityFlag) {
+	cmd.capFlags = c
+}
+
+// Capabilities returns the capabilities.
+func (cmd *command) Capabilities() CapabilityFlag {
+	return cmd.capFlags
 }
 
 // SkipPayload skips the payload.
