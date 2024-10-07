@@ -43,6 +43,8 @@ type Packet interface {
 	Payload() []byte
 	// CapabilityFlags returns the packet capability flags.
 	CapabilityFlags() CapabilityFlag
+	// Reader returns the packet reader.
+	Reader() *PacketReader
 	// Bytes returns the packet bytes.
 	Bytes() ([]byte, error)
 }
@@ -164,6 +166,11 @@ func (pkt *packet) SetCapabilityEnabled(flag CapabilityFlag) {
 // SetDisabled unsets the specified flag.
 func (pkt *packet) SetCapabilityDisabled(flag CapabilityFlag) {
 	pkt.capabilityFlags &^= flag
+}
+
+// Reader returns the packet reader.
+func (pkt *packet) Reader() *PacketReader {
+	return pkt.PacketReader
 }
 
 // Bytes returns the packet bytes.
