@@ -35,20 +35,22 @@ type Conn struct {
 	ts        time.Time
 	uuid      uuid.UUID
 	tracer.Context
-	tlsState *tls.ConnectionState
+	tlsState     *tls.ConnectionState
+	capabilities CapabilityFlag
 }
 
 // NewConnWith returns a connection with a raw connection.
 func NewConnWith(netConn net.Conn, opts ...ConnOption) *Conn {
 	conn := &Conn{
-		Conn:      netConn,
-		isClosed:  false,
-		msgReader: NewPacketReaderWith(netConn),
-		db:        "",
-		ts:        time.Now(),
-		uuid:      uuid.New(),
-		Context:   nil,
-		tlsState:  nil,
+		Conn:         netConn,
+		isClosed:     false,
+		msgReader:    NewPacketReaderWith(netConn),
+		db:           "",
+		ts:           time.Now(),
+		uuid:         uuid.New(),
+		Context:      nil,
+		tlsState:     nil,
+		capabilities: 0,
 	}
 	for _, opt := range opts {
 		opt(conn)
@@ -74,6 +76,13 @@ func WithConnTracer(t tracer.Context) func(*Conn) {
 func WithTLSConnectionState(s *tls.ConnectionState) func(*Conn) {
 	return func(conn *Conn) {
 		conn.tlsState = s
+	}
+}
+
+// WithCapabilities sets capabilities.
+func WithCapabilities(c CapabilityFlag) func(*Conn) {
+	return func(conn *Conn) {
+		conn.capabilities = c
 	}
 }
 
@@ -127,6 +136,11 @@ func (conn *Conn) IsTLSConnection() bool {
 // TLSConnectionState returns the TLS connection state.
 func (conn *Conn) TLSConnectionState() (*tls.ConnectionState, bool) {
 	return conn.tlsState, conn.tlsState != nil
+}
+
+// Capabilities returns the capabilities.
+func (conn *Conn) Capabilities() CapabilityFlag {
+	return conn.capabilities
 }
 
 // PacketReader returns a packet reader.
