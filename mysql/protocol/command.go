@@ -34,47 +34,47 @@ type Command interface {
 type CommandType uint8
 
 const (
-	// COM_QUIT: Command Quit
+	// COM_QUIT: Command Quit.
 	COM_QUIT CommandType = 0x01
-	// COM_INIT_DB: Command Init DB
+	// COM_INIT_DB: Command Init DB.
 	COM_INIT_DB CommandType = 0x02
-	// COM_QUERY: Command Query
+	// COM_QUERY: Command Query.
 	COM_QUERY CommandType = 0x03
-	// COM_FIELD_LIST: Command Field List
+	// COM_FIELD_LIST: Command Field List.
 	COM_FIELD_LIST CommandType = 0x04
-	// COM_CREATE_DB: Command Create DB
+	// COM_CREATE_DB: Command Create DB.
 	COM_CREATE_DB CommandType = 0x05
-	// COM_DROP_DB: Command Drop DB
+	// COM_DROP_DB: Command Drop DB.
 	COM_DROP_DB CommandType = 0x06
-	// COM_REFRESH: Command Refresh
+	// COM_REFRESH: Command Refresh.
 	COM_REFRESH CommandType = 0x07
-	// COM_SHUTDOWN: Command Shutdown
+	// COM_SHUTDOWN: Command Shutdown.
 	COM_SHUTDOWN CommandType = 0x08
-	// COM_STATISTICS: Command Statistics
+	// COM_STATISTICS: Command Statistics.
 	COM_STATISTICS CommandType = 0x09
-	// COM_PROCESS_INFO: Command Process Info
+	// COM_PROCESS_INFO: Command Process Info.
 	COM_PROCESS_INFO CommandType = 0x0a
-	// COM_CONNECT: Command Connect
+	// COM_CONNECT: Command Connect.
 	COM_CONNECT CommandType = 0x0b
-	// COM_PROCESS_KILL: Command Process Kill
+	// COM_PROCESS_KILL: Command Process Kill.
 	COM_PROCESS_KILL CommandType = 0x0c
-	// COM_DEBUG: Command Debug
+	// COM_DEBUG: Command Debug.
 	COM_DEBUG CommandType = 0x0d
-	// COM_PING: Command Ping
+	// COM_PING: Command Ping.
 	COM_PING CommandType = 0x0e
-	// COM_TIME: Command Time
+	// COM_TIME: Command Time.
 	COM_TIME CommandType = 0x0f
-	// COM_DELAYED_INSERT: Command Delayed Insert
+	// COM_DELAYED_INSERT: Command Delayed Insert.
 	COM_DELAYED_INSERT CommandType = 0x10
-	// COM_CHANGE_USER: Command Change User
+	// COM_CHANGE_USER: Command Change User.
 	COM_CHANGE_USER CommandType = 0x11
-	// COM_BINLOG_DUMP: Command Binlog Dump
+	// COM_BINLOG_DUMP: Command Binlog Dump.
 	COM_BINLOG_DUMP CommandType = 0x12
-	// COM_TABLE_DUMP: Command Table Dump
+	// COM_TABLE_DUMP: Command Table Dump.
 	COM_TABLE_DUMP CommandType = 0x13
-	// COM_CONNECT_OUT: Command Connect Out
+	// COM_CONNECT_OUT: Command Connect Out.
 	COM_CONNECT_OUT CommandType = 0x14
-	// COM_REGISTER_SLAVE: Command Register Slave
+	// COM_REGISTER_SLAVE: Command Register Slave.
 	COM_REGISTER_SLAVE CommandType = 0x15
 )
 
