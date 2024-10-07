@@ -26,9 +26,10 @@ import (
 //go:embed data/query-001.hex
 var queryMsg001 string
 
-func TestQueryPacket(t *testing.T) {
+func TestQuery(t *testing.T) {
 	type expected struct {
 		seqID protocol.SequenceID
+		query string
 	}
 	for _, test := range []struct {
 		name string
@@ -40,6 +41,7 @@ func TestQueryPacket(t *testing.T) {
 			queryMsg001,
 			expected{
 				seqID: protocol.SequenceID(0),
+				query: "select @@version_comment limit 1",
 			},
 		},
 	} {
@@ -54,10 +56,15 @@ func TestQueryPacket(t *testing.T) {
 			pkt, err := protocol.NewQueryFromReader(reader)
 			if err != nil {
 				t.Error(err)
+				return
 			}
 
 			if pkt.SequenceID() != test.expected.seqID {
 				t.Errorf("expected %d, got %d", test.expected.seqID, pkt.SequenceID())
+			}
+
+			if pkt.Query() != test.expected.query {
+				t.Errorf("expected %s, got %s", test.expected.query, pkt.Query())
 			}
 
 			// Compare the packet bytes
