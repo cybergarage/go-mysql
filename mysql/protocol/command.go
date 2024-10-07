@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// nolint: stylecheck
 package protocol
 
-import "io"
+import (
+	"io"
+)
 
 // MySQL: Command Phase
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_command_phase.html
@@ -167,8 +170,9 @@ func NewCommandFromReader(reader io.Reader) (Command, error) {
 	}
 
 	return &command{
-		cmdType: CommandType(cmdType),
-		Packet:  pkt,
+		cmdType:  CommandType(cmdType),
+		Packet:   pkt,
+		capFlags: 0,
 	}, nil
 }
 
