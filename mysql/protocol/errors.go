@@ -55,6 +55,10 @@ func newErrInvalidLength(name string, v int) error {
 	return fmt.Errorf("%s is %w length (%d)", name, ErrInvalid, v)
 }
 
-func newErrInvalitHeader(name string, v byte) error {
+func newErrInvalidHeader(name string, v byte) error {
 	return fmt.Errorf("%s is %w header (%X)", name, ErrInvalid, v)
+}
+
+func newErrInvalidCommandType(v CommandType, expected CommandType) error {
+	return fmt.Errorf("%02X is %w code (%02X)", v, ErrInvalid, expected)
 }

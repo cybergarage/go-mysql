@@ -92,7 +92,7 @@ func NewOKFromReader(reader io.Reader, opts ...OKOption) (*OK, error) {
 		return nil, err
 	}
 	if (pkt.header != okPacketHeader) && (pkt.header != errPacketHeader) {
-		return nil, newErrInvalitHeader("OK", pkt.header)
+		return nil, newErrInvalidHeader("OK", pkt.header)
 	}
 
 	// affectedRows
