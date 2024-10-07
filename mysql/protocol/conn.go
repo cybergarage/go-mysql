@@ -52,9 +52,7 @@ func NewConnWith(netConn net.Conn, opts ...ConnOption) *Conn {
 		tlsState:     nil,
 		capabilities: 0,
 	}
-	for _, opt := range opts {
-		opt(conn)
-	}
+	conn.SetOptions(opts...)
 	return conn
 }
 
@@ -96,6 +94,13 @@ func (conn *Conn) Close() error {
 	}
 	conn.isClosed = true
 	return nil
+}
+
+// SetOptions sets the connection options.
+func (conn *Conn) SetOptions(opts ...ConnOption) {
+	for _, opt := range opts {
+		opt(conn)
+	}
 }
 
 // SetDatabase sets the database name.
