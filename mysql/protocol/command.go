@@ -17,50 +17,50 @@ package protocol
 // MySQL: Command Phase
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_command_phase.html
 
-// Command represents a MySQL command.
-type Command uint8
+// CommandType represents a MySQL command type.
+type CommandType uint8
 
 const (
 	// COM_QUIT: Command Quit
-	Quit Command = 0x01
+	Quit CommandType = 0x01
 	// COM_INIT_DB: Command Init Database
-	InitDB Command = 0x02
+	InitDB CommandType = 0x02
 	// COM_QUERY: Command Query
-	Query Command = 0x03
+	Query CommandType = 0x03
 	// COM_FIELD_LIST: Command Field List
-	FieldList Command = 0x04
+	FieldList CommandType = 0x04
 	// COM_CREATE_DB: Command Create Database
-	CreateDB Command = 0x05
+	CreateDB CommandType = 0x05
 	// COM_DROP_DB: Command Drop Database
-	DropDB Command = 0x06
+	DropDB CommandType = 0x06
 	// COM_REFRESH: Command Refresh
-	Refresh Command = 0x07
+	Refresh CommandType = 0x07
 	// COM_SHUTDOWN: Command Shutdown
-	Shutdown Command = 0x08
+	Shutdown CommandType = 0x08
 	// COM_STATISTICS: Command Statistics
-	Statistics Command = 0x09
+	Statistics CommandType = 0x09
 	// COM_PROCESS_INFO: Command Process Info
-	ProcessInfo Command = 0x0a
+	ProcessInfo CommandType = 0x0a
 	// COM_CONNECT: Command Connect
-	Connect Command = 0x0b
+	Connect CommandType = 0x0b
 	// COM_PROCESS_KILL: Command Process Kill
-	ProcessKill Command = 0x0c
+	ProcessKill CommandType = 0x0c
 	// COM_DEBUG: Command Debug
-	Debug Command = 0x0d
+	Debug CommandType = 0x0d
 	// COM_PING: Command Ping
-	Ping Command = 0x0e
+	Ping CommandType = 0x0e
 	// COM_TIME: Command Time
-	Time Command = 0x0f
+	Time CommandType = 0x0f
 	// COM_DELAYED_INSERT: Command Delayed Insert
-	DelayedInsert Command = 0x10
+	DelayedInsert CommandType = 0x10
 	// COM_CHANGE_USER: Command Change User
-	ChangeUser Command = 0x11
+	ChangeUser CommandType = 0x11
 	// COM_BINLOG_DUMP: Command Binlog Dump
-	BinlogDump Command = 0x12
+	BinlogDump CommandType = 0x12
 	// COM_TABLE_DUMP: Command Table Dump
-	TableDump Command = 0x13
+	TableDump CommandType = 0x13
 	// COM_CONNECT_OUT: Command Connect Out
-	ConnectOut Command = 0x14
+	ConnectOut CommandType = 0x14
 	// COM_REGISTER_SLAVE: Command Register Slave
-	RegisterSlave Command = 0x15
+	RegisterSlave CommandType = 0x15
 )
