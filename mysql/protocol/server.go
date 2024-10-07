@@ -205,9 +205,26 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	}()
 
 	for {
-		loopSpan := server.Tracer.StartSpan("")
+		cmd, err := NewCommandFromReader(conn)
+		if err != nil {
+			return err
+		}
+		cmdType := cmd.Type()
+
+		loopSpan := server.Tracer.StartSpan(server.productName)
 		conn.SetSpanContext(loopSpan)
-		conn.StartSpan("")
+		conn.StartSpan(cmdType.String())
+
+		switch cmdType {
+		case COM_QUIT:
+			return nil
+		default:
+			err := cmd.SkipPayload()
+			if err != nil {
+				return err
+			}
+		}
+
 		conn.FinishSpan()
 
 		conn.StartSpan("response")
