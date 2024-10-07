@@ -191,10 +191,11 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	}
 
 	// Handshake Response Packet
-	_, err = NewHandshakeResponseFromReader(reader)
+	handshakeRes, err := NewHandshakeResponseFromReader(reader)
 	if err != nil {
 		return err
 	}
+	conn.SetCapabilities(handshakeRes.CapabilityFlags())
 
 	// MySQL: Command Phase
 	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_command_phase.html
@@ -209,6 +210,8 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		if err != nil {
 			return err
 		}
+		cmd.SetCapabilities(conn.Capabilities())
+
 		cmdType := cmd.Type()
 
 		loopSpan := server.Tracer.StartSpan(server.productName)
