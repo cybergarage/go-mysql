@@ -133,7 +133,7 @@ func NewERRFromReader(reader io.Reader, opts ...ERROption) (*ERR, error) {
 		return nil, err
 	}
 	if header != errPacketHeader {
-		return nil, newErrInvalitHeader("ERR", header)
+		return nil, newErrInvalidHeader("ERR", header)
 	}
 
 	// error_code

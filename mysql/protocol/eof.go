@@ -96,7 +96,7 @@ func NewEOFFromReader(reader io.Reader, opts ...EOFOption) (*EOF, error) {
 		return nil, err
 	}
 	if header != eofPacketHeader {
-		return nil, newErrInvalitHeader("EOF", header)
+		return nil, newErrInvalidHeader("EOF", header)
 	}
 
 	// warnings and status flags
