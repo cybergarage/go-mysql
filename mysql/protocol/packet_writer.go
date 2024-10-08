@@ -26,6 +26,11 @@ func NewPacketWriter() *PacketWriter {
 	}
 }
 
+// WriteCommandType writes a command type.
+func (w *PacketWriter) WriteCommandType(cmd Command) error {
+	return w.WriteByte(byte(cmd.Type()))
+}
+
 // WriteCapabilityFlags writes the capability flags.
 func (w *PacketWriter) WriteCapabilityFlags(c CapabilityFlag) error {
 	if c.IsEnabled(ClientProtocol41) {
