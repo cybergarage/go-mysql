@@ -28,6 +28,14 @@ type Query struct {
 	paramCnt          uint64
 	paramSetCnt       uint64
 	newParamsBindFlag uint8
+	params            []*QueryParameter
+	paramValues       []byte
+}
+
+// QueryParameter represents a MySQL Query parameter.
+type QueryParameter struct {
+	Type uint16
+	Name string
 }
 
 func newQueryWithCommand(cmd Command, opts ...QueryOption) *Query {
@@ -37,6 +45,8 @@ func newQueryWithCommand(cmd Command, opts ...QueryOption) *Query {
 		paramCnt:          0,
 		paramSetCnt:       0,
 		newParamsBindFlag: 0,
+		params:            []*QueryParameter{},
+		paramValues:       []byte{},
 	}
 	for _, opt := range opts {
 		opt(q)
@@ -112,6 +122,27 @@ func NewQueryFromCommand(cmd Command, opts ...QueryOption) (*Query, error) {
 		if err != nil {
 			return nil, err
 		}
+		if pkt.newParamsBindFlag == 1 {
+			for n := 0; n < int(pkt.paramCnt); n++ {
+				paramType, err := reader.ReadInt2()
+				if err != nil {
+					return nil, err
+				}
+				paramName, err := reader.ReadLengthEncodedString()
+				if err != nil {
+					return nil, err
+				}
+				pkt.params = append(pkt.params,
+					&QueryParameter{
+						Type: uint16(paramType),
+						Name: paramName,
+					})
+			}
+			pkt.paramValues, err = reader.ReadLengthEncodedBytes()
+			if err != nil {
+				return nil, err
+			}
+		}
 	}
 
 	// query
@@ -130,7 +161,44 @@ func (pkt *Query) Query() string {
 
 // Bytes returns the packet bytes.
 func (pkt *Query) Bytes() ([]byte, error) {
-	w := NewWriter()
+	w := NewPacketWriter()
+
+	if err := w.WriteCommandType(pkt); err != nil {
+		return nil, err
+	}
+
+	if pkt.Capabilities().IsEnabled(ClientQueryAttributes) {
+		// parameter_count
+		if err := w.WriteLengthEncodedInt(pkt.paramCnt); err != nil {
+			return nil, err
+		}
+		// parameter_set_count
+		if err := w.WriteLengthEncodedInt(pkt.paramSetCnt); err != nil {
+			return nil, err
+		}
+	}
+
+	if 0 < pkt.paramCnt {
+		if err := w.WriteLengthEncodedBytes([]byte{}); err != nil {
+			return nil, err
+		}
+		if err := w.WriteByte(pkt.newParamsBindFlag); err != nil {
+			return nil, err
+		}
+		if pkt.newParamsBindFlag == 1 {
+			for _, param := range pkt.params {
+				if err := w.WriteInt2(param.Type); err != nil {
+					return nil, err
+				}
+				if err := w.WriteLengthEncodedString(param.Name); err != nil {
+					return nil, err
+				}
+			}
+			if err := w.WriteLengthEncodedBytes(pkt.paramValues); err != nil {
+				return nil, err
+			}
+		}
+	}
 
 	// query
 	if err := w.WriteEOFTerminatedString(pkt.query); err != nil {

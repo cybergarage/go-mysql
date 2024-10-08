@@ -173,17 +173,26 @@ func (w *Writer) WriteVariableLengthString(s string) error {
 	return nil
 }
 
-// WriteLengthEncodedString writes a length encoded string.
-func (w *Writer) WriteLengthEncodedString(s string) error {
-	var n uint8
-	err := safecast.ToUint8(len(s), &n)
+// WriteLengthEncodedBytes writes a length encoded bytes.
+func (w *Writer) WriteLengthEncodedBytes(b []byte) error {
+	var n uint64
+	err := safecast.ToUint64(len(b), &n)
 	if err != nil {
 		return err
 	}
-	if err := w.WriteInt1(n); err != nil {
+	if err := w.WriteLengthEncodedInt(n); err != nil {
 		return err
 	}
-	return w.WriteFixedLengthString(s, int(n))
+	if n == 0 {
+		return nil
+	}
+	_, err = w.WriteBytes(b)
+	return err
+}
+
+// WriteLengthEncodedString writes a length encoded string.
+func (w *Writer) WriteLengthEncodedString(s string) error {
+	return w.WriteLengthEncodedBytes([]byte(s))
 }
 
 // Bytes returns the written bytes.
