@@ -75,8 +75,10 @@ const (
 	ClientOptionalResultsetMetadata CapabilityFlag = 33554432
 	// ClientZstdCompressionAlgorithm represents the CLIENT_ZSTD_COMPRESSION_ALGORITHMS capability flag.
 	ClientZstdCompressionAlgorithm CapabilityFlag = 67108864
+	// ClientQueryAttributes represents the CLIENT_QUERY_ATTRIBUTES capability flag.
+	ClientQueryAttributes CapabilityFlag = 134217728
 	// CapabilityMultiFactoryAuth represents the CLIENT_MULTI_FACTORY_AUTH capability flag.
-	CapabilityMultiFactoryAuth CapabilityFlag = 134217728
+	CapabilityMultiFactoryAuth CapabilityFlag = 67108864
 	// ClientCapabilityExtension represents the CLIENT_CAPABILITY_EXTENSION capability flag.
 	ClientCapabilityExtension CapabilityFlag = 268435456
 	// ClientSSLVerifyServerCert represents the CLIENT_SSL_VERIFY_SERVER_CERT capability flag.
