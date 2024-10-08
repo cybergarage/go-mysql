@@ -74,14 +74,14 @@ func TestQuery(t *testing.T) {
 
 			// Compare the packet bytes
 
-			msgBytes, err := pkt.Bytes()
+			pktBytes, err := pkt.Bytes()
 			if err != nil {
 				t.Error(err)
 				return
 			}
 
-			if !bytes.Equal(msgBytes, testBytes) {
-				HexdumpErrors(t, testBytes, msgBytes)
+			if !bytes.Equal(pktBytes, testBytes) {
+				HexdumpErrors(t, testBytes, pktBytes)
 			}
 		})
 	}
