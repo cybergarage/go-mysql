@@ -83,7 +83,7 @@ func TestOKPacket(t *testing.T) {
 			}
 
 			if !bytes.Equal(pktBytes, testBytes) {
-				t.Errorf("expected %v, got %v", testBytes, pktBytes)
+				HexdumpErrors(t, testBytes, pktBytes)
 			}
 		})
 	}
