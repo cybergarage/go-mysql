@@ -24,40 +24,51 @@ import (
 // Query represents a MySQL Query packet.
 type Query struct {
 	Command
-	query string
+	query             string
+	paramCnt          uint64
+	paramSetCnt       uint64
+	newParamsBindFlag uint8
 }
 
-func newQueryWithCommand(cmd Command) *Query {
-	return &Query{
-		Command: cmd,
-		query:   "",
+func newQueryWithCommand(cmd Command, opts ...QueryOption) *Query {
+	q := &Query{
+		Command:           cmd,
+		query:             "",
+		paramCnt:          0,
+		paramSetCnt:       0,
+		newParamsBindFlag: 0,
 	}
+	for _, opt := range opts {
+		opt(q)
+	}
+	return q
 }
 
 // QueryOption represents a MySQL Query option.
-type QueryOption func(*Query) error
+type QueryOption func(*Query)
 
 // WithQuery returns a QueryOption that sets the query.
 func WithQueryString(v string) QueryOption {
-	return func(pkt *Query) error {
+	return func(pkt *Query) {
 		pkt.query = v
-		return nil
+	}
+}
+
+// WithQueryCapabilities returns a QueryOption that sets the capabilities.
+func WithQueryCapabilities(c CapabilityFlag) QueryOption {
+	return func(pkt *Query) {
+		pkt.SetCapabilities(c)
 	}
 }
 
 // NewQuery returns a new MySQL Query packet.
 func NewQuery(opts ...QueryOption) (*Query, error) {
-	pkt := newQueryWithCommand(nil)
-	for _, opt := range opts {
-		if err := opt(pkt); err != nil {
-			return nil, err
-		}
-	}
+	pkt := newQueryWithCommand(nil, opts...)
 	return pkt, nil
 }
 
 // NewQueryFromReader returns a new MySQL Query packet from the specified reader.
-func NewQueryFromReader(reader io.Reader) (*Query, error) {
+func NewQueryFromReader(reader io.Reader, opts ...QueryOption) (*Query, error) {
 	var err error
 
 	cmd, err := NewCommandFromReader(reader)
@@ -69,15 +80,39 @@ func NewQueryFromReader(reader io.Reader) (*Query, error) {
 		return nil, err
 	}
 
-	return NewQueryFromCommand(cmd)
+	return NewQueryFromCommand(cmd, opts...)
 }
 
 // NewQueryFromCommand returns a new MySQL Query packet from the specified command.
-func NewQueryFromCommand(cmd Command) (*Query, error) {
+func NewQueryFromCommand(cmd Command, opts ...QueryOption) (*Query, error) {
 	var err error
 
-	pkt := newQueryWithCommand(cmd)
+	pkt := newQueryWithCommand(cmd, opts...)
 	reader := cmd.Reader()
+
+	if pkt.Capabilities().IsEnabled(ClientQueryAttributes) {
+		// parameter_count
+		pkt.paramCnt, err = reader.ReadLengthEncodedInt()
+		if err != nil {
+			return nil, err
+		}
+		// parameter_set_count
+		pkt.paramSetCnt, err = reader.ReadLengthEncodedInt()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if 0 < pkt.paramCnt {
+		_, err = reader.ReadLengthEncodedBytes()
+		if err != nil {
+			return nil, err
+		}
+		pkt.newParamsBindFlag, err = reader.ReadInt1()
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	// query
 	pkt.query, err = reader.ReadEOFTerminatedString()
