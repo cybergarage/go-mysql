@@ -22,6 +22,16 @@ import (
 // MySQL: Command Phase
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_command_phase.html
 
+// CommandOption represents a MySQL Command option.
+type CommandOption func(Command)
+
+// WithCommandCapabilities returns a CommandOption that sets the capabilities.
+func WithCommandCapabilities(c CapabilityFlag) CommandOption {
+	return func(cmd Command) {
+		cmd.SetCapabilities(c)
+	}
+}
+
 // Command represents a MySQL command.
 type Command interface {
 	Packet
@@ -141,21 +151,23 @@ type command struct {
 }
 
 // NewCommandWith returns a new command with the specified type and packet.
-func NewCommandWith(cmdType CommandType, pkt Packet) Command {
-	return &command{
+func NewCommandWith(cmdType CommandType, pkt Packet, opts ...CommandOption) Command {
+	cmd := &command{
 		cmdType:  cmdType,
 		Packet:   pkt,
 		capFlags: 0,
 	}
+	cmd.SetOptions(opts...)
+	return cmd
 }
 
 // NewCommand returns a new command.
-func NewCommand(cmdType CommandType) Command {
-	return NewCommandWith(cmdType, nil)
+func NewCommand(cmdType CommandType, opts ...CommandOption) Command {
+	return NewCommandWith(cmdType, nil, opts...)
 }
 
 // NewCommandFromReader returns a new command from the reader.
-func NewCommandFromReader(reader io.Reader) (Command, error) {
+func NewCommandFromReader(reader io.Reader, opts ...CommandOption) (Command, error) {
 	var err error
 
 	pkt, err := NewPacketWithReader(reader)
@@ -169,11 +181,20 @@ func NewCommandFromReader(reader io.Reader) (Command, error) {
 		return nil, err
 	}
 
-	return &command{
+	cmd := &command{
 		cmdType:  CommandType(cmdType),
 		Packet:   pkt,
 		capFlags: 0,
-	}, nil
+	}
+	cmd.SetOptions(opts...)
+	return cmd, nil
+}
+
+// SetOptions sets the options.
+func (cmd *command) SetOptions(opts ...CommandOption) {
+	for _, opt := range opts {
+		opt(cmd)
+	}
 }
 
 // Type returns the command type.
