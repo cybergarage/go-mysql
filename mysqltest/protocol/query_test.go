@@ -81,7 +81,7 @@ func TestQuery(t *testing.T) {
 			}
 
 			if !bytes.Equal(msgBytes, testBytes) {
-				t.Errorf("expected %v, got %v", testBytes, msgBytes)
+				HexdumpErrors(t, testBytes, msgBytes)
 			}
 		})
 	}
