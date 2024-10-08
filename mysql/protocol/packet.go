@@ -177,9 +177,9 @@ func (pkt *packet) Reader() *PacketReader {
 // Bytes returns the packet bytes.
 func (pkt *packet) Bytes() ([]byte, error) {
 	payloadLengthBuf := []byte{
-		byte(pkt.payloadLength),
-		byte(pkt.payloadLength >> 8),
-		byte(pkt.payloadLength >> 16),
+		byte(pkt.payloadLength & 0xFF),
+		byte((pkt.payloadLength >> 8) & 0xFF),
+		byte((pkt.payloadLength >> 16) & 0xFF),
 	}
 	seqIDByte := byte(pkt.sequenceID)
 	return slices.Concat(payloadLengthBuf, []byte{seqIDByte}, pkt.payload), nil
