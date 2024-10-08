@@ -279,5 +279,20 @@ func (reader *Reader) ReadLengthEncodedString() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if n == 0 {
+		return "", nil
+	}
 	return reader.ReadFixedLengthString(int(n))
+}
+
+// ReadLengthEncodedBytes reads a length encoded bytes.
+func (reader *Reader) ReadLengthEncodedBytes() ([]byte, error) {
+	n, err := reader.ReadInt1()
+	if err != nil {
+		return []byte{}, err
+	}
+	if n == 0 {
+		return []byte{}, nil
+	}
+	return reader.ReadFixedLengthBytes(int(n))
 }
