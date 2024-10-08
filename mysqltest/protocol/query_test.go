@@ -24,7 +24,10 @@ import (
 )
 
 //go:embed data/query-001.hex
-var queryMsg001 string
+var queryPkt001 string
+
+//go:embed data/query-002.hex
+var queryPkt002 string
 
 func TestQuery(t *testing.T) {
 	type expected struct {
@@ -39,11 +42,20 @@ func TestQuery(t *testing.T) {
 	}{
 		{
 			"query001",
-			queryMsg001,
+			queryPkt001,
 			protocol.ClientQueryAttributes,
 			expected{
 				seqID: protocol.SequenceID(0),
 				query: "select @@version_comment limit 1",
+			},
+		},
+		{
+			"query002",
+			queryPkt002,
+			0,
+			expected{
+				seqID: protocol.SequenceID(0),
+				query: "CREATE DATABASE IF NOT EXISTS sqltest1727254524366662000",
 			},
 		},
 	} {
