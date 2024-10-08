@@ -32,13 +32,15 @@ func TestQuery(t *testing.T) {
 		query string
 	}
 	for _, test := range []struct {
-		name string
-		data string
+		name     string
+		data     string
+		capFlags protocol.CapabilityFlag
 		expected
 	}{
 		{
 			"query001",
 			queryMsg001,
+			protocol.ClientQueryAttributes,
 			expected{
 				seqID: protocol.SequenceID(0),
 				query: "select @@version_comment limit 1",
@@ -53,7 +55,10 @@ func TestQuery(t *testing.T) {
 			}
 			reader := bytes.NewReader(testBytes)
 
-			pkt, err := protocol.NewQueryFromReader(reader)
+			opts := []protocol.QueryOption{
+				protocol.WithQueryCapabilities(test.capFlags),
+			}
+			pkt, err := protocol.NewQueryFromReader(reader, opts...)
 			if err != nil {
 				t.Error(err)
 				return
