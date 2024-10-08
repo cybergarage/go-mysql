@@ -16,6 +16,7 @@ package protocol
 
 import (
 	"io"
+	"slices"
 )
 
 // MySQL: Protocol Basics
@@ -181,5 +182,5 @@ func (pkt *packet) Bytes() ([]byte, error) {
 		byte(pkt.payloadLength >> 16),
 	}
 	seqIDByte := byte(pkt.sequenceID)
-	return append(append(payloadLengthBuf, seqIDByte), pkt.payload...), nil
+	return slices.Concat(payloadLengthBuf, []byte{seqIDByte}, pkt.payload), nil
 }
