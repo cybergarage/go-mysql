@@ -13,3 +13,22 @@
 // limitations under the License.
 
 package mysql
+
+import (
+	"github.com/cybergarage/go-tracing/tracer"
+)
+
+// Server represents a MySQL-compatible server interface.
+type Server interface {
+	Config
+	tracer.Tracer
+	SetQueryExecutor(e QueryExecutor)
+	Start() error
+	Stop() error
+	Restart() error
+}
+
+// NewServer creates a new server instance.
+func NewServer() Server {
+	return NewVitessServer()
+}

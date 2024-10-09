@@ -60,7 +60,7 @@ type VitessServer struct {
 }
 
 // NewServer returns a new server instance.
-func NewServer() *VitessServer {
+func NewVitessServer() *VitessServer {
 	server := &VitessServer{
 		Tracer:             tracer.NullTracer,
 		Config:             NewDefaultConfig(),
