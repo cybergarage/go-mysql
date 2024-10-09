@@ -16,6 +16,7 @@ package protocol
 
 import (
 	"crypto/tls"
+	"errors"
 	"net"
 	"strconv"
 
@@ -26,6 +27,7 @@ import (
 type Server struct {
 	*Config
 	*ConnManager
+	CommandHandler
 	tracer.Tracer
 	tcpListener net.Listener
 }
@@ -46,8 +48,17 @@ func (server *Server) SetTracer(t tracer.Tracer) {
 	server.Tracer = t
 }
 
+// ServerCommandHandler returns a command handler.
+func (server *Server) ServerCommandHandler() CommandHandler {
+	return server.CommandHandler
+}
+
 // Start starts the server.
 func (server *Server) Start() error {
+	if server.CommandHandler == nil {
+		return errors.New("no command handler")
+	}
+
 	err := server.ConnManager.Start()
 	if err != nil {
 		return err
@@ -218,9 +229,31 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		conn.SetSpanContext(loopSpan)
 		conn.StartSpan(cmdType.String())
 
+		finishSpans := func() {
+			conn.FinishSpan()
+			loopSpan.Span().Finish()
+		}
+
 		switch cmdType {
 		case COM_QUIT:
+			finishSpans()
 			return nil
+		case COM_QUERY:
+			q, err := NewQueryFromCommand(cmd)
+			if err != nil {
+				finishSpans()
+				return err
+			}
+			res, err := server.CommandHandler.HandleQuery(q)
+			if err != nil {
+				finishSpans()
+				return err
+			}
+			err = conn.ResponsePacket(res)
+			if err != nil {
+				finishSpans()
+				return err
+			}
 		default:
 			err := cmd.SkipPayload()
 			if err != nil {
