@@ -21,7 +21,7 @@ import (
 // MySQL: Protocol::Query
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query.html
 
-// Query represents a MySQL Query packet.
+// Query represents a COM_QUERY packet.
 type Query struct {
 	Command
 	query             string
@@ -32,7 +32,7 @@ type Query struct {
 	paramValues       []byte
 }
 
-// QueryParameter represents a MySQL Query parameter.
+// QueryParameter represents a COM_QUERY parameter.
 type QueryParameter struct {
 	Type uint16
 	Name string

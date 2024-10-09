@@ -17,7 +17,7 @@ package protocol
 const (
 	DefaultPort          = 3306
 	DefaultMaxPacketSize = 0
-	DefaultCharset       = CharacterSetUTF8
+	DefaultCharset       = CharSetUTF8
 
 	DefaultServerCapabilities = ClientLongPassword |
 		ClientFoundRows |

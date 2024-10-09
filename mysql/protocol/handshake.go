@@ -60,7 +60,7 @@ func newHandshakeWithPacket(msg *packet) *Handshake {
 		serverVersion:     "",
 		connectionID:      0,
 		capabilityFlags:   uint32(DefaultServerCapabilities),
-		characterSet:      uint8(CharacterSetUTF8),
+		characterSet:      uint8(CharSetUTF8),
 		statusFlags:       uint16(DefaultServerCapabilities),
 		authPluginDataLen: 0,
 		authPluginData1:   nil,
@@ -105,7 +105,7 @@ func WithHandshakeCapabilityFlags(v CapabilityFlag) HandshakeOption {
 }
 
 // WithHandshakeCharacterSet sets the character set.
-func WithHandshakeCharacterSet(v CharacterSet) HandshakeOption {
+func WithHandshakeCharacterSet(v CharSet) HandshakeOption {
 	return func(pkt *Handshake) error {
 		pkt.characterSet = uint8(v)
 		return nil
@@ -273,8 +273,8 @@ func (pkt *Handshake) CapabilityFlags() CapabilityFlag {
 }
 
 // CharacterSet returns the character set.
-func (pkt *Handshake) CharacterSet() CharacterSet {
-	return CharacterSet(pkt.characterSet)
+func (pkt *Handshake) CharacterSet() CharSet {
+	return CharSet(pkt.characterSet)
 }
 
 // StatusFlags returns the status flags.
