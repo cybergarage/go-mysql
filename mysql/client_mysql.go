@@ -23,7 +23,7 @@ import (
 
 // Client represents a client for MySQL server.
 type MySQLClient struct {
-	*Config
+	Config
 	conn driver.Conn
 }
 

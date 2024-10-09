@@ -24,7 +24,7 @@ import (
 
 // Client represents a client for MySQL server.
 type Client struct {
-	*Config
+	Config
 	db *sql.DB
 }
 
@@ -39,7 +39,7 @@ func NewClient() *Client {
 
 // Open opens a database specified by the internal configuration.
 func (client *Client) Open() error {
-	dsName := fmt.Sprintf("tcp(%s:%d)/%s", client.Address, client.Port, client.Database)
+	dsName := fmt.Sprintf("tcp(%s:%d)/%s", client.Address(), client.Port(), client.Database())
 	db, err := sql.Open("mysql", dsName)
 	if err != nil {
 		return err

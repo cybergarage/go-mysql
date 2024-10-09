@@ -41,7 +41,7 @@ func NewVitessListener(protocol, address string, authServer AuthHandler, handler
 // VitessServer represents a MySQL-compatible server.
 type VitessServer struct {
 	tracer.Tracer
-	*config
+	Config
 	ConnManager
 	AuthHandler
 	QueryHandler
@@ -53,7 +53,7 @@ type VitessServer struct {
 func NewServer() *VitessServer {
 	server := &VitessServer{
 		Tracer:        tracer.NullTracer,
-		config:        NewDefaultConfig(),
+		Config:        NewDefaultConfig(),
 		ConnManager:   NewConnManager(),
 		AuthHandler:   NewDefaultAuthHandler(),
 		QueryHandler:  nil,
@@ -80,7 +80,7 @@ func (server *VitessServer) SetQueryExecutor(e QueryExecutor) {
 
 // Start starts the server.
 func (server *VitessServer) Start() error {
-	hostPort := net.JoinHostPort(server.address, strconv.Itoa(server.port))
+	hostPort := net.JoinHostPort(server.Address(), strconv.Itoa(server.Port()))
 	l, err := NewVitessListener("tcp", hostPort, server, server, 0, 0, false)
 	if err != nil {
 		return err
@@ -101,7 +101,7 @@ func (server *VitessServer) Stop() error {
 		server.listener = nil
 	}
 
-	hostPort := net.JoinHostPort(server.address, strconv.Itoa(server.port))
+	hostPort := net.JoinHostPort(server.Address(), strconv.Itoa(server.Port()))
 	log.Infof("%s/%s (%s) terminated", PackageName, Version, hostPort)
 
 	return nil
