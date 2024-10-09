@@ -55,10 +55,6 @@ func (server *Server) ServerCommandHandler() CommandHandler {
 
 // Start starts the server.
 func (server *Server) Start() error {
-	if server.CommandHandler == nil {
-		return errors.New("no command handler")
-	}
-
 	err := server.ConnManager.Start()
 	if err != nil {
 		return err
@@ -217,6 +213,10 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	}()
 
 	for {
+		if server.CommandHandler == nil {
+			return errors.New("no command handler")
+		}
+
 		cmd, err := NewCommandFromReader(conn)
 		if err != nil {
 			return err
