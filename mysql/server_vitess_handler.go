@@ -22,18 +22,18 @@ import (
 )
 
 // NewConnection is called when a connection is created.
-func (server *Server) NewConnection(c *vitessmy.Conn) {
+func (server *VitessServer) NewConnection(c *vitessmy.Conn) {
 	conn := NewConnWith(tracer.NewNullTracer().StartSpan(""), c)
 	server.AddConn(conn)
 }
 
 // ConnectionClosed is called when a connection is closed.
-func (server *Server) ConnectionClosed(c *vitessmy.Conn) {
+func (server *VitessServer) ConnectionClosed(c *vitessmy.Conn) {
 	server.DeleteConnByUID(c.ConnectionID)
 }
 
 // ComInitDB is called once at the beginning to set db name, and subsequently for every ComInitDB event.
-func (server *Server) ComInitDB(c *vitessmy.Conn, dbName string) {
+func (server *VitessServer) ComInitDB(c *vitessmy.Conn, dbName string) {
 	conn, ok := server.GetConnByUID(c.ConnectionID)
 	if ok {
 		conn.SetDatabase(dbName)
@@ -42,7 +42,7 @@ func (server *Server) ComInitDB(c *vitessmy.Conn, dbName string) {
 
 // ComQuery is called when a connection receives a query.
 // nolint: exhaustive
-func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result) error) error {
+func (server *VitessServer) ComQuery(c *vitessmy.Conn, q string, callback func(*Result) error) error {
 	spanCtx := server.Tracer.StartSpan(PackageName)
 	defer spanCtx.Span().Finish()
 
@@ -166,20 +166,20 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 }
 
 // ComPrepare is called when a connection receives a prepared statement query.
-func (server *Server) ComPrepare(c *vitessmy.Conn, query string, bindVars map[string]*BindVariable) ([]*Field, error) {
+func (server *VitessServer) ComPrepare(c *vitessmy.Conn, query string, bindVars map[string]*BindVariable) ([]*Field, error) {
 	return nil, nil
 }
 
 // ComStmtExecute is called when a connection receives a statement execute query.
-func (server *Server) ComStmtExecute(c *vitessmy.Conn, prepare *PrepareData, callback func(*Result) error) error {
+func (server *VitessServer) ComStmtExecute(c *vitessmy.Conn, prepare *PrepareData, callback func(*Result) error) error {
 	return nil
 }
 
 // WarningCount is called at the end of each query to obtain the value to be returned to the client in the EOF packet.
-func (server *Server) WarningCount(c *vitessmy.Conn) uint16 {
+func (server *VitessServer) WarningCount(c *vitessmy.Conn) uint16 {
 	return 0
 }
 
 // ComResetConnection is called when the connection is reseted.
-func (server *Server) ComResetConnection(c *vitessmy.Conn) {
+func (server *VitessServer) ComResetConnection(c *vitessmy.Conn) {
 }
