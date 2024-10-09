@@ -82,5 +82,5 @@ func (pkt *QueryResponse) Bytes() ([]byte, error) {
 			PacketWithPayload(w.Bytes()),
 		)
 
-	return pkt.Bytes()
+	return pkt.packet.Bytes()
 }
