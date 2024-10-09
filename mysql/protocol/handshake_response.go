@@ -42,9 +42,9 @@ type HandshakeResponse struct {
 	zstdCompressionLevel uint8
 }
 
-func newHandshakeResponseWithPacket(msg *packet) *HandshakeResponse {
+func newHandshakeResponseWithPacket(pkt *packet) *HandshakeResponse {
 	return &HandshakeResponse{
-		packet:               msg,
+		packet:               pkt,
 		capabilityFlags:      0,
 		maxPacketSize:        0,
 		chanteSet:            0,
@@ -167,7 +167,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		}
 	}
 
-	return pkt, err
+	return pkt, nil
 }
 
 // CapabilityFlags returns the capability flags.

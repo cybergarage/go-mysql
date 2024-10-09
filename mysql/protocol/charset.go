@@ -17,14 +17,14 @@ package protocol
 // MySQL: Character Set
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_character_set.html#a_protocol_character_set
 
-// CharacterSet represents a MySQL Character Set.
-type CharacterSet uint8
+// CharSet represents a MySQL Character Set.
+type CharSet uint8
 
 const (
-	// CharacterSetLatin1 represents the latin1 character set.
-	CharacterSetLatin1 CharacterSet = 0x08
-	// CharacterSetUTF8 represents the utf8 character set.
-	CharacterSetUTF8 CharacterSet = 0x21
-	// CharacterSetBinary represents the binary character set.
-	CharacterSetBinary CharacterSet = 0x3f
+	// CharSetLatin1 represents the latin1 character set.
+	CharSetLatin1 CharSet = 0x08
+	// CharSetUTF8 represents the utf8 character set.
+	CharSetUTF8 CharSet = 0x21
+	// CharSetBinary represents the binary character set.
+	CharSetBinary CharSet = 0x3f
 )

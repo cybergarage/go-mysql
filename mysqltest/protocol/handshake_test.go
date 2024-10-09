@@ -96,7 +96,7 @@ func TestHandshakePacket(t *testing.T) {
 		serverVer      string
 		conID          uint32
 		capFlags       protocol.CapabilityFlag
-		charSet        protocol.CharacterSet
+		charSet        protocol.CharSet
 		statusFlags    protocol.StatusFlag
 		authPluginName string
 	}
@@ -114,7 +114,7 @@ func TestHandshakePacket(t *testing.T) {
 				serverVer:      "5.7.9-vitess-12.0.6",
 				conID:          1,
 				capFlags:       protocol.CapabilityFlag(0),
-				charSet:        protocol.CharacterSet(protocol.CharacterSetUTF8),
+				charSet:        protocol.CharSet(protocol.CharSetUTF8),
 				statusFlags:    protocol.StatusFlag(0),
 				authPluginName: "mysql_native_password",
 			},

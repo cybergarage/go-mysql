@@ -58,7 +58,7 @@ func WithSSLRequestCapabilityFlags(v CapabilityFlag) SSLRequestOption {
 }
 
 // WithSSLRequestCharacterSet sets the character set.
-func WithSSLRequestCharacterSet(v CharacterSet) SSLRequestOption {
+func WithSSLRequestCharacterSet(v CharSet) SSLRequestOption {
 	return func(h *SSLRequest) error {
 		h.characterSet = uint8(v)
 		return nil
@@ -123,8 +123,8 @@ func (pkt *SSLRequest) CapabilityFlags() CapabilityFlag {
 }
 
 // CharacterSet returns the character set.
-func (pkt *SSLRequest) CharacterSet() CharacterSet {
-	return CharacterSet(pkt.characterSet)
+func (pkt *SSLRequest) CharacterSet() CharSet {
+	return CharSet(pkt.characterSet)
 }
 
 // Bytes returns the packet bytes.
