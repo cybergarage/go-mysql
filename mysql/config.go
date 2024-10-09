@@ -14,39 +14,18 @@
 
 package mysql
 
-const (
-	defaultAddr = ""
-	defaultPort = 3306
-)
-
-// Config stores server configuration parammeters.
-type Config struct {
-	Address  string
-	Port     int
-	Database string
-}
-
-// NewDefaultConfig returns a default configuration instance.
-func NewDefaultConfig() *Config {
-	config := &Config{
-		Address:  defaultAddr,
-		Port:     defaultPort,
-		Database: "",
-	}
-	return config
-}
-
-// SetAddress sets a listen address.
-func (config *Config) SetAddress(host string) {
-	config.Address = host
-}
-
-// SetPort sets a listen port.
-func (config *Config) SetPort(port int) {
-	config.Port = port
-}
-
-// SetDatabase sets a host database.
-func (config *Config) SetDatabase(db string) {
-	config.Database = db
+// Config stores server configuration parameters.
+type Config interface {
+	// SetAddress sets a listen address.
+	SetAddress(host string)
+	// SetPort sets a listen port.
+	SetPort(port int)
+	// SetDatabase sets a host database.
+	SetDatabase(db string)
+	// Address returns a listen address.
+	Address() string
+	// Port returns a listen port.
+	Port() int
+	// Database returns a host database.
+	Database() string
 }
