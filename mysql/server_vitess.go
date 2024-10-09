@@ -29,8 +29,18 @@ type VitessListener struct {
 	*vitessmy.Listener
 }
 
+// A VitessAuthHandler is an interface used for the user authentication.
+type VitessAuthHandler interface {
+	vitessmy.AuthServer
+}
+
+// A VitessQueryHandler is an interface used for the request queries.
+type VitessQueryHandler interface {
+	vitessmy.Handler
+}
+
 // NewVitessListener creates a new listener.
-func NewVitessListener(protocol, address string, authServer AuthHandler, handler QueryHandler, connReadTimeout time.Duration, connWriteTimeout time.Duration, proxyProtocol bool) (*VitessListener, error) {
+func NewVitessListener(protocol, address string, authServer VitessAuthHandler, handler VitessQueryHandler, connReadTimeout time.Duration, connWriteTimeout time.Duration, proxyProtocol bool) (*VitessListener, error) {
 	l, err := vitessmy.NewListener(protocol, address, authServer, handler, connReadTimeout, connWriteTimeout, proxyProtocol)
 	if err != nil {
 		return nil, err
@@ -43,8 +53,8 @@ type VitessServer struct {
 	tracer.Tracer
 	Config
 	ConnManager
-	AuthHandler
-	QueryHandler
+	VitessAuthHandler
+	VitessQueryHandler
 	queryExecutor QueryExecutor
 	listener      *VitessListener
 }
@@ -52,13 +62,13 @@ type VitessServer struct {
 // NewServer returns a new server instance.
 func NewServer() *VitessServer {
 	server := &VitessServer{
-		Tracer:        tracer.NullTracer,
-		Config:        NewDefaultConfig(),
-		ConnManager:   NewConnManager(),
-		AuthHandler:   NewDefaultAuthHandler(),
-		QueryHandler:  nil,
-		queryExecutor: nil,
-		listener:      nil,
+		Tracer:             tracer.NullTracer,
+		Config:             NewDefaultConfig(),
+		ConnManager:        NewConnManager(),
+		VitessAuthHandler:  NewDefaultAuthHandler(),
+		VitessQueryHandler: nil,
+		queryExecutor:      nil,
+		listener:           nil,
 	}
 	return server
 }
@@ -69,8 +79,8 @@ func (server *VitessServer) SetTracer(t tracer.Tracer) {
 }
 
 // SetAuthHandler sets a user authentication handler.
-func (server *VitessServer) SetAuthHandler(h AuthHandler) {
-	server.AuthHandler = h
+func (server *VitessServer) SetAuthHandler(h VitessAuthHandler) {
+	server.VitessAuthHandler = h
 }
 
 // SetQueryExecutor sets a query executor.

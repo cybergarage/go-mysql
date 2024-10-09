@@ -19,7 +19,7 @@ import (
 )
 
 // NewDefaultAuthHandler returns a non authentication handler.
-func NewDefaultAuthHandler() AuthHandler {
+func NewDefaultAuthHandler() VitessAuthHandler {
 	h := vitessmy.NewAuthServerNone()
 	return h
 }
