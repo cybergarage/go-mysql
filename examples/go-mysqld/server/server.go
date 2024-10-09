@@ -28,15 +28,15 @@ const (
 // Server represents a test server.
 // This Server struct behave as ${hoge}CommandExecutor.
 type Server struct {
-	*mysql.Server
+	*mysql.VitessServer
 	Store
 }
 
 // NewServerWithStore returns a test server instance with the specified store.
 func NewServerWithStore(store Store) *Server {
 	server := &Server{
-		Server: mysql.NewServer(),
-		Store:  store,
+		VitessServer: mysql.NewServer(),
+		Store:        store,
 	}
 	server.SetQueryExecutor(store)
 	return server
