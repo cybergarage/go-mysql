@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mysql
+package vitess
 
 import (
 	vitessmy "vitess.io/vitess/go/mysql"
 )
 
 // NewDefaultAuthHandler returns a non authentication handler.
-func NewDefaultAuthHandler() VitessAuthHandler {
+func NewDefaultAuthHandler() AuthHandler {
 	h := vitessmy.NewAuthServerNone()
 	return h
 }

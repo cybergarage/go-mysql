@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mysql
+package vitess
 
 import (
 	"net"
@@ -20,78 +20,90 @@ import (
 	"time"
 
 	"github.com/cybergarage/go-logger/log"
+	"github.com/cybergarage/go-mysql/mysql/plugins"
 	"github.com/cybergarage/go-tracing/tracer"
 	vitessmy "vitess.io/vitess/go/mysql"
 )
 
-// VitessListener is the MySQL server protocol listener.
-type VitessListener struct {
+// Listener is the MySQL server protocol listener.
+type Listener struct {
 	*vitessmy.Listener
 }
 
-// A VitessAuthHandler is an interface used for the user authentication.
-type VitessAuthHandler interface {
+// A AuthHandler is an interface used for the user authentication.
+type AuthHandler interface {
 	vitessmy.AuthServer
 }
 
-// A VitessQueryHandler is an interface used for the request queries.
-type VitessQueryHandler interface {
+// A QueryHandler is an interface used for the request queries.
+type QueryHandler interface {
 	vitessmy.Handler
 }
 
-// NewVitessListener creates a new listener.
-func NewVitessListener(protocol, address string, authServer VitessAuthHandler, handler VitessQueryHandler, connReadTimeout time.Duration, connWriteTimeout time.Duration, proxyProtocol bool) (*VitessListener, error) {
+// NewListener creates a new listener.
+func NewListener(protocol, address string, authServer AuthHandler, handler QueryHandler, connReadTimeout time.Duration, connWriteTimeout time.Duration, proxyProtocol bool) (*Listener, error) {
 	l, err := vitessmy.NewListener(protocol, address, authServer, handler, connReadTimeout, connWriteTimeout, proxyProtocol)
 	if err != nil {
 		return nil, err
 	}
-	return &VitessListener{Listener: l}, nil
+	return &Listener{Listener: l}, nil
 }
 
-// VitessServer represents a MySQL-compatible server.
-type VitessServer struct {
+// Server represents a MySQL-compatible server.
+type Server struct {
 	tracer.Tracer
-	Config
-	ConnManager
-	VitessAuthHandler
-	VitessQueryHandler
+	plugins.Config
+	plugins.ConnManager
+	AuthHandler
+	QueryHandler
 	queryExecutor QueryExecutor
-	listener      *VitessListener
+	listener      *Listener
+	version       string
 }
 
 // NewServer returns a new server instance.
-func NewVitessServer() *VitessServer {
-	server := &VitessServer{
-		Tracer:             tracer.NullTracer,
-		Config:             NewDefaultConfig(),
-		ConnManager:        NewConnManager(),
-		VitessAuthHandler:  NewDefaultAuthHandler(),
-		VitessQueryHandler: nil,
-		queryExecutor:      nil,
-		listener:           nil,
+func NewServer() *Server {
+	server := &Server{
+		Tracer:        tracer.NullTracer,
+		Config:        plugins.NewDefaultConfig(),
+		ConnManager:   plugins.NewConnManager(),
+		AuthHandler:   NewDefaultAuthHandler(),
+		QueryHandler:  nil,
+		queryExecutor: nil,
+		listener:      nil,
 	}
 	return server
 }
 
+// SetVersion sets a version.
+func (server *Server) SetVersion(version string) {
+	server.version = version
+}
+
+// Version returns a version.
+func (server *Server) Version() string {
+	return server.version
+}
+
 // SetTracer sets a tracing tracer.
-func (server *VitessServer) SetTracer(t tracer.Tracer) {
+func (server *Server) SetTracer(t tracer.Tracer) {
 	server.Tracer = t
 }
 
 // SetAuthHandler sets a user authentication handler.
-func (server *VitessServer) SetAuthHandler(h VitessAuthHandler) {
-	server.VitessAuthHandler = h
+func (server *Server) SetAuthHandler(h AuthHandler) {
+	server.AuthHandler = h
 }
 
 // SetQueryExecutor sets a query executor.
-func (server *VitessServer) SetQueryExecutor(e QueryExecutor) {
+func (server *Server) SetQueryExecutor(e QueryExecutor) {
 	server.queryExecutor = e
 }
 
 // Start starts the server.
-func (server *VitessServer) Start() error {
+func (server *Server) Start() error {
 	hostPort := net.JoinHostPort(server.Address(), strconv.Itoa(server.Port()))
-	l, err := NewVitessListener("tcp", hostPort, server, server, 0, 0, false)
+	l, err := NewListener("tcp", hostPort, server, server, 0, 0, false)
 	if err != nil {
 		return err
 	}
@@ -99,26 +111,26 @@ func (server *VitessServer) Start() error {
 
 	go server.listener.Accept()
 
-	log.Infof("%s/%s (%s) started", PackageName, Version, hostPort)
+	log.Infof("%s/%s (%s) started", server.PackageName(), server.Version(), hostPort)
 
 	return nil
 }
 
 // Stop stops the server.
-func (server *VitessServer) Stop() error {
+func (server *Server) Stop() error {
 	if server.listener != nil {
 		server.listener.Close()
 		server.listener = nil
 	}
 
 	hostPort := net.JoinHostPort(server.Address(), strconv.Itoa(server.Port()))
-	log.Infof("%s/%s (%s) terminated", PackageName, Version, hostPort)
+	log.Infof("%s/%s (%s) terminated", server.PackageName(), server.Version(), hostPort)
 
 	return nil
 }
 
 // Restart restarts the server.
-func (server *VitessServer) Restart() error {
+func (server *Server) Restart() error {
 	err := server.Stop()
 	if err != nil {
 		return err

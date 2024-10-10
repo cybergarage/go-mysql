@@ -18,7 +18,7 @@ import (
 	"time"
 
 	"github.com/cybergarage/go-mysql/examples/go-mysqld/server/storage"
-	"github.com/cybergarage/go-mysql/mysql"
+	"github.com/cybergarage/go-mysql/mysql/plugins/vitess"
 )
 
 const (
@@ -28,14 +28,14 @@ const (
 // Server represents a test server.
 // This Server struct behave as ${hoge}CommandExecutor.
 type Server struct {
-	mysql.Server
+	*vitess.Server
 	Store
 }
 
 // NewServerWithStore returns a test server instance with the specified store.
 func NewServerWithStore(store Store) *Server {
 	server := &Server{
-		Server: mysql.NewServer(),
+		Server: vitess.NewServer(),
 		Store:  store,
 	}
 	server.SetQueryExecutor(store)

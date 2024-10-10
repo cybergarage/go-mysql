@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mysql
+package vitess
 
 import (
-	"github.com/cybergarage/go-mysql/mysql/plugins"
+	vitessmy "vitess.io/vitess/go/mysql"
 )
 
-// Config stores server configuration parameters.
-type Config = plugins.Config
+// PrepareData is a buffer used for store prepare statement meta data.
+type PrepareData = vitessmy.PrepareData

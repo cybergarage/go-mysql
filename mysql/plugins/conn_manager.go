@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mysql
+package plugins
 
 import (
 	"sync"
@@ -20,27 +20,27 @@ import (
 
 // ConnManager represents a connection map.
 type ConnManager struct {
-	m     map[uint32]*Conn
+	m     map[uint32]Conn
 	mutex *sync.RWMutex
 }
 
 // NewConnManager returns a connection map.
 func NewConnManager() ConnManager {
 	return ConnManager{
-		m:     map[uint32]*Conn{},
+		m:     map[uint32]Conn{},
 		mutex: &sync.RWMutex{},
 	}
 }
 
 // AddConn adds the specified connection.
-func (cm ConnManager) AddConn(c *Conn) {
+func (cm ConnManager) AddConn(c Conn) {
 	cm.mutex.Lock()
 	defer cm.mutex.Unlock()
-	cm.m[c.ConnectionID] = c
+	cm.m[c.ID()] = c
 }
 
 // GetConnByUID returns a connection and true when the specified connection exists by the connection ID, otherwise nil and false.
-func (cm ConnManager) GetConnByUID(cid uint32) (*Conn, bool) {
+func (cm ConnManager) GetConnByUID(cid uint32) (Conn, bool) {
 	cm.mutex.RLock()
 	defer cm.mutex.RUnlock()
 	c, ok := cm.m[cid]
