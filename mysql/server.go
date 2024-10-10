@@ -15,6 +15,7 @@
 package mysql
 
 import (
+	vitesspg "github.com/cybergarage/go-mysql/mysql/plugins/vitess"
 	"github.com/cybergarage/go-tracing/tracer"
 )
 
@@ -22,7 +23,6 @@ import (
 type Server interface {
 	Config
 	tracer.Tracer
-	SetQueryExecutor(e QueryExecutor)
 	Start() error
 	Stop() error
 	Restart() error
@@ -30,5 +30,8 @@ type Server interface {
 
 // NewServer creates a new server instance.
 func NewServer() Server {
-	return NewVitessServer()
+	server := vitesspg.NewServer()
+	server.SetPackageName(PackageName)
+	server.SetVersion(Version)
+	return server
 }

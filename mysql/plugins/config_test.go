@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mysql
+package plugins
 
 import (
 	"testing"
 )
 
-func TestNewConnWithConn(t *testing.T) {
-	NewConnWith(nil, nil)
+func TestDefaultConfig(t *testing.T) {
+	NewDefaultConfig()
 }

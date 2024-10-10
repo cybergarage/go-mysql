@@ -12,14 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mysql
+package plugins
 
-import (
-	vitessmy "vitess.io/vitess/go/mysql"
-)
-
-// NewDefaultAuthHandler returns a non authentication handler.
-func NewDefaultAuthHandler() VitessAuthHandler {
-	h := vitessmy.NewAuthServerNone()
-	return h
+// Config stores server configuration parameters.
+type Config interface {
+	// SetAddress sets a listen address.
+	SetAddress(host string)
+	// SetPort sets a listen port.
+	SetPort(port int)
+	// SetDatabase sets a host database.
+	SetDatabase(db string)
+	// Address returns a listen address.
+	Address() string
+	// Port returns a listen port.
+	Port() int
+	// Database returns a host database.
+	Database() string
 }

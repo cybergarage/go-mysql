@@ -12,11 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mysql
+package plugins
 
 import (
-	"github.com/cybergarage/go-mysql/mysql/plugins"
+	"time"
+
+	"github.com/cybergarage/go-tracing/tracer"
+	"github.com/google/uuid"
 )
 
 // Conn represents a connection.
-type Conn = plugins.Conn
+type Conn interface {
+	tracer.Context
+	// Close closes the connection.
+	Close() error
+	// SetDatabase sets a database name.
+	SetDatabase(db string)
+	// Database returns a database name.
+	Database() string
+	// SetTimestamp sets a timestamp.
+	Timestamp() time.Time
+	// UUID returns a UUID.
+	UUID() uuid.UUID
+	// ID returns a connection ID.
+	ID() uint32
+	// SetSpanContext sets a span context.
+	SetSpanContext(ctx tracer.Context)
+	// SpanContext returns a span context.
+	SpanContext() tracer.Context
+}

@@ -18,65 +18,65 @@ import (
 	"fmt"
 
 	"github.com/cybergarage/go-logger/log"
-	"github.com/cybergarage/go-mysql/mysql"
+	"github.com/cybergarage/go-mysql/mysql/plugins/vitess"
 	"github.com/cybergarage/go-mysql/mysql/query"
 )
 
 type MemStore struct {
-	*mysql.BaseExecutor
+	*vitess.BaseExecutor
 	Databases
 }
 
 // NewMemStore returns an in-memory storeinstance.
 func NewMemStore() *MemStore {
 	store := &MemStore{
-		BaseExecutor: mysql.NewBaseExecutor(),
+		BaseExecutor: vitess.NewBaseExecutor(),
 		Databases:    NewDatabases(),
 	}
 	return store
 }
 
 // Begin should handle a BEGIN statement.
-func (store *MemStore) Begin(conn *mysql.Conn, stmt *query.Begin) (*mysql.Result, error) {
+func (store *MemStore) Begin(conn vitess.Conn, stmt *query.Begin) (*vitess.Result, error) {
 	log.Debugf("%v", stmt)
-	return mysql.NewResult(), nil
+	return vitess.NewResult(), nil
 }
 
 // Commit should handle a COMMIT statement.
-func (store *MemStore) Commit(conn *mysql.Conn, stmt *query.Commit) (*mysql.Result, error) {
+func (store *MemStore) Commit(conn vitess.Conn, stmt *query.Commit) (*vitess.Result, error) {
 	log.Debugf("%v", stmt)
-	return mysql.NewResult(), nil
+	return vitess.NewResult(), nil
 }
 
 // Rollback should handle a ROLLBACK statement.
-func (store *MemStore) Rollback(conn *mysql.Conn, stmt *query.Rollback) (*mysql.Result, error) {
+func (store *MemStore) Rollback(conn vitess.Conn, stmt *query.Rollback) (*vitess.Result, error) {
 	log.Debugf("%v", stmt)
-	return mysql.NewResult(), nil
+	return vitess.NewResult(), nil
 }
 
 // CreateDatabase should handle a CREATE database statement.
-func (store *MemStore) CreateDatabase(conn *mysql.Conn, stmt *query.Database) (*mysql.Result, error) {
+func (store *MemStore) CreateDatabase(conn vitess.Conn, stmt *query.Database) (*vitess.Result, error) {
 	log.Debugf("%v", stmt)
 	dbName := stmt.Name()
 	_, ok := store.GetDatabase(dbName)
 	if ok {
-		return mysql.NewResult(), fmt.Errorf(errorDatabaseFound, dbName)
+		return vitess.NewResult(), fmt.Errorf(errorDatabaseFound, dbName)
 	}
 	err := store.AddDatabase(NewDatabaseWithName(dbName))
 	if err != nil {
-		return mysql.NewResult(), err
+		return vitess.NewResult(), err
 	}
-	return mysql.NewResult(), nil
+	return vitess.NewResult(), nil
 }
 
 // AlterDatabase should handle a ALTER database statement.
-func (store *MemStore) AlterDatabase(conn *mysql.Conn, stmt *query.Database) (*mysql.Result, error) {
+func (store *MemStore) AlterDatabase(conn vitess.Conn, stmt *query.Database) (*vitess.Result, error) {
 	log.Debugf("%v", stmt)
-	return mysql.NewResult(), nil
+	return vitess.NewResult(), nil
 }
 
 // DropDatabase should handle a DROP database statement.
-func (store *MemStore) DropDatabase(conn *mysql.Conn, stmt *query.Database) (*mysql.Result, error) {
+func (store *MemStore) DropDatabase(conn vitess.Conn, stmt *query.Database) (*vitess.Result, error) {
 	dbName := conn.Database()
 	db, ok := store.GetDatabase(dbName)
 	if !ok {
@@ -87,11 +87,11 @@ func (store *MemStore) DropDatabase(conn *mysql.Conn, stmt *query.Database) (*my
 		return nil, fmt.Errorf("%s could not deleted", db.Name())
 	}
 
-	return mysql.NewResult(), nil
+	return vitess.NewResult(), nil
 }
 
 // CreateTable should handle a CREATE table statement.
-func (store *MemStore) CreateTable(conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
+func (store *MemStore) CreateTable(conn vitess.Conn, stmt *query.Schema) (*vitess.Result, error) {
 	dbName := conn.Database()
 	db, ok := store.GetDatabase(dbName)
 	if !ok {
@@ -104,20 +104,20 @@ func (store *MemStore) CreateTable(conn *mysql.Conn, stmt *query.Schema) (*mysql
 		db.AddTable(table)
 	} else {
 		if !stmt.GetIfExists() {
-			return mysql.NewResult(), fmt.Errorf(errorTableFound, dbName, tableName)
+			return vitess.NewResult(), fmt.Errorf(errorTableFound, dbName, tableName)
 		}
 	}
-	return mysql.NewResult(), nil
+	return vitess.NewResult(), nil
 }
 
 // AlterTable should handle a ALTER table statement.
-func (store *MemStore) AlterTable(conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
+func (store *MemStore) AlterTable(conn vitess.Conn, stmt *query.Schema) (*vitess.Result, error) {
 	log.Debugf("%v", stmt)
-	return mysql.NewResult(), nil
+	return vitess.NewResult(), nil
 }
 
 // DropTable should handle a DROP table statement.
-func (store *MemStore) DropTable(conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
+func (store *MemStore) DropTable(conn vitess.Conn, stmt *query.Schema) (*vitess.Result, error) {
 	dbName := conn.Database()
 	db, ok := store.GetDatabase(dbName)
 	if !ok {
@@ -126,36 +126,36 @@ func (store *MemStore) DropTable(conn *mysql.Conn, stmt *query.Schema) (*mysql.R
 	tableName := stmt.TableName()
 	table, ok := db.GetTable(tableName)
 	if !ok {
-		return mysql.NewResult(), nil
+		return vitess.NewResult(), nil
 	}
 
 	if !db.DropTable(table) {
 		return nil, fmt.Errorf("%s could not deleted", table.TableName())
 	}
 
-	return mysql.NewResult(), nil
+	return vitess.NewResult(), nil
 }
 
 // RenameTable should handle a RENAME table statement.
-func (store *MemStore) RenameTable(conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
+func (store *MemStore) RenameTable(conn vitess.Conn, stmt *query.Schema) (*vitess.Result, error) {
 	log.Debugf("%v", stmt)
-	return mysql.NewResult(), nil
+	return vitess.NewResult(), nil
 }
 
 // TruncateTable should handle a TRUNCATE table statement.
-func (store *MemStore) TruncateTable(conn *mysql.Conn, stmt *query.Schema) (*mysql.Result, error) {
+func (store *MemStore) TruncateTable(conn vitess.Conn, stmt *query.Schema) (*vitess.Result, error) {
 	log.Debugf("%v", stmt)
-	return mysql.NewResult(), nil
+	return vitess.NewResult(), nil
 }
 
 // Insert should handle a INSERT statement.
-func (store *MemStore) Insert(conn *mysql.Conn, stmt *query.Insert) (*mysql.Result, error) {
+func (store *MemStore) Insert(conn vitess.Conn, stmt *query.Insert) (*vitess.Result, error) {
 	log.Debugf("%v", stmt)
 	dbName := conn.Database()
 	tableName := stmt.TableName()
 	table, ok := store.GetTableWithDatabase(dbName, tableName)
 	if !ok {
-		return mysql.NewResult(), fmt.Errorf(errorTableNotFound, dbName, tableName)
+		return vitess.NewResult(), fmt.Errorf(errorTableNotFound, dbName, tableName)
 	}
 
 	row, err := query.NewRowWithInsert(stmt)
@@ -169,11 +169,11 @@ func (store *MemStore) Insert(conn *mysql.Conn, stmt *query.Insert) (*mysql.Resu
 
 	table.Dump()
 
-	return mysql.NewResultWithRowsAffected(1), nil
+	return vitess.NewResultWithRowsAffected(1), nil
 }
 
 // Update should handle a UPDATE statement.
-func (store *MemStore) Update(conn *mysql.Conn, stmt *query.Update) (*mysql.Result, error) {
+func (store *MemStore) Update(conn vitess.Conn, stmt *query.Update) (*vitess.Result, error) {
 	log.Debugf("%v", stmt)
 
 	dbName := conn.Database()
@@ -207,11 +207,11 @@ func (store *MemStore) Update(conn *mysql.Conn, stmt *query.Update) (*mysql.Resu
 		nEffectedRows += uint64(nUpdatedRows)
 	}
 
-	return mysql.NewResultWithRowsAffected(nEffectedRows), nil
+	return vitess.NewResultWithRowsAffected(nEffectedRows), nil
 }
 
 // Delete should handle a DELETE statement.
-func (store *MemStore) Delete(conn *mysql.Conn, stmt *query.Delete) (*mysql.Result, error) {
+func (store *MemStore) Delete(conn vitess.Conn, stmt *query.Delete) (*vitess.Result, error) {
 	dbName := conn.Database()
 	cond := stmt.Where
 
@@ -238,11 +238,11 @@ func (store *MemStore) Delete(conn *mysql.Conn, stmt *query.Delete) (*mysql.Resu
 		nEffectedRows += uint64(nDeletedRows)
 	}
 
-	return mysql.NewResultWithRowsAffected(nEffectedRows), nil
+	return vitess.NewResultWithRowsAffected(nEffectedRows), nil
 }
 
 // Select should handle a SELECT statement.
-func (store *MemStore) Select(conn *mysql.Conn, stmt *query.Select) (*mysql.Result, error) {
+func (store *MemStore) Select(conn vitess.Conn, stmt *query.Select) (*vitess.Result, error) {
 	log.Debugf("%v", stmt)
 
 	dbName := conn.Database()
@@ -263,7 +263,7 @@ func (store *MemStore) Select(conn *mysql.Conn, stmt *query.Select) (*mysql.Resu
 	if !ok {
 		// TODO: Support dummy dual table for MySQL connector 5.1.49
 		if tableName == "dual" {
-			return mysql.NewResult(), nil
+			return vitess.NewResult(), nil
 		}
 		return nil, fmt.Errorf(errorTableNotFound, dbName, tableName)
 	}
@@ -271,15 +271,15 @@ func (store *MemStore) Select(conn *mysql.Conn, stmt *query.Select) (*mysql.Resu
 	cond := stmt.Where
 	matchedRows := table.FindMatchedRows(cond)
 
-	return mysql.NewResultWithRows(database.Database, table.Schema, matchedRows)
+	return vitess.NewResultWithRows(database.Database, table.Schema, matchedRows)
 }
 
 // ShowDatabases should handle a SHOW DATABASES statement.
-func (store *MemStore) ShowDatabases(conn *mysql.Conn) (*mysql.Result, error) {
-	return mysql.NewResult(), nil
+func (store *MemStore) ShowDatabases(conn vitess.Conn) (*vitess.Result, error) {
+	return vitess.NewResult(), nil
 }
 
 // ShowTables should handle a SHOW TABLES statement.
-func (store *MemStore) ShowTables(conn *mysql.Conn, database string) (*mysql.Result, error) {
-	return mysql.NewResult(), nil
+func (store *MemStore) ShowTables(conn vitess.Conn, database string) (*vitess.Result, error) {
+	return vitess.NewResult(), nil
 }

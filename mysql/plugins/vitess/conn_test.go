@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mysql
+package vitess
 
 import (
-	vitessmy "vitess.io/vitess/go/mysql"
+	"testing"
 )
 
-// PrepareData is a buffer used for store prepare statement meta data.
-type PrepareData = vitessmy.PrepareData
+func TestNewConnWithConn(t *testing.T) {
+	NewConnWith(nil, nil)
+}
