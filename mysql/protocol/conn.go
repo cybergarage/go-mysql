@@ -26,6 +26,9 @@ import (
 // ConnOption represents a connection option.
 type ConnOption = func(*Conn)
 
+// ConnID represents a connection ID.
+type ConnID uint64
+
 // Conn represents a connection of MySQL binary.
 type Conn struct {
 	net.Conn
@@ -34,6 +37,7 @@ type Conn struct {
 	db        string
 	ts        time.Time
 	uuid      uuid.UUID
+	id        ConnID
 	tracer.Context
 	tlsState     *tls.ConnectionState
 	capabilities CapabilityFlag
@@ -48,6 +52,7 @@ func NewConnWith(netConn net.Conn, opts ...ConnOption) *Conn {
 		db:           "",
 		ts:           time.Now(),
 		uuid:         uuid.New(),
+		id:           0,
 		Context:      nil,
 		tlsState:     nil,
 		capabilities: 0,
@@ -74,6 +79,13 @@ func WithConnTracer(t tracer.Context) func(*Conn) {
 func WithTLSConnectionState(s *tls.ConnectionState) func(*Conn) {
 	return func(conn *Conn) {
 		conn.tlsState = s
+	}
+}
+
+// WithConnID sets a connection ID.
+func WithConnID(id ConnID) func(*Conn) {
+	return func(conn *Conn) {
+		conn.id = id
 	}
 }
 
@@ -121,6 +133,11 @@ func (conn *Conn) Timestamp() time.Time {
 // UUID returns the UUID of the connection.
 func (conn *Conn) UUID() uuid.UUID {
 	return conn.uuid
+}
+
+// UUID returns the connection ID of the connection.
+func (conn *Conn) ID() ConnID {
+	return conn.id
 }
 
 // SetSpanContext sets the tracer span context of the connection.
