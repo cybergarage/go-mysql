@@ -35,10 +35,11 @@ type Server struct {
 // NewServer returns a new server instance.
 func NewServer() *Server {
 	server := &Server{
-		Config:      NewDefaultConfig(),
-		ConnManager: NewConnManager(),
-		Tracer:      tracer.NullTracer,
-		tcpListener: nil,
+		Config:         NewDefaultConfig(),
+		ConnManager:    NewConnManager(),
+		CommandHandler: nil,
+		Tracer:         tracer.NullTracer,
+		tcpListener:    nil,
 	}
 	return server
 }

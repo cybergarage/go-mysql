@@ -35,6 +35,20 @@ type ColumnDef struct {
 	decimals  uint8
 }
 
+func newColumnDef() *ColumnDef {
+	return &ColumnDef{
+		packet:    nil,
+		catalog:   "",
+		schema:    "",
+		table:     "",
+		orgName:   "",
+		charSet:   0,
+		colLength: 0,
+		colType:   0,
+		flags:     0,
+		decimals:  0,
+	}
+}
 func NewColumnDefFromReader(r io.Reader) (*ColumnDef, error) {
 	var err error
 
@@ -43,9 +57,7 @@ func NewColumnDefFromReader(r io.Reader) (*ColumnDef, error) {
 		return nil, err
 	}
 
-	colDef := &ColumnDef{
-		packet: nil,
-	}
+	colDef := newColumnDef()
 
 	colDef.catalog, err = pkt.ReadLengthEncodedString()
 	if err != nil {
