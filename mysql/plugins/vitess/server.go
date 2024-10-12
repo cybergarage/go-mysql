@@ -71,6 +71,7 @@ func NewServer() *Server {
 		QueryHandler:  nil,
 		queryExecutor: nil,
 		listener:      nil,
+		version:       "x.x.x",
 	}
 	return server
 }
