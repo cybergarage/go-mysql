@@ -17,6 +17,7 @@ package protocol
 // MySQL: Text Resultset
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset.html
 
-// ResultSet represents a MySQL text resultset packet.
-type ResultSet struct {
+// Response represents a response.
+type Response struct {
+	Packet
 }
