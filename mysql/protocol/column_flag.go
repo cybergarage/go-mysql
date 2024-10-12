@@ -20,7 +20,7 @@ package protocol
 // ColumnDefFlag represents a MySQL column definition flag.
 type ColumnDefFlag uint16
 
-// ColumnDefFlag constants
+// ColumnDefFlag constants.
 const (
 	// ColumnDefNotNULL represents the NOT_NULL column definition flag.
 	ColumnDefNotNULL ColumnDefFlag = 1
