@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package plugins
+package net
 
 import (
 	"sync"
@@ -25,22 +25,22 @@ type ConnManager struct {
 }
 
 // NewConnManager returns a connection map.
-func NewConnManager() ConnManager {
-	return ConnManager{
+func NewConnManager() *ConnManager {
+	return &ConnManager{
 		m:     map[uint32]Conn{},
 		mutex: &sync.RWMutex{},
 	}
 }
 
 // AddConn adds the specified connection.
-func (cm ConnManager) AddConn(c Conn) {
+func (cm *ConnManager) AddConn(c Conn) {
 	cm.mutex.Lock()
 	defer cm.mutex.Unlock()
 	cm.m[c.ID()] = c
 }
 
 // GetConnByUID returns a connection and true when the specified connection exists by the connection ID, otherwise nil and false.
-func (cm ConnManager) GetConnByUID(cid uint32) (Conn, bool) {
+func (cm *ConnManager) GetConnByUID(cid uint32) (Conn, bool) {
 	cm.mutex.RLock()
 	defer cm.mutex.RUnlock()
 	c, ok := cm.m[cid]
@@ -48,14 +48,14 @@ func (cm ConnManager) GetConnByUID(cid uint32) (Conn, bool) {
 }
 
 // DeleteConnByUID deletes the specified connection by the connection ID.
-func (cm ConnManager) DeleteConnByUID(cid uint32) {
+func (cm *ConnManager) DeleteConnByUID(cid uint32) {
 	cm.mutex.Lock()
 	defer cm.mutex.Unlock()
 	delete(cm.m, cid)
 }
 
 // Length returns the included connection count.
-func (cm ConnManager) Length() int {
+func (cm *ConnManager) Length() int {
 	cm.mutex.RLock()
 	defer cm.mutex.RUnlock()
 	return len(cm.m)

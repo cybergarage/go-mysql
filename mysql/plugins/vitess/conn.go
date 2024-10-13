@@ -18,14 +18,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cybergarage/go-mysql/mysql/plugins"
+	mysqlnet "github.com/cybergarage/go-mysql/mysql/net"
 	"github.com/cybergarage/go-tracing/tracer"
 	"github.com/google/uuid"
 	vitessmy "vitess.io/vitess/go/mysql"
 )
 
 // Conn represents a connection of MySQL binary protocol.
-type Conn = plugins.Conn
+type Conn = mysqlnet.Conn
 
 // conn represents a connection of MySQL binary protocol.
 type conn struct {
