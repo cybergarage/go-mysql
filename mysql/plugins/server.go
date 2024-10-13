@@ -14,25 +14,7 @@
 
 package plugins
 
-// Server represents a base executor server.
-type Server struct {
-	executor Executor
-}
-
-// NewServer returns a base executor server instance.
-func NewServer() *Server {
-	s := &Server{
-		executor: nil,
-	}
-	return s
-}
-
-// SetExecutor sets an executor to the server.
-func (s *Server) SetExecutor(executor Executor) {
-	s.executor = executor
-}
-
-// Executor returns the executor of the server.
-func (s *Server) Executor() Executor {
-	return s.executor
+// Server represents a server interface.
+type Server interface {
+	SetExecutor(executor Executor)
 }

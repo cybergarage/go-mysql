@@ -21,15 +21,25 @@ import (
 
 // Server represents a base executor server.
 type Server struct {
-	*plugins.Server
+	executor Executor
 }
 
 // NewServer returns a base executor server instance.
 func NewServer() *Server {
 	s := &Server{
-		Server: plugins.NewServer(),
+		executor: nil,
 	}
 	return s
+}
+
+// SetExecutor sets an executor to the server.
+func (s *Server) SetExecutor(executor Executor) {
+	s.executor = executor
+}
+
+// Executor returns the executor of the server.
+func (s *Server) Executor() Executor {
+	return s.executor
 }
 
 // CreateDatabase handles a CREATE DATABASE query.

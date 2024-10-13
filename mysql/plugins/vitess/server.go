@@ -52,7 +52,7 @@ func NewListener(protocol, address string, authServer AuthHandler, handler Query
 
 // Server represents a MySQL-compatible server.
 type Server struct {
-	*plugins.Server
+	plugins.Executor
 	tracer.Tracer
 	plugins.Config
 	*mysqlnet.ConnManager
@@ -66,7 +66,6 @@ type Server struct {
 // NewServer returns a new server instance.
 func NewServer() *Server {
 	server := &Server{
-		Server:        plugins.NewServer(),
 		Tracer:        tracer.NullTracer,
 		Config:        plugins.NewDefaultConfig(),
 		ConnManager:   mysqlnet.NewConnManager(),
@@ -75,8 +74,14 @@ func NewServer() *Server {
 		queryExecutor: nil,
 		listener:      nil,
 		version:       "x.x.x",
+		Executor:      nil,
 	}
 	return server
+}
+
+// SetExecutor sets an executor to the server.
+func (server *Server) SetExecutor(executor plugins.Executor) {
+	server.Executor = executor
 }
 
 // SetVersion sets a version.
