@@ -31,7 +31,7 @@ type Server interface {
 // NewServer creates a new server instance.
 func NewServer() Server {
 	server := vitesspg.NewServer()
-	server.SetPackageName(PackageName)
-	server.SetVersion(Version)
+	server.SetProductName(PackageName)
+	server.SetProductVersion(Version)
 	return server
 }

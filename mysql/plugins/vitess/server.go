@@ -58,23 +58,25 @@ type Server struct {
 	*mysqlnet.ConnManager
 	AuthHandler
 	QueryHandler
-	queryExecutor QueryExecutor
-	listener      *Listener
-	version       string
+	queryExecutor  QueryExecutor
+	listener       *Listener
+	productName    string
+	productVersion string
 }
 
 // NewServer returns a new server instance.
 func NewServer() *Server {
 	server := &Server{
-		Tracer:        tracer.NullTracer,
-		Config:        plugins.NewDefaultConfig(),
-		ConnManager:   mysqlnet.NewConnManager(),
-		AuthHandler:   NewDefaultAuthHandler(),
-		QueryHandler:  nil,
-		queryExecutor: nil,
-		listener:      nil,
-		version:       "x.x.x",
-		Executor:      nil,
+		Tracer:         tracer.NullTracer,
+		Config:         plugins.NewDefaultConfig(),
+		ConnManager:    mysqlnet.NewConnManager(),
+		AuthHandler:    NewDefaultAuthHandler(),
+		QueryHandler:   nil,
+		queryExecutor:  nil,
+		listener:       nil,
+		productName:    "vitess",
+		productVersion: "x.x.x",
+		Executor:       nil,
 	}
 	return server
 }
@@ -84,14 +86,14 @@ func (server *Server) SetExecutor(executor plugins.Executor) {
 	server.Executor = executor
 }
 
-// SetVersion sets a version.
-func (server *Server) SetVersion(version string) {
-	server.version = version
+// SetProuctName sets a product name to the configuration.
+func (server *Server) SetProductName(v string) {
+	server.productName = v
 }
 
-// Version returns a version.
-func (server *Server) Version() string {
-	return server.version
+// SetProductVersion sets a product version to the configuration.
+func (server *Server) SetProductVersion(v string) {
+	server.productVersion = v
 }
 
 // SetTracer sets a tracing tracer.
@@ -120,7 +122,7 @@ func (server *Server) Start() error {
 
 	go server.listener.Accept()
 
-	log.Infof("%s/%s (%s) started", server.PackageName(), server.Version(), hostPort)
+	log.Infof("%s/%s (%s) started", server.productName, server.productVersion, hostPort)
 
 	return nil
 }
@@ -133,7 +135,7 @@ func (server *Server) Stop() error {
 	}
 
 	hostPort := net.JoinHostPort(server.Address(), strconv.Itoa(server.Port()))
-	log.Infof("%s/%s (%s) terminated", server.PackageName(), server.Version(), hostPort)
+	log.Infof("%s/%s (%s) terminated", server.productName, server.productVersion, hostPort)
 
 	return nil
 }
