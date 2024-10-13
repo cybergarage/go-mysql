@@ -15,9 +15,7 @@
 package plugins
 
 import (
-	"testing"
+	"errors"
 )
 
-func TestDefaultConfig(t *testing.T) {
-	NewDefaultConfig()
-}
+var ErrNotImplemented = errors.New("not implemented")

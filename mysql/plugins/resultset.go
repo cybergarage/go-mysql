@@ -14,10 +14,8 @@
 
 package plugins
 
-import (
-	"testing"
-)
-
-func TestDefaultConfig(t *testing.T) {
-	NewDefaultConfig()
+// ResultSet represents a response resultset interface.
+type ResultSet interface {
+	// Bytes returns the message bytes.
+	Bytes() ([]byte, error)
 }
