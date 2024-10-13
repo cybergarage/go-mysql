@@ -51,6 +51,7 @@ func NewListener(protocol, address string, authServer AuthHandler, handler Query
 
 // Server represents a MySQL-compatible server.
 type Server struct {
+	*plugins.Server
 	tracer.Tracer
 	plugins.Config
 	plugins.ConnManager
@@ -64,6 +65,7 @@ type Server struct {
 // NewServer returns a new server instance.
 func NewServer() *Server {
 	server := &Server{
+		Server:        plugins.NewServer(),
 		Tracer:        tracer.NullTracer,
 		Config:        plugins.NewDefaultConfig(),
 		ConnManager:   plugins.NewConnManager(),
