@@ -18,11 +18,12 @@ import (
 	"testing"
 )
 
+// nolint: staticcheck, gosimple
 func TestServer(t *testing.T) {
 	var server any
 	server = NewServer()
 	_, ok := server.(Executor)
 	if !ok {
-		t.Error("NewServer() must return Executor")
+		t.Error("NewServer() must implement Executor")
 	}
 }
