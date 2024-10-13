@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/cybergarage/go-logger/log"
+	mysqlnet "github.com/cybergarage/go-mysql/mysql/net"
 	"github.com/cybergarage/go-mysql/mysql/plugins"
 	"github.com/cybergarage/go-tracing/tracer"
 	vitessmy "vitess.io/vitess/go/mysql"
@@ -54,7 +55,7 @@ type Server struct {
 	*plugins.Server
 	tracer.Tracer
 	plugins.Config
-	plugins.ConnManager
+	*mysqlnet.ConnManager
 	AuthHandler
 	QueryHandler
 	queryExecutor QueryExecutor
@@ -68,7 +69,7 @@ func NewServer() *Server {
 		Server:        plugins.NewServer(),
 		Tracer:        tracer.NullTracer,
 		Config:        plugins.NewDefaultConfig(),
-		ConnManager:   plugins.NewConnManager(),
+		ConnManager:   mysqlnet.NewConnManager(),
 		AuthHandler:   NewDefaultAuthHandler(),
 		QueryHandler:  nil,
 		queryExecutor: nil,
