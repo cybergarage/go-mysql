@@ -15,20 +15,25 @@
 package net
 
 import (
+	"errors"
 	"sync"
+
+	"github.com/google/uuid"
 )
 
 // ConnManager represents a connection map.
 type ConnManager struct {
-	m     map[uint32]Conn
-	mutex *sync.RWMutex
+	uidMap map[uint64]Conn
+	m      map[uuid.UUID]Conn
+	mutex  *sync.RWMutex
 }
 
 // NewConnManager returns a connection map.
 func NewConnManager() *ConnManager {
 	return &ConnManager{
-		m:     map[uint32]Conn{},
-		mutex: &sync.RWMutex{},
+		uidMap: map[uint64]Conn{},
+		m:      map[uuid.UUID]Conn{},
+		mutex:  &sync.RWMutex{},
 	}
 }
 
@@ -36,27 +41,94 @@ func NewConnManager() *ConnManager {
 func (cm *ConnManager) AddConn(c Conn) {
 	cm.mutex.Lock()
 	defer cm.mutex.Unlock()
-	cm.m[c.ID()] = c
+	uuid := c.UUID()
+	cm.m[uuid] = c
+	uid := c.ID()
+	if uid != 0 {
+		cm.uidMap[uid] = c
+	}
 }
 
-// GetConnByUID returns a connection and true when the specified connection exists by the connection ID, otherwise nil and false.
-func (cm *ConnManager) GetConnByUID(cid uint32) (Conn, bool) {
+// Conns returns the included connections.
+func (cm *ConnManager) Conns() []Conn {
 	cm.mutex.RLock()
 	defer cm.mutex.RUnlock()
-	c, ok := cm.m[cid]
+	conns := make([]Conn, 0, len(cm.m))
+	for _, conn := range cm.m {
+		conns = append(conns, conn)
+	}
+	return conns
+}
+
+// ConnByUID returns a connection and true when the specified connection exists by the connection ID, otherwise nil and false.
+func (cm *ConnManager) ConnByUID(cid uint64) (Conn, bool) {
+	cm.mutex.RLock()
+	defer cm.mutex.RUnlock()
+	c, ok := cm.uidMap[cid]
 	return c, ok
 }
 
-// DeleteConnByUID deletes the specified connection by the connection ID.
-func (cm *ConnManager) DeleteConnByUID(cid uint32) {
-	cm.mutex.Lock()
-	defer cm.mutex.Unlock()
-	delete(cm.m, cid)
-}
-
-// Length returns the included connection count.
-func (cm *ConnManager) Length() int {
+// ConnByUUID returns the connection with the specified UUID.
+func (cm *ConnManager) ConnByUUID(uuid uuid.UUID) (Conn, bool) {
 	cm.mutex.RLock()
 	defer cm.mutex.RUnlock()
-	return len(cm.m)
+	c, ok := cm.m[uuid]
+	return c, ok
+}
+
+// RemoveConn deletes the specified connection from the map.
+func (cm *ConnManager) RemoveConn(conn Conn) error {
+	cm.mutex.Lock()
+	defer cm.mutex.Unlock()
+	delete(cm.uidMap, conn.ID())
+	delete(cm.m, conn.UUID())
+	return nil
+}
+
+// RemoveConnByUID deletes the specified connection by the connection ID.
+func (cm *ConnManager) RemoveConnByUID(cid uint64) {
+	conn, ok := cm.ConnByUID(cid)
+	if !ok {
+		return
+	}
+	cm.RemoveConn(conn)
+}
+
+// RemoveConnByUID deletes the specified connection by the connection ID.
+func (cm *ConnManager) RemoveConnByUUID(uuid uuid.UUID) {
+	conn, ok := cm.ConnByUUID(uuid)
+	if !ok {
+		return
+	}
+	cm.RemoveConn(conn)
+}
+
+// Start starts the connection manager.
+func (cm *ConnManager) Start() error {
+	return nil
+}
+
+// Close closes the connection manager.
+func (cm *ConnManager) Close() error {
+	var errs error
+	conns := cm.Conns()
+	for _, conn := range conns {
+		err := conn.Close()
+		if err == nil {
+			if err := cm.RemoveConn(conn); err != nil {
+				errs = errors.Join(errs, err)
+			}
+		} else {
+			errs = errors.Join(errs, err)
+		}
+	}
+	return errs
+}
+
+// Stop closes all connections.
+func (cm *ConnManager) Stop() error {
+	if err := cm.Close(); err != nil {
+		return err
+	}
+	return nil
 }

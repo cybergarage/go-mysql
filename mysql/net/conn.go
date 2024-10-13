@@ -35,7 +35,7 @@ type Conn interface {
 	// UUID returns a UUID.
 	UUID() uuid.UUID
 	// ID returns a connection ID.
-	ID() uint32
+	ID() uint64
 	// SetSpanContext sets a span context.
 	SetSpanContext(ctx tracer.Context)
 	// SpanContext returns a span context.
