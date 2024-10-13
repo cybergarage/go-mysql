@@ -18,6 +18,6 @@ package protocol
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset.html
 
 // Response represents a response.
-type Response struct {
+type Response interface {
 	Packet
 }
