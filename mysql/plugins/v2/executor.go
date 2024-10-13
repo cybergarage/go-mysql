@@ -12,12 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package plugins
+package v2
 
 import (
+	"github.com/cybergarage/go-mysql/mysql/plugins"
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 	"github.com/cybergarage/go-sqlparser/sql"
 )
+
+// Conn represents a connection.
+type Conn = plugins.Conn
 
 // Response represents a response.
 type Response = protocol.Response
