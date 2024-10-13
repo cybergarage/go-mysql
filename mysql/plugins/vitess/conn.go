@@ -31,7 +31,7 @@ type Conn = mysqlnet.Conn
 type conn struct {
 	*vitessmy.Conn
 	db   string
-	uid  uint32
+	uid  uint64
 	uuid uuid.UUID
 	ts   time.Time
 	sync.Map
@@ -59,7 +59,7 @@ func NewConnWith(ctx tracer.Context, c *vitessmy.Conn) *conn {
 	}
 
 	if c != nil {
-		conn.uid = c.ConnectionID
+		conn.uid = uint64(c.ConnectionID)
 	}
 
 	return conn
@@ -97,7 +97,7 @@ func (conn *conn) Database() string {
 }
 
 // ID returns the creation ID of the connection.
-func (conn *conn) ID() uint32 {
+func (conn *conn) ID() uint64 {
 	return conn.uid
 }
 

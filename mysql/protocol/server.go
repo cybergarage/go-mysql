@@ -20,13 +20,14 @@ import (
 	"net"
 	"strconv"
 
+	mysqlnet "github.com/cybergarage/go-mysql/mysql/net"
 	"github.com/cybergarage/go-tracing/tracer"
 )
 
 // Server represents a MySQL protocol server.
 type Server struct {
 	*Config
-	*ConnManager
+	*mysqlnet.ConnManager
 	CommandHandler
 	tracer.Tracer
 	tcpListener net.Listener
@@ -36,7 +37,7 @@ type Server struct {
 func NewServer() *Server {
 	server := &Server{
 		Config:         NewDefaultConfig(),
-		ConnManager:    NewConnManager(),
+		ConnManager:    mysqlnet.NewConnManager(),
 		CommandHandler: nil,
 		Tracer:         tracer.NullTracer,
 		tcpListener:    nil,
