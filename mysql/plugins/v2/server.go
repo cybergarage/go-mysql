@@ -21,11 +21,14 @@ import (
 
 // Server represents a base executor server.
 type Server struct {
+	*plugins.Server
 }
 
 // NewServer returns a base executor server instance.
 func NewServer() *Server {
-	s := &Server{}
+	s := &Server{
+		Server: plugins.NewServer(),
+	}
 	return s
 }
 
