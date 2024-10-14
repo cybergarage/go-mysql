@@ -20,7 +20,7 @@ import (
 	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/mysql/errors"
 	"github.com/cybergarage/go-mysql/mysql/plugins/vitess"
-	"github.com/cybergarage/go-mysql/mysql/query"
+	"github.com/cybergarage/go-mysql/mysql/plugins/vitess/query"
 )
 
 type MemStore struct {

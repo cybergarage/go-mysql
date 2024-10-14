@@ -15,7 +15,7 @@
 package vitess
 
 import (
-	"github.com/cybergarage/go-mysql/mysql/query"
+	"github.com/cybergarage/go-mysql/mysql/plugins/vitess/query"
 	"github.com/cybergarage/go-tracing/tracer"
 	vitessmy "vitess.io/vitess/go/mysql"
 	vitesssp "vitess.io/vitess/go/vt/sqlparser"
