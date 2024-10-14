@@ -61,6 +61,9 @@ func (store *MemStore) CreateDatabase(conn vitess.Conn, stmt *query.Database) (*
 	dbName := stmt.Name()
 	_, ok := store.LookupDatabase(dbName)
 	if ok {
+		if stmt.IfNotExists() {
+			return vitess.NewResult(), nil
+		}
 		return vitess.NewResult(), errors.NewDatabaseNotFound(dbName)
 	}
 	err := store.AddDatabase(NewDatabaseWithName(dbName))
@@ -78,7 +81,7 @@ func (store *MemStore) AlterDatabase(conn vitess.Conn, stmt *query.Database) (*v
 
 // DropDatabase should handle a DROP database statement.
 func (store *MemStore) DropDatabase(conn vitess.Conn, stmt *query.Database) (*vitess.Result, error) {
-	dbName := conn.Database()
+	dbName := stmt.Name()
 	db, ok := store.LookupDatabase(dbName)
 	if !ok {
 		return nil, errors.NewDatabaseNotFound(dbName)
