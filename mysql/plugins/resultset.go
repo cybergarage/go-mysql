@@ -14,8 +14,9 @@
 
 package plugins
 
+import (
+	"github.com/cybergarage/go-mysql/mysql/query"
+)
+
 // ResultSet represents a response resultset interface.
-type ResultSet interface {
-	// Bytes returns the message bytes.
-	Bytes() ([]byte, error)
-}
+type ResultSet = query.ResultSet
