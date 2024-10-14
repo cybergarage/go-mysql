@@ -16,10 +16,41 @@ package errors
 
 import (
 	"errors"
+	"fmt"
 )
 
 var ErrInvalidRequest = errors.New("invalid request")
 var ErrNotImplemented = errors.New("not implemented")
 var ErrNotFound = errors.New("not found")
-var ErrAlreadyExists = errors.New("already exists")
+var ErrExists = errors.New("already exists")
 var ErrInvalidParameter = errors.New("invalid parameter")
+
+// NewSystemDatabaseNotFound returns an error for a system database not found.
+func NewSystemDatabaseNotFound(name string) error {
+	return fmt.Errorf("system database (%s) is %w", name, ErrNotFound)
+}
+
+// NewSystemTableNotFound returns an error for a system table not found.
+func NewSystemTableNotFound(name string) error {
+	return fmt.Errorf("system table (%s) is %w", name, ErrNotFound)
+}
+
+// NewDatabaseNotFound returns an error for a database not found.
+func NewDatabaseNotFound(name string) error {
+	return fmt.Errorf("database (%s) is %w", name, ErrNotFound)
+}
+
+// NewDatabaseExists returns an error for a database already exists.
+func NewDatabaseExists(name string) error {
+	return fmt.Errorf("database (%s) is %w", name, ErrExists)
+}
+
+// NewCollectionNotFound returns an error for a collection not found.
+func NewCollectionNotFound(name string) error {
+	return fmt.Errorf("collection (%s) is %w", name, ErrNotFound)
+}
+
+// NewCollectionExists returns an error for a collection already exists.
+func NewCollectionExists(name string) error {
+	return fmt.Errorf("collection (%s) is %w", name, ErrExists)
+}
