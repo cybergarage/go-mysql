@@ -17,7 +17,7 @@ package server
 import (
 	"time"
 
-	"github.com/cybergarage/go-mysql/examples/go-mysqld/server/storage"
+	"github.com/cybergarage/go-mysql/examples/go-mysqld/vitess/server/storage"
 	"github.com/cybergarage/go-mysql/mysql/plugins/vitess"
 )
 
