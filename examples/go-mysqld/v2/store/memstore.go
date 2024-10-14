@@ -73,18 +73,15 @@ func (store *MemStore) AlterDatabase(conn net.Conn, stmt query.AlterDatabase) er
 
 // DropDatabase should handle a DROP database statement.
 func (store *MemStore) DropDatabase(conn net.Conn, stmt query.DropDatabase) error {
-	/*
-		dbName := conn.Database()
-		db, ok := store.LookupDatabase(dbName)
-		if !ok {
-			return nil, errors.NewDatabaseNotFound(dbName)
+	dbName := stmt.DatabaseName()
+	db, ok := store.LookupDatabase(dbName)
+	if !ok {
+		if stmt.IfExists() {
+			return nil
 		}
-
-		if !store.Databases.DropDatabase(db) {
-			return nil, fmt.Errorf("%s could not deleted", db.Name())
-		}
-	*/
-	return errors.ErrNotImplemented
+		return errors.NewDatabaseNotFound(dbName)
+	}
+	return store.Databases.DropDatabase(db)
 }
 
 // CreateTable should handle a CREATE table statement.
