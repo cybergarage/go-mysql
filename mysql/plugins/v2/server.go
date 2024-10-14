@@ -14,9 +14,13 @@
 
 package v2
 
+import (
+	"github.com/cybergarage/go-mysql/mysql/plugins"
+)
+
 // Server represents a base executor server.
 type Server struct {
-	executor Executor
+	executor plugins.Executor
 }
 
 // NewServer returns a base executor server instance.
@@ -28,11 +32,11 @@ func NewServer() *Server {
 }
 
 // SetExecutor sets an executor to the server.
-func (s *Server) SetExecutor(executor Executor) {
+func (s *Server) SetExecutor(executor plugins.Executor) {
 	s.executor = executor
 }
 
 // Executor returns the executor of the server.
-func (s *Server) Executor() Executor {
+func (s *Server) Executor() plugins.Executor {
 	return s.executor
 }
