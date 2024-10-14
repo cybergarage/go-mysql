@@ -53,19 +53,16 @@ func (store *MemStore) Rollback(conn net.Conn, stmt query.Rollback) error {
 
 // CreateDatabase should handle a CREATE database statement.
 func (store *MemStore) CreateDatabase(conn net.Conn, stmt query.CreateDatabase) error {
-	/*
-		log.Debugf("%v", stmt)
-		dbName := stmt.Name()
-		_, ok := store.LookupDatabase(dbName)
-		if ok {
-			return vitess.NewResult(), errors.NewDatabaseNotFound(dbName)
+	log.Debugf("%v", stmt)
+	dbName := stmt.DatabaseName()
+	_, ok := store.LookupDatabase(dbName)
+	if ok {
+		if stmt.IfNotExists() {
+			return nil
 		}
-		err := store.AddDatabase(NewDatabaseWithName(dbName))
-		if err != nil {
-			return vitess.NewResult(), err
-		}
-	*/
-	return errors.ErrNotImplemented
+		return errors.NewDatabaseExists(dbName)
+	}
+	return store.AddDatabase(NewDatabaseWithName(dbName))
 }
 
 // AlterDatabase should handle a ALTER database statement.
