@@ -21,3 +21,13 @@ package protocol
 type Response interface {
 	Packet
 }
+
+// NewResponseWithError returns a new response with the specified error.
+func NewResponseWithError(err error) (Response, error) {
+	if err == nil {
+		return NewOK()
+	}
+	return NewERR(
+		WithErrMsg(err.Error()),
+	)
+}
