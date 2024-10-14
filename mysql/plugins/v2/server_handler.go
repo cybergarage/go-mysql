@@ -1,0 +1,90 @@
+// Copyright (C) 2024 The go-mysql Authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package v2
+
+import (
+	"github.com/cybergarage/go-mysql/mysql/plugins"
+	"github.com/cybergarage/go-sqlparser/sql"
+)
+
+// CreateDatabase handles a CREATE DATABASE query.
+func (*Server) CreateDatabase(Conn, sql.CreateDatabase) (Response, error) {
+	return nil, plugins.ErrNotImplemented
+}
+
+// CreateTable handles a CREATE TABLE query.
+func (*Server) CreateTable(Conn, sql.CreateTable) (Response, error) {
+	return nil, plugins.ErrNotImplemented
+}
+
+// AlterDatabase handles a ALTER DATABASE query.
+func (*Server) AlterDatabase(Conn, sql.AlterDatabase) (Response, error) {
+	return nil, plugins.ErrNotImplemented
+}
+
+// AlterTable handles a ALTER TABLE query.
+func (*Server) AlterTable(Conn, sql.AlterTable) (Response, error) {
+	return nil, plugins.ErrNotImplemented
+}
+
+// DropDatabase handles a DROP DATABASE query.
+func (*Server) DropDatabase(Conn, sql.DropDatabase) (Response, error) {
+	return nil, plugins.ErrNotImplemented
+}
+
+// DropIndex handles a DROP INDEX query.
+func (*Server) DropTable(Conn, sql.DropTable) (Response, error) {
+	return nil, plugins.ErrNotImplemented
+}
+
+// Insert handles a INSERT query.
+func (*Server) Insert(Conn, sql.Insert) (Response, error) {
+	return nil, plugins.ErrNotImplemented
+}
+
+// Select handles a SELECT query.
+func (*Server) Select(Conn, sql.Select) (Response, error) {
+	return nil, plugins.ErrNotImplemented
+}
+
+// Update handles a UPDATE query.
+func (*Server) Update(Conn, sql.Update) (Response, error) {
+	return nil, plugins.ErrNotImplemented
+}
+
+// Delete handles a DELETE query.
+func (*Server) Delete(Conn, sql.Delete) (Response, error) {
+	return nil, plugins.ErrNotImplemented
+}
+
+// Begin handles a BEGIN query.
+func (*Server) Begin(Conn, sql.Begin) (Response, error) {
+	return nil, plugins.ErrNotImplemented
+}
+
+// Commit handles a COMMIT query.
+func (*Server) Commit(Conn, sql.Commit) (Response, error) {
+	return nil, plugins.ErrNotImplemented
+}
+
+// Rollback handles a ROLLBACK query.
+func (*Server) Rollback(Conn, sql.Rollback) (Response, error) {
+	return nil, plugins.ErrNotImplemented
+}
+
+// ErrorHandler represents a user error handler.
+func (*Server) ParserError(Conn, string, error) (Response, error) {
+	return nil, plugins.ErrNotImplemented
+}
