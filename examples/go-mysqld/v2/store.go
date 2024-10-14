@@ -15,10 +15,10 @@
 package v2
 
 import (
-	"github.com/cybergarage/go-mysql/mysql"
+	"github.com/cybergarage/go-mysql/mysql/query"
 )
 
 // Store should support only DMOExecutor methods.
 type Store interface {
-	mysql.Executor
+	query.Executor
 }
