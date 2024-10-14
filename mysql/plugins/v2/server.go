@@ -32,11 +32,11 @@ func NewServer() *Server {
 }
 
 // SetExecutor sets an executor to the server.
-func (s *Server) SetExecutor(executor plugins.Executor) {
-	s.executor = executor
+func (server *Server) SetExecutor(executor plugins.Executor) {
+	server.executor = executor
 }
 
 // Executor returns the executor of the server.
-func (s *Server) Executor() plugins.Executor {
-	return s.executor
+func (server *Server) Executor() plugins.Executor {
+	return server.executor
 }
