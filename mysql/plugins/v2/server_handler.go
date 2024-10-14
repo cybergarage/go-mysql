@@ -27,32 +27,32 @@ func (server *Server) CreateDatabase(conn Conn, stmt sql.CreateDatabase) (Respon
 
 // CreateTable handles a CREATE TABLE query.
 func (server *Server) CreateTable(conn Conn, stmt sql.CreateTable) (Response, error) {
-	return nil, plugins.ErrNotImplemented
+	return protocol.NewResponseWithError(server.Executor().CreateTable(conn, stmt))
 }
 
 // AlterDatabase handles a ALTER DATABASE query.
 func (server *Server) AlterDatabase(conn Conn, stmt sql.AlterDatabase) (Response, error) {
-	return nil, plugins.ErrNotImplemented
+	return protocol.NewResponseWithError(server.Executor().AlterDatabase(conn, stmt))
 }
 
 // AlterTable handles a ALTER TABLE query.
 func (server *Server) AlterTable(conn Conn, stmt sql.AlterTable) (Response, error) {
-	return nil, plugins.ErrNotImplemented
+	return protocol.NewResponseWithError(server.Executor().AlterTable(conn, stmt))
 }
 
 // DropDatabase handles a DROP DATABASE query.
 func (server *Server) DropDatabase(conn Conn, stmt sql.DropDatabase) (Response, error) {
-	return nil, plugins.ErrNotImplemented
+	return protocol.NewResponseWithError(server.Executor().DropDatabase(conn, stmt))
 }
 
 // DropIndex handles a DROP INDEX query.
 func (server *Server) DropTable(conn Conn, stmt sql.DropTable) (Response, error) {
-	return nil, plugins.ErrNotImplemented
+	return protocol.NewResponseWithError(server.Executor().DropTable(conn, stmt))
 }
 
 // Insert handles a INSERT query.
 func (server *Server) Insert(conn Conn, stmt sql.Insert) (Response, error) {
-	return nil, plugins.ErrNotImplemented
+	return protocol.NewResponseWithError(server.Executor().Insert(conn, stmt))
 }
 
 // Select handles a SELECT query.
@@ -72,17 +72,17 @@ func (server *Server) Delete(conn Conn, stmt sql.Delete) (Response, error) {
 
 // Begin handles a BEGIN query.
 func (server *Server) Begin(conn Conn, stmt sql.Begin) (Response, error) {
-	return nil, plugins.ErrNotImplemented
+	return protocol.NewResponseWithError(server.Executor().Begin(conn, stmt))
 }
 
 // Commit handles a COMMIT query.
 func (server *Server) Commit(conn Conn, stmt sql.Commit) (Response, error) {
-	return nil, plugins.ErrNotImplemented
+	return protocol.NewResponseWithError(server.Executor().Commit(conn, stmt))
 }
 
 // Rollback handles a ROLLBACK query.
 func (server *Server) Rollback(conn Conn, stmt sql.Rollback) (Response, error) {
-	return nil, plugins.ErrNotImplemented
+	return protocol.NewResponseWithError(server.Executor().Rollback(conn, stmt))
 }
 
 // ErrorHandler represents a user error handler.
