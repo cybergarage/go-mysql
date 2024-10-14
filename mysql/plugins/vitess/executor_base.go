@@ -16,7 +16,7 @@ package vitess
 
 import (
 	"github.com/cybergarage/go-logger/log"
-	"github.com/cybergarage/go-mysql/mysql/query"
+	"github.com/cybergarage/go-mysql/mysql/plugins/vitess/query"
 )
 
 const (

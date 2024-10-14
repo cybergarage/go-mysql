@@ -15,7 +15,7 @@
 package store
 
 import (
-	"github.com/cybergarage/go-mysql/mysql/query"
+	"github.com/cybergarage/go-mysql/mysql/plugins/vitess/query"
 )
 
 // Database represents a destination or source database of query.

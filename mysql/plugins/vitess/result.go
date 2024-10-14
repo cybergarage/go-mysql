@@ -17,7 +17,7 @@ package vitess
 import (
 	"fmt"
 
-	"github.com/cybergarage/go-mysql/mysql/query"
+	"github.com/cybergarage/go-mysql/mysql/plugins/vitess/query"
 	vitessst "vitess.io/vitess/go/sqltypes"
 	vitesspq "vitess.io/vitess/go/vt/proto/query"
 )
