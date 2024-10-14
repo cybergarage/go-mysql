@@ -18,6 +18,7 @@ import (
 	"fmt"
 
 	"github.com/cybergarage/go-logger/log"
+	"github.com/cybergarage/go-mysql/mysql/errors"
 	"github.com/cybergarage/go-mysql/mysql/plugins/vitess"
 	"github.com/cybergarage/go-mysql/mysql/query"
 )
@@ -60,7 +61,7 @@ func (store *MemStore) CreateDatabase(conn vitess.Conn, stmt *query.Database) (*
 	dbName := stmt.Name()
 	_, ok := store.GetDatabase(dbName)
 	if ok {
-		return vitess.NewResult(), fmt.Errorf(errorDatabaseFound, dbName)
+		return vitess.NewResult(), errors.NewDatabaseNotFound(dbName)
 	}
 	err := store.AddDatabase(NewDatabaseWithName(dbName))
 	if err != nil {
@@ -80,7 +81,7 @@ func (store *MemStore) DropDatabase(conn vitess.Conn, stmt *query.Database) (*vi
 	dbName := conn.Database()
 	db, ok := store.GetDatabase(dbName)
 	if !ok {
-		return nil, fmt.Errorf(errorDatabaseNotFound, dbName)
+		return nil, errors.NewDatabaseNotFound(dbName)
 	}
 
 	if !store.Databases.DropDatabase(db) {
@@ -95,7 +96,7 @@ func (store *MemStore) CreateTable(conn vitess.Conn, stmt *query.Schema) (*vites
 	dbName := conn.Database()
 	db, ok := store.GetDatabase(dbName)
 	if !ok {
-		return nil, fmt.Errorf(errorDatabaseNotFound, dbName)
+		return nil, errors.NewDatabaseNotFound(dbName)
 	}
 	tableName := stmt.TableName()
 	_, ok = db.GetTable(tableName)
@@ -104,7 +105,7 @@ func (store *MemStore) CreateTable(conn vitess.Conn, stmt *query.Schema) (*vites
 		db.AddTable(table)
 	} else {
 		if !stmt.GetIfExists() {
-			return vitess.NewResult(), fmt.Errorf(errorTableFound, dbName, tableName)
+			return vitess.NewResult(), errors.NewCollectionExists(tableName)
 		}
 	}
 	return vitess.NewResult(), nil
@@ -121,7 +122,7 @@ func (store *MemStore) DropTable(conn vitess.Conn, stmt *query.Schema) (*vitess.
 	dbName := conn.Database()
 	db, ok := store.GetDatabase(dbName)
 	if !ok {
-		return nil, fmt.Errorf(errorDatabaseNotFound, dbName)
+		return nil, errors.NewDatabaseNotFound(dbName)
 	}
 	tableName := stmt.TableName()
 	table, ok := db.GetTable(tableName)
@@ -155,7 +156,7 @@ func (store *MemStore) Insert(conn vitess.Conn, stmt *query.Insert) (*vitess.Res
 	tableName := stmt.TableName()
 	table, ok := store.GetTableWithDatabase(dbName, tableName)
 	if !ok {
-		return vitess.NewResult(), fmt.Errorf(errorTableNotFound, dbName, tableName)
+		return vitess.NewResult(), errors.NewCollectionNotFound(tableName)
 	}
 
 	row, err := query.NewRowWithInsert(stmt)
@@ -181,7 +182,7 @@ func (store *MemStore) Update(conn vitess.Conn, stmt *query.Update) (*vitess.Res
 
 	database, ok := store.GetDatabase(dbName)
 	if !ok {
-		return nil, fmt.Errorf(errorDatabaseFound, dbName)
+		return nil, errors.NewDatabaseNotFound(dbName)
 	}
 
 	nEffectedRows := uint64(0)
@@ -192,7 +193,7 @@ func (store *MemStore) Update(conn vitess.Conn, stmt *query.Update) (*vitess.Res
 		}
 		table, ok := database.GetTable(tableName)
 		if !ok {
-			return nil, fmt.Errorf(errorTableNotFound, dbName, tableName)
+			return nil, errors.NewCollectionNotFound(tableName)
 		}
 
 		columns, err := stmt.Columns()
@@ -217,7 +218,7 @@ func (store *MemStore) Delete(conn vitess.Conn, stmt *query.Delete) (*vitess.Res
 
 	database, ok := store.GetDatabase(dbName)
 	if !ok {
-		return nil, fmt.Errorf(errorDatabaseFound, dbName)
+		return nil, errors.NewDatabaseNotFound(dbName)
 	}
 
 	nEffectedRows := uint64(0)
@@ -228,7 +229,7 @@ func (store *MemStore) Delete(conn vitess.Conn, stmt *query.Delete) (*vitess.Res
 		}
 		table, ok := database.GetTable(tableName)
 		if !ok {
-			return nil, fmt.Errorf(errorTableNotFound, dbName, tableName)
+			return nil, errors.NewCollectionNotFound(tableName)
 		}
 
 		nDeletedRows, err := table.Delete(cond)
@@ -248,7 +249,7 @@ func (store *MemStore) Select(conn vitess.Conn, stmt *query.Select) (*vitess.Res
 	dbName := conn.Database()
 	database, ok := store.GetDatabase(dbName)
 	if !ok {
-		return nil, fmt.Errorf(errorDatabaseFound, dbName)
+		return nil, errors.NewDatabaseNotFound(dbName)
 	}
 
 	// NOTE: Select scans only a first table
@@ -265,7 +266,7 @@ func (store *MemStore) Select(conn vitess.Conn, stmt *query.Select) (*vitess.Res
 		if tableName == "dual" {
 			return vitess.NewResult(), nil
 		}
-		return nil, fmt.Errorf(errorTableNotFound, dbName, tableName)
+		return nil, errors.NewCollectionNotFound(tableName)
 	}
 
 	cond := stmt.Where
