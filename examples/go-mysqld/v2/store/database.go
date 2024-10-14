@@ -14,23 +14,19 @@
 
 package store
 
-import (
-	"github.com/cybergarage/go-mysql/mysql/plugins/vitess/query"
-)
-
 // Database represents a destination or source database of query.
 type Database struct {
-	*query.Database
+	name   string
 	tables map[string]*Table
 }
 
 // NewDatabaseWithName returns a new database with the specified string.
 func NewDatabaseWithName(name string) *Database {
-	ks := &Database{
-		Database: query.NewDatabaseWithName(name),
-		tables:   map[string]*Table{},
+	db := &Database{
+		name:   name,
+		tables: map[string]*Table{},
 	}
-	return ks
+	return db
 }
 
 // NewDatabase returns a new database.
@@ -38,37 +34,42 @@ func NewDatabase() *Database {
 	return NewDatabaseWithName("")
 }
 
+// Name returns the database name.
+func (db *Database) Name() string {
+	return db.name
+}
+
 // AddTable adds a specified table into the database.
-func (ks *Database) AddTable(table *Table) {
+func (db *Database) AddTable(table *Table) {
 	tableName := table.Name()
-	ks.tables[tableName] = table
+	db.tables[tableName] = table
 }
 
 // AddTables adds a specified tables into the database.
-func (ks *Database) AddTables(tables []*Table) {
+func (db *Database) AddTables(tables []*Table) {
 	for _, table := range tables {
-		ks.AddTable(table)
+		db.AddTable(table)
 	}
 }
 
 // DropTable remove the specified table.
-func (ks *Database) DropTable(table *Table) bool {
+func (db *Database) DropTable(table *Table) bool {
 	name := table.TableName()
-	delete(ks.tables, name)
-	_, ok := ks.tables[name]
+	delete(db.tables, name)
+	_, ok := db.tables[name]
 	return !ok
 }
 
 // LookupTable returns a table with the specified name.
-func (ks *Database) LookupTable(name string) (*Table, bool) {
-	table, ok := ks.tables[name]
+func (db *Database) LookupTable(name string) (*Table, bool) {
+	table, ok := db.tables[name]
 	return table, ok
 }
 
 // Tables returns all tables in the database.
-func (ks *Database) Tables() []*Table {
+func (db *Database) Tables() []*Table {
 	tables := make([]*Table, 0)
-	for _, table := range ks.tables {
+	for _, table := range db.tables {
 		tables = append(tables, table)
 	}
 	return tables
