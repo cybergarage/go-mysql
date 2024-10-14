@@ -12,17 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package storage
+package vitess
 
 import (
-	"testing"
+	"github.com/cybergarage/go-mysql/mysql/plugins/vitess"
 )
 
-func TestNewTable(t *testing.T) {
-	tbl := NewTable()
-
-	rows := tbl.Rows.Rows()
-	if len(rows) != 0 {
-		t.Errorf("%d", len(rows))
-	}
+// Store should support only DMOExecutor methods.
+type Store interface {
+	vitess.QueryExecutor
 }

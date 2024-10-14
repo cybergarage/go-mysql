@@ -15,18 +15,18 @@
 package server
 
 import (
-	"github.com/cybergarage/go-mysql/examples/go-mysqld/vitess/server"
+	"github.com/cybergarage/go-mysql/examples/go-mysqld/vitess"
 )
 
 // Server represents a test server.
 type Server struct {
-	*server.Server
+	*vitess.Server
 }
 
 // NewServer returns a test server instance.
 func NewServer() *Server {
 	s := &Server{
-		Server: server.NewServer(),
+		Server: vitess.NewServer(),
 	}
 	return s
 }
