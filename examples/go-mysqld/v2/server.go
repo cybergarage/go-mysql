@@ -15,24 +15,24 @@
 package v2
 
 import (
-	"github.com/cybergarage/go-mysql/examples/go-mysqld/vitess/store"
-	"github.com/cybergarage/go-mysql/mysql/plugins/vitess"
+	"github.com/cybergarage/go-mysql/examples/go-mysqld/v2/store"
+	v2 "github.com/cybergarage/go-mysql/mysql/plugins/v2"
 )
 
 // Server represents a test server.
 // This Server struct behave as ${hoge}CommandExecutor.
 type Server struct {
-	*vitess.Server
+	*v2.Server
 	Store
 }
 
 // NewServerWithStore returns a test server instance with the specified store.
 func NewServerWithStore(store Store) *Server {
 	server := &Server{
-		Server: vitess.NewServer(),
+		Server: v2.NewServer(),
 		Store:  store,
 	}
-	server.SetQueryExecutor(store)
+	server.SetExecutor(store)
 	return server
 }
 

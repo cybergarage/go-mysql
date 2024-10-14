@@ -15,45 +15,45 @@
 package plugins
 
 import (
-	"github.com/cybergarage/go-sqlparser/sql"
+	"github.com/cybergarage/go-mysql/mysql/query"
 )
 
 // DDOExecutor defines a executor interface for DDO (Data Definition Operations).
 type DDOExecutor interface {
 	// CreateDatabase handles a CREATE DATABASE query.
-	CreateDatabase(Conn, sql.CreateDatabase) error
+	CreateDatabase(Conn, query.CreateDatabase) error
 	// CreateTable handles a CREATE TABLE query.
-	CreateTable(Conn, sql.CreateTable) error
+	CreateTable(Conn, query.CreateTable) error
 	// AlterDatabase handles a ALTER DATABASE query.
-	AlterDatabase(Conn, sql.AlterDatabase) error
+	AlterDatabase(Conn, query.AlterDatabase) error
 	// AlterTable handles a ALTER TABLE query.
-	AlterTable(Conn, sql.AlterTable) error
+	AlterTable(Conn, query.AlterTable) error
 	// DropDatabase handles a DROP DATABASE query.
-	DropDatabase(Conn, sql.DropDatabase) error
+	DropDatabase(Conn, query.DropDatabase) error
 	// DropIndex handles a DROP INDEX query.
-	DropTable(Conn, sql.DropTable) error
+	DropTable(Conn, query.DropTable) error
 }
 
 // DMOExecutor defines a executor interface for DMO (Data Manipulation Operations).
 type DMOExecutor interface {
 	// Insert handles a INSERT query.
-	Insert(Conn, sql.Insert) error
+	Insert(Conn, query.Insert) error
 	// Select handles a SELECT query.
-	Select(Conn, sql.Select) (ResultSet, error)
+	Select(Conn, query.Select) (ResultSet, error)
 	// Update handles a UPDATE query.
-	Update(Conn, sql.Update) (ResultSet, error)
+	Update(Conn, query.Update) (ResultSet, error)
 	// Delete handles a DELETE query.
-	Delete(Conn, sql.Delete) (ResultSet, error)
+	Delete(Conn, query.Delete) (ResultSet, error)
 }
 
 // TCLExecutor defines a executor interface for TCL (Transaction Control Language).
 type TCLExecutor interface {
 	// Begin handles a BEGIN query.
-	Begin(Conn, sql.Begin) error
+	Begin(Conn, query.Begin) error
 	// Commit handles a COMMIT query.
-	Commit(Conn, sql.Commit) error
+	Commit(Conn, query.Commit) error
 	// Rollback handles a ROLLBACK query.
-	Rollback(Conn, sql.Rollback) error
+	Rollback(Conn, query.Rollback) error
 }
 
 // QueryExecutor represents a user query message executor.
