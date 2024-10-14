@@ -39,7 +39,7 @@ import (
 	"syscall"
 
 	clog "github.com/cybergarage/go-logger/log"
-	"github.com/cybergarage/go-mysql/examples/go-mysqld/vitess/server"
+	"github.com/cybergarage/go-mysql/examples/go-mysqld/vitess"
 )
 
 const (
@@ -66,7 +66,7 @@ func main() {
 
 	// Start server
 
-	server := server.NewServer()
+	server := vitess.NewServer()
 	err := server.Start()
 	if err != nil {
 		log.Printf("%s couldn't be started (%s)", ProgramName, err.Error())

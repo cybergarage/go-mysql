@@ -12,17 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package server
+package vitess
 
 import (
-	"time"
-
-	"github.com/cybergarage/go-mysql/examples/go-mysqld/vitess/server/storage"
+	"github.com/cybergarage/go-mysql/examples/go-mysqld/vitess/store"
 	"github.com/cybergarage/go-mysql/mysql/plugins/vitess"
-)
-
-const (
-	timeout = 3600 * time.Second
 )
 
 // Server represents a test server.
@@ -45,7 +39,7 @@ func NewServerWithStore(store Store) *Server {
 // NewServer returns a test server instance.
 func NewServer() *Server {
 	// NOTE: MemStore is a sample implementation. So, change to use your implementation.
-	return NewServerWithStore(storage.NewMemStore())
+	return NewServerWithStore(store.NewMemStore())
 }
 
 // GetStore returns a store in the server.
