@@ -15,10 +15,10 @@
 package v2
 
 import (
-	"github.com/cybergarage/go-mysql/mysql/plugins/vitess"
+	"github.com/cybergarage/go-mysql/mysql"
 )
 
 // Store should support only DMOExecutor methods.
 type Store interface {
-	vitess.QueryExecutor
+	mysql.Executor
 }
