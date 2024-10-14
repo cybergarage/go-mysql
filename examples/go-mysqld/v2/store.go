@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package vitess
+package v2
 
 import (
 	"github.com/cybergarage/go-mysql/mysql/plugins/vitess"
