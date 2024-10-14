@@ -59,7 +59,7 @@ func (store *MemStore) Rollback(conn vitess.Conn, stmt *query.Rollback) (*vitess
 func (store *MemStore) CreateDatabase(conn vitess.Conn, stmt *query.Database) (*vitess.Result, error) {
 	log.Debugf("%v", stmt)
 	dbName := stmt.Name()
-	_, ok := store.GetDatabase(dbName)
+	_, ok := store.LookupDatabase(dbName)
 	if ok {
 		return vitess.NewResult(), errors.NewDatabaseNotFound(dbName)
 	}
@@ -79,7 +79,7 @@ func (store *MemStore) AlterDatabase(conn vitess.Conn, stmt *query.Database) (*v
 // DropDatabase should handle a DROP database statement.
 func (store *MemStore) DropDatabase(conn vitess.Conn, stmt *query.Database) (*vitess.Result, error) {
 	dbName := conn.Database()
-	db, ok := store.GetDatabase(dbName)
+	db, ok := store.LookupDatabase(dbName)
 	if !ok {
 		return nil, errors.NewDatabaseNotFound(dbName)
 	}
@@ -94,7 +94,7 @@ func (store *MemStore) DropDatabase(conn vitess.Conn, stmt *query.Database) (*vi
 // CreateTable should handle a CREATE table statement.
 func (store *MemStore) CreateTable(conn vitess.Conn, stmt *query.Schema) (*vitess.Result, error) {
 	dbName := conn.Database()
-	db, ok := store.GetDatabase(dbName)
+	db, ok := store.LookupDatabase(dbName)
 	if !ok {
 		return nil, errors.NewDatabaseNotFound(dbName)
 	}
@@ -120,7 +120,7 @@ func (store *MemStore) AlterTable(conn vitess.Conn, stmt *query.Schema) (*vitess
 // DropTable should handle a DROP table statement.
 func (store *MemStore) DropTable(conn vitess.Conn, stmt *query.Schema) (*vitess.Result, error) {
 	dbName := conn.Database()
-	db, ok := store.GetDatabase(dbName)
+	db, ok := store.LookupDatabase(dbName)
 	if !ok {
 		return nil, errors.NewDatabaseNotFound(dbName)
 	}
@@ -180,7 +180,7 @@ func (store *MemStore) Update(conn vitess.Conn, stmt *query.Update) (*vitess.Res
 	dbName := conn.Database()
 	cond := stmt.Where
 
-	database, ok := store.GetDatabase(dbName)
+	database, ok := store.LookupDatabase(dbName)
 	if !ok {
 		return nil, errors.NewDatabaseNotFound(dbName)
 	}
@@ -216,7 +216,7 @@ func (store *MemStore) Delete(conn vitess.Conn, stmt *query.Delete) (*vitess.Res
 	dbName := conn.Database()
 	cond := stmt.Where
 
-	database, ok := store.GetDatabase(dbName)
+	database, ok := store.LookupDatabase(dbName)
 	if !ok {
 		return nil, errors.NewDatabaseNotFound(dbName)
 	}
@@ -247,7 +247,7 @@ func (store *MemStore) Select(conn vitess.Conn, stmt *query.Select) (*vitess.Res
 	log.Debugf("%v", stmt)
 
 	dbName := conn.Database()
-	database, ok := store.GetDatabase(dbName)
+	database, ok := store.LookupDatabase(dbName)
 	if !ok {
 		return nil, errors.NewDatabaseNotFound(dbName)
 	}
