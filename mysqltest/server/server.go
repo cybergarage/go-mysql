@@ -22,13 +22,14 @@ import (
 // Server represents a test server.
 type Server struct {
 	*vitess.Server
+	v2 *v2.Server
 }
 
 // NewServer returns a test server instance.
 func NewServer() *Server {
-	v2.NewServer()
 	s := &Server{
 		Server: vitess.NewServer(),
+		v2:     v2.NewServer(),
 	}
 	return s
 }
