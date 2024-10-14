@@ -14,6 +14,8 @@
 
 package store
 
+import "github.com/cybergarage/go-mysql/mysql/errors"
+
 // Databases represents a collection of databases.
 type Databases map[string]*Database
 
@@ -30,11 +32,14 @@ func (dbs Databases) AddDatabase(db *Database) error {
 }
 
 // DropDatabase remove the specified database.
-func (dbs Databases) DropDatabase(db *Database) bool {
+func (dbs Databases) DropDatabase(db *Database) error {
 	name := db.Name()
-	delete(dbs, name)
 	_, ok := dbs[name]
-	return !ok
+	if !ok {
+		return errors.NewDatabaseNotFound(name)
+	}
+	delete(dbs, name)
+	return nil
 }
 
 // LookupDatabase returns a database with the specified name.
