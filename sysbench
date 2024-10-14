@@ -1,0 +1,10 @@
+!#/bin/bash
+sysbench  \
+    --mysql-host=localhost \
+    --mysql-db=sbtest \
+    --mysql-user=sbtest \
+    --tables=3 \
+    --table_size=10000 \
+    --threads=N \
+    --time=60 \
+    oltp_read_write
