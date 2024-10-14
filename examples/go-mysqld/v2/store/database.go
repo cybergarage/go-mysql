@@ -59,8 +59,8 @@ func (ks *Database) DropTable(table *Table) bool {
 	return !ok
 }
 
-// GetTable returns a table with the specified name.
-func (ks *Database) GetTable(name string) (*Table, bool) {
+// LookupTable returns a table with the specified name.
+func (ks *Database) LookupTable(name string) (*Table, bool) {
 	table, ok := ks.tables[name]
 	return table, ok
 }

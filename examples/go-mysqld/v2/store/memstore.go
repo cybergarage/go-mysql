@@ -99,7 +99,7 @@ func (store *MemStore) CreateTable(conn vitess.Conn, stmt *query.Schema) (*vites
 		return nil, errors.NewDatabaseNotFound(dbName)
 	}
 	tableName := stmt.TableName()
-	_, ok = db.GetTable(tableName)
+	_, ok = db.LookupTable(tableName)
 	if !ok {
 		table := NewTableWith(tableName, stmt)
 		db.AddTable(table)
@@ -125,7 +125,7 @@ func (store *MemStore) DropTable(conn vitess.Conn, stmt *query.Schema) (*vitess.
 		return nil, errors.NewDatabaseNotFound(dbName)
 	}
 	tableName := stmt.TableName()
-	table, ok := db.GetTable(tableName)
+	table, ok := db.LookupTable(tableName)
 	if !ok {
 		return vitess.NewResult(), nil
 	}
@@ -191,7 +191,7 @@ func (store *MemStore) Update(conn vitess.Conn, stmt *query.Update) (*vitess.Res
 		if err != nil {
 			return nil, err
 		}
-		table, ok := database.GetTable(tableName)
+		table, ok := database.LookupTable(tableName)
 		if !ok {
 			return nil, errors.NewCollectionNotFound(tableName)
 		}
@@ -227,7 +227,7 @@ func (store *MemStore) Delete(conn vitess.Conn, stmt *query.Delete) (*vitess.Res
 		if err != nil {
 			return nil, err
 		}
-		table, ok := database.GetTable(tableName)
+		table, ok := database.LookupTable(tableName)
 		if !ok {
 			return nil, errors.NewCollectionNotFound(tableName)
 		}
@@ -260,7 +260,7 @@ func (store *MemStore) Select(conn vitess.Conn, stmt *query.Select) (*vitess.Res
 		return nil, err
 	}
 
-	table, ok := database.GetTable(tableName)
+	table, ok := database.LookupTable(tableName)
 	if !ok {
 		// TODO: Support dummy dual table for MySQL connector 5.1.49
 		if tableName == "dual" {
