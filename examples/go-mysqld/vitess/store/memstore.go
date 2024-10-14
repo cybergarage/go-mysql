@@ -157,7 +157,7 @@ func (store *MemStore) Insert(conn vitess.Conn, stmt *query.Insert) (*vitess.Res
 	log.Debugf("%v", stmt)
 	dbName := conn.Database()
 	tableName := stmt.TableName()
-	table, ok := store.GetTableWithDatabase(dbName, tableName)
+	table, ok := store.LookupTableWithDatabase(dbName, tableName)
 	if !ok {
 		return vitess.NewResult(), errors.NewCollectionNotFound(tableName)
 	}
