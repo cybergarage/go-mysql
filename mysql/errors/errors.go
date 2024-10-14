@@ -18,4 +18,8 @@ import (
 	"errors"
 )
 
+var ErrInvalidRequest = errors.New("invalid request")
 var ErrNotImplemented = errors.New("not implemented")
+var ErrNotFound = errors.New("not found")
+var ErrAlreadyExists = errors.New("already exists")
+var ErrInvalidParameter = errors.New("invalid parameter")
