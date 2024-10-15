@@ -24,13 +24,19 @@ import (
 // QueryResponse represents a MySQL COM_QUERY response packet.
 type QueryResponse struct {
 	*packet
-	capFlags CapabilityFlag
+	capFlags        CapabilityFlag
+	metadataFollows ResultsetMetadata
+	columnCount     uint64
+	columnDefs      []*ColumnDef
 }
 
 func newQueryResponseWithPacket(pkt *packet, opts ...QueryResponseOption) *QueryResponse {
 	q := &QueryResponse{
-		packet:   pkt,
-		capFlags: 0,
+		packet:          pkt,
+		capFlags:        0,
+		metadataFollows: 0,
+		columnCount:     0,
+		columnDefs:      []*ColumnDef{},
 	}
 	for _, opt := range opts {
 		opt(q)
@@ -64,6 +70,35 @@ func NewQueryResponseFromReader(reader io.Reader, opts ...QueryResponseOption) (
 
 	pkt := newQueryResponseWithPacket(pktReader, opts...)
 
+	if pkt.Capabilities().IsEnabled(ClientOptionalResultsetMetadata) {
+		pkt.metadataFollows, err = pkt.ReadByte()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	pkt.columnCount, err = pkt.ReadLengthEncodedInt()
+	if err != nil {
+		return nil, err
+	}
+
+	if pkt.Capabilities().IsDisabled(ClientOptionalResultsetMetadata) || pkt.metadataFollows == ResultsetMetadataFull {
+		for i := 0; i < int(pkt.columnCount); i++ {
+			colDef, err := NewColumnDefFromReader(reader)
+			if err != nil {
+				return nil, err
+			}
+			pkt.columnDefs = append(pkt.columnDefs, colDef)
+		}
+	}
+
+	if pkt.Capabilities().IsDisabled(ClientDeprecateEOF) {
+		_, err := NewEOFFromReader(reader, WithEOFCapability(pkt.Capabilities()))
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return pkt, nil
 }
 
@@ -75,6 +110,48 @@ func (pkt *QueryResponse) Capabilities() CapabilityFlag {
 // Bytes returns the packet bytes.
 func (pkt *QueryResponse) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
+
+	if pkt.Capabilities().IsEnabled(ClientOptionalResultsetMetadata) {
+		err := w.WriteByte(pkt.metadataFollows)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	err := w.WriteLengthEncodedInt(pkt.columnCount)
+	if err != nil {
+		return nil, err
+	}
+
+	if pkt.Capabilities().IsDisabled(ClientOptionalResultsetMetadata) || pkt.metadataFollows == ResultsetMetadataFull {
+		for _, colDef := range pkt.columnDefs {
+			colDefBytes, err := colDef.Bytes()
+			if err != nil {
+				return nil, err
+			}
+			_, err = w.WriteBytes(colDefBytes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	if pkt.Capabilities().IsDisabled(ClientDeprecateEOF) {
+		eof, err := NewEOF(
+			WithEOFCapability(pkt.Capabilities()),
+		)
+		if err != nil {
+			return nil, err
+		}
+		eofBytes, err := eof.Bytes()
+		if err != nil {
+			return nil, err
+		}
+		_, err = w.WriteBytes(eofBytes)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	pkt.packet =
 		NewPacket(
