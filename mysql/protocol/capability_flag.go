@@ -91,3 +91,8 @@ const (
 func (capFlg CapabilityFlag) IsEnabled(flag CapabilityFlag) bool {
 	return (capFlg & flag) != 0
 }
+
+// IsDisabled returns true if the specified flag is not set.
+func (capFlg CapabilityFlag) IsDisabled(flag CapabilityFlag) bool {
+	return !capFlg.IsEnabled(flag)
+}
