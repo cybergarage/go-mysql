@@ -21,7 +21,7 @@ import (
 // MySQL: Column Definition
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset_column_definition.html
 
-// ResultSet represents a MySQL text resultset packet.
+// ColumnDef represents a MySQL Column Definition packet.
 type ColumnDef struct {
 	*packet
 	catalog   string
@@ -49,6 +49,8 @@ func newColumnDef() *ColumnDef {
 		decimals:  0,
 	}
 }
+
+// NewColumnDefFromReader returns a new ColumnDef from the reader.
 func NewColumnDefFromReader(r io.Reader) (*ColumnDef, error) {
 	var err error
 
