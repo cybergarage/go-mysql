@@ -99,6 +99,13 @@ func NewQueryResponseFromReader(reader io.Reader, opts ...QueryResponseOption) (
 		}
 	}
 
+	if pkt.Capabilities().IsDisabled(ClientDeprecateEOF) {
+		_, err := NewEOFFromReader(reader, WithEOFCapability(pkt.Capabilities()))
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return pkt, nil
 }
 
@@ -137,17 +144,19 @@ func (pkt *QueryResponse) Bytes() ([]byte, error) {
 	}
 
 	if pkt.Capabilities().IsDisabled(ClientDeprecateEOF) {
-		eof, err := NewEOF(
-			WithEOFCapability(pkt.Capabilities()),
-		)
+		err := w.WriteEOF()
 		if err != nil {
 			return nil, err
 		}
-		eofBytes, err := eof.Bytes()
+	}
+
+	if pkt.Capabilities().IsEnabled(ClientDeprecateEOF) {
+		err := w.WriteOK(pkt.Capabilities())
 		if err != nil {
 			return nil, err
 		}
-		_, err = w.WriteBytes(eofBytes)
+	} else {
+		err := w.WriteEOF(pkt.Capabilities())
 		if err != nil {
 			return nil, err
 		}
