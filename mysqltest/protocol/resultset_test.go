@@ -23,13 +23,15 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-//go:embed data/query-001.hex
-var resultSetPkt001 string
+// //go:embed data/resultset-001.hex
+// var resultSetPkt001 string
+
+//go:embed data/resultset-002.hex
+var resultSetPkt002 string
 
 func TestResultSet(t *testing.T) {
 	type expected struct {
 		seqID protocol.SequenceID
-		query string
 	}
 	for _, test := range []struct {
 		name     string
@@ -37,13 +39,20 @@ func TestResultSet(t *testing.T) {
 		capFlags protocol.CapabilityFlag
 		expected
 	}{
+		// {
+		// 	"query001",
+		// 	resultSetPkt001,
+		// 	protocol.ClientQueryAttributes,
+		// 	expected{
+		// 		seqID: protocol.SequenceID(0),
+		// 	},
+		// },
 		{
-			"query001",
-			resultSetPkt001,
+			"query002",
+			resultSetPkt002,
 			protocol.ClientQueryAttributes,
 			expected{
 				seqID: protocol.SequenceID(0),
-				query: "select @@version_comment limit 1",
 			},
 		},
 	} {
@@ -55,10 +64,10 @@ func TestResultSet(t *testing.T) {
 			}
 			reader := bytes.NewReader(testBytes)
 
-			opts := []protocol.QueryOption{
-				protocol.WithQueryCapabilities(test.capFlags),
+			opts := []protocol.QueryResponseOption{
+				protocol.WithQueryResponseCapabilities(test.capFlags),
 			}
-			pkt, err := protocol.NewQueryFromReader(reader, opts...)
+			pkt, err := protocol.NewQueryResponseFromReader(reader, opts...)
 			if err != nil {
 				t.Error(err)
 				return
@@ -66,10 +75,6 @@ func TestResultSet(t *testing.T) {
 
 			if pkt.SequenceID() != test.expected.seqID {
 				t.Errorf("expected %d, got %d", test.expected.seqID, pkt.SequenceID())
-			}
-
-			if pkt.Query() != test.expected.query {
-				t.Errorf("expected %s, got %s", test.expected.query, pkt.Query())
 			}
 
 			// Compare the packet bytes
