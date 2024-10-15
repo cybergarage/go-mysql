@@ -48,3 +48,51 @@ func (w *PacketWriter) WriteFillerBytes(b byte, n int) error {
 	}
 	return nil
 }
+
+// WriteOK writes a OK packet.
+func (w *PacketWriter) WriteOK(opts ...any) error {
+	okOpts := []OKOption{}
+	for _, opt := range opts {
+		switch o := opt.(type) {
+		case CapabilityFlag:
+			okOpts = append(okOpts, WithOKCapability(o))
+		}
+	}
+	ok, err := NewOK(okOpts...)
+	if err != nil {
+		return err
+	}
+	okBytes, err := ok.Bytes()
+	if err != nil {
+		return err
+	}
+	_, err = w.WriteBytes(okBytes)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// WriteEOF writes a EOF packet.
+func (w *PacketWriter) WriteEOF(opts ...any) error {
+	eofOpts := []EOFOption{}
+	for _, opt := range opts {
+		switch o := opt.(type) {
+		case CapabilityFlag:
+			eofOpts = append(eofOpts, WithEOFCapability(o))
+		}
+	}
+	eof, err := NewEOF(eofOpts...)
+	if err != nil {
+		return err
+	}
+	eofBytes, err := eof.Bytes()
+	if err != nil {
+		return err
+	}
+	_, err = w.WriteBytes(eofBytes)
+	if err != nil {
+		return err
+	}
+	return nil
+}
