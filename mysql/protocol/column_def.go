@@ -24,29 +24,35 @@ import (
 // ColumnDef represents a MySQL Column Definition packet.
 type ColumnDef struct {
 	*packet
-	catalog   string
-	schema    string
-	table     string
-	orgName   string
-	charSet   uint16
-	colLength uint32
-	colType   uint8
-	flags     uint16
-	decimals  uint8
+	catalog          string
+	schema           string
+	table            string
+	orgTable         string
+	name             string
+	orgName          string
+	fixedFieldLength uint64
+	charSet          uint16
+	colLength        uint32
+	colType          uint8
+	flags            uint16
+	decimals         uint8
 }
 
-func newColumnDef() *ColumnDef {
+func newColumnDefWith(pkt *packet) *ColumnDef {
 	return &ColumnDef{
-		packet:    nil,
-		catalog:   "",
-		schema:    "",
-		table:     "",
-		orgName:   "",
-		charSet:   0,
-		colLength: 0,
-		colType:   0,
-		flags:     0,
-		decimals:  0,
+		packet:           pkt,
+		catalog:          "",
+		schema:           "",
+		table:            "",
+		orgTable:         "",
+		name:             "",
+		orgName:          "",
+		fixedFieldLength: 0,
+		charSet:          0,
+		colLength:        0,
+		colType:          0,
+		flags:            0,
+		decimals:         0,
 	}
 }
 
@@ -59,7 +65,7 @@ func NewColumnDefFromReader(r io.Reader) (*ColumnDef, error) {
 		return nil, err
 	}
 
-	colDef := newColumnDef()
+	colDef := newColumnDefWith(pkt)
 
 	colDef.catalog, err = pkt.ReadLengthEncodedString()
 	if err != nil {
@@ -76,7 +82,22 @@ func NewColumnDefFromReader(r io.Reader) (*ColumnDef, error) {
 		return nil, err
 	}
 
+	colDef.orgTable, err = pkt.ReadLengthEncodedString()
+	if err != nil {
+		return nil, err
+	}
+
+	colDef.name, err = pkt.ReadLengthEncodedString()
+	if err != nil {
+		return nil, err
+	}
+
 	colDef.orgName, err = pkt.ReadLengthEncodedString()
+	if err != nil {
+		return nil, err
+	}
+
+	colDef.fixedFieldLength, err = pkt.ReadLengthEncodedInt()
 	if err != nil {
 		return nil, err
 	}
@@ -122,6 +143,16 @@ func (pkt *ColumnDef) Schema() string {
 // Table returns the column table.
 func (pkt *ColumnDef) Table() string {
 	return pkt.table
+}
+
+// OrgTable returns the column original table.
+func (pkt *ColumnDef) OrgTable() string {
+	return pkt.orgTable
+}
+
+// Name returns the column name.
+func (pkt *ColumnDef) Name() string {
+	return pkt.name
 }
 
 // OrgName returns the column original name.
@@ -170,7 +201,19 @@ func (pkt *ColumnDef) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
+	if err := w.WriteLengthEncodedString(pkt.orgTable); err != nil {
+		return nil, err
+	}
+
+	if err := w.WriteLengthEncodedString(pkt.name); err != nil {
+		return nil, err
+	}
+
 	if err := w.WriteLengthEncodedString(pkt.orgName); err != nil {
+		return nil, err
+	}
+
+	if err := w.WriteLengthEncodedInt(pkt.fixedFieldLength); err != nil {
 		return nil, err
 	}
 
