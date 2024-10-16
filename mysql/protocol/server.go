@@ -219,7 +219,10 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			return errors.New("no command handler")
 		}
 
-		cmd, err := NewCommandFromReader(conn)
+		var err error
+		var cmd Command
+
+		cmd, err = NewCommandFromReader(conn)
 		if err != nil {
 			return err
 		}
@@ -236,38 +239,40 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			loopSpan.Span().Finish()
 		}
 
+		var res Packet
 		switch cmdType {
 		case COM_QUIT:
+			err = conn.ResponsePacket(NewOK())
 			finishSpans()
-			return nil
+			return err
 		case COM_QUERY:
-			q, err := NewQueryFromCommand(cmd)
-			if err != nil {
-				finishSpans()
-				return err
-			}
-			res, err := server.CommandHandler.HandleQuery(q)
-			if err != nil {
-				finishSpans()
-				return err
-			}
-			err = conn.ResponsePacket(res)
-			if err != nil {
-				finishSpans()
-				return err
+			var q *Query
+			q, err = NewQueryFromCommand(cmd)
+			if err == nil {
+				res, err = server.CommandHandler.HandleQuery(conn, q)
 			}
 		default:
-			err := cmd.SkipPayload()
-			if err != nil {
-				return err
-			}
+			err = cmd.SkipPayload()
 		}
 
 		conn.FinishSpan()
 
 		conn.StartSpan("response")
+
+		if err == nil {
+			if res != nil {
+				err = conn.ResponsePacket(res)
+			}
+		} else {
+			err = conn.ResponseError(err)
+		}
+
 		conn.FinishSpan()
 
 		loopSpan.Span().Finish()
+
+		if err != nil {
+			return err
+		}
 	}
 }

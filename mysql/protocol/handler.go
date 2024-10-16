@@ -16,5 +16,5 @@ package protocol
 
 // CommandHandler represents a MySQL command handler.
 type CommandHandler interface {
-	HandleQuery(q *Query) (Packet, error)
+	HandleQuery(conn Conn, q *Query) (Response, error)
 }
