@@ -27,11 +27,12 @@ type Server struct {
 
 // NewServer returns a base executor server instance.
 func NewServer() *Server {
-	s := &Server{
+	server := &Server{
 		Server:   protocol.NewServer(),
 		executor: nil,
 	}
-	return s
+	server.Server.SetCommandHandler(server)
+	return server
 }
 
 // SetExecutor sets an executor to the server.

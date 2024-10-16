@@ -50,9 +50,9 @@ func (server *Server) SetTracer(t tracer.Tracer) {
 	server.Tracer = t
 }
 
-// ServerCommandHandler returns a command handler.
-func (server *Server) ServerCommandHandler() CommandHandler {
-	return server.CommandHandler
+// SetCommandHandler sets a command handler.
+func (server *Server) SetCommandHandler(h CommandHandler) {
+	server.CommandHandler = h
 }
 
 // Start starts the server.
