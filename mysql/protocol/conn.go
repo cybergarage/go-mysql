@@ -17,195 +17,21 @@ package protocol
 import (
 	"crypto/tls"
 	"net"
-	"time"
 
-	"github.com/cybergarage/go-tracing/tracer"
-	"github.com/google/uuid"
+	mysqlnet "github.com/cybergarage/go-mysql/mysql/net"
 )
 
-// ConnOption represents a connection option.
-type ConnOption = func(*Conn)
-
-// Conn represents a connection of MySQL binary.
-type Conn struct {
+type Conn interface {
 	net.Conn
-	isClosed  bool
-	msgReader *PacketReader
-	db        string
-	ts        time.Time
-	uuid      uuid.UUID
-	id        uint64
-	tracer.Context
-	tlsState     *tls.ConnectionState
-	capabilities CapabilityFlag
-}
-
-// NewConnWith returns a connection with a raw connection.
-func NewConnWith(netConn net.Conn, opts ...ConnOption) *Conn {
-	conn := &Conn{
-		Conn:         netConn,
-		isClosed:     false,
-		msgReader:    NewPacketReaderWith(netConn),
-		db:           "",
-		ts:           time.Now(),
-		uuid:         uuid.New(),
-		id:           0,
-		Context:      nil,
-		tlsState:     nil,
-		capabilities: 0,
-	}
-	conn.SetOptions(opts...)
-	return conn
-}
-
-// WithConnDatabase sets a database name.
-func WithConnDatabase(name string) func(*Conn) {
-	return func(conn *Conn) {
-		conn.db = name
-	}
-}
-
-// WithConnTracer sets a tracer context.
-func WithConnTracer(t tracer.Context) func(*Conn) {
-	return func(conn *Conn) {
-		conn.Context = t
-	}
-}
-
-// WithTLSConnectionState sets a TLS connection state.
-func WithTLSConnectionState(s *tls.ConnectionState) func(*Conn) {
-	return func(conn *Conn) {
-		conn.tlsState = s
-	}
-}
-
-// Withuint64 sets a connection ID.
-func Withuint64(id uint64) func(*Conn) {
-	return func(conn *Conn) {
-		conn.id = id
-	}
-}
-
-// WithCapabilities sets capabilities.
-func WithCapabilities(c CapabilityFlag) func(*Conn) {
-	return func(conn *Conn) {
-		conn.capabilities = c
-	}
-}
-
-// Close closes the connection.
-func (conn *Conn) Close() error {
-	if conn.isClosed {
-		return nil
-	}
-	if err := conn.Conn.Close(); err != nil {
-		return err
-	}
-	conn.isClosed = true
-	return nil
-}
-
-// SetOptions sets the connection options.
-func (conn *Conn) SetOptions(opts ...ConnOption) {
-	for _, opt := range opts {
-		opt(conn)
-	}
-}
-
-// SetDatabase sets the database name.
-func (conn *Conn) SetDatabase(db string) {
-	conn.db = db
-}
-
-// Database returns the database name.
-func (conn *Conn) Database() string {
-	return conn.db
-}
-
-// Timestamp returns the creation time of the connection.
-func (conn *Conn) Timestamp() time.Time {
-	return conn.ts
-}
-
-// UUID returns the UUID of the connection.
-func (conn *Conn) UUID() uuid.UUID {
-	return conn.uuid
-}
-
-// UUID returns the connection ID of the connection.
-func (conn *Conn) ID() uint64 {
-	return conn.id
-}
-
-// SetSpanContext sets the tracer span context of the connection.
-func (conn *Conn) SetSpanContext(ctx tracer.Context) {
-	conn.Context = ctx
-}
-
-// SpanContext returns the tracer span context of the connection.
-func (conn *Conn) SpanContext() tracer.Context {
-	return conn.Context
-}
-
-// IsTLSConnection return true if the connection is enabled TLS.
-func (conn *Conn) IsTLSConnection() bool {
-	return conn.tlsState != nil
-}
-
-// TLSConnectionState returns the TLS connection state.
-func (conn *Conn) TLSConnectionState() (*tls.ConnectionState, bool) {
-	return conn.tlsState, conn.tlsState != nil
-}
-
-// SetCapabilities sets the capabilities.
-func (conn *Conn) SetCapabilities(c CapabilityFlag) {
-	conn.capabilities = c
-}
-
-// Capabilities returns the capabilities.
-func (conn *Conn) Capabilities() CapabilityFlag {
-	return conn.capabilities
-}
-
-// PacketReader returns a packet reader.
-func (conn *Conn) PacketReader() *PacketReader {
-	return conn.msgReader
-}
-
-// ResponsePacket sends a response.
-func (conn *Conn) ResponsePacket(resMsg Packet) error {
-	if resMsg == nil {
-		return nil
-	}
-	resBytes, err := resMsg.Bytes()
-	if err != nil {
-		return err
-	}
-	if _, err := conn.Conn.Write(resBytes); err != nil {
-		return err
-	}
-	return nil
-}
-
-// ResponsePackets sends response packets.
-func (conn *Conn) ResponsePackets(resMsgs []Packet) error {
-	if len(resMsgs) == 0 {
-		return nil
-	}
-	for _, resMsg := range resMsgs {
-		err := conn.ResponsePacket(resMsg)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// ResponseError sends an error response.
-func (conn *Conn) ResponseError(err error) error {
-	pkt, err := NewERRFromError(err)
-	if err != nil {
-		return err
-	}
-	return conn.ResponsePacket(pkt)
+	mysqlnet.Conn
+	SetDatabase(db string)
+	Database() string
+	IsTLSConnection() bool
+	TLSConnectionState() (*tls.ConnectionState, bool)
+	SetCapabilities(c CapabilityFlag)
+	Capabilities() CapabilityFlag
+	PacketReader() *PacketReader
+	ResponsePacket(resMsg Packet) error
+	ResponsePackets(resMsgs []Packet) error
+	ResponseError(err error) error
 }

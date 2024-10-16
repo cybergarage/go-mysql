@@ -16,6 +16,7 @@ package v2
 
 import (
 	"github.com/cybergarage/go-mysql/mysql/errors"
+	"github.com/cybergarage/go-mysql/mysql/plugins"
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 	"github.com/cybergarage/go-mysql/mysql/query"
 )
@@ -23,7 +24,7 @@ import (
 // Server represents a base executor server.
 type Server struct {
 	*protocol.Server
-	executor plugins
+	executor plugins.QueryExecutor
 }
 
 // NewServer returns a base executor server instance.
