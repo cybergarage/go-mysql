@@ -1,4 +1,4 @@
-// Copyright (C) 2020 The go-mysql Authors. All rights reserved.
+// Copyright (C) 2024 The go-mysql Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,31 @@ package query
 
 import (
 	"github.com/cybergarage/go-sqlparser/sql"
+	"github.com/cybergarage/go-sqlparser/sql/query"
+)
+
+type StatementType = query.StatementType
+
+const (
+	CreateDatabaseStatement = query.CreateDatabaseStatement
+	CreateTableStatement    = query.CreateTableStatement
+	CreateIndexStatement    = query.CreateIndexStatement
+	InsertStatement         = query.InsertStatement
+	SelectStatement         = query.SelectStatement
+	UpdateStatement         = query.UpdateStatement
+	DeleteStatement         = query.DeleteStatement
+	DropDatabaseStatement   = query.DropDatabaseStatement
+	DropTableStatement      = query.DropTableStatement
+	DropIndexStatement      = query.DropIndexStatement
+	AlterDatabaseStatement  = query.AlterDatabaseStatement
+	AlterTableStatement     = query.AlterTableStatement
+	AlterIndexStatement     = query.AlterIndexStatement
+	CopyStatement           = query.CopyStatement
+	CommitStatement         = query.CommitStatement
+	VacuumStatement         = query.VacuumStatement
+	TruncateStatement       = query.TruncateStatement
+	BeginStatement          = query.BeginStatement
+	RollbackStatement       = query.RollbackStatement
 )
 
 // CreateDatabase represents a "CREATE DATABASE" statement interface.
