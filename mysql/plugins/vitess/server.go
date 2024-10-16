@@ -52,7 +52,7 @@ func NewListener(protocol, address string, authServer AuthHandler, handler Query
 
 // Server represents a MySQL-compatible server.
 type Server struct {
-	plugins.Executor
+	plugins.QueryExecutor
 	tracer.Tracer
 	plugins.Config
 	*mysqlnet.ConnManager
@@ -76,14 +76,14 @@ func NewServer() *Server {
 		listener:       nil,
 		productName:    "vitess",
 		productVersion: "x.x.x",
-		Executor:       nil,
+		QueryExecutor:  nil,
 	}
 	return server
 }
 
-// SetExecutor sets an executor to the server.
-func (server *Server) SetExecutor(executor plugins.Executor) {
-	server.Executor = executor
+// SetExecutor sets an query executor to the server.
+func (server *Server) SetExecutor(executor plugins.QueryExecutor) {
+	server.QueryExecutor = executor
 }
 
 // SetProuctName sets a product name to the configuration.

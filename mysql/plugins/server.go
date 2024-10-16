@@ -16,7 +16,7 @@ package plugins
 
 // Server represents a server interface.
 type Server interface {
-	SetExecutor(executor Executor)
+	SetExecutor(executor QueryExecutor)
 	SetProductName(v string)
 	SetProductVersion(v string)
 }

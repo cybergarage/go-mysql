@@ -18,4 +18,4 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/query"
 )
 
-type Executor = query.Executor
+type QueryExecutor = query.Executor
