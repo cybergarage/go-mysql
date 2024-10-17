@@ -38,9 +38,7 @@ func newQueryResponseWithPacket(pkt *packet, opts ...QueryResponseOption) *Query
 		columnCount:     0,
 		columnDefs:      []*ColumnDef{},
 	}
-	for _, opt := range opts {
-		opt(q)
-	}
+	q.SetOptions(opts...)
 	return q
 }
 
@@ -107,6 +105,13 @@ func NewQueryResponseFromReader(reader io.Reader, opts ...QueryResponseOption) (
 	}
 
 	return pkt, nil
+}
+
+// SetOptions sets the options.
+func (pkt *QueryResponse) SetOptions(opts ...QueryResponseOption) {
+	for _, opt := range opts {
+		opt(pkt)
+	}
 }
 
 // Capabilities returns the capabilities.
