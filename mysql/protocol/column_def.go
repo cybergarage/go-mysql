@@ -77,6 +77,7 @@ func WithColumnDefSchema(schema string) ColumnDefOption {
 func WithColumnDefTable(table string) ColumnDefOption {
 	return func(pkt *ColumnDef) {
 		pkt.table = table
+		pkt.orgTable = table
 	}
 }
 
@@ -91,6 +92,7 @@ func WithColumnDefOrgTable(orgTable string) ColumnDefOption {
 func WithColumnDefName(name string) ColumnDefOption {
 	return func(pkt *ColumnDef) {
 		pkt.name = name
+		pkt.orgName = name
 	}
 }
 
