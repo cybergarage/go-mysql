@@ -15,8 +15,8 @@
 package mysql
 
 import (
-	"github.com/cybergarage/go-mysql/mysql/plugins"
+	"github.com/cybergarage/go-mysql/mysql/net"
 )
 
 // Conn represents a connection.
-type Conn = plugins.Conn
+type Conn = net.Conn
