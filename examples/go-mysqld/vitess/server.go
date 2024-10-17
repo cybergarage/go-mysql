@@ -32,7 +32,7 @@ func NewServerWithStore(store Store) *Server {
 		Server: vitess.NewServer(),
 		Store:  store,
 	}
-	server.SetQueryExecutor(store)
+	server.SetExecutor(store)
 	return server
 }
 
