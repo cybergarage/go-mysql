@@ -21,6 +21,16 @@ import (
 // MySQL: Column Definition
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset_column_definition.html
 
+const (
+	defaultColumnDefCatalog       = "def"
+	defaultColumnFixedFieldLength = 0x0c
+	defaultColumnDefMaxLen        = 0xFFFF
+	defaultColumnCharSet          = uint16(CharSetUTF8)
+)
+
+// ColumnDefOption represents a function to set a ColumnDef option.
+type ColumnDefOption func(*ColumnDef)
+
 // ColumnDef represents a MySQL Column Definition packet.
 type ColumnDef struct {
 	*packet
@@ -41,18 +51,88 @@ type ColumnDef struct {
 func newColumnDefWith(pkt *packet) *ColumnDef {
 	return &ColumnDef{
 		packet:           pkt,
-		catalog:          "",
+		catalog:          defaultColumnDefCatalog,
 		schema:           "",
 		table:            "",
 		orgTable:         "",
 		name:             "",
 		orgName:          "",
-		fixedFieldLength: 0,
-		charSet:          0,
-		colLength:        0,
+		fixedFieldLength: defaultColumnFixedFieldLength,
+		charSet:          defaultColumnCharSet,
+		colLength:        defaultColumnDefMaxLen,
 		colType:          0,
 		flags:            0,
 		decimals:         0,
+	}
+}
+
+// WithColumnDefSchema returns a ColumnDefOption to set the schema.
+func WithColumnDefSchema(schema string) ColumnDefOption {
+	return func(pkt *ColumnDef) {
+		pkt.schema = schema
+	}
+}
+
+// WithColumnDefTable returns a ColumnDefOption to set the table.
+func WithColumnDefTable(table string) ColumnDefOption {
+	return func(pkt *ColumnDef) {
+		pkt.table = table
+	}
+}
+
+// WithColumnDefOrgTable returns a ColumnDefOption to set the original table.
+func WithColumnDefOrgTable(orgTable string) ColumnDefOption {
+	return func(pkt *ColumnDef) {
+		pkt.orgTable = orgTable
+	}
+}
+
+// WithColumnDefName returns a ColumnDefOption to set the name.
+func WithColumnDefName(name string) ColumnDefOption {
+	return func(pkt *ColumnDef) {
+		pkt.name = name
+	}
+}
+
+// WithColumnDefOrgName returns a ColumnDefOption to set the original name.
+func WithColumnDefOrgName(orgName string) ColumnDefOption {
+	return func(pkt *ColumnDef) {
+		pkt.orgName = orgName
+	}
+}
+
+// WithColumnDefColLength returns a ColumnDefOption to set the column length.
+func WithColumnDefFixedFieldLength(fixedFieldLength uint64) ColumnDefOption {
+	return func(pkt *ColumnDef) {
+		pkt.fixedFieldLength = fixedFieldLength
+	}
+}
+
+// WithColumnDefColLength returns a ColumnDefOption to set the column length.
+func WithColumnDefCharSet(charSet uint16) ColumnDefOption {
+	return func(pkt *ColumnDef) {
+		pkt.charSet = charSet
+	}
+}
+
+// WithColumnDefColLength returns a ColumnDefOption to set the column length.
+func WithColumnDefColType(colType uint8) ColumnDefOption {
+	return func(pkt *ColumnDef) {
+		pkt.colType = colType
+	}
+}
+
+// WithColumnDefFlags returns a ColumnDefOption to set the flags.
+func WithColumnDefFlags(flags uint16) ColumnDefOption {
+	return func(pkt *ColumnDef) {
+		pkt.flags = flags
+	}
+}
+
+// WithColumnDefDecimals returns a ColumnDefOption to set the decimals.
+func WithColumnDefDecimals(decimals uint8) ColumnDefOption {
+	return func(pkt *ColumnDef) {
+		pkt.decimals = decimals
 	}
 }
 
@@ -128,6 +208,13 @@ func NewColumnDefFromReader(r io.Reader) (*ColumnDef, error) {
 	}
 
 	return colDef, nil
+}
+
+// SetOptions sets the ColumnDef options.
+func (pkt *ColumnDef) SetOptions(opts ...ColumnDefOption) {
+	for _, opt := range opts {
+		opt(pkt)
+	}
 }
 
 // Catalog returns the column catalog.
