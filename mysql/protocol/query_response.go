@@ -59,6 +59,7 @@ func WithQueryResponseMetadataFollows(m ResultsetMetadata) QueryResponseOption {
 	}
 }
 
+// WithQueryResponseColumnDefs returns a response option to set the column definitions.
 func WithQueryResponseColumnDefs(colDefs []*ColumnDef) QueryResponseOption {
 	return func(pkt *QueryResponse) {
 		pkt.columnCount = uint64(len(colDefs))
