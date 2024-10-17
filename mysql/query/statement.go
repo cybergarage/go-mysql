@@ -91,9 +91,3 @@ type Vacuum = sql.Vacuum
 
 // Truncate represents a "TRUNCATE" statement interface.
 type Truncate = sql.Truncate
-
-// ResultSet represents a response resultset interface.
-type ResultSet interface {
-	// Bytes returns the message bytes.
-	Bytes() ([]byte, error)
-}
