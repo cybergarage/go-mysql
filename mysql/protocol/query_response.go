@@ -45,9 +45,24 @@ func newQueryResponseWithPacket(pkt *packet, opts ...QueryResponseOption) *Query
 // QueryResponseOption represents a COM_QUERY response option.
 type QueryResponseOption func(*QueryResponse)
 
+// WithQueryResponseCapabilities returns a response option to set the capabilities.
 func WithQueryResponseCapabilities(c CapabilityFlag) QueryResponseOption {
 	return func(pkt *QueryResponse) {
 		pkt.capFlags = c
+	}
+}
+
+// WithQueryResponseMetadataFollows returns a response option to set the metadata follows.
+func WithQueryResponseMetadataFollows(m ResultsetMetadata) QueryResponseOption {
+	return func(pkt *QueryResponse) {
+		pkt.metadataFollows = m
+	}
+}
+
+func WithQueryResponseColumnDefs(colDefs []*ColumnDef) QueryResponseOption {
+	return func(pkt *QueryResponse) {
+		pkt.columnCount = uint64(len(colDefs))
+		pkt.columnDefs = colDefs
 	}
 }
 
