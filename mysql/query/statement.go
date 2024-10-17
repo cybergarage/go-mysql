@@ -19,6 +19,7 @@ import (
 	"github.com/cybergarage/go-sqlparser/sql/query"
 )
 
+type Statement = query.Statement
 type StatementType = query.StatementType
 
 const (
