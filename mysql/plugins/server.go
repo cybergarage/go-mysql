@@ -14,9 +14,13 @@
 
 package plugins
 
+import (
+	"github.com/cybergarage/go-mysql/mysql/query"
+)
+
 // Server represents a server interface.
 type Server interface {
-	SetExecutor(executor QueryExecutor)
+	SetQueryExecutor(executor query.Executor)
 	SetProductName(v string)
 	SetProductVersion(v string)
 }

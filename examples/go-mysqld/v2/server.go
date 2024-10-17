@@ -32,7 +32,7 @@ func NewServerWithStore(store Store) *Server {
 		Server: v2.NewServer(),
 		Store:  store,
 	}
-	server.SetExecutor(store)
+	server.SetQueryExecutor(store)
 	return server
 }
 

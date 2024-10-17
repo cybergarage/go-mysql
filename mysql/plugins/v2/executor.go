@@ -15,13 +15,13 @@
 package v2
 
 import (
-	"github.com/cybergarage/go-mysql/mysql/plugins"
+	"github.com/cybergarage/go-mysql/mysql/net"
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 	"github.com/cybergarage/go-sqlparser/sql"
 )
 
 // Conn represents a connection.
-type Conn = plugins.Conn
+type Conn = net.Conn
 
 // Response represents a response.
 type Response = protocol.Response

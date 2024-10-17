@@ -22,6 +22,7 @@ import (
 	"github.com/cybergarage/go-logger/log"
 	mysqlnet "github.com/cybergarage/go-mysql/mysql/net"
 	"github.com/cybergarage/go-mysql/mysql/plugins"
+	"github.com/cybergarage/go-mysql/mysql/query"
 	"github.com/cybergarage/go-tracing/tracer"
 	vitessmy "vitess.io/vitess/go/mysql"
 )
@@ -52,7 +53,7 @@ func NewListener(protocol, address string, authServer AuthHandler, handler Query
 
 // Server represents a MySQL-compatible server.
 type Server struct {
-	plugins.QueryExecutor
+	query.Executor
 	tracer.Tracer
 	plugins.Config
 	*mysqlnet.ConnManager
@@ -76,14 +77,14 @@ func NewServer() *Server {
 		listener:       nil,
 		productName:    "vitess",
 		productVersion: "x.x.x",
-		QueryExecutor:  nil,
+		Executor:       nil,
 	}
 	return server
 }
 
-// SetExecutor sets an query executor to the server.
-func (server *Server) SetExecutor(executor plugins.QueryExecutor) {
-	server.QueryExecutor = executor
+// SetQueryExecutor sets a query executor.
+func (server *Server) SetQueryExecutor(executor query.Executor) {
+	server.Executor = executor
 }
 
 // SetProuctName sets a product name to the configuration.
@@ -106,8 +107,8 @@ func (server *Server) SetAuthHandler(h AuthHandler) {
 	server.AuthHandler = h
 }
 
-// SetQueryExecutor sets a query executor.
-func (server *Server) SetQueryExecutor(e QueryExecutor) {
+// SetExecutor sets a query executor.
+func (server *Server) SetExecutor(e QueryExecutor) {
 	server.queryExecutor = e
 }
 
