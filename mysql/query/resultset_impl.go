@@ -14,10 +14,31 @@
 
 package query
 
+type resultset struct {
+	rowsAffected int64
+}
+
 // ResultSet represents a response resultset interface.
-type ResultSet interface {
-	// RowsAffected returns the number of rows affected.
-	RowsAffected() (int64, error)
-	// Next returns the next row.
-	Next() bool
+type ResultSetOption func(*resultset)
+
+// WithRowsAffected returns a resultset option to set the rows affected.
+func WithRowsAffected(rowsAffected int64) ResultSetOption {
+	return func(r *resultset) {
+		r.rowsAffected = rowsAffected
+	}
+}
+
+// NewResultSet returns a new ResultSet.
+func NewResultSet() ResultSet {
+	return &resultset{}
+}
+
+// RowsAffected returns the number of rows affected.
+func (r *resultset) RowsAffected() (int64, error) {
+	return r.rowsAffected, nil
+}
+
+// Next returns the next row.
+func (r *resultset) Next() bool {
+	return false
 }
