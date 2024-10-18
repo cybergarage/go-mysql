@@ -14,10 +14,54 @@
 
 package query
 
+import (
+	"github.com/cybergarage/go-sqlparser/sql/query"
+)
+
+type DataType = query.DataType
+
+// ResultSetColumn represents a column interface in a resultset.
+type ResultSetColumn interface {
+	// Name returns the column name.
+	Name() string
+	// Type returns the data type.
+	Type() DataType
+}
+
+// ResultSetSchema represents a schema interface in a resultset.
+type ResultSetSchema interface {
+	// Columns returns the columns.
+	Columns() []ResultSetColumn
+}
+
+// ResultSetRow represents a row interface.
+type ResultSetRow interface {
+	// Values returns the all values.
+	Values() []any
+	// ValueAt returns the value at the specified index.
+	ValueAt(int) any
+	// ValueNamed returns the value of the specified column.
+	ValueNamed(string) any
+	// Scan scans the values.
+	Scan(...any) error
+	// ScanAt scans the value at the specified index.
+	ScanAt(int, any) error
+	// ScanNamed scans the value of the specified column.
+	ScanNamed(string, any) error
+}
+
 // ResultSet represents a response resultset interface.
 type ResultSet interface {
+	ResultSetSchema
+	ResultSetRow
+	// Row returns the current row.
+	Row() ResultSetRow
+	// Schema returns the schema.
+	Schema() ResultSetSchema
 	// RowsAffected returns the number of rows affected.
 	RowsAffected() (int64, error)
 	// Next returns the next row.
 	Next() bool
+	// Close closes the resultset.
+	Close() error
 }
