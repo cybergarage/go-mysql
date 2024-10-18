@@ -15,6 +15,8 @@
 package query
 
 type resultset struct {
+	ResultSetSchema
+	ResultSetRow
 	rowsAffected int64
 }
 
@@ -30,7 +32,11 @@ func WithRowsAffected(rowsAffected int64) ResultSetOption {
 
 // NewResultSet returns a new ResultSet.
 func NewResultSet() ResultSet {
-	return &resultset{}
+	return &resultset{
+		ResultSetSchema: nil,
+		ResultSetRow:    nil,
+		rowsAffected:    0,
+	}
 }
 
 // RowsAffected returns the number of rows affected.
@@ -41,4 +47,19 @@ func (r *resultset) RowsAffected() (int64, error) {
 // Next returns the next row.
 func (r *resultset) Next() bool {
 	return false
+}
+
+// Row returns the current row.
+func (r *resultset) Row() ResultSetRow {
+	return nil
+}
+
+// Schema returns the schema.
+func (r *resultset) Schema() ResultSetSchema {
+	return nil
+}
+
+// Close closes the resultset.
+func (r *resultset) Close() error {
+	return nil
 }
