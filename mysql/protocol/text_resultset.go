@@ -20,9 +20,11 @@ import (
 
 // MySQL: Protocol::QueryResponse
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query.html
+// MySQL: Text Resultset
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset.html
 
-// QueryResponse represents a MySQL COM_QUERY response packet.
-type QueryResponse struct {
+// TextResultSet represents a MySQL text resultset response packet.
+type TextResultSet struct {
 	*packet
 	capFlags        CapabilityFlag
 	metadataFollows ResultsetMetadata
@@ -30,8 +32,8 @@ type QueryResponse struct {
 	columnDefs      []*ColumnDef
 }
 
-func newQueryResponseWithPacket(pkt *packet, opts ...QueryResponseOption) *QueryResponse {
-	q := &QueryResponse{
+func newTextResultSetWithPacket(pkt *packet, opts ...TextResultSetOption) *TextResultSet {
+	q := &TextResultSet{
 		packet:          pkt,
 		capFlags:        0,
 		metadataFollows: 0,
@@ -42,39 +44,39 @@ func newQueryResponseWithPacket(pkt *packet, opts ...QueryResponseOption) *Query
 	return q
 }
 
-// QueryResponseOption represents a COM_QUERY response option.
-type QueryResponseOption func(*QueryResponse)
+// TextResultSetOption represents a COM_QUERY text resultset option.
+type TextResultSetOption func(*TextResultSet)
 
-// WithQueryResponseCapabilities returns a response option to set the capabilities.
-func WithQueryResponseCapabilities(c CapabilityFlag) QueryResponseOption {
-	return func(pkt *QueryResponse) {
+// WithTextResultSetCapabilities returns a text resultset option to set the capabilities.
+func WithTextResultSetCapabilities(c CapabilityFlag) TextResultSetOption {
+	return func(pkt *TextResultSet) {
 		pkt.capFlags = c
 	}
 }
 
-// WithQueryResponseMetadataFollows returns a response option to set the metadata follows.
-func WithQueryResponseMetadataFollows(m ResultsetMetadata) QueryResponseOption {
-	return func(pkt *QueryResponse) {
+// WithTextResultSetMetadataFollows returns a text resultset option to set the metadata follows.
+func WithTextResultSetMetadataFollows(m ResultsetMetadata) TextResultSetOption {
+	return func(pkt *TextResultSet) {
 		pkt.metadataFollows = m
 	}
 }
 
-// WithQueryResponseColumnDefs returns a response option to set the column definitions.
-func WithQueryResponseColumnDefs(colDefs []*ColumnDef) QueryResponseOption {
-	return func(pkt *QueryResponse) {
+// WithTextResultSetColumnDefs returns a text resultset option to set the column definitions.
+func WithTextResultSetColumnDefs(colDefs []*ColumnDef) TextResultSetOption {
+	return func(pkt *TextResultSet) {
 		pkt.columnCount = uint64(len(colDefs))
 		pkt.columnDefs = colDefs
 	}
 }
 
-// NewQueryResponse returns a new COM_QUERY response packet.
-func NewQueryResponse(opts ...QueryResponseOption) (*QueryResponse, error) {
-	pkt := newQueryResponseWithPacket(nil, opts...)
+// NewTextResultSet returns a new text resultset response packet.
+func NewTextResultSet(opts ...TextResultSetOption) (*TextResultSet, error) {
+	pkt := newTextResultSetWithPacket(nil, opts...)
 	return pkt, nil
 }
 
-// NewQueryResponseFromReader returns a new COM_QUERY response packet from the specified reader.
-func NewQueryResponseFromReader(reader io.Reader, opts ...QueryResponseOption) (*QueryResponse, error) {
+// NewTextResultSetFromReader returns a new text resultset response packet from the specified reader.
+func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (*TextResultSet, error) {
 	var err error
 
 	pktReader, err := NewPacketWithReader(reader)
@@ -82,7 +84,7 @@ func NewQueryResponseFromReader(reader io.Reader, opts ...QueryResponseOption) (
 		return nil, err
 	}
 
-	pkt := newQueryResponseWithPacket(pktReader, opts...)
+	pkt := newTextResultSetWithPacket(pktReader, opts...)
 
 	if pkt.Capabilities().IsEnabled(ClientOptionalResultsetMetadata) {
 		pkt.metadataFollows, err = pkt.ReadByte()
@@ -124,19 +126,19 @@ func NewQueryResponseFromReader(reader io.Reader, opts ...QueryResponseOption) (
 }
 
 // SetOptions sets the options.
-func (pkt *QueryResponse) SetOptions(opts ...QueryResponseOption) {
+func (pkt *TextResultSet) SetOptions(opts ...TextResultSetOption) {
 	for _, opt := range opts {
 		opt(pkt)
 	}
 }
 
 // Capabilities returns the capabilities.
-func (pkt *QueryResponse) Capabilities() CapabilityFlag {
+func (pkt *TextResultSet) Capabilities() CapabilityFlag {
 	return pkt.capFlags
 }
 
 // Bytes returns the packet bytes.
-func (pkt *QueryResponse) Bytes() ([]byte, error) {
+func (pkt *TextResultSet) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
 	if pkt.Capabilities().IsEnabled(ClientOptionalResultsetMetadata) {
