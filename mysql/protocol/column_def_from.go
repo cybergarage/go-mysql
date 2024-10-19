@@ -30,11 +30,16 @@ func NewColumnDefsFromResultSet(rs query.ResultSet) ([]*ColumnDef, error) {
 		if err != nil {
 			return nil, err
 		}
+		c, err := query.NewColumnDefFlagFrom(column.Constraint())
+		if err != nil {
+			return nil, err
+		}
 		columnDef := NewColumnDef(
 			WithColumnDefSchema(rs.DatabaseName()),
 			WithColumnDefTable(rs.TableName()),
 			WithColumnDefName(column.Name()),
 			WithColumnDefType(uint8(t)),
+			WithColumnDefFlags(uint16(c)),
 		)
 		columnDefs[n] = columnDef
 	}
