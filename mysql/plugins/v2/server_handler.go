@@ -15,7 +15,6 @@
 package v2
 
 import (
-	"github.com/cybergarage/go-mysql/mysql/errors"
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 	"github.com/cybergarage/go-sqlparser/sql"
 )
@@ -66,12 +65,14 @@ func (server *Server) Select(conn Conn, stmt sql.Select) (Response, error) {
 
 // Update handles a UPDATE query.
 func (server *Server) Update(conn Conn, stmt sql.Update) (Response, error) {
-	return nil, errors.ErrNotImplemented
+	_, err := server.QueryExecutor().Update(conn, stmt)
+	return protocol.NewResponseWithError(err)
 }
 
 // Delete handles a DELETE query.
 func (server *Server) Delete(conn Conn, stmt sql.Delete) (Response, error) {
-	return nil, errors.ErrNotImplemented
+	_, err := server.QueryExecutor().Delete(conn, stmt)
+	return protocol.NewResponseWithError(err)
 }
 
 // Begin handles a BEGIN query.
@@ -91,5 +92,5 @@ func (server *Server) Rollback(conn Conn, stmt sql.Rollback) (Response, error) {
 
 // ErrorHandler represents a user error handler.
 func (server *Server) ParserError(conn Conn, stmt string, err error) (Response, error) {
-	return nil, errors.ErrNotImplemented
+	return nil, err
 }
