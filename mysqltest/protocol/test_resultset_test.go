@@ -64,10 +64,10 @@ func TestResultSet(t *testing.T) {
 			}
 			reader := bytes.NewReader(testBytes)
 
-			opts := []protocol.QueryResponseOption{
-				protocol.WithQueryResponseCapabilities(test.capFlags),
+			opts := []protocol.TextResultSetOption{
+				protocol.WithTextResultSetCapabilities(test.capFlags),
 			}
-			pkt, err := protocol.NewQueryResponseFromReader(reader, opts...)
+			pkt, err := protocol.NewTextResultSetFromReader(reader, opts...)
 			if err != nil {
 				t.Error(err)
 				return
