@@ -57,6 +57,10 @@ func (server *Server) Insert(conn Conn, stmt sql.Insert) (Response, error) {
 
 // Select handles a SELECT query.
 func (server *Server) Select(conn Conn, stmt sql.Select) (Response, error) {
+	res, err := server.QueryExecutor().Select(conn, stmt)
+	if err != nil {
+		return nil, err
+	}
 	return nil, errors.ErrNotImplemented
 }
 
