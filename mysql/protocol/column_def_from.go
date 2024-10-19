@@ -26,10 +26,15 @@ func NewColumnDefsFromResultSet(rs query.ResultSet) ([]*ColumnDef, error) {
 	columns := rs.Columns()
 	columnDefs := make([]*ColumnDef, len(columns))
 	for n, column := range columns {
+		t, err := query.NewFieldTypeFrom(column.Type())
+		if err != nil {
+			return nil, err
+		}
 		columnDef := NewColumnDef(
 			WithColumnDefSchema(rs.DatabaseName()),
 			WithColumnDefTable(rs.TableName()),
 			WithColumnDefName(column.Name()),
+			WithColumnDefType(uint8(t)),
 		)
 		columnDefs[n] = columnDef
 	}
