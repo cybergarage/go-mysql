@@ -118,7 +118,7 @@ func WithColumnDefCharSet(charSet uint16) ColumnDefOption {
 }
 
 // WithColumnDefColLength returns a ColumnDefOption to set the column length.
-func WithColumnDefColType(colType uint8) ColumnDefOption {
+func WithColumnDefType(colType uint8) ColumnDefOption {
 	return func(pkt *ColumnDef) {
 		pkt.colType = colType
 	}
