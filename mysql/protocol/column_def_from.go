@@ -25,12 +25,13 @@ import (
 func NewColumnDefsFromResultSet(rs query.ResultSet) ([]*ColumnDef, error) {
 	columns := rs.Columns()
 	columnDefs := make([]*ColumnDef, len(columns))
-	// for n, column := range columns {
-	// 	columnDef, err := NewColumnDefFromColumn(column)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// 	columnDefs[n] = columnDef
-	// }
+	for n, column := range columns {
+		columnDef := NewColumnDef(
+			WithColumnDefSchema(rs.DatabaseName()),
+			WithColumnDefTable(rs.TableName()),
+			WithColumnDefName(column.Name()),
+		)
+		columnDefs[n] = columnDef
+	}
 	return columnDefs, nil
 }

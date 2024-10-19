@@ -138,6 +138,11 @@ func WithColumnDefDecimals(decimals uint8) ColumnDefOption {
 	}
 }
 
+// NewColumnDef returns a new ColumnDef.
+func NewColumnDef(...ColumnDefOption) *ColumnDef {
+	return newColumnDefWith(nil)
+}
+
 // NewColumnDefFromReader returns a new ColumnDef from the reader.
 func NewColumnDefFromReader(r io.Reader) (*ColumnDef, error) {
 	var err error
