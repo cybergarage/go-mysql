@@ -61,11 +61,7 @@ func (server *Server) Select(conn Conn, stmt sql.Select) (Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	_, err = protocol.NewColumnDefsFromResultSet(rs)
-	if err != nil {
-		return nil, err
-	}
-	return nil, errors.ErrNotImplemented
+	return protocol.NewTextResultSetFromResultSet(rs)
 }
 
 // Update handles a UPDATE query.
