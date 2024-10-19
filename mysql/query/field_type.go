@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package protocol
+package query
 
 // MySQL: include/field_types.h File Reference
 // https://dev.mysql.com/doc/dev/mysql-server/latest/field__types_8h.html
