@@ -19,11 +19,10 @@ import (
 	"fmt"
 )
 
-var ErrInvalidRequest = errors.New("invalid request")
+var ErrInvalid = errors.New("invalid")
 var ErrNotImplemented = errors.New("not implemented")
 var ErrNotFound = errors.New("not found")
 var ErrExists = errors.New("already exists")
-var ErrInvalidParameter = errors.New("invalid parameter")
 
 // NewSystemDatabaseNotFound returns an error for a system database not found.
 func NewSystemDatabaseNotFound(name string) error {
