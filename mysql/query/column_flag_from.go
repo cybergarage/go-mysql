@@ -21,13 +21,13 @@ import (
 // NewColumnDefFlagFrom converts a given ColumnConstraint into a ColumnDefFlag.
 func NewColumnDefFlagFrom(c query.ColumnConstraint) (ColumnDefFlag, error) {
 	cdf := ColumnDefFlag(0)
-	if (c & query.ColumnConstraintPrimaryKey) != 0 {
+	if (c & query.PrimaryKeyConstraint) != 0 {
 		cdf |= PriKeyFlag
 	}
-	if (c & query.ColumnConstraintNotNull) != 0 {
+	if (c & query.NotNullConstraint) != 0 {
 		cdf |= NotNullFlag
 	}
-	if (c & query.ColumnConstraintUnique) != 0 {
+	if (c & query.UniqueConstraint) != 0 {
 		cdf |= UniqueKeyFlag
 	}
 	return cdf, nil
