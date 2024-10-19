@@ -30,6 +30,10 @@ type ResultSetColumn interface {
 
 // ResultSetSchema represents a schema interface in a resultset.
 type ResultSetSchema interface {
+	// DatabaseName returns the database name.
+	DatabaseName() string
+	// TableName returns the table name.
+	TableName() string
 	// Columns returns the columns.
 	Columns() []ResultSetColumn
 }
