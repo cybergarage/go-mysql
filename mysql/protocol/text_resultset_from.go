@@ -23,5 +23,12 @@ import "github.com/cybergarage/go-mysql/mysql/query"
 
 // TextResultSet represents a MySQL text resultset response packet.
 func NewTextResultSetFromResultSet(rs query.ResultSet) (*TextResultSet, error) {
-	return nil, nil
+	columDefs, err := NewColumnDefsFromResultSet(rs)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewTextResultSet(
+		WithTextResultSetColumnDefs(columDefs),
+	)
 }
