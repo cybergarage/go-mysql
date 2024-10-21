@@ -65,14 +65,24 @@ func (server *Server) Select(conn Conn, stmt sql.Select) (Response, error) {
 
 // Update handles a UPDATE query.
 func (server *Server) Update(conn Conn, stmt sql.Update) (Response, error) {
-	_, err := server.QueryExecutor().Update(conn, stmt)
-	return protocol.NewResponseWithError(err)
+	rs, err := server.QueryExecutor().Update(conn, stmt)
+	if err != nil {
+		return protocol.NewResponseWithError(err)
+	}
+	return protocol.NewOK(
+		protocol.WithOKAffectedRows(uint64(rs.RowsAffected())),
+	)
 }
 
 // Delete handles a DELETE query.
 func (server *Server) Delete(conn Conn, stmt sql.Delete) (Response, error) {
-	_, err := server.QueryExecutor().Delete(conn, stmt)
-	return protocol.NewResponseWithError(err)
+	rs, err := server.QueryExecutor().Delete(conn, stmt)
+	if err != nil {
+		return protocol.NewResponseWithError(err)
+	}
+	return protocol.NewOK(
+		protocol.WithOKAffectedRows(uint64(rs.RowsAffected())),
+	)
 }
 
 // Begin handles a BEGIN query.

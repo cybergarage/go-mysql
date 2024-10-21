@@ -66,7 +66,7 @@ type ResultSet interface {
 	// Schema returns the schema.
 	Schema() ResultSetSchema
 	// RowsAffected returns the number of rows affected.
-	RowsAffected() (int64, error)
+	RowsAffected() uint64
 	// Next returns the next row.
 	Next() bool
 	// Close closes the resultset.
