@@ -95,13 +95,18 @@ func (reader *Reader) SkipBytes(n int) error {
 	return nil
 }
 
-// PeekInt1 peeks a 8-bit integer.
-func (reader *Reader) PeekInt1() (uint8, error) {
+// PeekByte peeks a byte.
+func (reader *Reader) PeekByte() (uint8, error) {
 	b, err := reader.PeekBytes(1)
 	if err != nil {
 		return 0, err
 	}
 	return uint8(b[0]), nil
+}
+
+// PeekInt1 peeks a 8-bit integer.
+func (reader *Reader) PeekInt1() (uint8, error) {
+	return reader.PeekByte()
 }
 
 // PeekInt2 reads a 16-bit integer.
