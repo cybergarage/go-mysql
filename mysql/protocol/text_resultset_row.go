@@ -21,6 +21,58 @@ package protocol
 // MySQL: Text Resultset Row
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset_row.html
 
+// TextResultSetRowOption represents a MySQL text resultset row option.
+type TextResultSetRowOption func(*TextResultSetRow)
+
 // TextResultSetRow represents a MySQL text resultset row response packet.
 type TextResultSetRow struct {
+	*packet
+	columns []string
+}
+
+func newTextResultSetRowWithPacket(pkt *packet, opts ...TextResultSetRowOption) *TextResultSetRow {
+	row := &TextResultSetRow{
+		packet:  pkt,
+		columns: []string{},
+	}
+	row.SetOptions(opts...)
+	return row
+}
+
+// NewTextResultSetRow returns a new TextResultSetRow.
+func NewTextResultSetRow(opts ...TextResultSetRowOption) *TextResultSetRow {
+	return newTextResultSetRowWithPacket(nil, opts...)
+}
+
+// NewTextResultSetRowFromReader returns a new TextResultSetRow from the reader.
+func NewTextResultSetRowFromReader(reader *Reader, opts ...TextResultSetRowOption) (*TextResultSetRow, error) {
+	pktReader, err := NewPacketWithReader(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	row := newTextResultSetRowWithPacket(pktReader)
+	// for {
+	// 	column, err := reader.ReadLengthEncodedString()
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
+	// 	if column == "" {
+	// 		break
+	// 	}
+	// 	row.columns = append(row.columns, column)
+	// }
+	return row, nil
+}
+
+// SetOptions sets the options.
+func (row *TextResultSetRow) SetOptions(opts ...TextResultSetRowOption) {
+	for _, opt := range opts {
+		opt(row)
+	}
+}
+
+// Columns returns the columns.
+func (row *TextResultSetRow) Columns() []string {
+	return row.columns
 }
