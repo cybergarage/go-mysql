@@ -34,6 +34,7 @@ type ErrCode = sql.Code
 // ERR represents a MySQL ERR packet.
 type ERR struct {
 	*packet
+	header      uint8
 	code        uint16
 	stateMarker string
 	state       ErrCode
@@ -46,6 +47,7 @@ type ERROption func(*ERR) error
 func newERRPacket(p *packet, opts ...ERROption) (*ERR, error) {
 	pkt := &ERR{
 		packet:      p,
+		header:      errPacketHeader,
 		code:        0,
 		stateMarker: stateMarker,
 		state:       "",
@@ -128,12 +130,12 @@ func NewERRFromReader(reader io.Reader, opts ...ERROption) (*ERR, error) {
 	}
 
 	// header
-	header, err := pkt.ReadByte()
+	pkt.header, err = pkt.ReadByte()
 	if err != nil {
 		return nil, err
 	}
-	if header != errPacketHeader {
-		return nil, newErrInvalidHeader("ERR", header)
+	if pkt.header != errPacketHeader {
+		return nil, newErrInvalidHeader("ERR", pkt.header)
 	}
 
 	// error_code
@@ -166,6 +168,11 @@ func NewERRFromReader(reader io.Reader, opts ...ERROption) (*ERR, error) {
 	return pkt, err
 }
 
+// Header returns the header.
+func (pkt *ERR) Header() uint8 {
+	return pkt.header
+}
+
 // Code returns the error code.
 func (pkt *ERR) Code() uint16 {
 	return pkt.code
@@ -191,7 +198,7 @@ func (pkt *ERR) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
 	// header
-	if err := w.WriteByte(errPacketHeader); err != nil {
+	if err := w.WriteByte(pkt.header); err != nil {
 		return nil, err
 	}
 
