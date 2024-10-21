@@ -30,6 +30,7 @@ type TextResultSet struct {
 	metadataFollows ResultsetMetadata
 	columnCount     uint64
 	columnDefs      []*ColumnDef
+	rows            []Row
 }
 
 func newTextResultSetWithPacket(pkt *packet, opts ...TextResultSetOption) *TextResultSet {
@@ -39,6 +40,7 @@ func newTextResultSetWithPacket(pkt *packet, opts ...TextResultSetOption) *TextR
 		metadataFollows: 0,
 		columnCount:     0,
 		columnDefs:      []*ColumnDef{},
+		rows:            []Row{},
 	}
 	q.SetOptions(opts...)
 	return q
@@ -115,7 +117,19 @@ func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (
 		}
 	}
 
-	if pkt.Capabilities().IsDisabled(ClientDeprecateEOF) {
+	// One or more Text Resultset Row
+	row, err := NewTextResultSetRowFromReader(pkt.Reader(), WithTextResultSetRowColmunCount(pkt.columnCount))
+	if err != nil {
+		return nil, err
+	}
+	pkt.rows = append(pkt.rows, row)
+
+	if pkt.Capabilities().IsEnabled(ClientDeprecateEOF) {
+		_, err := NewOKFromReader(reader, WithOKCapability(pkt.Capabilities()))
+		if err != nil {
+			return nil, err
+		}
+	} else {
 		_, err := NewEOFFromReader(reader, WithEOFCapability(pkt.Capabilities()))
 		if err != nil {
 			return nil, err
@@ -135,6 +149,11 @@ func (pkt *TextResultSet) SetOptions(opts ...TextResultSetOption) {
 // Capabilities returns the capabilities.
 func (pkt *TextResultSet) Capabilities() CapabilityFlag {
 	return pkt.capFlags
+}
+
+// Rows returns the rows.
+func (pkt *TextResultSet) Rows() []Row {
+	return pkt.rows
 }
 
 // Bytes returns the packet bytes.
@@ -168,6 +187,18 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 
 	if pkt.Capabilities().IsDisabled(ClientDeprecateEOF) {
 		err := w.WriteEOF()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// One or more Text Resultset Row
+	for _, row := range pkt.rows {
+		rowBytes, err := row.Bytes()
+		if err != nil {
+			return nil, err
+		}
+		_, err = w.WriteBytes(rowBytes)
 		if err != nil {
 			return nil, err
 		}
