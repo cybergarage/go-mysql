@@ -28,6 +28,7 @@ const (
 // EOF represents a MySQL EOF packet.
 type EOF struct {
 	*packet
+	header   uint8
 	warnings uint16
 	status   StatusFlag
 }
@@ -38,6 +39,7 @@ type EOFOption func(*EOF) error
 func newEOFPacket(p *packet, opts ...EOFOption) (*EOF, error) {
 	pkt := &EOF{
 		packet:   p,
+		header:   eofPacketHeader,
 		warnings: 0,
 		status:   0,
 	}
@@ -91,12 +93,12 @@ func NewEOFFromReader(reader io.Reader, opts ...EOFOption) (*EOF, error) {
 	}
 
 	// header
-	header, err := pkt.ReadByte()
+	pkt.header, err = pkt.ReadByte()
 	if err != nil {
 		return nil, err
 	}
-	if header != eofPacketHeader {
-		return nil, newErrInvalidHeader("EOF", header)
+	if pkt.header != eofPacketHeader {
+		return nil, newErrInvalidHeader("EOF", pkt.header)
 	}
 
 	// warnings and status flags
@@ -117,6 +119,11 @@ func NewEOFFromReader(reader io.Reader, opts ...EOFOption) (*EOF, error) {
 	return pkt, err
 }
 
+// Header returns the header.
+func (pkt *EOF) Header() uint8 {
+	return pkt.header
+}
+
 // Warnings returns the number of warnings.
 func (pkt *EOF) Warnings() uint16 {
 	return pkt.warnings
@@ -132,7 +139,7 @@ func (pkt *EOF) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
 	// header
-	if err := w.WriteByte(eofPacketHeader); err != nil {
+	if err := w.WriteByte(pkt.header); err != nil {
 		return nil, err
 	}
 
