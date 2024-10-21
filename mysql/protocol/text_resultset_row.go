@@ -39,29 +39,34 @@ func newTextResultSetRowWithPacket(pkt *packet, opts ...TextResultSetRowOption) 
 	return row
 }
 
+func WithTextResultSetRowColmunCount(c uint64) TextResultSetRowOption {
+	return func(pkt *TextResultSetRow) {
+		pkt.columns = make([]string, c)
+	}
+}
+
 // NewTextResultSetRow returns a new TextResultSetRow.
 func NewTextResultSetRow(opts ...TextResultSetRowOption) *TextResultSetRow {
 	return newTextResultSetRowWithPacket(nil, opts...)
 }
 
 // NewTextResultSetRowFromReader returns a new TextResultSetRow from the reader.
-func NewTextResultSetRowFromReader(reader *Reader, opts ...TextResultSetRowOption) (*TextResultSetRow, error) {
+func NewTextResultSetRowFromReader(reader *PacketReader, opts ...TextResultSetRowOption) (*TextResultSetRow, error) {
 	pktReader, err := NewPacketWithReader(reader)
 	if err != nil {
 		return nil, err
 	}
 
-	row := newTextResultSetRowWithPacket(pktReader)
-	// for {
-	// 	column, err := reader.ReadLengthEncodedString()
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// 	if column == "" {
-	// 		break
-	// 	}
-	// 	row.columns = append(row.columns, column)
-	// }
+	row := newTextResultSetRowWithPacket(pktReader, opts...)
+	columnCount := len(row.columns)
+	for n := 0; n < columnCount; n++ {
+		column, err := row.ReadColumn()
+		if err != nil {
+			return nil, err
+		}
+		row.columns = append(row.columns, column)
+	}
+
 	return row, nil
 }
 
@@ -72,7 +77,24 @@ func (row *TextResultSetRow) SetOptions(opts ...TextResultSetRowOption) {
 	}
 }
 
+// ReadColumn reads a column.
+func (row *TextResultSetRow) ReadColumn() (string, error) {
+	return row.ReadLengthEncodedString()
+}
+
 // Columns returns the columns.
 func (row *TextResultSetRow) Columns() []string {
 	return row.columns
+}
+
+// Bytes returns the packet bytes.
+func (row *TextResultSetRow) Bytes() ([]byte, error) {
+	w := NewPacketWriter()
+	for _, column := range row.columns {
+		err := w.WriteLengthEncodedString(column)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return w.Bytes(), nil
 }
