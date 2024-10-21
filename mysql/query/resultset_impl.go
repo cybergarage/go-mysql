@@ -17,14 +17,14 @@ package query
 type resultset struct {
 	ResultSetSchema
 	ResultSetRow
-	rowsAffected int64
+	rowsAffected uint64
 }
 
 // ResultSet represents a response resultset interface.
 type ResultSetOption func(*resultset)
 
 // WithRowsAffected returns a resultset option to set the rows affected.
-func WithRowsAffected(rowsAffected int64) ResultSetOption {
+func WithRowsAffected(rowsAffected uint64) ResultSetOption {
 	return func(r *resultset) {
 		r.rowsAffected = rowsAffected
 	}
@@ -40,8 +40,8 @@ func NewResultSet() ResultSet {
 }
 
 // RowsAffected returns the number of rows affected.
-func (r *resultset) RowsAffected() (int64, error) {
-	return r.rowsAffected, nil
+func (r *resultset) RowsAffected() uint64 {
+	return r.rowsAffected
 }
 
 // Next returns the next row.

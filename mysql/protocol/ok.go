@@ -48,6 +48,38 @@ func WithOKCapability(c CapabilityFlag) OKOption {
 	}
 }
 
+// WithOKAffectedRows returns a OKOption that sets the number of affected rows.
+func WithOKAffectedRows(v uint64) OKOption {
+	return func(pkt *OK) error {
+		pkt.affectedRows = v
+		return nil
+	}
+}
+
+// WithOKLastInsertID returns a OKOption that sets the last insert ID.
+func WithOKLastInsertID(v uint64) OKOption {
+	return func(pkt *OK) error {
+		pkt.lastInsertID = v
+		return nil
+	}
+}
+
+// WithOKStatus returns a OKOption that sets the status flag.
+func WithOKStatus(v StatusFlag) OKOption {
+	return func(pkt *OK) error {
+		pkt.status = uint16(v)
+		return nil
+	}
+}
+
+// WithOKWarnings returns a OKOption that sets the number of warnings.
+func WithOKWarnings(v uint16) OKOption {
+	return func(pkt *OK) error {
+		pkt.warnings = v
+		return nil
+	}
+}
+
 func newOKPacket(p *packet, opts ...OKOption) (*OK, error) {
 	pkt := &OK{
 		packet:           p,
