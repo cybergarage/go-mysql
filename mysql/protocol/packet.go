@@ -99,28 +99,55 @@ func NewPacket(opts ...PacketOption) *packet {
 	return pkt
 }
 
-// NewPacket returns a new MySQL packet.
-func NewPacketWithReader(reader io.Reader) (*packet, error) {
+// NewPacketWithReader returns a new MySQL packet from the reader.
+func NewPacketWithReader(reader io.Reader) *packet {
 	pkt := newPacket()
 	pkt.PacketReader = NewPacketReaderWith(reader)
+	return pkt
+}
 
+// NewPacketHeaderWithReader returns a new MySQL packet from the reader.
+func NewPacketHeaderWithReader(reader io.Reader) (*packet, error) {
+	pkt := NewPacketWithReader(reader)
+	err := pkt.ReadHeader()
+	if err != nil {
+		return nil, err
+	}
+	return pkt, nil
+}
+
+// ReadHeader reads the packet header.
+func (pkt *packet) ReadHeader() error {
 	// Read the payload length
-
 	payloadLengthBuf := make([]byte, 3)
 	_, err := pkt.ReadBytes(payloadLengthBuf)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	pkt.payloadLength = uint32(payloadLengthBuf[0]) | uint32(payloadLengthBuf[1])<<8 | uint32(payloadLengthBuf[2])<<16
 
 	// Read the sequence ID
 	seqIDByte, err := pkt.ReadByte()
 	if err != nil {
-		return nil, err
+		return err
 	}
 	pkt.sequenceID = SequenceID(seqIDByte)
 
-	return pkt, nil
+	return nil
+}
+
+// ReadPayload reads the packet payload.
+func (pkt *packet) ReadPayload() error {
+	payload := make([]byte, pkt.payloadLength)
+	n, err := pkt.ReadBytes(payload)
+	if err != nil {
+		return err
+	}
+	if n != int(pkt.payloadLength) {
+		return io.EOF
+	}
+	pkt.payload = payload
+	return nil
 }
 
 // SetPayload sets the packet payload.
