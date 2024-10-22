@@ -59,6 +59,7 @@ func WithEOFCapability(c CapabilityFlag) EOFOption {
 	}
 }
 
+// WithEOFWarnings returns a EOFOption that sets the number of warnings.
 func WithEOFWarnings(warnings uint16) EOFOption {
 	return func(pkt *EOF) error {
 		pkt.warnings = warnings
@@ -66,6 +67,7 @@ func WithEOFWarnings(warnings uint16) EOFOption {
 	}
 }
 
+// WithEOFStatus returns a EOFOption that sets the status flag.
 func WithEOFStatus(status StatusFlag) EOFOption {
 	return func(pkt *EOF) error {
 		pkt.status = status
