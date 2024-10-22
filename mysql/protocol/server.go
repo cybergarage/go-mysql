@@ -241,14 +241,14 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 
 		var res Packet
 		switch cmdType {
-		case COM_QUIT:
+		case ComQuit:
 			ok, err := NewOK()
 			if err == nil {
 				err = conn.ResponsePacket(ok)
 			}
 			finishSpans()
 			return err
-		case COM_QUERY:
+		case ComQuery:
 			var q *Query
 			q, err = NewQueryFromCommand(cmd)
 			if err == nil {

@@ -86,7 +86,7 @@ func NewQueryFromReader(reader io.Reader, opts ...QueryOption) (*Query, error) {
 		return nil, err
 	}
 
-	if err = cmd.IsType(COM_QUERY); err != nil {
+	if err = cmd.IsType(ComQuery); err != nil {
 		return nil, err
 	}
 
@@ -206,7 +206,7 @@ func (pkt *Query) Bytes() ([]byte, error) {
 	}
 
 	pkt.Command = NewCommandWith(
-		COM_QUERY,
+		ComQuery,
 		NewPacket(
 			PacketWithSequenceID(pkt.SequenceID()),
 			PacketWithPayload(w.Bytes()),
