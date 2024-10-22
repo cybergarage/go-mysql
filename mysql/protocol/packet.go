@@ -30,6 +30,7 @@ import (
 
 // Packet represents a MySQL packet.
 type Packet interface {
+	PacketIdentifier
 	// SetSequenceID sets the packet sequence ID.
 	SetSequenceID(n SequenceID)
 	// SetPayload sets the packet payload.
@@ -48,6 +49,11 @@ type Packet interface {
 	Reader() *PacketReader
 	// Bytes returns the packet bytes.
 	Bytes() ([]byte, error)
+}
+
+// PacketIdentifier represents a MySQL packet identifier.
+type PacketIdentifier interface {
+	isEOF() bool
 }
 
 // SequenceID represents a MySQL packet sequence ID.
@@ -199,6 +205,19 @@ func (pkt *packet) SetCapabilityDisabled(flag CapabilityFlag) {
 // Reader returns the packet reader.
 func (pkt *packet) Reader() *PacketReader {
 	return pkt.PacketReader
+}
+
+// isEOF returns true if the packet is an EOF packet.
+func (pkt *packet) isEOF() bool {
+	// MySQL: EOF_Packet
+	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_eof_packet.html
+	if len(pkt.payload) == 1 && pkt.payload[0] == 0xFE {
+		return true
+	}
+	if len(pkt.payload) == 5 && pkt.payload[0] == 0xFE {
+		return true
+	}
+	return false
 }
 
 // Bytes returns the packet bytes.
