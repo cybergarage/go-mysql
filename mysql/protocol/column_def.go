@@ -214,6 +214,13 @@ func NewColumnDefFromReader(r io.Reader) (*ColumnDef, error) {
 		return nil, err
 	}
 
+	// filler packets?
+
+	_, err = pkt.ReadInt4()
+	if err != nil {
+		return nil, err
+	}
+
 	return colDef, nil
 }
 
@@ -328,6 +335,12 @@ func (pkt *ColumnDef) Bytes() ([]byte, error) {
 	}
 
 	if err := w.WriteInt1(pkt.decimals); err != nil {
+		return nil, err
+	}
+
+	// filler packets?
+
+	if err := w.WriteInt4(0); err != nil {
 		return nil, err
 	}
 
