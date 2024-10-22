@@ -80,7 +80,7 @@ func NewSSLRequest(opts ...SSLRequestOption) (*SSLRequest, error) {
 func NewSSLRequestFromReader(reader io.Reader) (*SSLRequest, error) {
 	var err error
 
-	msg, err := NewPacketWithReader(reader)
+	msg, err := NewPacketHeaderWithReader(reader)
 	if err != nil {
 		return nil, err
 	}

@@ -76,7 +76,7 @@ func NewHandshakeResponse(opts ...HandshakeResponseOption) (*HandshakeResponse, 
 func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error) {
 	var err error
 
-	pktReader, err := NewPacketWithReader(reader)
+	pktReader, err := NewPacketHeaderWithReader(reader)
 	if err != nil {
 		return nil, err
 	}

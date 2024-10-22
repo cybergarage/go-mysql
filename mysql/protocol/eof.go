@@ -84,7 +84,7 @@ func NewEOF(opts ...EOFOption) (*EOF, error) {
 func NewEOFFromReader(reader io.Reader, opts ...EOFOption) (*EOF, error) {
 	var err error
 
-	pktReader, err := NewPacketWithReader(reader)
+	pktReader, err := NewPacketHeaderWithReader(reader)
 	if err != nil {
 		return nil, err
 	}
