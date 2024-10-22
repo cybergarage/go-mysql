@@ -51,11 +51,6 @@ type Packet interface {
 	Bytes() ([]byte, error)
 }
 
-// PacketIdentifier represents a MySQL packet identifier.
-type PacketIdentifier interface {
-	isEOF() bool
-}
-
 // SequenceID represents a MySQL packet sequence ID.
 type SequenceID uint8
 
@@ -205,19 +200,6 @@ func (pkt *packet) SetCapabilityDisabled(flag CapabilityFlag) {
 // Reader returns the packet reader.
 func (pkt *packet) Reader() *PacketReader {
 	return pkt.PacketReader
-}
-
-// isEOF returns true if the packet is an EOF packet.
-func (pkt *packet) isEOF() bool {
-	// MySQL: EOF_Packet
-	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_eof_packet.html
-	if len(pkt.payload) == 1 && pkt.payload[0] == 0xFE {
-		return true
-	}
-	if len(pkt.payload) == 5 && pkt.payload[0] == 0xFE {
-		return true
-	}
-	return false
 }
 
 // Bytes returns the packet bytes.
