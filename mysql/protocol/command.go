@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// nolint: stylecheck
 package protocol
 
 import (
@@ -51,97 +50,97 @@ type Command interface {
 type CommandType uint8
 
 const (
-	// COM_QUIT: Command Quit.
-	COM_QUIT CommandType = 0x01
-	// COM_INIT_DB: Command Init DB.
-	COM_INIT_DB CommandType = 0x02
-	// COM_QUERY: Command Query.
-	COM_QUERY CommandType = 0x03
-	// COM_FIELD_LIST: Command Field List.
-	COM_FIELD_LIST CommandType = 0x04
-	// COM_CREATE_DB: Command Create DB.
-	COM_CREATE_DB CommandType = 0x05
-	// COM_DROP_DB: Command Drop DB.
-	COM_DROP_DB CommandType = 0x06
-	// COM_REFRESH: Command Refresh.
-	COM_REFRESH CommandType = 0x07
-	// COM_SHUTDOWN: Command Shutdown.
-	COM_SHUTDOWN CommandType = 0x08
-	// COM_STATISTICS: Command Statistics.
-	COM_STATISTICS CommandType = 0x09
-	// COM_PROCESS_INFO: Command Process Info.
-	COM_PROCESS_INFO CommandType = 0x0a
-	// COM_CONNECT: Command Connect.
-	COM_CONNECT CommandType = 0x0b
-	// COM_PROCESS_KILL: Command Process Kill.
-	COM_PROCESS_KILL CommandType = 0x0c
-	// COM_DEBUG: Command Debug.
-	COM_DEBUG CommandType = 0x0d
-	// COM_PING: Command Ping.
-	COM_PING CommandType = 0x0e
-	// COM_TIME: Command Time.
-	COM_TIME CommandType = 0x0f
-	// COM_DELAYED_INSERT: Command Delayed Insert.
-	COM_DELAYED_INSERT CommandType = 0x10
-	// COM_CHANGE_USER: Command Change User.
-	COM_CHANGE_USER CommandType = 0x11
-	// COM_BINLOG_DUMP: Command Binlog Dump.
-	COM_BINLOG_DUMP CommandType = 0x12
-	// COM_TABLE_DUMP: Command Table Dump.
-	COM_TABLE_DUMP CommandType = 0x13
-	// COM_CONNECT_OUT: Command Connect Out.
-	COM_CONNECT_OUT CommandType = 0x14
-	// COM_REGISTER_SLAVE: Command Register Slave.
-	COM_REGISTER_SLAVE CommandType = 0x15
+	// ComQuit: Command Quit.
+	ComQuit CommandType = 0x01
+	// ComInitDb: Command Init DB.
+	ComInitDb CommandType = 0x02
+	// ComQuery: Command Query.
+	ComQuery CommandType = 0x03
+	// ComFieldList: Command Field List.
+	ComFieldList CommandType = 0x04
+	// ComCreateDb: Command Create DB.
+	ComCreateDb CommandType = 0x05
+	// ComDropDb: Command Drop DB.
+	ComDropDb CommandType = 0x06
+	// ComRefresh: Command Refresh.
+	ComRefresh CommandType = 0x07
+	// ComShutdown: Command Shutdown.
+	ComShutdown CommandType = 0x08
+	// ComStatistics: Command Statistics.
+	ComStatistics CommandType = 0x09
+	// ComProcessInfo: Command Process Info.
+	ComProcessInfo CommandType = 0x0a
+	// ComConnect: Command Connect.
+	ComConnect CommandType = 0x0b
+	// ComProcessKill: Command Process Kill.
+	ComProcessKill CommandType = 0x0c
+	// ComDebug: Command Debug.
+	ComDebug CommandType = 0x0d
+	// ComPing: Command Ping.
+	ComPing CommandType = 0x0e
+	// ComTime: Command Time.
+	ComTime CommandType = 0x0f
+	// ComDelayedInsert: Command Delayed Insert.
+	ComDelayedInsert CommandType = 0x10
+	// ComChangeUser: Command Change User.
+	ComChangeUser CommandType = 0x11
+	// ComBinlogDump: Command Binlog Dump.
+	ComBinlogDump CommandType = 0x12
+	// ComTableDump: Command Table Dump.
+	ComTableDump CommandType = 0x13
+	// ComConnectOut: Command Connect Out.
+	ComConnectOut CommandType = 0x14
+	// ComRegisterSlave: Command Register Slave.
+	ComRegisterSlave CommandType = 0x15
 )
 
 // String returns the string representation of the command type.
 func (t CommandType) String() string {
 	switch t {
-	case COM_QUIT:
-		return "COM_QUIT"
-	case COM_INIT_DB:
-		return "COM_INIT_DB"
-	case COM_QUERY:
-		return "COM_QUERY"
-	case COM_FIELD_LIST:
-		return "COM_FIELD_LIST"
-	case COM_CREATE_DB:
-		return "COM_CREATE_DB"
-	case COM_DROP_DB:
-		return "COM_DROP_DB"
-	case COM_REFRESH:
-		return "COM_REFRESH"
-	case COM_SHUTDOWN:
-		return "COM_SHUTDOWN"
-	case COM_STATISTICS:
-		return "COM_STATISTICS"
-	case COM_PROCESS_INFO:
-		return "COM_PROCESS_INFO"
-	case COM_CONNECT:
-		return "COM_CONNECT"
-	case COM_PROCESS_KILL:
-		return "COM_PROCESS_KILL"
-	case COM_DEBUG:
-		return "COM_DEBUG"
-	case COM_PING:
-		return "COM_PING"
-	case COM_TIME:
-		return "COM_TIME"
-	case COM_DELAYED_INSERT:
-		return "COM_DELAYED_INSERT"
-	case COM_CHANGE_USER:
-		return "COM_CHANGE_USER"
-	case COM_BINLOG_DUMP:
-		return "COM_BINLOG_DUMP"
-	case COM_TABLE_DUMP:
-		return "COM_TABLE_DUMP"
-	case COM_CONNECT_OUT:
-		return "COM_CONNECT_OUT"
-	case COM_REGISTER_SLAVE:
-		return "COM_REGISTER_SLAVE"
+	case ComQuit:
+		return "ComQuit"
+	case ComInitDb:
+		return "ComInitDb"
+	case ComQuery:
+		return "ComQuery"
+	case ComFieldList:
+		return "ComFieldList"
+	case ComCreateDb:
+		return "ComCreateDb"
+	case ComDropDb:
+		return "ComDropDb"
+	case ComRefresh:
+		return "ComRefresh"
+	case ComShutdown:
+		return "ComShutdown"
+	case ComStatistics:
+		return "ComStatistics"
+	case ComProcessInfo:
+		return "ComProcessInfo"
+	case ComConnect:
+		return "ComConnect"
+	case ComProcessKill:
+		return "ComProcessKill"
+	case ComDebug:
+		return "ComDebug"
+	case ComPing:
+		return "ComPing"
+	case ComTime:
+		return "ComTime"
+	case ComDelayedInsert:
+		return "ComDelayedInsert"
+	case ComChangeUser:
+		return "ComChangeUser"
+	case ComBinlogDump:
+		return "ComBinlogDump"
+	case ComTableDump:
+		return "ComTableDump"
+	case ComConnectOut:
+		return "ComConnectOut"
+	case ComRegisterSlave:
+		return "ComRegisterSlave"
 	}
-	return "COM_UNKNOWN"
+	return "ComUnknown"
 }
 
 type command struct {
