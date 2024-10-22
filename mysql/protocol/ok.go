@@ -108,7 +108,7 @@ func NewOK(opts ...OKOption) (*OK, error) {
 func NewOKFromReader(reader io.Reader, opts ...OKOption) (*OK, error) {
 	var err error
 
-	pktReader, err := NewPacketWithReader(reader)
+	pktReader, err := NewPacketHeaderWithReader(reader)
 	if err != nil {
 		return nil, err
 	}

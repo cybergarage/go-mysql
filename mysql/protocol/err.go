@@ -119,7 +119,7 @@ func NewERRFromError(err error, opts ...ERROption) (*ERR, error) {
 func NewERRFromReader(reader io.Reader, opts ...ERROption) (*ERR, error) {
 	var err error
 
-	pktReader, err := NewPacketWithReader(reader)
+	pktReader, err := NewPacketHeaderWithReader(reader)
 	if err != nil {
 		return nil, err
 	}

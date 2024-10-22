@@ -161,7 +161,7 @@ func NewHandshake(opts ...HandshakeOption) (*Handshake, error) {
 func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	var err error
 
-	pktReader, err := NewPacketWithReader(reader)
+	pktReader, err := NewPacketHeaderWithReader(reader)
 	if err != nil {
 		return nil, err
 	}

@@ -147,7 +147,7 @@ func NewColumnDef(...ColumnDefOption) *ColumnDef {
 func NewColumnDefFromReader(r io.Reader) (*ColumnDef, error) {
 	var err error
 
-	pkt, err := NewPacketWithReader(r)
+	pkt, err := NewPacketHeaderWithReader(r)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +214,7 @@ func NewColumnDefFromReader(r io.Reader) (*ColumnDef, error) {
 		return nil, err
 	}
 
-	// filler packets?
+	// default valuse?
 
 	_, err = pkt.ReadInt4()
 	if err != nil {
@@ -338,7 +338,7 @@ func (pkt *ColumnDef) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	// filler packets?
+	// default valuse?
 
 	if err := w.WriteInt4(0); err != nil {
 		return nil, err

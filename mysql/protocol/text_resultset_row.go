@@ -52,7 +52,7 @@ func NewTextResultSetRow(opts ...TextResultSetRowOption) *TextResultSetRow {
 
 // NewTextResultSetRowFromReader returns a new TextResultSetRow from the reader.
 func NewTextResultSetRowFromReader(reader *PacketReader, opts ...TextResultSetRowOption) (*TextResultSetRow, error) {
-	pktReader, err := NewPacketWithReader(reader)
+	pktReader, err := NewPacketHeaderWithReader(reader)
 	if err != nil {
 		return nil, err
 	}

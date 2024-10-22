@@ -81,7 +81,7 @@ func NewTextResultSet(opts ...TextResultSetOption) (*TextResultSet, error) {
 func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (*TextResultSet, error) {
 	var err error
 
-	pktReader, err := NewPacketWithReader(reader)
+	pktReader, err := NewPacketHeaderWithReader(reader)
 	if err != nil {
 		return nil, err
 	}
