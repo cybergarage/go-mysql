@@ -52,16 +52,16 @@ type CommandType uint8
 const (
 	// ComQuit: Command Quit.
 	ComQuit CommandType = 0x01
-	// ComInitDb: Command Init DB.
-	ComInitDb CommandType = 0x02
+	// ComInitDB: Command Init DB.
+	ComInitDB CommandType = 0x02
 	// ComQuery: Command Query.
 	ComQuery CommandType = 0x03
 	// ComFieldList: Command Field List.
 	ComFieldList CommandType = 0x04
-	// ComCreateDb: Command Create DB.
-	ComCreateDb CommandType = 0x05
-	// ComDropDb: Command Drop DB.
-	ComDropDb CommandType = 0x06
+	// ComCreateDB: Command Create DB.
+	ComCreateDB CommandType = 0x05
+	// ComDropDB: Command Drop DB.
+	ComDropDB CommandType = 0x06
 	// ComRefresh: Command Refresh.
 	ComRefresh CommandType = 0x07
 	// ComShutdown: Command Shutdown.
@@ -99,15 +99,15 @@ func (t CommandType) String() string {
 	switch t {
 	case ComQuit:
 		return "ComQuit"
-	case ComInitDb:
+	case ComInitDB:
 		return "ComInitDb"
 	case ComQuery:
 		return "ComQuery"
 	case ComFieldList:
 		return "ComFieldList"
-	case ComCreateDb:
+	case ComCreateDB:
 		return "ComCreateDb"
-	case ComDropDb:
+	case ComDropDB:
 		return "ComDropDb"
 	case ComRefresh:
 		return "ComRefresh"
