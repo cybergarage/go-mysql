@@ -26,8 +26,8 @@ import (
 // //go:embed data/resultset-001.hex
 // var resultSetPkt001 string
 
-//go:embed data/resultset-002.hex
-var resultSetPkt002 string
+//go:embed data/text-resultset-001.hex
+var resultSetPkt001 string
 
 func TestResultSet(t *testing.T) {
 	type expected struct {
