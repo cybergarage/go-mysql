@@ -15,6 +15,7 @@
 package protocol
 
 import (
+	"bytes"
 	"io"
 )
 
@@ -118,19 +119,21 @@ func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (
 	}
 
 	// One or more Text Resultset Row
-	row, err := NewTextResultSetRowFromReader(pkt.Reader(), WithTextResultSetRowColmunCount(pkt.columnCount))
+
+	rowPkt, err := NewPacketWithReader(pkt.Reader())
 	if err != nil {
 		return nil, err
 	}
-	pkt.rows = append(pkt.rows, row)
 
-	if pkt.Capabilities().IsEnabled(ClientDeprecateEOF) {
-		_, err := NewOKFromReader(reader, WithOKCapability(pkt.Capabilities()))
+	for !rowPkt.IsEOF() {
+		reader := NewPacketReaderWith(bytes.NewReader(rowPkt.Payload()))
+		row, err := NewTextResultSetRowFromReader(reader, WithTextResultSetRowColmunCount(pkt.columnCount))
 		if err != nil {
 			return nil, err
 		}
-	} else {
-		_, err := NewEOFFromReader(reader, WithEOFCapability(pkt.Capabilities()))
+		pkt.rows = append(pkt.rows, row)
+
+		rowPkt, err = NewPacketWithReader(pkt.Reader())
 		if err != nil {
 			return nil, err
 		}
