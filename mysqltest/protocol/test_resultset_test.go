@@ -23,13 +23,10 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-// //go:embed data/resultset-001.hex
-// var resultSetPkt001 string
-
 //go:embed data/text-resultset-001.hex
-var resultSetPkt001 string
+var textResultSetPkt001 string
 
-func TestResultSet(t *testing.T) {
+func TestTextResultSet(t *testing.T) {
 	type expected struct {
 		seqID protocol.SequenceID
 	}
@@ -39,17 +36,9 @@ func TestResultSet(t *testing.T) {
 		capFlags protocol.CapabilityFlag
 		expected
 	}{
-		// {
-		// 	"query001",
-		// 	resultSetPkt001,
-		// 	protocol.ClientQueryAttributes,
-		// 	expected{
-		// 		seqID: protocol.SequenceID(0),
-		// 	},
-		// },
 		{
 			"text-resultset-001",
-			resultSetPkt001,
+			textResultSetPkt001,
 			protocol.ClientQueryAttributes,
 			expected{
 				seqID: protocol.SequenceID(0),
