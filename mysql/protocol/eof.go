@@ -19,7 +19,7 @@ import (
 )
 
 // MySQL: EOF_Packet
-// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_ok_packet.html
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_eof_packet.html
 // EOF_Packet - MariaDB Knowledge Base
 // https://mariadb.com/kb/en/eof_packet/
 
