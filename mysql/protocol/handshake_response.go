@@ -264,10 +264,10 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 		}
 	}
 
-	pkt.packet = NewPacket(
+	res := NewPacket(
 		PacketWithSequenceID(pkt.packet.SequenceID()),
 		PacketWithPayload(w.Bytes()),
 	)
 
-	return pkt.packet.Bytes()
+	return res.Bytes()
 }
