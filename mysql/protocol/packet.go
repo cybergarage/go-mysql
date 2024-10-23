@@ -102,8 +102,13 @@ func NewPacket(opts ...PacketOption) *packet {
 
 // NewPacketWithReader returns a new MySQL packet from the reader.
 func NewPacketWithReader(reader io.Reader) (*packet, error) {
+	return NewPacketWithPacketReader(NewPacketReaderWith(reader))
+}
+
+// NewPacketWithPacketReader returns a new MySQL packet from the packet reader.
+func NewPacketWithPacketReader(reader *PacketReader) (*packet, error) {
 	pkt := newPacket()
-	pkt.PacketReader = NewPacketReaderWith(reader)
+	pkt.PacketReader = reader
 	err := pkt.ReadHeader()
 	if err != nil {
 		return nil, err
@@ -130,9 +135,12 @@ func NewPacketHeaderWithReader(reader io.Reader) (*packet, error) {
 func (pkt *packet) ReadHeader() error {
 	// Read the payload length
 	payloadLengthBuf := make([]byte, 3)
-	_, err := pkt.ReadBytes(payloadLengthBuf)
+	nread, err := pkt.ReadBytes(payloadLengthBuf)
 	if err != nil {
 		return err
+	}
+	if nread != 3 {
+		return io.EOF
 	}
 	pkt.payloadLength = uint32(payloadLengthBuf[0]) | uint32(payloadLengthBuf[1])<<8 | uint32(payloadLengthBuf[2])<<16
 
@@ -149,11 +157,11 @@ func (pkt *packet) ReadHeader() error {
 // ReadPayload reads the packet payload.
 func (pkt *packet) ReadPayload() error {
 	payload := make([]byte, pkt.payloadLength)
-	n, err := pkt.ReadBytes(payload)
+	nread, err := pkt.ReadBytes(payload)
 	if err != nil {
 		return err
 	}
-	if n != int(pkt.payloadLength) {
+	if nread != int(pkt.payloadLength) {
 		return io.EOF
 	}
 	pkt.payload = payload
