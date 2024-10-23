@@ -48,8 +48,8 @@ func TestResultSet(t *testing.T) {
 		// 	},
 		// },
 		{
-			"query002",
-			resultSetPkt002,
+			"text-resultset-001",
+			resultSetPkt001,
 			protocol.ClientQueryAttributes,
 			expected{
 				seqID: protocol.SequenceID(0),
