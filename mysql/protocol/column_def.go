@@ -20,6 +20,8 @@ import (
 
 // MySQL: Column Definition
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset_column_definition.html
+// Result Set Packets - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/result-set-packets/#column-definition-packet
 
 const (
 	defaultColumnDefCatalog       = "def"
@@ -214,9 +216,9 @@ func NewColumnDefFromReader(r io.Reader) (*ColumnDef, error) {
 		return nil, err
 	}
 
-	// default valuse?
+	// unused
 
-	_, err = pkt.ReadInt4()
+	_, err = pkt.ReadInt2()
 	if err != nil {
 		return nil, err
 	}
@@ -338,9 +340,9 @@ func (pkt *ColumnDef) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	// default valuse?
+	// unused
 
-	if err := w.WriteInt4(0); err != nil {
+	if err := w.WriteInt2(0); err != nil {
 		return nil, err
 	}
 
