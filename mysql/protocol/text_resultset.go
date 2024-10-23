@@ -23,6 +23,8 @@ import (
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query.html
 // MySQL: Text Resultset
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset.html
+// Result Set Packets - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/result-set-packets/
 
 // TextResultSet represents a MySQL text resultset response packet.
 type TextResultSet struct {
