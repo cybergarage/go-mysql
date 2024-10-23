@@ -20,6 +20,8 @@ import (
 
 // MySQL: EOF_Packet
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_ok_packet.html
+// EOF_Packet - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/eof_packet/
 
 const (
 	eofPacketHeader = 0xFE
@@ -104,7 +106,7 @@ func NewEOFFromReader(reader io.Reader, opts ...EOFOption) (*EOF, error) {
 	}
 
 	// warnings and status flags
-	if pkt.CapabilityFlags().IsEnabled(ClientProtocol41) {
+	if pkt.PayloadLength() == 5 || pkt.CapabilityFlags().IsEnabled(ClientProtocol41) {
 		// warnings
 		pkt.warnings, err = pkt.ReadInt2()
 		if err != nil {
