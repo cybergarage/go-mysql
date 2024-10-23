@@ -39,7 +39,7 @@ func TestTextResultSet(t *testing.T) {
 		{
 			"text-resultset-001",
 			textResultSetPkt001,
-			protocol.ClientQueryAttributes,
+			(protocol.ClientProtocol41 | protocol.ClientQueryAttributes),
 			expected{
 				seqID: protocol.SequenceID(0),
 			},
