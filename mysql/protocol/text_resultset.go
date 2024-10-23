@@ -198,6 +198,7 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 	}
 
 	// One or more Text Resultset Row
+
 	for _, row := range pkt.rows {
 		rowBytes, err := row.Bytes()
 		if err != nil {
