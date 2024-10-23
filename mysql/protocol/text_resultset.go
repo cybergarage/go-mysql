@@ -221,11 +221,10 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 		}
 	}
 
-	pkt.packet =
-		NewPacket(
-			PacketWithSequenceID(pkt.SequenceID()),
-			PacketWithPayload(w.Bytes()),
-		)
+	res := NewPacket(
+		PacketWithSequenceID(pkt.SequenceID()),
+		PacketWithPayload(w.Bytes()),
+	)
 
-	return pkt.packet.Bytes()
+	return res.Bytes()
 }
