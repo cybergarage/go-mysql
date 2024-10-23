@@ -79,7 +79,7 @@ func WithEOFStatus(status StatusFlag) EOFOption {
 
 // NewEOF returns a new EOF packet.
 func NewEOF(opts ...EOFOption) (*EOF, error) {
-	return newEOFPacket(nil, opts...)
+	return newEOFPacket(newPacket(), opts...)
 }
 
 // NewEOFFromReader returns a new EOF packet from the reader.
