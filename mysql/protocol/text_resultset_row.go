@@ -20,6 +20,8 @@ package protocol
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset.html
 // MySQL: Text Resultset Row
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset_row.html
+// Resultset row - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/resultset-row/
 
 // TextResultSetRowOption represents a MySQL text resultset row option.
 type TextResultSetRowOption func(*TextResultSetRow)
