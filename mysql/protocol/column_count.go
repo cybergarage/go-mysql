@@ -37,6 +37,7 @@ type ColumnCount struct {
 func newColumnCountWith(pkt *packet, opts ...ColumnCountOption) *ColumnCount {
 	c := &ColumnCount{
 		packet:          pkt,
+		capFlags:        0,
 		metadataFollows: 0,
 		count:           0,
 	}
