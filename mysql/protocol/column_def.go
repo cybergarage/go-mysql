@@ -346,10 +346,7 @@ func (pkt *ColumnDef) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	res := NewPacket(
-		PacketWithSequenceID(pkt.packet.SequenceID()),
-		PacketWithPayload(w.Bytes()),
-	)
+	pkt.SetPayload(w.Bytes())
 
-	return res.Bytes()
+	return pkt.packet.Bytes()
 }
