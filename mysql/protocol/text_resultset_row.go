@@ -98,5 +98,6 @@ func (row *TextResultSetRow) Bytes() ([]byte, error) {
 			return nil, err
 		}
 	}
-	return w.Bytes(), nil
+	row.SetPayload(w.Bytes())
+	return row.packet.Bytes()
 }
