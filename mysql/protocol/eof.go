@@ -53,6 +53,14 @@ func newEOFPacket(p *packet, opts ...EOFOption) (*EOF, error) {
 	return pkt, nil
 }
 
+// WithEOFCSecuenceID returns a EOFOption that sets the sequence ID.
+func WithEOFCSecuenceID(n SequenceID) EOFOption {
+	return func(pkt *EOF) error {
+		pkt.SetSequenceID(n)
+		return nil
+	}
+}
+
 // WithEOFCapability returns a EOFOption that sets the capability flag.
 func WithEOFCapability(c CapabilityFlag) EOFOption {
 	return func(pkt *EOF) error {
