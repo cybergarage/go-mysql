@@ -28,18 +28,18 @@ import (
 
 // TextResultSet represents a MySQL text resultset response packet.
 type TextResultSet struct {
-	capFlags CapabilityFlag
-	*ColumnCount
+	capFlags   CapabilityFlag
+	columnCnt  *ColumnCount
 	columnDefs []*ColumnDef
 	rows       []Row
 }
 
 func newTextResultSetWithPacket(opts ...TextResultSetOption) *TextResultSet {
 	q := &TextResultSet{
-		capFlags:    0,
-		ColumnCount: NewColumnCount(),
-		columnDefs:  []*ColumnDef{},
-		rows:        []Row{},
+		capFlags:   0,
+		columnCnt:  NewColumnCount(),
+		columnDefs: []*ColumnDef{},
+		rows:       []Row{},
 	}
 	q.SetOptions(opts...)
 	return q
@@ -58,14 +58,14 @@ func WithTextResultSetCapabilities(c CapabilityFlag) TextResultSetOption {
 // WithTextResultSetMetadataFollows returns a text resultset option to set the metadata follows.
 func WithTextResultSetMetadataFollows(m ResultsetMetadata) TextResultSetOption {
 	return func(pkt *TextResultSet) {
-		pkt.metadataFollows = m
+		pkt.columnCnt.metadataFollows = m
 	}
 }
 
 // WithTextResultSetColumnDefs returns a text resultset option to set the column definitions.
 func WithTextResultSetColumnDefs(colDefs []*ColumnDef) TextResultSetOption {
 	return func(pkt *TextResultSet) {
-		pkt.ColumnCount.count = uint64(len(colDefs))
+		pkt.columnCnt.count = uint64(len(colDefs))
 		pkt.columnDefs = colDefs
 	}
 }
@@ -85,14 +85,14 @@ func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (
 	columnCountOpts := []ColumnCountOption{
 		WithColumnCountCapabilities(pkt.Capabilities()),
 	}
-	pkt.ColumnCount, err = NewColumnCountFromReader(reader, columnCountOpts...)
+	pkt.columnCnt, err = NewColumnCountFromReader(reader, columnCountOpts...)
 	if err != nil {
 		return nil, err
 	}
 
-	columnCount := pkt.ColumnCount.ColumnCount()
+	columnCount := pkt.columnCnt.ColumnCount()
 
-	if pkt.Capabilities().IsDisabled(ClientOptionalResultsetMetadata) || pkt.metadataFollows == ResultsetMetadataFull {
+	if pkt.Capabilities().IsDisabled(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
 		for i := 0; i < int(columnCount); i++ {
 			colDef, err := NewColumnDefFromReader(reader)
 			if err != nil {
@@ -111,7 +111,7 @@ func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (
 
 	// One or more Text Resultset Row
 
-	rowPkt, err := NewPacketWithReader(pkt.Reader())
+	rowPkt, err := NewPacketWithReader(reader)
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +124,7 @@ func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (
 		}
 		pkt.rows = append(pkt.rows, row)
 
-		rowPkt, err = NewPacketWithReader(pkt.Reader())
+		rowPkt, err = NewPacketWithReader(reader)
 		if err != nil {
 			return nil, err
 		}
@@ -154,7 +154,7 @@ func (pkt *TextResultSet) Rows() []Row {
 func (pkt *TextResultSet) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
-	columCntBytes, err := pkt.ColumnCount.Bytes()
+	columCntBytes, err := pkt.columnCnt.Bytes()
 	if err != nil {
 		return nil, err
 	}
@@ -163,8 +163,12 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	if pkt.Capabilities().IsDisabled(ClientOptionalResultsetMetadata) || pkt.metadataFollows == ResultsetMetadataFull {
+	secuenceID := pkt.columnCnt.SequenceID()
+	secuenceID++
+
+	if pkt.Capabilities().IsDisabled(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
 		for _, colDef := range pkt.columnDefs {
+			colDef.SetSequenceID(secuenceID)
 			colDefBytes, err := colDef.Bytes()
 			if err != nil {
 				return nil, err
@@ -173,19 +177,22 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 			if err != nil {
 				return nil, err
 			}
+			secuenceID++
 		}
 	}
 
 	if pkt.Capabilities().IsDisabled(ClientDeprecateEOF) {
-		err := w.WriteEOF(pkt.Capabilities())
+		err := w.WriteEOF(secuenceID, pkt.Capabilities())
 		if err != nil {
 			return nil, err
 		}
+		secuenceID++
 	}
 
 	// One or more Text Resultset Row
 
 	for _, row := range pkt.rows {
+		row.SetSequenceID(secuenceID)
 		rowBytes, err := row.Bytes()
 		if err != nil {
 			return nil, err
@@ -194,24 +201,22 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
+		secuenceID++
 	}
 
 	if pkt.Capabilities().IsEnabled(ClientDeprecateEOF) {
-		err := w.WriteOK(pkt.Capabilities())
+		err := w.WriteOK(secuenceID, pkt.Capabilities())
 		if err != nil {
 			return nil, err
 		}
+		secuenceID++
 	} else {
-		err := w.WriteEOF(pkt.Capabilities())
+		err := w.WriteEOF(secuenceID, pkt.Capabilities())
 		if err != nil {
 			return nil, err
 		}
+		secuenceID++
 	}
 
-	res := NewPacket(
-		PacketWithSequenceID(pkt.SequenceID()),
-		PacketWithPayload(w.Bytes()),
-	)
-
-	return res.Bytes()
+	return w.Bytes(), nil
 }
