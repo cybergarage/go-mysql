@@ -213,13 +213,11 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		secuenceID++
 	} else {
 		err := w.WriteEOF(secuenceID, pkt.Capabilities())
 		if err != nil {
 			return nil, err
 		}
-		secuenceID++
 	}
 
 	return w.Bytes(), nil
