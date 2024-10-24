@@ -61,16 +61,24 @@ func newERRPacket(p *packet, opts ...ERROption) (*ERR, error) {
 	return pkt, nil
 }
 
-// WithErrCode sets the error code.
-func WithErrCode(code uint16) ERROption {
+// WithERRSecuenceID sets the sequence ID.
+func WithERRSecuenceID(n SequenceID) ERROption {
+	return func(pkt *ERR) error {
+		pkt.SetSequenceID(n)
+		return nil
+	}
+}
+
+// WithERRCode sets the error code.
+func WithERRCode(code uint16) ERROption {
 	return func(pkt *ERR) error {
 		pkt.code = code
 		return nil
 	}
 }
 
-// WithErrState sets the state.
-func WithErrState(state string) ERROption {
+// WithERRState sets the state.
+func WithERRState(state string) ERROption {
 	return func(pkt *ERR) error {
 		pkt.state = ErrCode(state)
 		pkt.errMsg = pkt.state.String()
@@ -78,16 +86,16 @@ func WithErrState(state string) ERROption {
 	}
 }
 
-// WithErrMsg sets the error message.
-func WithErrMsg(errMsg string) ERROption {
+// WithERRMessage sets the error message.
+func WithERRMessage(errMsg string) ERROption {
 	return func(pkt *ERR) error {
 		pkt.errMsg = errMsg
 		return nil
 	}
 }
 
-// WithErrCapability sets the error capability.
-func WithErrCapability(c CapabilityFlag) ERROption {
+// WithERRCapability sets the error capability.
+func WithERRCapability(c CapabilityFlag) ERROption {
 	return func(pkt *ERR) error {
 		pkt.SetCapabilityEnabled(c)
 		return nil
@@ -96,7 +104,7 @@ func WithErrCapability(c CapabilityFlag) ERROption {
 
 // NewERR returns a new ERR packet.
 func NewERR(opts ...ERROption) (*ERR, error) {
-	pkt, err := newERRPacket(nil, opts...)
+	pkt, err := newERRPacket(newPacket(), opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -109,9 +117,9 @@ func NewERRFromError(err error, opts ...ERROption) (*ERR, error) {
 	state := ""
 	errMsg := err.Error()
 	opts = append(opts,
-		WithErrCode(code),
-		WithErrState(state),
-		WithErrMsg(errMsg))
+		WithERRCode(code),
+		WithERRState(state),
+		WithERRMessage(errMsg))
 	return NewERR(opts...)
 }
 

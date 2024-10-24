@@ -59,7 +59,7 @@ func TestErrPacket(t *testing.T) {
 			}
 			reader := bytes.NewReader(testBytes)
 
-			pkt, err := protocol.NewERRFromReader(reader, protocol.WithErrCapability(protocol.ClientProtocol41))
+			pkt, err := protocol.NewERRFromReader(reader, protocol.WithERRCapability(protocol.ClientProtocol41))
 			if err != nil {
 				t.Error(err)
 			}

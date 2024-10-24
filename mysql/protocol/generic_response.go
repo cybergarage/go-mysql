@@ -57,7 +57,7 @@ func NewGenericResponseFromReader(r io.Reader, opts ...GenericResponseOption) (G
 	case eofPacketHeader:
 		return NewEOFFromReader(reader, WithEOFCapability(res.capFlags))
 	case errPacketHeader:
-		return NewERRFromReader(reader, WithErrCapability(res.capFlags))
+		return NewERRFromReader(reader, WithERRCapability(res.capFlags))
 	default:
 	}
 	return nil, newErrInvalidHeader("response", header)
