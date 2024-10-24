@@ -23,6 +23,7 @@ package protocol
 
 // Row represents a MySQL row.
 type Row interface {
+	SetSequenceID(n SequenceID)
 	Columns() []string
 	Bytes() ([]byte, error)
 }
