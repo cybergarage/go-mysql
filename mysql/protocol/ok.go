@@ -101,7 +101,7 @@ func newOKPacket(p *packet, opts ...OKOption) (*OK, error) {
 
 // NewOK returns a new OK packet.
 func NewOK(opts ...OKOption) (*OK, error) {
-	return newOKPacket(nil)
+	return newOKPacket(newPacket())
 }
 
 // NewOKFromReader returns a new OK packet from the reader.
@@ -281,10 +281,7 @@ func (pkt *OK) Bytes() ([]byte, error) {
 		}
 	}
 
-	res := NewPacket(
-		PacketWithSequenceID(pkt.packet.SequenceID()),
-		PacketWithPayload(w.Bytes()),
-	)
+	pkt.SetPayload(w.Bytes())
 
-	return res.Bytes()
+	return pkt.packet.Bytes()
 }
