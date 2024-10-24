@@ -239,7 +239,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			loopSpan.Span().Finish()
 		}
 
-		var res Packet
+		var res Response
 		switch cmdType {
 		case ComQuit:
 			ok, err := NewOK()
