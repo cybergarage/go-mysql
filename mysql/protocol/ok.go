@@ -38,45 +38,47 @@ type OK struct {
 }
 
 // OKOption represents a MySQL OK packet option.
-type OKOption func(*OK) error
+type OKOption func(*OK)
+
+// WithOKSecuenceID returns a OKOption that sets the sequence ID.
+func WithOKSecuenceID(n SequenceID) OKOption {
+	return func(pkt *OK) {
+		pkt.SetSequenceID(n)
+	}
+}
 
 // WithOKCapability returns a OKOption that sets the capability flag.
 func WithOKCapability(c CapabilityFlag) OKOption {
-	return func(pkt *OK) error {
+	return func(pkt *OK) {
 		pkt.SetCapabilityEnabled(c)
-		return nil
 	}
 }
 
 // WithOKAffectedRows returns a OKOption that sets the number of affected rows.
 func WithOKAffectedRows(v uint64) OKOption {
-	return func(pkt *OK) error {
+	return func(pkt *OK) {
 		pkt.affectedRows = v
-		return nil
 	}
 }
 
 // WithOKLastInsertID returns a OKOption that sets the last insert ID.
 func WithOKLastInsertID(v uint64) OKOption {
-	return func(pkt *OK) error {
+	return func(pkt *OK) {
 		pkt.lastInsertID = v
-		return nil
 	}
 }
 
 // WithOKStatus returns a OKOption that sets the status flag.
 func WithOKStatus(v StatusFlag) OKOption {
-	return func(pkt *OK) error {
+	return func(pkt *OK) {
 		pkt.status = uint16(v)
-		return nil
 	}
 }
 
 // WithOKWarnings returns a OKOption that sets the number of warnings.
 func WithOKWarnings(v uint16) OKOption {
-	return func(pkt *OK) error {
+	return func(pkt *OK) {
 		pkt.warnings = v
-		return nil
 	}
 }
 
@@ -92,9 +94,7 @@ func newOKPacket(p *packet, opts ...OKOption) (*OK, error) {
 		sessionStateInfo: "",
 	}
 	for _, opt := range opts {
-		if err := opt(pkt); err != nil {
-			return nil, err
-		}
+		opt(pkt)
 	}
 	return pkt, nil
 }
