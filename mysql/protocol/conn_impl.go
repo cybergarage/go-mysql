@@ -173,7 +173,7 @@ func (conn *conn) PacketReader() *PacketReader {
 }
 
 // ResponsePacket sends a response.
-func (conn *conn) ResponsePacket(resMsg Packet) error {
+func (conn *conn) ResponsePacket(resMsg Response) error {
 	if resMsg == nil {
 		return nil
 	}
@@ -188,7 +188,7 @@ func (conn *conn) ResponsePacket(resMsg Packet) error {
 }
 
 // ResponsePackets sends response packets.
-func (conn *conn) ResponsePackets(resMsgs []Packet) error {
+func (conn *conn) ResponsePackets(resMsgs []Response) error {
 	if len(resMsgs) == 0 {
 		return nil
 	}

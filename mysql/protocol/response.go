@@ -19,7 +19,8 @@ package protocol
 
 // Response represents a response.
 type Response interface {
-	Packet
+	// Bytes returns the packet bytes.
+	Bytes() ([]byte, error)
 }
 
 // NewResponseWithError returns a new response with the specified error.
@@ -28,6 +29,6 @@ func NewResponseWithError(err error) (Response, error) {
 		return NewOK()
 	}
 	return NewERR(
-		WithErrMsg(err.Error()),
+		WithERRMessage(err.Error()),
 	)
 }
