@@ -28,22 +28,18 @@ import (
 
 // TextResultSet represents a MySQL text resultset response packet.
 type TextResultSet struct {
-	*packet
-	capFlags        CapabilityFlag
-	metadataFollows ResultsetMetadata
-	columnCount     uint64
-	columnDefs      []*ColumnDef
-	rows            []Row
+	capFlags CapabilityFlag
+	*ColumnCount
+	columnDefs []*ColumnDef
+	rows       []Row
 }
 
-func newTextResultSetWithPacket(pkt *packet, opts ...TextResultSetOption) *TextResultSet {
+func newTextResultSetWithPacket(opts ...TextResultSetOption) *TextResultSet {
 	q := &TextResultSet{
-		packet:          pkt,
-		capFlags:        0,
-		metadataFollows: 0,
-		columnCount:     0,
-		columnDefs:      []*ColumnDef{},
-		rows:            []Row{},
+		capFlags:    0,
+		ColumnCount: NewColumnCount(),
+		columnDefs:  []*ColumnDef{},
+		rows:        []Row{},
 	}
 	q.SetOptions(opts...)
 	return q
@@ -69,14 +65,14 @@ func WithTextResultSetMetadataFollows(m ResultsetMetadata) TextResultSetOption {
 // WithTextResultSetColumnDefs returns a text resultset option to set the column definitions.
 func WithTextResultSetColumnDefs(colDefs []*ColumnDef) TextResultSetOption {
 	return func(pkt *TextResultSet) {
-		pkt.columnCount = uint64(len(colDefs))
+		pkt.ColumnCount.count = uint64(len(colDefs))
 		pkt.columnDefs = colDefs
 	}
 }
 
 // NewTextResultSet returns a new text resultset response packet.
 func NewTextResultSet(opts ...TextResultSetOption) (*TextResultSet, error) {
-	pkt := newTextResultSetWithPacket(nil, opts...)
+	pkt := newTextResultSetWithPacket(opts...)
 	return pkt, nil
 }
 
@@ -84,27 +80,20 @@ func NewTextResultSet(opts ...TextResultSetOption) (*TextResultSet, error) {
 func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (*TextResultSet, error) {
 	var err error
 
-	pktReader, err := NewPacketHeaderWithReader(reader)
+	pkt := newTextResultSetWithPacket(opts...)
+
+	columnCountOpts := []ColumnCountOption{
+		WithColumnCountCapabilities(pkt.Capabilities()),
+	}
+	pkt.ColumnCount, err = NewColumnCountFromReader(reader, columnCountOpts...)
 	if err != nil {
 		return nil, err
 	}
 
-	pkt := newTextResultSetWithPacket(pktReader, opts...)
-
-	if pkt.Capabilities().IsEnabled(ClientOptionalResultsetMetadata) {
-		pkt.metadataFollows, err = pkt.ReadByte()
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	pkt.columnCount, err = pkt.ReadLengthEncodedInt()
-	if err != nil {
-		return nil, err
-	}
+	columnCount := pkt.ColumnCount.ColumnCount()
 
 	if pkt.Capabilities().IsDisabled(ClientOptionalResultsetMetadata) || pkt.metadataFollows == ResultsetMetadataFull {
-		for i := 0; i < int(pkt.columnCount); i++ {
+		for i := 0; i < int(columnCount); i++ {
 			colDef, err := NewColumnDefFromReader(reader)
 			if err != nil {
 				return nil, err
@@ -129,7 +118,7 @@ func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (
 
 	for !rowPkt.IsEOF() {
 		reader := NewPacketReaderWith(bytes.NewReader(rowPkt.Payload()))
-		row, err := NewTextResultSetRowFromReader(reader, WithTextResultSetRowColmunCount(pkt.columnCount))
+		row, err := NewTextResultSetRowFromReader(reader, WithTextResultSetRowColmunCount(columnCount))
 		if err != nil {
 			return nil, err
 		}
@@ -165,14 +154,11 @@ func (pkt *TextResultSet) Rows() []Row {
 func (pkt *TextResultSet) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
-	if pkt.Capabilities().IsEnabled(ClientOptionalResultsetMetadata) {
-		err := w.WriteByte(pkt.metadataFollows)
-		if err != nil {
-			return nil, err
-		}
+	columCntBytes, err := pkt.ColumnCount.Bytes()
+	if err != nil {
+		return nil, err
 	}
-
-	err := w.WriteLengthEncodedInt(pkt.columnCount)
+	_, err = w.WriteBytes(columCntBytes)
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +177,7 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 	}
 
 	if pkt.Capabilities().IsDisabled(ClientDeprecateEOF) {
-		err := w.WriteEOF()
+		err := w.WriteEOF(pkt.Capabilities())
 		if err != nil {
 			return nil, err
 		}
