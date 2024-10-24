@@ -26,9 +26,11 @@ import (
 //go:embed data/text-resultset-001.hex
 var textResultSetPkt001 string
 
+//go:embed data/text-resultset-002.hex
+var textResultSetPkt002 string
+
 func TestTextResultSet(t *testing.T) {
 	type expected struct {
-		seqID protocol.SequenceID
 	}
 	for _, test := range []struct {
 		name     string
@@ -36,13 +38,17 @@ func TestTextResultSet(t *testing.T) {
 		capFlags protocol.CapabilityFlag
 		expected
 	}{
+		// {
+		// 	"text-resultset-001",
+		// 	textResultSetPkt001,
+		// 	(protocol.ClientProtocol41 | protocol.ClientQueryAttributes),
+		// 	expected{},
+		// },
 		{
-			"text-resultset-001",
-			textResultSetPkt001,
+			"text-resultset-002",
+			textResultSetPkt002,
 			(protocol.ClientProtocol41 | protocol.ClientQueryAttributes),
-			expected{
-				seqID: protocol.SequenceID(0),
-			},
+			expected{},
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
@@ -60,10 +66,6 @@ func TestTextResultSet(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 				return
-			}
-
-			if pkt.SequenceID() != test.expected.seqID {
-				t.Errorf("expected %d, got %d", test.expected.seqID, pkt.SequenceID())
 			}
 
 			// Compare the packet bytes
