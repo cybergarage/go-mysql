@@ -49,7 +49,7 @@ func WithTextResultSetRowColmunCount(c uint64) TextResultSetRowOption {
 
 // NewTextResultSetRow returns a new TextResultSetRow.
 func NewTextResultSetRow(opts ...TextResultSetRowOption) *TextResultSetRow {
-	return newTextResultSetRowWithPacket(nil, opts...)
+	return newTextResultSetRowWithPacket(newPacket(), opts...)
 }
 
 // NewTextResultSetRowFromReader returns a new TextResultSetRow from the reader.
