@@ -142,7 +142,7 @@ func WithColumnDefDecimals(decimals uint8) ColumnDefOption {
 
 // NewColumnDef returns a new ColumnDef.
 func NewColumnDef(...ColumnDefOption) *ColumnDef {
-	return newColumnDefWith(nil)
+	return newColumnDefWith(newPacket())
 }
 
 // NewColumnDefFromReader returns a new ColumnDef from the reader.
