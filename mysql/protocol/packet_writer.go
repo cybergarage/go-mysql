@@ -53,11 +53,11 @@ func (w *PacketWriter) WriteFillerBytes(b byte, n int) error {
 func (w *PacketWriter) WriteOK(opts ...any) error {
 	okOpts := []OKOption{}
 	for _, opt := range opts {
-		switch o := opt.(type) {
+		switch v := opt.(type) {
 		case SequenceID:
-			okOpts = append(okOpts, WithOKSecuenceID(o))
+			okOpts = append(okOpts, WithOKSecuenceID(v))
 		case CapabilityFlag:
-			okOpts = append(okOpts, WithOKCapability(o))
+			okOpts = append(okOpts, WithOKCapability(v))
 		}
 	}
 	ok, err := NewOK(okOpts...)
@@ -79,9 +79,9 @@ func (w *PacketWriter) WriteOK(opts ...any) error {
 func (w *PacketWriter) WriteErr(opts ...any) error {
 	errOpts := []ERROption{}
 	for _, opt := range opts {
-		switch o := opt.(type) {
+		switch v := opt.(type) {
 		case SequenceID:
-			errOpts = append(errOpts, WithERRSecuenceID(o))
+			errOpts = append(errOpts, WithERRSecuenceID(v))
 		}
 	}
 	pkt, err := NewERR(errOpts...)
@@ -103,11 +103,11 @@ func (w *PacketWriter) WriteErr(opts ...any) error {
 func (w *PacketWriter) WriteEOF(opts ...any) error {
 	eofOpts := []EOFOption{}
 	for _, opt := range opts {
-		switch o := opt.(type) {
+		switch v := opt.(type) {
 		case SequenceID:
-			eofOpts = append(eofOpts, WithEOFCSecuenceID(o))
+			eofOpts = append(eofOpts, WithEOFCSecuenceID(v))
 		case CapabilityFlag:
-			eofOpts = append(eofOpts, WithEOFCapability(o))
+			eofOpts = append(eofOpts, WithEOFCapability(v))
 		}
 	}
 	eof, err := NewEOF(eofOpts...)
