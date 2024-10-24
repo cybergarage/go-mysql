@@ -41,6 +41,7 @@ func newColumnCountWith(pkt *packet, opts ...ColumnCountOption) *ColumnCount {
 		metadataFollows: 0,
 		count:           0,
 	}
+	pkt.SetSequenceID(1)
 	c.SetOptions(opts...)
 	return c
 }
@@ -60,7 +61,7 @@ func WithColumnCountCapabilities(c CapabilityFlag) ColumnCountOption {
 
 // NewColumnCount returns a new ColumnCount.
 func NewColumnCount(opts ...ColumnCountOption) *ColumnCount {
-	pkt := newColumnCountWith(nil, opts...)
+	pkt := newColumnCountWith(newPacket(), opts...)
 	return pkt
 }
 
@@ -127,10 +128,7 @@ func (pkt *ColumnCount) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	res := NewPacket(
-		PacketWithSequenceID(1),
-		PacketWithPayload(w.Bytes()),
-	)
+	pkt.SetPayload(w.Bytes())
 
-	return res.Bytes()
+	return pkt.packet.Bytes()
 }
