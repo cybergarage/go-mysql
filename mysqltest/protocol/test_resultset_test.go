@@ -38,12 +38,12 @@ func TestTextResultSet(t *testing.T) {
 		capFlags protocol.CapabilityFlag
 		expected
 	}{
-		// {
-		// 	"text-resultset-001",
-		// 	textResultSetPkt001,
-		// 	(protocol.ClientProtocol41 | protocol.ClientQueryAttributes),
-		// 	expected{},
-		// },
+		{
+			"text-resultset-001",
+			textResultSetPkt001,
+			(protocol.ClientProtocol41 | protocol.ClientQueryAttributes),
+			expected{},
+		},
 		{
 			"text-resultset-002",
 			textResultSetPkt002,
