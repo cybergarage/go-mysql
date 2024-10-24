@@ -22,6 +22,10 @@ import (
 	util "github.com/cybergarage/go-mysql/mysql/encoding/bytes"
 )
 
+const (
+	NullValue = 0xFB
+)
+
 // Reader represents a packet reader.
 type Reader struct {
 	io.Reader
@@ -206,6 +210,8 @@ func (reader *Reader) ReadLengthEncodedInt() (uint64, error) {
 	case firstByte == 0xFE:
 		v, err := reader.ReadInt8()
 		return uint64(v), err
+	case firstByte == NullValue:
+		return NullValue, nil
 	default:
 		return 0, newErrInvalidCode("length encoded integer", uint(firstByte))
 	}
@@ -280,11 +286,14 @@ func (reader *Reader) ReadVariableLengthString(n int) (string, error) {
 
 // ReadLengthEncodedInt reads a length encoded integer.
 func (reader *Reader) ReadLengthEncodedString() (string, error) {
-	n, err := reader.ReadInt1()
+	n, err := reader.ReadLengthEncodedInt()
 	if err != nil {
 		return "", err
 	}
-	if n == 0 {
+	switch {
+	case n == 0:
+		return "", nil
+	case n == NullValue:
 		return "", nil
 	}
 	return reader.ReadFixedLengthString(int(n))
@@ -292,7 +301,7 @@ func (reader *Reader) ReadLengthEncodedString() (string, error) {
 
 // ReadLengthEncodedBytes reads a length encoded bytes.
 func (reader *Reader) ReadLengthEncodedBytes() ([]byte, error) {
-	n, err := reader.ReadInt1()
+	n, err := reader.ReadLengthEncodedInt()
 	if err != nil {
 		return []byte{}, err
 	}
