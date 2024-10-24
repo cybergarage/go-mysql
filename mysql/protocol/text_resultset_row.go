@@ -66,7 +66,7 @@ func NewTextResultSetRowFromReader(reader *PacketReader, opts ...TextResultSetRo
 		if err != nil {
 			return nil, err
 		}
-		row.columns = append(row.columns, column)
+		row.columns[n] = column
 	}
 
 	return row, nil
