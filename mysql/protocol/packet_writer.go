@@ -49,6 +49,19 @@ func (w *PacketWriter) WriteFillerBytes(b byte, n int) error {
 	return nil
 }
 
+// WritePacket writes a packet.
+func (w *PacketWriter) WritePacket(pkt Response) error {
+	pktBytes, err := pkt.Bytes()
+	if err != nil {
+		return err
+	}
+	_, err = w.WriteBytes(pktBytes)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // WriteOK writes a OK packet.
 func (w *PacketWriter) WriteOK(opts ...any) error {
 	okOpts := []OKOption{}

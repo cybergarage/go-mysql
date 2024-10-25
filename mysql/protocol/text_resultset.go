@@ -180,11 +180,7 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 	if pkt.Capabilities().IsDisabled(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
 		for _, colDef := range pkt.columnDefs {
 			colDef.SetSequenceID(secuenceID)
-			colDefBytes, err := colDef.Bytes()
-			if err != nil {
-				return nil, err
-			}
-			_, err = w.WriteBytes(colDefBytes)
+			err := w.WritePacket(colDef)
 			if err != nil {
 				return nil, err
 			}
@@ -204,11 +200,7 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 
 	for _, row := range pkt.rows {
 		row.SetSequenceID(secuenceID)
-		rowBytes, err := row.Bytes()
-		if err != nil {
-			return nil, err
-		}
-		_, err = w.WriteBytes(rowBytes)
+		err := w.WritePacket(row)
 		if err != nil {
 			return nil, err
 		}
