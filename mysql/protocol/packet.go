@@ -51,9 +51,6 @@ type Packet interface {
 	Bytes() ([]byte, error)
 }
 
-// SequenceID represents a MySQL packet sequence ID.
-type SequenceID uint8
-
 // packet represents a MySQL packet.
 type packet struct {
 	*PacketReader

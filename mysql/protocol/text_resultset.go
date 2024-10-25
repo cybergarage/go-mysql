@@ -175,7 +175,7 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 	}
 
 	secuenceID := pkt.columnCnt.SequenceID()
-	secuenceID++
+	secuenceID = secuenceID.Next()
 
 	if pkt.Capabilities().IsDisabled(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
 		for _, colDef := range pkt.columnDefs {
@@ -188,7 +188,7 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 			if err != nil {
 				return nil, err
 			}
-			secuenceID++
+			secuenceID = secuenceID.Next()
 		}
 	}
 
@@ -197,7 +197,7 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		secuenceID++
+		secuenceID = secuenceID.Next()
 	}
 
 	// One or more Text Resultset Row
@@ -212,7 +212,7 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		secuenceID++
+		secuenceID = secuenceID.Next()
 	}
 
 	if pkt.Capabilities().IsEnabled(ClientDeprecateEOF) {
