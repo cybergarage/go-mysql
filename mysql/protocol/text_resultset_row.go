@@ -41,9 +41,17 @@ func newTextResultSetRowWithPacket(pkt *packet, opts ...TextResultSetRowOption) 
 	return row
 }
 
+// WithTextResultSetRowColmunCount returns a text resultset row option to set the column count.
 func WithTextResultSetRowColmunCount(c uint64) TextResultSetRowOption {
 	return func(pkt *TextResultSetRow) {
 		pkt.columns = make([]string, c)
+	}
+}
+
+// WithTextResultSetRowColmuns returns a text resultset row option to set the columns.
+func WithTextResultSetRowColmuns(columns []string) TextResultSetRowOption {
+	return func(pkt *TextResultSetRow) {
+		pkt.columns = columns
 	}
 }
 
