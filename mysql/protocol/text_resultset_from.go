@@ -28,7 +28,13 @@ func NewTextResultSetFromResultSet(rs query.ResultSet) (*TextResultSet, error) {
 		return nil, err
 	}
 
+	rows, err := NewTextResultSetRowsFromResultSet(rs)
+	if err != nil {
+		return nil, err
+	}
+
 	return NewTextResultSet(
 		WithTextResultSetColumnDefs(columDefs),
+		WithTextResultSetRows(rows),
 	)
 }
