@@ -21,8 +21,8 @@ package protocol
 // MySQL: Text Resultset Row
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset_row.html
 
-// Row represents a MySQL row.
-type Row interface {
+// ResultSetRow represents a MySQL resultset row.
+type ResultSetRow interface {
 	SetSequenceID(n SequenceID)
 	Columns() []string
 	Bytes() ([]byte, error)

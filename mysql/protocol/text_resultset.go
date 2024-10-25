@@ -31,7 +31,7 @@ type TextResultSet struct {
 	capFlags   CapabilityFlag
 	columnCnt  *ColumnCount
 	columnDefs []*ColumnDef
-	rows       []Row
+	rows       []ResultSetRow
 }
 
 func newTextResultSetWithPacket(opts ...TextResultSetOption) *TextResultSet {
@@ -39,7 +39,7 @@ func newTextResultSetWithPacket(opts ...TextResultSetOption) *TextResultSet {
 		capFlags:   0,
 		columnCnt:  NewColumnCount(),
 		columnDefs: []*ColumnDef{},
-		rows:       []Row{},
+		rows:       []ResultSetRow{},
 	}
 	q.SetOptions(opts...)
 	return q
@@ -67,6 +67,13 @@ func WithTextResultSetColumnDefs(colDefs []*ColumnDef) TextResultSetOption {
 	return func(pkt *TextResultSet) {
 		pkt.columnCnt.count = uint64(len(colDefs))
 		pkt.columnDefs = colDefs
+	}
+}
+
+// WithTextResultSetRows returns a text resultset option to set the rows.
+func WithTextResultSetRows(rows []ResultSetRow) TextResultSetOption {
+	return func(pkt *TextResultSet) {
+		pkt.rows = rows
 	}
 }
 
@@ -150,7 +157,7 @@ func (pkt *TextResultSet) Capabilities() CapabilityFlag {
 }
 
 // Rows returns the rows.
-func (pkt *TextResultSet) Rows() []Row {
+func (pkt *TextResultSet) Rows() []ResultSetRow {
 	return pkt.rows
 }
 
