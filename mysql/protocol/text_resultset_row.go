@@ -85,8 +85,12 @@ func (row *TextResultSetRow) ReadColumn() (string, error) {
 }
 
 // Columns returns the columns.
-func (row *TextResultSetRow) Columns() []string {
-	return row.columns
+func (row *TextResultSetRow) Columns() []any {
+	columns := make([]any, len(row.columns))
+	for n, column := range row.columns {
+		columns[n] = column
+	}
+	return columns
 }
 
 // Bytes returns the packet bytes.

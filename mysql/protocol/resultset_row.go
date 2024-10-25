@@ -24,6 +24,6 @@ package protocol
 // ResultSetRow represents a MySQL resultset row.
 type ResultSetRow interface {
 	SetSequenceID(n SequenceID)
-	Columns() []string
+	Columns() []any
 	Bytes() ([]byte, error)
 }
