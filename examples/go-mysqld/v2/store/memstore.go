@@ -119,16 +119,17 @@ func (store *MemStore) DropTable(conn net.Conn, stmt query.DropTable) error {
 	if !ok {
 		return errors.NewErrDatabaseNotExist(dbName)
 	}
-	tableName := stmt.TableName()
-	table, ok := db.LookupTable(tableName)
-	if !ok {
-		return errors.ErrNotImplemented
-	}
+	for _, table := range stmt.Tables() {
+		tableName := table.Name()
+		table, ok := db.LookupTable(tableName)
+		if !ok {
+			return errors.ErrNotImplemented
+		}
 
-	if !db.DropTable(table) {
-		return fmt.Errorf("%s could not deleted", table.TableName())
+		if !db.DropTable(table) {
+			return fmt.Errorf("%s could not deleted", table.TableName())
+		}
 	}
-
 	return errors.ErrNotImplemented
 }
 
