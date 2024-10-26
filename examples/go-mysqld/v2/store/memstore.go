@@ -214,38 +214,92 @@ func (store *MemStore) Delete(conn net.Conn, stmt query.Delete) (query.ResultSet
 
 // Select should handle a SELECT statement.
 func (store *MemStore) Select(conn net.Conn, stmt query.Select) (query.ResultSet, error) {
-	/*
-		log.Debugf("%v", stmt)
+	log.Debugf("%v", stmt)
 
-		dbName := conn.Database()
-		database, ok := store.LookupDatabase(dbName)
-		if !ok {
-			return nil, errors.NewErrDatabaseNotExist(dbName)
-		}
+	from := stmt.From()
+	if len(from) != 1 {
+		return nil, errors.NewErrMultipleTableNotSupported(from.String())
+	}
 
-		// NOTE: Select scans only a first table
+	tblName := from[0].TableName()
 
-		tables := stmt.From()
-		tableName, err := tables[0].Name()
+	_, tbl, err := store.LookupDatabaseTable(conn, conn.Database(), tblName)
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := tbl.Select(stmt.Where())
+	if err != nil {
+		return nil, err
+	}
+
+	// Row description response
+
+	selectors := stmt.Selectors()
+	if selectors.IsSelectAll() {
+		selectors = tbl.Selectors()
+	}
+
+	schema := tbl.Schema
+	rsSchemaColums := []query.ResultSetColumn{}
+	for _, selector := range selectors {
+		colName := selector.Name()
+		shemaColumn, err := schema.LookupColumn(colName)
 		if err != nil {
 			return nil, err
 		}
-
-		table, ok := database.LookupTable(tableName)
-		if !ok {
-			// TODO: Support dummy dual table for MySQL connector 5.1.49
-			if tableName == "dual" {
-				return errors.ErrNotImplemented
-			}
-			return nil, errors.NewErrTableNotExist(tableName)
+		rsCchemaColumn, err := query.NewResultSetColumnFrom(shemaColumn)
+		if err != nil {
+			return nil, err
 		}
+		rsSchemaColums = append(rsSchemaColums, rsCchemaColumn)
+	}
 
-		cond := stmt.Where
-		matchedRows := table.FindMatchedRows(cond)
+	rsSchema := query.NewResultSetSchema(
+		query.WithResultSetSchemaDatabaseName(conn.Database()),
+		query.WithResultSetSchemaTableName(tblName),
+		query.WithResultSetSchemaResultSetColumns(rsSchemaColums),
+	)
 
-		return vitess.NewResultWithRows(database.Database, table.Schema, matchedRows)
-	*/
-	return nil, errors.ErrNotImplemented
+	// Data row response
+
+	rowIdx := 0
+	rsRows := []query.ResultSetRow{}
+	if !selectors.HasAggregateFunction() {
+		offset := stmt.Limit().Offset()
+		limit := stmt.Limit().Limit()
+		for rowNo, row := range rows {
+			if 0 < offset && rowNo < offset {
+				continue
+			}
+			rowValues := []any{}
+			for _, selector := range selectors {
+				colName := selector.Name()
+				value, err := row.ValueByName(colName)
+				if err != nil {
+					return nil, err
+				}
+				rowValues = append(rowValues, value)
+			}
+			rsRow := query.NewResultSetRow(
+				query.WithResultSetRowValues(rowValues),
+			)
+			rsRows = append(rsRows, rsRow)
+			rowIdx++
+			if 0 < limit && limit <= rowIdx {
+				break
+			}
+		}
+	}
+	// Return a result set
+
+	rs := query.NewResultSet(
+		query.WithResultSetSchema(rsSchema),
+		query.WithResultSetRowsAffected(uint64(rowIdx)),
+		query.WithResultSetRows(rsRows),
+	)
+
+	return rs, nil
 }
 
 // ParserError should handle a parser error.
