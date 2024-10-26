@@ -30,6 +30,13 @@ func WithResultSetRowsAffected(rowsAffected uint64) ResultSetOption {
 	}
 }
 
+// WithResultSetSchema returns a resultset option to set the schema.
+func WithResultSetSchema(schema ResultSetSchema) ResultSetOption {
+	return func(r *resultset) {
+		r.ResultSetSchema = schema
+	}
+}
+
 // NewResultSet returns a new ResultSet.
 func NewResultSet(opts ...ResultSetOption) ResultSet {
 	rs := &resultset{
