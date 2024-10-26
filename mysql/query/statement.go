@@ -15,7 +15,6 @@
 package query
 
 import (
-	"github.com/cybergarage/go-sqlparser/sql"
 	"github.com/cybergarage/go-sqlparser/sql/query"
 )
 
@@ -43,51 +42,3 @@ const (
 	BeginStatement          = query.BeginStatement
 	RollbackStatement       = query.RollbackStatement
 )
-
-// CreateDatabase represents a "CREATE DATABASE" statement interface.
-type CreateDatabase = sql.CreateDatabase
-
-// CreateTable represents a "CREATE TABLE" statement interface.
-type CreateTable = sql.CreateTable
-
-// AlterDatabase represents a "ALTER DATABASE" statement interface.
-type AlterDatabase = sql.AlterDatabase
-
-// AlterTable represents a "ALTER TABLE" statement interface.
-type AlterTable = sql.AlterTable
-
-// DropTable represents a "DROP TABLE" statement interface.
-type DropDatabase = sql.DropDatabase
-
-// DropTable represents a "DROP TABLE" statement interface.
-type DropTable = sql.DropTable
-
-// Insert represents a "INSERT" statement interface.
-type Insert = sql.Insert
-
-// Select represents a "SELECT" statement interface.
-type Select = sql.Select
-
-// Update represents a "UPDATE" statement interface.
-type Update = sql.Update
-
-// Delete represents a "DELETE" statement interface.
-type Delete = sql.Delete
-
-// Begin represents a "BEGIN" statement interface.
-type Begin = sql.Begin
-
-// Commit represents a "COMMIT" statement interface.
-type Commit = sql.Commit
-
-// Rollback represents a "ROLLBACK" statement interface.
-type Rollback = sql.Rollback
-
-// Copy represents a "COPY" statement interface.
-type Copy = sql.Copy
-
-// Vacuum represents a "VACUUM" statement interface.
-type Vacuum = sql.Vacuum
-
-// Truncate represents a "TRUNCATE" statement interface.
-type Truncate = sql.Truncate
