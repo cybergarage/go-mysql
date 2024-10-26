@@ -23,20 +23,24 @@ type resultset struct {
 // ResultSet represents a response resultset interface.
 type ResultSetOption func(*resultset)
 
-// WithRowsAffected returns a resultset option to set the rows affected.
-func WithRowsAffected(rowsAffected uint64) ResultSetOption {
+// WithResultSetRowsAffected returns a resultset option to set the rows affected.
+func WithResultSetRowsAffected(rowsAffected uint64) ResultSetOption {
 	return func(r *resultset) {
 		r.rowsAffected = rowsAffected
 	}
 }
 
 // NewResultSet returns a new ResultSet.
-func NewResultSet() ResultSet {
-	return &resultset{
+func NewResultSet(opts ...ResultSetOption) ResultSet {
+	rs := &resultset{
 		ResultSetSchema: nil,
 		ResultSetRow:    nil,
 		rowsAffected:    0,
 	}
+	for _, opt := range opts {
+		opt(rs)
+	}
+	return rs
 }
 
 // RowsAffected returns the number of rows affected.

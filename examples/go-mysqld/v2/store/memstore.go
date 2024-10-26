@@ -35,6 +35,20 @@ func NewMemStore() *MemStore {
 	return store
 }
 
+func (store *MemStore) LookupDatabaseTable(conn net.Conn, dbName string, tblName string) (*Database, *Table, error) {
+	db, ok := store.LookupDatabase(dbName)
+	if !ok {
+		return nil, nil, errors.NewErrDatabaseNotExist(dbName)
+	}
+
+	tbl, ok := db.LookupTable(tblName)
+	if !ok {
+		return nil, nil, errors.NewErrTableNotExist(tblName)
+	}
+
+	return db, tbl, nil
+}
+
 // Begin should handle a BEGIN statement.
 func (store *MemStore) Begin(conn net.Conn, stmt query.Begin) error {
 	log.Debugf("%v", stmt)
@@ -195,38 +209,19 @@ func (store *MemStore) Update(conn net.Conn, stmt query.Update) (query.ResultSet
 
 // Delete should handle a DELETE statement.
 func (store *MemStore) Delete(conn net.Conn, stmt query.Delete) (query.ResultSet, error) {
-	/*
-	   dbName := conn.Database()
-	   cond := stmt.Where
+	_, tbl, err := store.LookupDatabaseTable(conn, conn.Database(), stmt.TableName())
+	if err != nil {
+		return nil, err
+	}
 
-	   database, ok := store.LookupDatabase(dbName)
+	n, err := tbl.Delete(stmt.Where())
+	if err != nil {
+		return nil, err
+	}
 
-	   	if !ok {
-	   		return nil, errors.NewErrDatabaseNotExist(dbName)
-	   	}
-
-	   nEffectedRows := uint64(0)
-
-	   	for _, table := range stmt.Tables() {
-	   		tableName, err := table.Name()
-	   		if err != nil {
-	   			return nil, err
-	   		}
-	   		table, ok := database.LookupTable(tableName)
-	   		if !ok {
-	   			return nil, errors.NewErrTableNotExist(tableName)
-	   		}
-
-	   		nDeletedRows, err := table.Delete(cond)
-	   		if err != nil {
-	   			return nil, err
-	   		}
-	   		nEffectedRows += uint64(nDeletedRows)
-	   	}
-
-	   return vitess.NewResultWithRowsAffected(nEffectedRows), nil
-	*/
-	return nil, errors.ErrNotImplemented
+	return query.NewResultSet(
+		query.WithResultSetRowsAffected(uint64(n)),
+	), nil
 }
 
 // Select should handle a SELECT statement.
