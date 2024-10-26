@@ -135,29 +135,20 @@ func (store *MemStore) DropTable(conn net.Conn, stmt query.DropTable) error {
 
 // Insert should handle a INSERT statement.
 func (store *MemStore) Insert(conn net.Conn, stmt query.Insert) error {
-	/*
-		log.Debugf("%v", stmt)
-		dbName := conn.Database()
-		tableName := stmt.TableName()
-		table, ok := store.GetTableWithDatabase(dbName, tableName)
-		if !ok {
-			return vitess.NewResult(), errors.NewErrTableNotExist(tableName)
-		}
+	log.Debugf("%v", stmt)
+	dbName := conn.Database()
+	tableName := stmt.TableName()
+	table, ok := store.LookupTableWithDatabase(dbName, tableName)
+	if !ok {
+		return errors.NewErrTableNotExist(tableName)
+	}
 
-		row, err := query.NewRowWithInsert(stmt)
-		if err != nil {
-			return nil, err
-		}
+	row := NewRowWith(stmt.Columns())
+	table.Lock()
+	table.Rows = append(table.Rows, row)
+	defer table.Unlock()
 
-		if err := table.AddRow(row); err != nil {
-			return nil, err
-		}
-
-		table.Dump()
-
-		return vitess.NewResultWithRowsAffected(1), nil
-	*/
-	return errors.ErrNotImplemented
+	return nil
 }
 
 // Update should handle a UPDATE statement.
