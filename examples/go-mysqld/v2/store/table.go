@@ -1,4 +1,4 @@
-// Copyright (C) 2020 The go-mysql Authors. All rights reserved.
+// Copyright (C) 2024 The go-mysql Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,99 +17,95 @@ package store
 import (
 	"sync"
 
-	"github.com/cybergarage/go-logger/log"
-	"github.com/cybergarage/go-mysql/mysql/plugins/vitess/query"
+	"github.com/cybergarage/go-mysql/mysql/query"
 )
-
-type Schema = query.Schema
-type Row = query.Row
-type Rows = query.Rows
 
 // Table represents a destination or source database of query.
 type Table struct {
 	sync.Mutex
-	value string
+	Name string
 	*query.Schema
-	*query.Rows
+	Rows []Row
 }
 
-// NewTableWith returns a new database with the specified string.
-func NewTableWith(name string, schema *Schema) *Table {
+// NewTable returns a new table.
+func NewTableWith(name string, schema *query.Schema) *Table {
 	tbl := &Table{
-		value:  name,
+		Name:   name,
 		Schema: schema,
-		Rows:   query.NewRows(),
+		Rows:   []Row{},
 	}
 	return tbl
 }
 
-// NewTable returns a new database.
-func NewTable() *Table {
-	return NewTableWith("", nil)
-}
+// Select returns rows matched to the specified condition.
+func (tbl *Table) Select(cond *query.Condition) ([]Row, error) {
+	tbl.Lock()
+	defer tbl.Unlock()
 
-// SetSchema sets a specified schema.
-func (tbl *Table) SetSchema(schema *Schema) {
-	tbl.Schema = schema
-}
+	if cond.IsEmpty() {
+		return tbl.Rows, nil
+	}
 
-// Name returns the database name.
-func (tbl *Table) Name() string {
-	return tbl.value
-}
-
-// Insert adds a row.
-func (tbl *Table) Insert(row *Row) error {
-	return tbl.AddRow(row)
-}
-
-// Select returns only matched and projected rows by the specified conditions and the columns.
-func (tbl *Table) Select(cond *query.Condition) (*Rows, error) {
-	matchedRows := tbl.FindMatchedRows(cond)
-	return matchedRows, nil
-}
-
-// Update updates rows which are satisfied by the specified columns and conditions.
-func (tbl *Table) Update(columns *query.Columns, cond *query.Condition) (int, error) {
-	matchedRows := tbl.FindMatchedRows(cond)
-	nUpdatedRows := 0
-	for _, matchedRow := range matchedRows.Rows() {
-		err := matchedRow.Update(columns)
-		if err != nil {
-			return 0, err
+	rows := []Row{}
+	for _, row := range tbl.Rows {
+		if !row.IsMatched(cond) {
+			continue
 		}
-		nUpdatedRows++
+		rows = append(rows, row)
 	}
-	return nUpdatedRows, nil
+	return rows, nil
 }
 
-// Delete deletes rows which are satisfied by the specified conditions.
+// Insert inserts a new row.
+func (tbl *Table) Insert(cols []*query.Column) error {
+	row := NewRowWith(cols)
+	tbl.Lock()
+	tbl.Rows = append(tbl.Rows, row)
+	defer tbl.Unlock()
+	return nil
+}
+
+// Update updates rows matched to the specified condition.
+func (tbl *Table) Update(cols []*query.Column, cond *query.Condition) (int, error) {
+	rows, err := tbl.Select(cond)
+	if err != nil {
+		return 0, err
+	}
+
+	tbl.Lock()
+	defer tbl.Unlock()
+
+	for _, row := range rows {
+		row.Update(cols)
+	}
+
+	return len(rows), nil
+}
+
+// Delete deletes rows matched to the specified condition.
 func (tbl *Table) Delete(cond *query.Condition) (int, error) {
-	matchedRows := tbl.FindMatchedRows(cond)
-	nDeletedRows := 0
-	for _, matchedRow := range matchedRows.Rows() {
-		nDeletedRows += int(tbl.DeleteRow(matchedRow))
+	rows, err := tbl.Select(cond)
+	if err != nil {
+		return 0, err
 	}
-	return nDeletedRows, nil
-}
 
-// DeleteAll deletes all rows in the table.
-func (tbl *Table) DeleteAll() int {
-	rows := tbl.Rows.Rows()
-	nRowsCnt := len(rows)
-	tbl.Rows = query.NewRows()
-	return nRowsCnt
+	tbl.Lock()
+	defer tbl.Unlock()
+
+	for _, row := range rows {
+		for n, r := range tbl.Rows {
+			if !row.IsEqual(r) {
+				continue
+			}
+			tbl.Rows = append(tbl.Rows[:n], tbl.Rows[n+1:]...)
+		}
+	}
+
+	return len(rows), nil
 }
 
 // String returns the string representation.
 func (tbl *Table) String() string {
-	return tbl.value
-}
-
-// Dump outputs all row values for debug.
-func (tbl *Table) Dump() {
-	log.Debugf("%s", tbl.Name())
-	for n, row := range tbl.Rows.Rows() {
-		log.Debugf("[%d] %s", n, row.String())
-	}
+	return tbl.Schema.String()
 }
