@@ -108,7 +108,7 @@ func (store *MemStore) CreateTable(conn vitess.Conn, stmt *query.Schema) (*vites
 		db.AddTable(table)
 	} else {
 		if !stmt.GetIfNotExists() {
-			return vitess.NewResult(), errors.NewCollectionExists(tableName)
+			return vitess.NewResult(), errors.NewErrTableExist(tableName)
 		}
 	}
 	return vitess.NewResult(), nil
@@ -159,7 +159,7 @@ func (store *MemStore) Insert(conn vitess.Conn, stmt *query.Insert) (*vitess.Res
 	tableName := stmt.TableName()
 	table, ok := store.LookupTableWithDatabase(dbName, tableName)
 	if !ok {
-		return vitess.NewResult(), errors.NewCollectionNotFound(tableName)
+		return vitess.NewResult(), errors.NewErrTableNotExist(tableName)
 	}
 
 	row, err := query.NewRowWithInsert(stmt)
@@ -196,7 +196,7 @@ func (store *MemStore) Update(conn vitess.Conn, stmt *query.Update) (*vitess.Res
 		}
 		table, ok := database.LookupTable(tableName)
 		if !ok {
-			return nil, errors.NewCollectionNotFound(tableName)
+			return nil, errors.NewErrTableNotExist(tableName)
 		}
 
 		columns, err := stmt.Columns()
@@ -232,7 +232,7 @@ func (store *MemStore) Delete(conn vitess.Conn, stmt *query.Delete) (*vitess.Res
 		}
 		table, ok := database.LookupTable(tableName)
 		if !ok {
-			return nil, errors.NewCollectionNotFound(tableName)
+			return nil, errors.NewErrTableNotExist(tableName)
 		}
 
 		nDeletedRows, err := table.Delete(cond)
@@ -269,7 +269,7 @@ func (store *MemStore) Select(conn vitess.Conn, stmt *query.Select) (*vitess.Res
 		if tableName == "dual" {
 			return vitess.NewResult(), nil
 		}
-		return nil, errors.NewCollectionNotFound(tableName)
+		return nil, errors.NewErrTableNotExist(tableName)
 	}
 
 	cond := stmt.Where
