@@ -70,6 +70,7 @@ func (store *MemStore) Rollback(conn net.Conn, stmt query.Rollback) error {
 // CreateDatabase should handle a CREATE database statement.
 func (store *MemStore) CreateDatabase(conn net.Conn, stmt query.CreateDatabase) error {
 	log.Debugf("%v", stmt)
+
 	dbName := stmt.DatabaseName()
 	_, ok := store.LookupDatabase(dbName)
 	if ok {
@@ -78,6 +79,7 @@ func (store *MemStore) CreateDatabase(conn net.Conn, stmt query.CreateDatabase) 
 		}
 		return errors.NewErrDatabaseExist(dbName)
 	}
+
 	return store.AddDatabase(NewDatabaseWithName(dbName))
 }
 
@@ -89,6 +91,8 @@ func (store *MemStore) AlterDatabase(conn net.Conn, stmt query.AlterDatabase) er
 
 // DropDatabase should handle a DROP database statement.
 func (store *MemStore) DropDatabase(conn net.Conn, stmt query.DropDatabase) error {
+	log.Debugf("%v", stmt)
+
 	dbName := stmt.DatabaseName()
 	db, ok := store.LookupDatabase(dbName)
 	if !ok {
@@ -102,6 +106,8 @@ func (store *MemStore) DropDatabase(conn net.Conn, stmt query.DropDatabase) erro
 
 // CreateTable should handle a CREATE table statement.
 func (store *MemStore) CreateTable(conn net.Conn, stmt query.CreateTable) error {
+	log.Debugf("%v", stmt)
+
 	dbName := conn.Database()
 	db, ok := store.LookupDatabase(dbName)
 	if !ok {
@@ -128,6 +134,8 @@ func (store *MemStore) AlterTable(conn net.Conn, stmt query.AlterTable) error {
 
 // DropTable should handle a DROP table statement.
 func (store *MemStore) DropTable(conn net.Conn, stmt query.DropTable) error {
+	log.Debugf("%v", stmt)
+
 	dbName := conn.Database()
 	db, ok := store.LookupDatabase(dbName)
 	if !ok {
@@ -150,6 +158,7 @@ func (store *MemStore) DropTable(conn net.Conn, stmt query.DropTable) error {
 // Insert should handle a INSERT statement.
 func (store *MemStore) Insert(conn net.Conn, stmt query.Insert) error {
 	log.Debugf("%v", stmt)
+
 	dbName := conn.Database()
 	tableName := stmt.TableName()
 	table, ok := store.LookupTableWithDatabase(dbName, tableName)
@@ -167,48 +176,27 @@ func (store *MemStore) Insert(conn net.Conn, stmt query.Insert) error {
 
 // Update should handle a UPDATE statement.
 func (store *MemStore) Update(conn net.Conn, stmt query.Update) (query.ResultSet, error) {
-	/*
-		log.Debugf("%v", stmt)
+	log.Debugf("%v", stmt)
 
-		dbName := conn.Database()
-		cond := stmt.Where
+	_, tbl, err := store.LookupDatabaseTable(conn, conn.Database(), stmt.TableName())
+	if err != nil {
+		return nil, err
+	}
 
-		database, ok := store.LookupDatabase(dbName)
-		if !ok {
-			return nil, errors.NewErrDatabaseNotExist(dbName)
-		}
+	n, err := tbl.Update(stmt.Columns(), stmt.Where())
+	if err != nil {
+		return nil, err
+	}
 
-		nEffectedRows := uint64(0)
-		for _, table := range stmt.Tables() {
-			tableName, err := table.Name()
-			if err != nil {
-				return nil, err
-			}
-			table, ok := database.LookupTable(tableName)
-			if !ok {
-				return nil, errors.NewErrTableNotExist(tableName)
-			}
-
-			columns, err := stmt.Columns()
-			if err != nil {
-				return nil, err
-			}
-
-			nUpdatedRows, err := table.Update(columns, cond)
-			if err != nil {
-				return nil, err
-			}
-			nEffectedRows += uint64(nUpdatedRows)
-		}
-
-		return vitess.NewResultWithRowsAffected(nEffectedRows), nil
-	*/
-	return nil, errors.ErrNotImplemented
-
+	return query.NewResultSet(
+		query.WithResultSetRowsAffected(uint64(n)),
+	), nil
 }
 
 // Delete should handle a DELETE statement.
 func (store *MemStore) Delete(conn net.Conn, stmt query.Delete) (query.ResultSet, error) {
+	log.Debugf("%v", stmt)
+
 	_, tbl, err := store.LookupDatabaseTable(conn, conn.Database(), stmt.TableName())
 	if err != nil {
 		return nil, err
