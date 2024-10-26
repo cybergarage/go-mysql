@@ -46,21 +46,16 @@ type ResultSetRow interface {
 	// Values returns the all values.
 	Values() []any
 	// ValueAt returns the value at the specified index.
-	ValueAt(int) any
-	// ValueNamed returns the value of the specified column.
-	ValueNamed(string) any
+	ValueAt(int) (any, error)
 	// Scan scans the values.
 	Scan(...any) error
 	// ScanAt scans the value at the specified index.
 	ScanAt(int, any) error
-	// ScanNamed scans the value of the specified column.
-	ScanNamed(string, any) error
 }
 
 // ResultSet represents a response resultset interface.
 type ResultSet interface {
 	ResultSetSchema
-	ResultSetRow
 	// Row returns the current row.
 	Row() ResultSetRow
 	// Schema returns the schema.

@@ -16,8 +16,9 @@ package query
 
 type resultset struct {
 	ResultSetSchema
-	ResultSetRow
+	rows         []ResultSetRow
 	rowsAffected uint64
+	rowCursor    int
 }
 
 // ResultSet represents a response resultset interface.
@@ -37,12 +38,20 @@ func WithResultSetSchema(schema ResultSetSchema) ResultSetOption {
 	}
 }
 
+// WithResultSetRows returns a resultset option to set the rows.
+func WithResultSetRows(rows []ResultSetRow) ResultSetOption {
+	return func(r *resultset) {
+		r.rows = rows
+	}
+}
+
 // NewResultSet returns a new ResultSet.
 func NewResultSet(opts ...ResultSetOption) ResultSet {
 	rs := &resultset{
 		ResultSetSchema: nil,
-		ResultSetRow:    nil,
+		rows:            []ResultSetRow{},
 		rowsAffected:    0,
+		rowCursor:       0,
 	}
 	for _, opt := range opts {
 		opt(rs)
@@ -57,17 +66,21 @@ func (r *resultset) RowsAffected() uint64 {
 
 // Next returns the next row.
 func (r *resultset) Next() bool {
-	return false
+	r.rowCursor++
+	return (r.rowCursor - 1) < len(r.rows)
 }
 
 // Row returns the current row.
 func (r *resultset) Row() ResultSetRow {
-	return nil
+	if (r.rowCursor - 1) < len(r.rows) {
+		return nil
+	}
+	return r.rows[r.rowCursor-1]
 }
 
 // Schema returns the schema.
 func (r *resultset) Schema() ResultSetSchema {
-	return nil
+	return r.ResultSetSchema
 }
 
 // Close closes the resultset.
