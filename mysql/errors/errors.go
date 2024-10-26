@@ -49,33 +49,3 @@ func NewErrNotImplemented(s string) error {
 func NewErrNotExis(name string) error {
 	return fmt.Errorf("%s is not exists", name)
 }
-
-// NewSystemDatabaseNotFound returns an error for a system database not found.
-func NewSystemDatabaseNotFound(name string) error {
-	return fmt.Errorf("system database (%s) is %w", name, ErrNotFound)
-}
-
-// NewSystemTableNotFound returns an error for a system table not found.
-func NewSystemTableNotFound(name string) error {
-	return fmt.Errorf("system table (%s) is %w", name, ErrNotFound)
-}
-
-// NewDatabaseNotFound returns an error for a database not found.
-func NewDatabaseNotFound(name string) error {
-	return fmt.Errorf("database (%s) is %w", name, ErrNotFound)
-}
-
-// NewDatabaseExists returns an error for a database already exists.
-func NewDatabaseExists(name string) error {
-	return fmt.Errorf("database (%s) is %w", name, ErrExist)
-}
-
-// NewCollectionNotFound returns an error for a collection not found.
-func NewCollectionNotFound(name string) error {
-	return fmt.Errorf("collection (%s) is %w", name, ErrNotFound)
-}
-
-// NewCollectionExists returns an error for a collection already exists.
-func NewCollectionExists(name string) error {
-	return fmt.Errorf("collection (%s) is %w", name, ErrExist)
-}

@@ -1,4 +1,4 @@
-// Copyright (C) 2020 The go-mysql Authors. All rights reserved.
+// Copyright (C) 2024 The go-mysql Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,9 @@
 
 package store
 
-import "github.com/cybergarage/go-mysql/mysql/errors"
+import (
+	"github.com/cybergarage/go-mysql/mysql/errors"
+)
 
 // Databases represents a collection of databases.
 type Databases map[string]*Database
@@ -36,7 +38,7 @@ func (dbs Databases) DropDatabase(db *Database) error {
 	name := db.Name()
 	_, ok := dbs[name]
 	if !ok {
-		return errors.NewDatabaseNotFound(name)
+		return errors.NewErrDatabaseNotExist(name)
 	}
 	delete(dbs, name)
 	return nil

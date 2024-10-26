@@ -1,4 +1,4 @@
-// Copyright (C) 2020 The go-mysql Authors. All rights reserved.
+// Copyright (C) 2024 The go-mysql Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ func (db *Database) Name() string {
 
 // AddTable adds a specified table into the database.
 func (db *Database) AddTable(table *Table) {
-	tableName := table.Name()
+	tableName := table.Name
 	db.tables[tableName] = table
 }
 

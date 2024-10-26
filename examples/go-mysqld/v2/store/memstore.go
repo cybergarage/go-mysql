@@ -15,6 +15,8 @@
 package store
 
 import (
+	"fmt"
+
 	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/mysql/errors"
 	"github.com/cybergarage/go-mysql/mysql/net"
@@ -79,7 +81,7 @@ func (store *MemStore) DropDatabase(conn net.Conn, stmt query.DropDatabase) erro
 		if stmt.IfExists() {
 			return nil
 		}
-		return errors.NewDatabaseNotFound(dbName)
+		return errors.NewErrDatabaseNotExist(dbName)
 	}
 	return store.Databases.DropDatabase(db)
 }
@@ -89,15 +91,13 @@ func (store *MemStore) CreateTable(conn net.Conn, stmt query.CreateTable) error 
 	dbName := conn.Database()
 	db, ok := store.LookupDatabase(dbName)
 	if !ok {
-		return errors.NewDatabaseNotFound(dbName)
+		return errors.NewErrDatabaseNotExist(dbName)
 	}
 	tableName := stmt.TableName()
 	_, ok = db.LookupTable(tableName)
 	if !ok {
-		/*
-			table := NewTableWith(tableName, stmt)
-			db.AddTable(table)
-		*/
+		table := NewTableWith(tableName, stmt.Schema())
+		db.AddTable(table)
 	} else {
 		if !stmt.IfNotExists() {
 			return errors.NewCollectionExists(tableName)
@@ -114,22 +114,20 @@ func (store *MemStore) AlterTable(conn net.Conn, stmt query.AlterTable) error {
 
 // DropTable should handle a DROP table statement.
 func (store *MemStore) DropTable(conn net.Conn, stmt query.DropTable) error {
-	/*
-		dbName := conn.Database()
-		db, ok := store.LookupDatabase(dbName)
-		if !ok {
-			return nil, errors.NewDatabaseNotFound(dbName)
-		}
-		tableName := stmt.TableName()
-		table, ok := db.LookupTable(tableName)
-		if !ok {
-			return errors.ErrNotImplemented
-		}
+	dbName := conn.Database()
+	db, ok := store.LookupDatabase(dbName)
+	if !ok {
+		return nil, errors.NewErrDatabaseNotExist(dbName)
+	}
+	tableName := stmt.TableName()
+	table, ok := db.LookupTable(tableName)
+	if !ok {
+		return errors.ErrNotImplemented
+	}
 
-		if !db.DropTable(table) {
-			return nil, fmt.Errorf("%s could not deleted", table.TableName())
-		}
-	*/
+	if !db.DropTable(table) {
+		return nil, fmt.Errorf("%s could not deleted", table.TableName())
+	}
 	return errors.ErrNotImplemented
 }
 
@@ -170,7 +168,7 @@ func (store *MemStore) Update(conn net.Conn, stmt query.Update) (query.ResultSet
 
 		database, ok := store.LookupDatabase(dbName)
 		if !ok {
-			return nil, errors.NewDatabaseNotFound(dbName)
+			return nil, errors.NewErrDatabaseNotExist(dbName)
 		}
 
 		nEffectedRows := uint64(0)
@@ -211,7 +209,7 @@ func (store *MemStore) Delete(conn net.Conn, stmt query.Delete) (query.ResultSet
 	   database, ok := store.LookupDatabase(dbName)
 
 	   	if !ok {
-	   		return nil, errors.NewDatabaseNotFound(dbName)
+	   		return nil, errors.NewErrDatabaseNotExist(dbName)
 	   	}
 
 	   nEffectedRows := uint64(0)
@@ -246,7 +244,7 @@ func (store *MemStore) Select(conn net.Conn, stmt query.Select) (query.ResultSet
 		dbName := conn.Database()
 		database, ok := store.LookupDatabase(dbName)
 		if !ok {
-			return nil, errors.NewDatabaseNotFound(dbName)
+			return nil, errors.NewErrDatabaseNotExist(dbName)
 		}
 
 		// NOTE: Select scans only a first table

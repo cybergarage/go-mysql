@@ -64,7 +64,7 @@ func (store *MemStore) CreateDatabase(conn vitess.Conn, stmt *query.Database) (*
 		if stmt.IfNotExists() {
 			return vitess.NewResult(), nil
 		}
-		return vitess.NewResult(), errors.NewDatabaseNotFound(dbName)
+		return vitess.NewResult(), errors.NewErrDatabaseNotExist(dbName)
 	}
 	err := store.AddDatabase(NewDatabaseWithName(dbName))
 	if err != nil {
@@ -84,7 +84,7 @@ func (store *MemStore) DropDatabase(conn vitess.Conn, stmt *query.Database) (*vi
 	dbName := stmt.Name()
 	db, ok := store.LookupDatabase(dbName)
 	if !ok {
-		return nil, errors.NewDatabaseNotFound(dbName)
+		return nil, errors.NewErrDatabaseNotExist(dbName)
 	}
 
 	if !store.Databases.DropDatabase(db) {
@@ -99,7 +99,7 @@ func (store *MemStore) CreateTable(conn vitess.Conn, stmt *query.Schema) (*vites
 	dbName := conn.Database()
 	db, ok := store.LookupDatabase(dbName)
 	if !ok {
-		return nil, errors.NewDatabaseNotFound(dbName)
+		return nil, errors.NewErrDatabaseNotExist(dbName)
 	}
 	tableName := stmt.TableName()
 	_, ok = db.LookupTable(tableName)
@@ -125,7 +125,7 @@ func (store *MemStore) DropTable(conn vitess.Conn, stmt *query.Schema) (*vitess.
 	dbName := conn.Database()
 	db, ok := store.LookupDatabase(dbName)
 	if !ok {
-		return nil, errors.NewDatabaseNotFound(dbName)
+		return nil, errors.NewErrDatabaseNotExist(dbName)
 	}
 	tableName := stmt.TableName()
 	table, ok := db.LookupTable(tableName)
@@ -185,7 +185,7 @@ func (store *MemStore) Update(conn vitess.Conn, stmt *query.Update) (*vitess.Res
 
 	database, ok := store.LookupDatabase(dbName)
 	if !ok {
-		return nil, errors.NewDatabaseNotFound(dbName)
+		return nil, errors.NewErrDatabaseNotExist(dbName)
 	}
 
 	nEffectedRows := uint64(0)
@@ -221,7 +221,7 @@ func (store *MemStore) Delete(conn vitess.Conn, stmt *query.Delete) (*vitess.Res
 
 	database, ok := store.LookupDatabase(dbName)
 	if !ok {
-		return nil, errors.NewDatabaseNotFound(dbName)
+		return nil, errors.NewErrDatabaseNotExist(dbName)
 	}
 
 	nEffectedRows := uint64(0)
@@ -252,7 +252,7 @@ func (store *MemStore) Select(conn vitess.Conn, stmt *query.Select) (*vitess.Res
 	dbName := conn.Database()
 	database, ok := store.LookupDatabase(dbName)
 	if !ok {
-		return nil, errors.NewDatabaseNotFound(dbName)
+		return nil, errors.NewErrDatabaseNotExist(dbName)
 	}
 
 	// NOTE: Select scans only a first table
