@@ -86,23 +86,23 @@ func (store *MemStore) DropDatabase(conn net.Conn, stmt query.DropDatabase) erro
 
 // CreateTable should handle a CREATE table statement.
 func (store *MemStore) CreateTable(conn net.Conn, stmt query.CreateTable) error {
-	/*
-		dbName := conn.Database()
-		db, ok := store.LookupDatabase(dbName)
-		if !ok {
-			return nil, errors.NewDatabaseNotFound(dbName)
-		}
-		tableName := stmt.TableName()
-		_, ok = db.LookupTable(tableName)
-		if !ok {
+	dbName := conn.Database()
+	db, ok := store.LookupDatabase(dbName)
+	if !ok {
+		return errors.NewDatabaseNotFound(dbName)
+	}
+	tableName := stmt.TableName()
+	_, ok = db.LookupTable(tableName)
+	if !ok {
+		/*
 			table := NewTableWith(tableName, stmt)
 			db.AddTable(table)
-		} else {
-			if !stmt.GetIfExists() {
-				return vitess.NewResult(), errors.NewCollectionExists(tableName)
-			}
+		*/
+	} else {
+		if !stmt.IfNotExists() {
+			return errors.NewCollectionExists(tableName)
 		}
-	*/
+	}
 	return errors.ErrNotImplemented
 }
 

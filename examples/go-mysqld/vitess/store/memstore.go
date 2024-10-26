@@ -107,7 +107,7 @@ func (store *MemStore) CreateTable(conn vitess.Conn, stmt *query.Schema) (*vites
 		table := NewTableWith(tableName, stmt)
 		db.AddTable(table)
 	} else {
-		if !stmt.GetIfExists() {
+		if !stmt.GetIfNotExists() {
 			return vitess.NewResult(), errors.NewCollectionExists(tableName)
 		}
 	}
