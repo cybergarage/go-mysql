@@ -62,7 +62,7 @@ func (store *MemStore) CreateDatabase(conn net.Conn, stmt query.CreateDatabase) 
 		if stmt.IfNotExists() {
 			return nil
 		}
-		return errors.NewDatabaseExists(dbName)
+		return errors.NewErrDatabaseExist(dbName)
 	}
 	return store.AddDatabase(NewDatabaseWithName(dbName))
 }
@@ -100,7 +100,7 @@ func (store *MemStore) CreateTable(conn net.Conn, stmt query.CreateTable) error 
 		db.AddTable(table)
 	} else {
 		if !stmt.IfNotExists() {
-			return errors.NewCollectionExists(tableName)
+			return errors.NewErrTableExist(tableName)
 		}
 	}
 	return errors.ErrNotImplemented
@@ -117,7 +117,7 @@ func (store *MemStore) DropTable(conn net.Conn, stmt query.DropTable) error {
 	dbName := conn.Database()
 	db, ok := store.LookupDatabase(dbName)
 	if !ok {
-		return nil, errors.NewErrDatabaseNotExist(dbName)
+		return errors.NewErrDatabaseNotExist(dbName)
 	}
 	tableName := stmt.TableName()
 	table, ok := db.LookupTable(tableName)
@@ -126,8 +126,9 @@ func (store *MemStore) DropTable(conn net.Conn, stmt query.DropTable) error {
 	}
 
 	if !db.DropTable(table) {
-		return nil, fmt.Errorf("%s could not deleted", table.TableName())
+		return fmt.Errorf("%s could not deleted", table.TableName())
 	}
+
 	return errors.ErrNotImplemented
 }
 
@@ -139,7 +140,7 @@ func (store *MemStore) Insert(conn net.Conn, stmt query.Insert) error {
 		tableName := stmt.TableName()
 		table, ok := store.GetTableWithDatabase(dbName, tableName)
 		if !ok {
-			return vitess.NewResult(), errors.NewCollectionNotFound(tableName)
+			return vitess.NewResult(), errors.NewErrTableNotExist(tableName)
 		}
 
 		row, err := query.NewRowWithInsert(stmt)
@@ -179,7 +180,7 @@ func (store *MemStore) Update(conn net.Conn, stmt query.Update) (query.ResultSet
 			}
 			table, ok := database.LookupTable(tableName)
 			if !ok {
-				return nil, errors.NewCollectionNotFound(tableName)
+				return nil, errors.NewErrTableNotExist(tableName)
 			}
 
 			columns, err := stmt.Columns()
@@ -221,7 +222,7 @@ func (store *MemStore) Delete(conn net.Conn, stmt query.Delete) (query.ResultSet
 	   		}
 	   		table, ok := database.LookupTable(tableName)
 	   		if !ok {
-	   			return nil, errors.NewCollectionNotFound(tableName)
+	   			return nil, errors.NewErrTableNotExist(tableName)
 	   		}
 
 	   		nDeletedRows, err := table.Delete(cond)
@@ -261,7 +262,7 @@ func (store *MemStore) Select(conn net.Conn, stmt query.Select) (query.ResultSet
 			if tableName == "dual" {
 				return errors.ErrNotImplemented
 			}
-			return nil, errors.NewCollectionNotFound(tableName)
+			return nil, errors.NewErrTableNotExist(tableName)
 		}
 
 		cond := stmt.Where
