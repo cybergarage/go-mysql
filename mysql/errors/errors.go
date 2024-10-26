@@ -19,10 +19,36 @@ import (
 	"fmt"
 )
 
-var ErrInvalid = errors.New("invalid")
+// ErrNotImplemented is returned when the operation is not implemented.
 var ErrNotImplemented = errors.New("not implemented")
+
+// ErrNotSupported is returned when the operation is not supported.
+var ErrNotSupported = errors.New("not supported")
+
+// ErrNotExist is returned when the specified object is not exist.
+var ErrNotExist = errors.New("not exist")
+
+// ErrExist is returned when the specified object is exist.
+var ErrExist = errors.New("exist")
+
+// ErrNotEqual is returned when the specified object is not equal.
+var ErrNotEqual = errors.New("not equal")
+
+// ErrInvalid is returned when the specified object is invalid.
+var ErrInvalid = errors.New("invalid")
+
+// ErrNotFound is returned when the specified object is not found.
 var ErrNotFound = errors.New("not found")
-var ErrExists = errors.New("already exists")
+
+// NewErrNotImplemented returns an error for a not implemented.
+func NewErrNotImplemented(s string) error {
+	return fmt.Errorf("%s is %w", s, ErrNotImplemented)
+}
+
+// NewErrNotExis returns an error for a not exist.
+func NewErrNotExis(name string) error {
+	return fmt.Errorf("%s is not exists", name)
+}
 
 // NewSystemDatabaseNotFound returns an error for a system database not found.
 func NewSystemDatabaseNotFound(name string) error {
@@ -41,7 +67,7 @@ func NewDatabaseNotFound(name string) error {
 
 // NewDatabaseExists returns an error for a database already exists.
 func NewDatabaseExists(name string) error {
-	return fmt.Errorf("database (%s) is %w", name, ErrExists)
+	return fmt.Errorf("database (%s) is %w", name, ErrExist)
 }
 
 // NewCollectionNotFound returns an error for a collection not found.
@@ -51,5 +77,5 @@ func NewCollectionNotFound(name string) error {
 
 // NewCollectionExists returns an error for a collection already exists.
 func NewCollectionExists(name string) error {
-	return fmt.Errorf("collection (%s) is %w", name, ErrExists)
+	return fmt.Errorf("collection (%s) is %w", name, ErrExist)
 }
