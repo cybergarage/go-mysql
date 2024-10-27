@@ -19,6 +19,8 @@ const (
 	DefaultMaxPacketSize = 0
 	DefaultCharset       = CharSetUTF8
 
+	DefaultServerVersion = "5.7.9"
+
 	DefaultServerCapabilities = ClientLongPassword |
 		ClientFoundRows |
 		ClientLongColumnFlag |
