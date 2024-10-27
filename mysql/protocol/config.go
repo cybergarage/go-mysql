@@ -17,8 +17,7 @@ package protocol
 import "fmt"
 
 const (
-	DefaultAddr      = ""
-	SupportedVersion = "5.7.9"
+	DefaultAddr = ""
 )
 
 // Config stores server configuration parammeters.
@@ -84,5 +83,5 @@ func (config *Config) ProductVersion() string {
 
 // ServerVersion returns the server version for the handshake.
 func (config *Config) ServerVersion() string {
-	return fmt.Sprintf("%s-%s-%s", SupportedVersion, config.productName, config.productVersion)
+	return fmt.Sprintf("%s-%s-%s", SupportVersion, config.productName, config.productVersion)
 }

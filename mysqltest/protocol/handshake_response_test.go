@@ -17,6 +17,7 @@ package protocol
 import (
 	"bytes"
 	_ "embed"
+	"strings"
 	"testing"
 
 	"github.com/cybergarage/go-logger/log/hexdump"
@@ -116,5 +117,13 @@ func TestHandshakeResponsePacket(t *testing.T) {
 				t.Errorf("expected %v, got %v", testBytes, msgBytes)
 			}
 		})
+	}
+}
+
+func TestHandshakeDefaultResponsePacket(t *testing.T) {
+	pkt := protocol.NewHandshake()
+
+	if !strings.HasPrefix(pkt.ServerVersion(), protocol.SupportVersion) {
+		t.Errorf("expected %s, got %s", protocol.SupportVersion, pkt.ServerVersion())
 	}
 }

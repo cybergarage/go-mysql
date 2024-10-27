@@ -64,7 +64,6 @@ type HandshakeResponseOption func(*HandshakeResponse)
 // NewHandshakeResponse returns a new HandshakeResponse.
 func NewHandshakeResponse(opts ...HandshakeResponseOption) *HandshakeResponse {
 	h := newHandshakeResponseWithPacket(newPacket())
-	h.database = DefaultServerVersion
 	for _, opt := range opts {
 		opt(h)
 	}

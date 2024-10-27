@@ -70,91 +70,81 @@ func newHandshakeWithPacket(msg *packet) *Handshake {
 }
 
 // HandshakeOption represents a MySQL Handshake option.
-type HandshakeOption func(*Handshake) error
+type HandshakeOption func(*Handshake)
 
 // WithHandshakeProtocolVersion sets the protocol version.
 func WithHandshakeProtocolVersion(v ProtocolVersion) HandshakeOption {
-	return func(pkt *Handshake) error {
+	return func(pkt *Handshake) {
 		pkt.protocolVersion = uint8(v)
-		return nil
 	}
 }
 
 // WithHandshakeServerVersion sets the server version.
 func WithHandshakeServerVersion(v string) HandshakeOption {
-	return func(pkt *Handshake) error {
+	return func(pkt *Handshake) {
 		pkt.serverVersion = v
-		return nil
 	}
 }
 
 // WithHandshakeConnectionID sets the connection ID.
 func WithHandshakeConnectionID(v uint32) HandshakeOption {
-	return func(pkt *Handshake) error {
+	return func(pkt *Handshake) {
 		pkt.connectionID = v
-		return nil
 	}
 }
 
 // WithHandshakeCapabilityFlags sets the capability flags.
 func WithHandshakeCapabilityFlags(v CapabilityFlag) HandshakeOption {
-	return func(pkt *Handshake) error {
+	return func(pkt *Handshake) {
 		pkt.capabilityFlags = uint32(v)
-		return nil
 	}
 }
 
 // WithHandshakeCharacterSet sets the character set.
 func WithHandshakeCharacterSet(v CharSet) HandshakeOption {
-	return func(pkt *Handshake) error {
+	return func(pkt *Handshake) {
 		pkt.characterSet = uint8(v)
-		return nil
 	}
 }
 
 // WithHandshakeStatusFlags sets the status flags.
 func WithHandshakeStatusFlags(v StatusFlag) HandshakeOption {
-	return func(pkt *Handshake) error {
+	return func(pkt *Handshake) {
 		pkt.statusFlags = uint16(v)
-		return nil
 	}
 }
 
 // WithHandshakeAuthPluginData1 sets the auth plugin data.
 func WithHandshakeAuthPluginData(v []byte) HandshakeOption {
-	return func(pkt *Handshake) error {
+	return func(pkt *Handshake) {
 		if authPluginDataPartMaxLen < len(v) {
-			return newErrInvalidLength("auth-plugin-data", len(v))
+			v = v[:authPluginDataPartMaxLen]
 		}
 		pkt.authPluginDataLen = uint8(len(v))
 		if len(v) <= authPluginDataPart1Len {
 			pkt.authPluginData1 = v
 			pkt.authPluginData2 = nil
-			return nil
 		}
 		pkt.authPluginData1 = v[:authPluginDataPart1Len]
 		pkt.authPluginData2 = v[authPluginDataPart1Len:]
-		return nil
 	}
 }
 
 // WithHandshakeAuthPluginData2 sets the auth plugin name.
 func WithHandshakeAuthPluginName(v string) HandshakeOption {
-	return func(pkt *Handshake) error {
+	return func(pkt *Handshake) {
 		pkt.authPluginName = v
-		return nil
 	}
 }
 
 // NewHandshake returns a new MySQL Handshake packet.
-func NewHandshake(opts ...HandshakeOption) (*Handshake, error) {
+func NewHandshake(opts ...HandshakeOption) *Handshake {
 	pkt := newHandshakeWithPacket(newPacket())
+	pkt.serverVersion = SupportVersion
 	for _, opt := range opts {
-		if err := opt(pkt); err != nil {
-			return nil, err
-		}
+		opt(pkt)
 	}
-	return pkt, nil
+	return pkt
 }
 
 // NewHandshakeFromReader returns a new MySQL Handshake packet from the specified reader.

@@ -162,13 +162,9 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 
 	// Initial Handshake Packet
 
-	handshakeMsg, err := NewHandshake(
+	handshakeMsg := NewHandshake(
 		WithHandshakeServerVersion(server.ServerVersion()))
-	if err != nil {
-		return err
-	}
-
-	err = conn.ResponsePacket(handshakeMsg)
+	err := conn.ResponsePacket(handshakeMsg)
 	if err != nil {
 		return err
 	}
