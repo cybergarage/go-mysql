@@ -141,6 +141,12 @@ func (server *Server) serve() error {
 	return nil
 }
 
+// GenerateHandshakeFor retrun a handshake message for the specified connection.
+func (server *Server) GenerateHandshakeFor(netConn net.Conn) (*Handshake, error) {
+	return NewHandshake(
+		WithHandshakeServerVersion(server.ServerVersion())), nil
+}
+
 // receive handles client packets.
 func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintidx
 	defer func() {
@@ -162,9 +168,12 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 
 	// Initial Handshake Packet
 
-	handshakeMsg := NewHandshake(
-		WithHandshakeServerVersion(server.ServerVersion()))
-	err := conn.ResponsePacket(handshakeMsg)
+	handshakeMsg, err := server.GenerateHandshakeFor(netConn)
+	if err != nil {
+		return err
+	}
+
+	err = conn.ResponsePacket(handshakeMsg)
 	if err != nil {
 		return err
 	}
