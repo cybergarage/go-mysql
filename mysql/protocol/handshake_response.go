@@ -59,17 +59,15 @@ func newHandshakeResponseWithPacket(pkt *packet) *HandshakeResponse {
 }
 
 // HandshakeResponseOption represents a HandshakeResponse option.
-type HandshakeResponseOption func(*HandshakeResponse) error
+type HandshakeResponseOption func(*HandshakeResponse)
 
 // NewHandshakeResponse returns a new HandshakeResponse.
-func NewHandshakeResponse(opts ...HandshakeResponseOption) (*HandshakeResponse, error) {
+func NewHandshakeResponse(opts ...HandshakeResponseOption) *HandshakeResponse {
 	h := newHandshakeResponseWithPacket(newPacket())
 	for _, opt := range opts {
-		if err := opt(h); err != nil {
-			return nil, err
-		}
+		opt(h)
 	}
-	return h, nil
+	return h
 }
 
 // NewHandshakeResponseFromReader returns a new HandshakeResponse from the reader.
