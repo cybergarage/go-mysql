@@ -46,6 +46,13 @@ func TestServer(t *testing.T) {
 	defer client.Close()
 	if err != nil {
 		t.Error(err)
+		return
+	}
+
+	err = client.Ping()
+	if err != nil {
+		t.Error(err)
+		return
 	}
 
 	for n, query := range testQueries {
