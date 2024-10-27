@@ -76,3 +76,14 @@ func (client *Client) Query(query string, args ...interface{}) (*sql.Rows, error
 	}
 	return client.db.Query(query, args...)
 }
+
+// Ping executes a ping to the database.
+func (client *Client) Ping() error {
+	if client.db == nil {
+		err := client.Open()
+		if err != nil {
+			return nil
+		}
+	}
+	return client.db.Ping()
+}
