@@ -241,6 +241,14 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 
 		var res Response
 		switch cmdType {
+		case ComPing:
+			res, err = NewOK()
+		case ComQuery:
+			var q *Query
+			q, err = NewQueryFromCommand(cmd)
+			if err == nil {
+				res, err = server.CommandHandler.HandleQuery(conn, q)
+			}
 		case ComQuit:
 			ok, err := NewOK()
 			if err == nil {
@@ -248,12 +256,6 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			}
 			finishSpans()
 			return err
-		case ComQuery:
-			var q *Query
-			q, err = NewQueryFromCommand(cmd)
-			if err == nil {
-				res, err = server.CommandHandler.HandleQuery(conn, q)
-			}
 		default:
 			err = cmd.SkipPayload()
 		}
