@@ -24,6 +24,8 @@ import (
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase_packets_protocol_handshake.html
 // MySQL: Protocol::HandshakeV10
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase_packets_protocol_handshake_v10.html
+// Connecting - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/connection/
 
 // ProtocolVersion represents a MySQL Protocol Version.
 type ProtocolVersion uint8
