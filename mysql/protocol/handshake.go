@@ -63,7 +63,7 @@ func newHandshakeWithPacket(msg *packet) *Handshake {
 		connectionID:      0,
 		capabilityFlags:   uint32(DefaultServerCapabilities),
 		characterSet:      uint8(CharSetUTF8),
-		statusFlags:       uint16(DefaultServerCapabilities),
+		statusFlags:       uint16(DefaultServerStatus),
 		authPluginDataLen: 0,
 		authPluginData1:   nil,
 		authPluginData2:   nil,
