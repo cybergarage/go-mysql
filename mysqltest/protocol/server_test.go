@@ -23,7 +23,27 @@ import (
 )
 
 func TestServer(t *testing.T) {
-	pkt := protocol.NewHandshake()
+	server := protocol.NewServer()
+
+	err := server.Start()
+	if err != nil {
+		t.Errorf("expected nil, got %v", err)
+		return
+	}
+
+	defer func() {
+		err := server.Stop()
+		if err != nil {
+			t.Errorf("expected nil, got %v", err)
+			return
+		}
+	}()
+
+	pkt, err := server.GenerateHandshakeFor(nil)
+	if err != nil {
+		t.Errorf("expected nil, got %v", err)
+		return
+	}
 
 	if pkt.ProtocolVersion() != protocol.ProtocolVersion10 {
 		t.Errorf("expected %d, got %d", protocol.ProtocolVersion10, pkt.ProtocolVersion())
