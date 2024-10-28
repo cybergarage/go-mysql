@@ -28,8 +28,9 @@ import (
 type Server struct {
 	*Config
 	*mysqlnet.ConnManager
-	CommandHandler
 	tracer.Tracer
+	lastConnID *Counter
+	CommandHandler
 	tcpListener net.Listener
 }
 
@@ -38,10 +39,12 @@ func NewServer() *Server {
 	server := &Server{
 		Config:         NewDefaultConfig(),
 		ConnManager:    mysqlnet.NewConnManager(),
-		CommandHandler: nil,
 		Tracer:         tracer.NullTracer,
+		lastConnID:     NewCounter(),
+		CommandHandler: nil,
 		tcpListener:    nil,
 	}
+	server.SetCapability(DefaultServerCapabilities)
 	return server
 }
 
@@ -141,34 +144,65 @@ func (server *Server) serve() error {
 	return nil
 }
 
-// GenerateHandshakeFor retrun a handshake message for the specified connection.
-func (server *Server) GenerateHandshakeFor(netConn net.Conn) (*Handshake, error) {
+// GenerateHandshakeForConn retrun a handshake message for the specified connection.
+func (server *Server) GenerateHandshakeForConn(conn mysqlnet.Conn) (*Handshake, error) {
 	return NewHandshake(
-		WithHandshakeServerVersion(server.ServerVersion())), nil
+		WithHandshakeCapability(server.Capability()),
+		WithHandshakeServerVersion(server.ServerVersion()),
+		WithHandshakeConnectionID(uint32(conn.ID())),
+	), nil
 }
 
 // receive handles client packets.
 func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintidx
-	defer func() {
-		netConn.Close()
-	}()
-
 	// MySQL: Connection Lifecycle
 	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_lifecycle.html
 
-	conn := NewConnWith(netConn)
+	constructConnection := func(netConn net.Conn) (Conn, error) {
+		lastConnID := server.lastConnID.Count()
+		nextConnID := server.lastConnID.Inc()
+
+		conn := NewConnWith(netConn,
+			WithConnID(uint64(nextConnID)),
+		)
+
+		for {
+			if lastConnID == nextConnID {
+				netConn.Close()
+				return nil, ErrTooManyConnections
+			}
+
+			if err := server.AddConn(conn); err == nil {
+				return conn, nil
+			}
+
+			nextConnID = server.lastConnID.Inc()
+
+			conn = NewConnWith(netConn,
+				WithConnID(uint64(nextConnID)),
+			)
+		}
+
+	}
+
+	conn, err := constructConnection(netConn)
+	if err != nil {
+		netConn.Close()
+		return err
+	}
+
 	defer func() {
 		conn.Close()
 	}()
 
-	reader := conn.PacketReader()
-
 	// MySQL: Connection Phase
 	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase.html
 
+	reader := conn.PacketReader()
+
 	// Initial Handshake Packet
 
-	handshakeMsg, err := server.GenerateHandshakeFor(netConn)
+	handshakeMsg, err := server.GenerateHandshakeForConn(conn)
 	if err != nil {
 		return err
 	}
@@ -201,7 +235,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			return err
 		}
 		tlsConnState := tlsConn.ConnectionState()
-		conn = NewConnWith(tlsConn, WithTLSConnectionState(&tlsConnState))
+		conn = NewConnWith(tlsConn, WithConnTLSConnectionState(&tlsConnState))
 	}
 
 	// Handshake Response Packet
@@ -214,7 +248,6 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	// MySQL: Command Phase
 	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_command_phase.html
 
-	server.AddConn(conn)
 	defer func() {
 		server.RemoveConn(conn)
 	}()
