@@ -34,7 +34,7 @@ func (server *Server) ConnectionClosed(c *vitessmy.Conn) {
 
 // ComInitDB is called once at the beginning to set db name, and subsequently for every ComInitDB event.
 func (server *Server) ComInitDB(c *vitessmy.Conn, dbName string) {
-	conn, ok := server.ConnByUID(uint64(c.ConnectionID))
+	conn, ok := server.LookupConnByUID(uint64(c.ConnectionID))
 	if ok {
 		conn.SetDatabase(dbName)
 	}
@@ -46,7 +46,7 @@ func (server *Server) ComQuery(c *vitessmy.Conn, q string, callback func(*Result
 	spanCtx := server.Tracer.StartSpan(server.PackageName())
 	defer spanCtx.Span().Finish()
 
-	conn, ok := server.ConnByUID(uint64(c.ConnectionID))
+	conn, ok := server.LookupConnByUID(uint64(c.ConnectionID))
 	if ok {
 		conn.SetSpanContext(spanCtx)
 	} else {

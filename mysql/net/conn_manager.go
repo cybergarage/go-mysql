@@ -16,10 +16,17 @@ package net
 
 import (
 	"errors"
+	"fmt"
 	"sync"
 
 	"github.com/google/uuid"
 )
+
+var ErrExists = errors.New("exists")
+
+func newErrConnExists(s string) error {
+	return fmt.Errorf("connection (%s) is already %w", s, ErrExists)
+}
 
 // ConnManager represents a connection map.
 type ConnManager struct {
@@ -38,15 +45,23 @@ func NewConnManager() *ConnManager {
 }
 
 // AddConn adds the specified connection.
-func (cm *ConnManager) AddConn(c Conn) {
+func (cm *ConnManager) AddConn(c Conn) error {
 	cm.mutex.Lock()
 	defer cm.mutex.Unlock()
+
 	uuid := c.UUID()
-	cm.m[uuid] = c
-	uid := c.ID()
-	if uid != 0 {
-		cm.uidMap[uid] = c
+	if _, ok := cm.m[uuid]; ok {
+		return newErrConnExists(uuid.String())
 	}
+	uid := c.ID()
+	if _, ok := cm.uidMap[uid]; ok {
+		return newErrConnExists(fmt.Sprintf("%d", uid))
+	}
+
+	cm.m[uuid] = c
+	cm.uidMap[uid] = c
+
+	return nil
 }
 
 // Conns returns the included connections.
@@ -60,16 +75,16 @@ func (cm *ConnManager) Conns() []Conn {
 	return conns
 }
 
-// ConnByUID returns a connection and true when the specified connection exists by the connection ID, otherwise nil and false.
-func (cm *ConnManager) ConnByUID(cid uint64) (Conn, bool) {
+// LookupConnByUID returns a connection and true when the specified connection exists by the connection ID, otherwise nil and false.
+func (cm *ConnManager) LookupConnByUID(cid uint64) (Conn, bool) {
 	cm.mutex.RLock()
 	defer cm.mutex.RUnlock()
 	c, ok := cm.uidMap[cid]
 	return c, ok
 }
 
-// ConnByUUID returns the connection with the specified UUID.
-func (cm *ConnManager) ConnByUUID(uuid uuid.UUID) (Conn, bool) {
+// LookupConnByUUID returns the connection with the specified UUID.
+func (cm *ConnManager) LookupConnByUUID(uuid uuid.UUID) (Conn, bool) {
 	cm.mutex.RLock()
 	defer cm.mutex.RUnlock()
 	c, ok := cm.m[uuid]
@@ -87,7 +102,7 @@ func (cm *ConnManager) RemoveConn(conn Conn) error {
 
 // RemoveConnByUID deletes the specified connection by the connection ID.
 func (cm *ConnManager) RemoveConnByUID(cid uint64) {
-	conn, ok := cm.ConnByUID(cid)
+	conn, ok := cm.LookupConnByUID(cid)
 	if !ok {
 		return
 	}
@@ -96,7 +111,7 @@ func (cm *ConnManager) RemoveConnByUID(cid uint64) {
 
 // RemoveConnByUID deletes the specified connection by the connection ID.
 func (cm *ConnManager) RemoveConnByUUID(uuid uuid.UUID) {
-	conn, ok := cm.ConnByUUID(uuid)
+	conn, ok := cm.LookupConnByUUID(uuid)
 	if !ok {
 		return
 	}
