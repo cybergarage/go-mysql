@@ -31,6 +31,9 @@ var ErrNotExist = errors.New("not exist")
 // ErrExist is returned when the specified object is exist.
 var ErrExist = errors.New("exist")
 
+// ErrTooManyConnections is returned when the connection is too many.
+var ErrTooManyConnections = errors.New("too many connections")
+
 func newErrNotSupported(v any) error {
 	return fmt.Errorf("%v is %w", v, ErrNotSupported)
 }
