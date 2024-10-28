@@ -16,16 +16,19 @@ package protocol
 
 import (
 	"math"
+	"sync"
 )
 
 // Counter is a counter.
 type Counter struct {
+	sync.Mutex
 	count int32
 }
 
 // NewCounter returns a new counter.
 func NewCounter() *Counter {
 	return &Counter{
+		Mutex: sync.Mutex{},
 		count: 0,
 	}
 }
