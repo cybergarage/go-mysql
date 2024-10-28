@@ -37,6 +37,11 @@ func NewCounterWith(count int32) *Counter {
 	}
 }
 
+// Count returns the count.
+func (counter *Counter) Count() int32 {
+	return counter.count
+}
+
 // Inc increments the counter and returns the new value.
 func (counter *Counter) Inc() int32 {
 	if counter.count == math.MaxInt32 {
