@@ -147,9 +147,11 @@ func (server *Server) serve() error {
 // GenerateHandshakeForConn retrun a handshake message for the specified connection.
 func (server *Server) GenerateHandshakeForConn(conn mysqlnet.Conn) (*Handshake, error) {
 	return NewHandshake(
+		WithHandshakeCharacterSet(CharSetUTF8),
 		WithHandshakeCapability(server.Capability()),
 		WithHandshakeServerVersion(server.ServerVersion()),
 		WithHandshakeConnectionID(uint32(conn.ID())),
+		WithHandshakeAuthPluginName(server.AuthPluginName()),
 	), nil
 }
 
