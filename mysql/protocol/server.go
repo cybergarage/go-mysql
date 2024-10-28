@@ -185,7 +185,6 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 				WithConnID(uint64(nextConnID)),
 			)
 		}
-
 	}
 
 	conn, err := constructConnection(netConn)
