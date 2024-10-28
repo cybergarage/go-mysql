@@ -14,10 +14,13 @@
 
 package protocol
 
-import "fmt"
+import (
+	"fmt"
+)
 
 const (
-	DefaultAddr = ""
+	DefaultAddr        = ""
+	DefaultProductName = "mysql"
 )
 
 // Config stores server configuration parammeters.
@@ -27,6 +30,7 @@ type Config struct {
 	*TLSConf
 	productName    string
 	productVersion string
+	capability     CapabilityFlag
 }
 
 // NewDefaultConfig returns a default configuration instance.
@@ -35,8 +39,9 @@ func NewDefaultConfig() *Config {
 		addr:           DefaultAddr,
 		port:           DefaultPort,
 		TLSConf:        NewTLSConf(),
-		productName:    "",
+		productName:    DefaultProductName,
 		productVersion: "",
+		capability:     DefaultServerCapabilities,
 	}
 	return config
 }
@@ -83,5 +88,22 @@ func (config *Config) ProductVersion() string {
 
 // ServerVersion returns the server version for the handshake.
 func (config *Config) ServerVersion() string {
-	return fmt.Sprintf("%s-%s-%s", SupportVersion, config.productName, config.productVersion)
+	ver := SupportVersion
+	if 0 < len(config.productName) {
+		ver = fmt.Sprintf("%s-%s", ver, config.productName)
+	}
+	if 0 < len(config.productVersion) {
+		ver = fmt.Sprintf("%s-%s", ver, config.productVersion)
+	}
+	return ver
+}
+
+// SetCapability sets the capability flags to the configuration.
+func (config *Config) SetCapability(c CapabilityFlag) {
+	config.capability = c
+}
+
+// Capability returns the capability flags from the configuration.
+func (config *Config) Capability() CapabilityFlag {
+	return config.capability
 }
