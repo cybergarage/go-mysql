@@ -95,8 +95,8 @@ func WithHandshakeConnectionID(v uint32) HandshakeOption {
 	}
 }
 
-// WithHandshakeCapabilityFlags sets the capability flags.
-func WithHandshakeCapabilityFlags(v CapabilityFlag) HandshakeOption {
+// WithHandshakeCapability sets the capability flags.
+func WithHandshakeCapability(v CapabilityFlag) HandshakeOption {
 	return func(pkt *Handshake) {
 		pkt.capabilityFlags = uint32(v)
 	}
