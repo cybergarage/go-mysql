@@ -82,7 +82,7 @@ func (client *Client) Ping() error {
 	if client.db == nil {
 		err := client.Open()
 		if err != nil {
-			return nil
+			return err
 		}
 	}
 	return client.db.Ping()
