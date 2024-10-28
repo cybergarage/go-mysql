@@ -14,6 +14,10 @@
 
 package protocol
 
+import (
+	"github.com/cybergarage/go-mysql/mysql/auth"
+)
+
 const (
 	DefaultPort          = 3306
 	DefaultMaxPacketSize = 0
@@ -24,7 +28,8 @@ const (
 	DefaultServerCapabilities = ClientLongPassword |
 		ClientFoundRows |
 		ClientLongColumnFlag |
-		ClientProtocol41
+		ClientProtocol41 |
+		ClientPluginAuth
 
 	DefaultHandshakeServerCapabilities = DefaultServerCapabilities |
 		ClientConnectWithDB
@@ -33,4 +38,6 @@ const (
 		ClientSSL
 
 	DefaultServerStatus = 0x0000
+
+	DefaultAuthPluginName = auth.MySQLNativePassword
 )
