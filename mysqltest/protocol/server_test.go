@@ -22,7 +22,7 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-func TestServer(t *testing.T) {
+func TestServerHandshake(t *testing.T) {
 	server := protocol.NewServer()
 
 	err := server.Start()
@@ -39,7 +39,8 @@ func TestServer(t *testing.T) {
 		}
 	}()
 
-	pkt, err := server.GenerateHandshakeFor(nil)
+	conn := protocol.NewConnWith(nil)
+	pkt, err := server.GenerateHandshakeForConn(conn)
 	if err != nil {
 		t.Errorf("expected nil, got %v", err)
 		return
