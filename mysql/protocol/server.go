@@ -159,6 +159,9 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_lifecycle.html
 
 	constructConnection := func(netConn net.Conn) (Conn, error) {
+		server.lastConnID.Lock()
+		defer server.lastConnID.Unlock()
+
 		lastConnID := server.lastConnID.Count()
 		nextConnID := server.lastConnID.Inc()
 
