@@ -36,6 +36,7 @@ func NewCounter() *Counter {
 // NewCounterWith returns a new counter with the specified count.
 func NewCounterWith(count int32) *Counter {
 	return &Counter{
+		Mutex: sync.Mutex{},
 		count: count,
 	}
 }
