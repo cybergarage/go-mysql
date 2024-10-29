@@ -18,6 +18,7 @@ import (
 	_ "embed"
 	"testing"
 
+	"github.com/cybergarage/go-mysql/mysql"
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
@@ -37,4 +38,21 @@ func TestServer(t *testing.T) {
 			return
 		}
 	}()
+
+	client := mysql.NewClient()
+	err = client.Open()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = client.Ping()
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = client.Close()
+	if err != nil {
+		t.Error(err)
+	}
 }
