@@ -16,7 +16,6 @@ package protocol
 
 import (
 	"crypto/tls"
-	"errors"
 	"net"
 	"strconv"
 
@@ -257,10 +256,6 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	}()
 
 	for {
-		if server.CommandHandler == nil {
-			return errors.New("no command handler")
-		}
-
 		var err error
 		var cmd Command
 
@@ -286,10 +281,14 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		case ComPing:
 			res, err = NewOK()
 		case ComQuery:
-			var q *Query
-			q, err = NewQueryFromCommand(cmd)
-			if err == nil {
-				res, err = server.CommandHandler.HandleQuery(conn, q)
+			if server.CommandHandler != nil {
+				var q *Query
+				q, err = NewQueryFromCommand(cmd)
+				if err == nil {
+					res, err = server.CommandHandler.HandleQuery(conn, q)
+				}
+			} else {
+				err = newErrNotSupportedCommandType(cmdType)
 			}
 		case ComQuit:
 			ok, err := NewOK()
@@ -300,6 +299,9 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			return err
 		default:
 			err = cmd.SkipPayload()
+			if err == nil {
+				err = newErrNotSupportedCommandType(cmdType)
+			}
 		}
 
 		conn.FinishSpan()
