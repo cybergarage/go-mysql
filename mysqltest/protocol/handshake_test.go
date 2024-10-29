@@ -17,6 +17,7 @@ package protocol
 import (
 	"bytes"
 	_ "embed"
+	"strings"
 	"testing"
 
 	"github.com/cybergarage/go-logger/log/hexdump"
@@ -173,5 +174,38 @@ func TestHandshakePacket(t *testing.T) {
 				t.Errorf("expected %v, got %v", testBytes, msgBytes)
 			}
 		})
+	}
+}
+
+func TestServerHandshake(t *testing.T) {
+	server := protocol.NewServer()
+
+	err := server.Start()
+	if err != nil {
+		t.Errorf("expected nil, got %v", err)
+		return
+	}
+
+	defer func() {
+		err := server.Stop()
+		if err != nil {
+			t.Errorf("expected nil, got %v", err)
+			return
+		}
+	}()
+
+	conn := protocol.NewConnWith(nil)
+	pkt, err := server.GenerateHandshakeForConn(conn)
+	if err != nil {
+		t.Errorf("expected nil, got %v", err)
+		return
+	}
+
+	if pkt.ProtocolVersion() != protocol.ProtocolVersion10 {
+		t.Errorf("expected %d, got %d", protocol.ProtocolVersion10, pkt.ProtocolVersion())
+	}
+
+	if !strings.HasPrefix(pkt.ServerVersion(), protocol.SupportVersion) {
+		t.Errorf("expected %s, got %s", protocol.SupportVersion, pkt.ServerVersion())
 	}
 }
