@@ -65,3 +65,7 @@ func newErrInvalidHeader(name string, v byte) error {
 func newErrInvalidCommandType(v CommandType, expected CommandType) error {
 	return fmt.Errorf("%02X is %w code (%02X)", v, ErrInvalid, expected)
 }
+
+func newErrNotSupportedCommandType(v CommandType) error {
+	return fmt.Errorf("command (%02X) is %w", v, ErrNotSupported)
+}
