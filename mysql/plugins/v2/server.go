@@ -15,6 +15,9 @@
 package v2
 
 import (
+	stderr "errors"
+
+	"github.com/cybergarage/go-mysql/mysql/auth"
 	"github.com/cybergarage/go-mysql/mysql/errors"
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 	"github.com/cybergarage/go-mysql/mysql/query"
@@ -22,6 +25,7 @@ import (
 
 // Server represents a base executor server.
 type Server struct {
+	*auth.Manager
 	*protocol.Server
 	executor      Executor
 	queryExecutor query.Executor
@@ -30,6 +34,7 @@ type Server struct {
 // NewServer returns a base executor server instance.
 func NewServer() *Server {
 	server := &Server{
+		Manager:       auth.NewManager(),
 		Server:        protocol.NewServer(),
 		executor:      nil,
 		queryExecutor: nil,
@@ -125,4 +130,47 @@ func (server *Server) HandleStatement(conn protocol.Conn, stmt query.Statement) 
 	}
 
 	return res, err
+}
+
+// Start starts the server.
+func (server *Server) Start() error {
+	type starter interface {
+		Start() error
+	}
+	starters := []starter{
+		server.Server,
+	}
+	for _, s := range starters {
+		err := s.Start()
+		if err != nil {
+			return stderr.Join(err, server.Stop())
+		}
+	}
+	return nil
+}
+
+// Stop stops the server.
+func (server *Server) Stop() error {
+	type stopper interface {
+		Stop() error
+	}
+	stoppers := []stopper{
+		server.Server,
+	}
+	for _, s := range stoppers {
+		err := s.Stop()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Restart restarts the server.
+func (server *Server) Restart() error {
+	err := server.Stop()
+	if err != nil {
+		return err
+	}
+	return server.Start()
 }
