@@ -19,9 +19,10 @@ import (
 )
 
 const (
-	DefaultPort          = 3306
-	DefaultMaxPacketSize = 0
-	DefaultCharset       = CharSetUTF8
+	DefaultPort                  = 3306
+	DefaultMaxPacketSize         = 0
+	DefaultCharset               = CharSetUTF8
+	DefaultAuthPluginDataPartLen = 20
 
 	SupportVersion = "5.7.9"
 
