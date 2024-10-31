@@ -66,6 +66,9 @@ github.com/cybergarage/go-logger v1.3.8 h1:Law2nkLjH5tJDNISMVUjT7F46x4DaZuBUyWUL
 github.com/cybergarage/go-logger v1.3.8/go.mod h1:a7B/AZjPoA1W8EU/458vdCv6YWtRJI7Q9rofUcZjiho=
 github.com/cybergarage/go-safecast v1.2.3 h1:DlD/VxntuR+H6hy+TMprxkDIxbwd9pLn6CZ44FC5PlE=
 github.com/cybergarage/go-safecast v1.2.3/go.mod h1:bv+1ykIikB3xYPJFqu3ZsY3xfyEVQesq8+biHX3ZMWQ=
+github.com/cybergarage/go-safecast v1.2.5/go.mod h1:fw2lE/5DIOjmyPj5kx0aYZSAL2bSFoh/Zith5TWVTz8=
+github.com/cybergarage/go-sasl v1.2.1 h1:m+WtlO9B0LjQ82On35mmQTcyKotHizzT+26cRdHRkrM=
+github.com/cybergarage/go-sasl v1.2.1/go.mod h1:IrVfwO6JkYw/bpOJV6HIc5nBe+DReYOOFw5uFCO7GnU=
 github.com/cybergarage/go-sqlparser v1.3.3 h1:LTqf0g0Dzztdk2ssEMSr/FZSYgkrUCQaNttevQil1Hw=
 github.com/cybergarage/go-sqlparser v1.3.3/go.mod h1:twIJQxMhw3LEQed6f1e5xhCu4miJcUgDqTSYvXAY9lo=
 github.com/cybergarage/go-sqltest v1.4.1 h1:1NX5oKBMAMM2K5PP/jtFcBQqV/qPM74sx8GtDu/Ux44=
