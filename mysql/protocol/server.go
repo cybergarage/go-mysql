@@ -19,6 +19,7 @@ import (
 	"net"
 	"strconv"
 
+	"github.com/cybergarage/go-mysql/mysql/auth"
 	mysqlnet "github.com/cybergarage/go-mysql/mysql/net"
 	"github.com/cybergarage/go-tracing/tracer"
 )
@@ -145,11 +146,16 @@ func (server *Server) serve() error {
 
 // GenerateHandshakeForConn retrun a handshake message for the specified connection.
 func (server *Server) GenerateHandshakeForConn(conn mysqlnet.Conn) (*Handshake, error) {
+	salt, err := auth.NewSalt(DefaultAuthPluginDataPartLen)
+	if err != nil {
+		return nil, err
+	}
 	return NewHandshake(
 		WithHandshakeCharacterSet(CharSetUTF8),
 		WithHandshakeCapability(server.Capability()),
 		WithHandshakeServerVersion(server.ServerVersion()),
 		WithHandshakeConnectionID(uint32(conn.ID())),
+		WithHandshakeAuthPluginData(salt),
 		WithHandshakeAuthPluginName(server.AuthPluginName()),
 	), nil
 }
