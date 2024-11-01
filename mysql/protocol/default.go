@@ -22,7 +22,7 @@ const (
 	DefaultPort                  = 3306
 	DefaultMaxPacketSize         = 0
 	DefaultCharset               = CharSetUTF8
-	DefaultAuthPluginDataPartLen = 20
+	DefaultAuthPluginDataPartLen = authPluginDataPartMaxLen
 
 	SupportVersion = "5.7.9"
 

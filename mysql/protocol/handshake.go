@@ -35,9 +35,15 @@ const (
 )
 
 const (
-	authPluginDataPartMaxLen = 13
-	authPluginDataPart1Len   = 8
-	handshakeReservedLen     = 10
+	authPluginDataPart1Len               = 8
+	authPluginDataPart2Len               = authPluginDataPart2MySQLLen
+	authPluginDataPart2MySQLLen          = (authPluginDataPart2MariaDBMaxLen + authPluginDataPart2MariaDBReserveLen)
+	authPluginDataPart2MariaDBMaxLen     = 12
+	authPluginDataPart2MariaDBReserveLen = 1
+	authPluginDataPartMaxLen             = authPluginDataPartMaxMySQLLen
+	authPluginDataPartMaxMySQLLen        = (authPluginDataPart1Len + authPluginDataPart2MySQLLen)
+	authPluginDataPartMaxMariaDBLen      = (authPluginDataPart1Len + authPluginDataPart2MariaDBMaxLen)
+	handshakeReservedLen                 = 10
 )
 
 // Handshake represents a MySQL Handshake packet.
