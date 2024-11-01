@@ -22,6 +22,8 @@ import (
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase.html
 // MySQL: Protocol::HandshakeResponse
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase_packets_protocol_handshake_response.html
+// Connecting - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/connection/
 
 const (
 	handshakeResponseFillerLen = 23
@@ -141,19 +143,26 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 	}
 
 	if pkt.CapabilityFlags().IsEnabled(ClientConnectAttrs) {
-		nmap, err := pkt.ReadLengthEncodedInt()
+		attrSize, err := pkt.ReadLengthEncodedInt()
 		if err != nil {
 			return nil, err
 		}
-		for i := uint64(0); i < nmap; i++ {
+		readAttrSize := 0
+		for readAttrSize < int(attrSize) {
 			key, err := pkt.ReadLengthEncodedString()
 			if err != nil {
 				return nil, err
 			}
+			keyLen := len(key)
+			readAttrSize += LengthEncodeIntSize(uint64(keyLen)) + keyLen
+
 			value, err := pkt.ReadLengthEncodedString()
 			if err != nil {
 				return nil, err
 			}
+			valueLen := len(value)
+			readAttrSize += LengthEncodeIntSize(uint64(valueLen)) + valueLen
+
 			pkt.attributes[key] = value
 		}
 	}
