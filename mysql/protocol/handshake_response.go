@@ -32,15 +32,15 @@ const (
 // HandshakeResponse represents a MySQL Handshake Response packet.
 type HandshakeResponse struct {
 	*packet
-	capabilityFlags      CapabilityFlag
-	maxPacketSize        uint32
-	charSet              uint8
-	username             string
-	authResponseLength   uint8
-	authResponse         string
-	database             string
-	clientPluginName     string
-	attributes           map[string]string
+	capabilityFlags    CapabilityFlag
+	maxPacketSize      uint32
+	charSet            uint8
+	username           string
+	authResponseLength uint8
+	authResponse       string
+	database           string
+	clientPluginName   string
+	*AttributeMap
 	zstdCompressionLevel uint8
 }
 
@@ -55,7 +55,7 @@ func newHandshakeResponseWithPacket(pkt *packet) *HandshakeResponse {
 		authResponse:         "",
 		database:             "",
 		clientPluginName:     "",
-		attributes:           make(map[string]string),
+		AttributeMap:         NewAttributeMap(),
 		zstdCompressionLevel: 0,
 	}
 }
@@ -163,7 +163,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 			valueLen := len(value)
 			readAttrSize += LengthEncodeIntSize(uint64(valueLen)) + valueLen
 
-			pkt.attributes[key] = value
+			pkt.AddAttribute(key, value)
 		}
 	}
 
@@ -210,17 +210,6 @@ func (pkt *HandshakeResponse) Database() string {
 // ClientPluginName returns the client plugin name.
 func (pkt *HandshakeResponse) ClientPluginName() string {
 	return pkt.clientPluginName
-}
-
-// Attributes returns the attributes.
-func (pkt *HandshakeResponse) Attributes() map[string]string {
-	return pkt.attributes
-}
-
-// LookupAttribute returns the attribute value.
-func (pkt *HandshakeResponse) LookupAttribute(key string) (string, bool) {
-	v, ok := pkt.attributes[key]
-	return v, ok
 }
 
 // ZstdCompressionLevel returns the Zstd compression level.
@@ -278,16 +267,22 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 	}
 
 	if pkt.CapabilityFlags().IsEnabled(ClientConnectAttrs) {
-		if err := w.WriteLengthEncodedInt(uint64(len(pkt.attributes))); err != nil {
+		attrWriter := NewPacketWriter()
+		for key, value := range pkt.Attributes() {
+			if err := attrWriter.WriteLengthEncodedString(key); err != nil {
+				return nil, err
+			}
+			if err := attrWriter.WriteLengthEncodedString(value); err != nil {
+				return nil, err
+			}
+		}
+		attrBytes := attrWriter.Bytes()
+		attrSize := len(attrBytes)
+		if err := w.WriteLengthEncodedInt(uint64(attrSize)); err != nil {
 			return nil, err
 		}
-		for key, value := range pkt.attributes {
-			if err := w.WriteLengthEncodedString(key); err != nil {
-				return nil, err
-			}
-			if err := w.WriteLengthEncodedString(value); err != nil {
-				return nil, err
-			}
+		if _, err := w.WriteBytes(attrBytes); err != nil {
+			return nil, err
 		}
 	}
 
