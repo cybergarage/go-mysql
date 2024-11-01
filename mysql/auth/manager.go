@@ -34,7 +34,7 @@ func NewManager() *Manager {
 // Authenticators returns the authenticators.
 func (mgr *Manager) Authenticate(conn net.Conn, q *Query) bool {
 	auths := mgr.Authenticators()
-	if len(auths) <= 0 {
+	if len(auths) == 0 {
 		return true
 	}
 	for _, auth := range auths {
