@@ -33,5 +33,6 @@ type Conn interface {
 	PacketReader() *PacketReader
 	ResponsePacket(resMsg Response) error
 	ResponsePackets(resMsgs []Response) error
+	ResponseOK(opts ...OKOption) error
 	ResponseError(err error) error
 }

@@ -208,6 +208,15 @@ func (conn *conn) ResponsePackets(resMsgs []Response) error {
 	return nil
 }
 
+// ResponseOK sends an OK response.
+func (conn *conn) ResponseOK(opts ...OKOption) error {
+	pkt, err := NewOK(opts...)
+	if err != nil {
+		return err
+	}
+	return conn.ResponsePacket(pkt)
+}
+
 // ResponseError sends an error response.
 func (conn *conn) ResponseError(err error) error {
 	pkt, err := NewERRFromError(err)
