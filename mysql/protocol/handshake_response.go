@@ -268,7 +268,8 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 
 	if pkt.CapabilityFlags().IsEnabled(ClientConnectAttrs) {
 		attrWriter := NewPacketWriter()
-		for key, value := range pkt.Attributes() {
+		for _, key := range pkt.AttributeKeys() {
+			value, _ := pkt.LookupAttribute(key)
 			if err := attrWriter.WriteLengthEncodedString(key); err != nil {
 				return nil, err
 			}
