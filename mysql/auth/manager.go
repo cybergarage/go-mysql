@@ -18,9 +18,28 @@ import (
 	"github.com/cybergarage/go-sasl/sasl"
 )
 
-type Manager = sasl.Server
+// Manager represents a MySQL auth manager.
+type Manager struct {
+	*sasl.Server
+}
 
 // NewManager returns a new SASL server.
 func NewManager() *Manager {
-	return sasl.NewServer()
+	return &Manager{
+		Server: sasl.NewServer(),
+	}
+}
+
+// Authenticators returns the authenticators.
+func (mgr *Manager) Authenticate(q *Query) bool {
+	auths := mgr.Authenticators()
+	if len(auths) <= 0 {
+		return true
+	}
+	for _, auth := range auths {
+		if _, ok := auth.HasCredential(q); ok {
+			return true
+		}
+	}
+	return false
 }
