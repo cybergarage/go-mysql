@@ -29,35 +29,10 @@ var handshakeResponseMsg001 string
 //go:embed data/handshake-response-002.hex
 var handshakeResponseMsg002 string
 
-func TestHandshakeResponsePacket(t *testing.T) {
-	// Packet Length: 89
-	// Packet Number: 1
-	// Login Request
-	//     Client Capabilities: 0xa28d
-	//         .... .... .... ...1 = Long Password: Set
-	//         .... .... .... ..0. = Found Rows: Not set
-	//         .... .... .... .1.. = Long Column Flags: Set
-	//         .... .... .... 1... = Connect With Database: Set
-	//         .... .... ...0 .... = Don't Allow database.table.column: Not set
-	//         .... .... ..0. .... = Can use compression protocol: Not set
-	//         .... .... .0.. .... = ODBC Client: Not set
-	//         .... .... 1... .... = Can Use LOAD DATA LOCAL: Set
-	//         .... ...0 .... .... = Ignore Spaces before '(': Not set
-	//         .... ..1. .... .... = Speaks 4.1 protocol (new flag): Set
-	//         .... .0.. .... .... = Interactive Client: Not set
-	//         .... 0... .... .... = Switch to SSL after handshake: Not set
-	//         ...0 .... .... .... = Ignore sigpipes: Not set
-	//         ..1. .... .... .... = Knows about transactions: Set
-	//         .0.. .... .... .... = Speaks 4.1 protocol (old flag): Not set
-	//         1... .... .... .... = Can do 4.1 authentication: Set
-	//     Extended Client Capabilities: 0x000a
-	//     MAX Packet: 0
-	//     Collation: utf8mb4 COLLATE utf8mb4_general_ci (45)
-	//     Unused: 0000000000000000000000000000000000000000000000
-	//     Username: skonno
-	//     Schema: sqltest1727254524366662000
-	//     Client Auth Plugin: mysql_native_password
+//go:embed data/handshake-response-003.hex
+var handshakeResponseMsg003 string
 
+func TestHandshakeResponsePacket(t *testing.T) {
 	type expected struct {
 		capFlags   protocol.CapabilityFlag
 		maxPkt     uint32
@@ -98,8 +73,23 @@ func TestHandshakeResponsePacket(t *testing.T) {
 				charSet:    0,
 				username:   "",
 				authRes:    "",
-				database:   "",
-				pluginName: "",
+				database:   "test",
+				pluginName: "mysql_native_password",
+				attrs:      map[string]string{},
+				zstdLevel:  0,
+			},
+		},
+		{
+			"handshake-response-003",
+			handshakeResponseMsg003,
+			expected{
+				capFlags:   protocol.CapabilityFlag(0x001ea285),
+				maxPkt:     0,
+				charSet:    0,
+				username:   "",
+				authRes:    "",
+				database:   "root",
+				pluginName: "mysql_native_password",
 				attrs:      map[string]string{},
 				zstdLevel:  0,
 			},
@@ -116,6 +106,7 @@ func TestHandshakeResponsePacket(t *testing.T) {
 			pkt, err := protocol.NewHandshakeResponseFromReader(reader)
 			if err != nil {
 				t.Error(err)
+				return
 			}
 
 			if test.expected.capFlags != 0 {
@@ -157,6 +148,13 @@ func TestHandshakeResponsePacket(t *testing.T) {
 			if 0 < len(test.expected.pluginName) {
 				if pkt.ClientPluginName() != test.expected.pluginName {
 					t.Errorf("expected %s, got %s", test.expected.pluginName, pkt.ClientPluginName())
+				}
+			}
+
+			for key, value := range test.expected.attrs {
+				v, ok := pkt.LookupAttribute(key)
+				if !ok || v != value {
+					t.Errorf("expected %s, got %s", value, v)
 				}
 			}
 
