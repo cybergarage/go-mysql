@@ -101,7 +101,7 @@ func newOKPacket(p *packet, opts ...OKOption) (*OK, error) {
 
 // NewOK returns a new OK packet.
 func NewOK(opts ...OKOption) (*OK, error) {
-	return newOKPacket(newPacket())
+	return newOKPacket(newPacket(), opts...)
 }
 
 // NewOKFromReader returns a new OK packet from the reader.
