@@ -91,9 +91,9 @@ func TestHandshakeResponsePacket(t *testing.T) {
 				database:   "root",
 				pluginName: "mysql_native_password",
 				attrs: map[string]string{
-					"_os":          "debian",
+					"_os":          "debian6.0",
 					"_client_name": "libmysql",
-					"_pid":         "2344",
+					"_pid":         "23444",
 					"_client_ver":  "5.6.6-m9",
 					"_platform":    "x86_64",
 					"foo":          "bar",
@@ -174,7 +174,7 @@ func TestHandshakeResponsePacket(t *testing.T) {
 			}
 
 			if !bytes.Equal(msgBytes, testBytes) {
-				t.Errorf("expected %v, got %v", testBytes, msgBytes)
+				HexdumpErrors(t, msgBytes, testBytes)
 			}
 		})
 	}
