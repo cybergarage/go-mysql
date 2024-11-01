@@ -92,17 +92,32 @@ func (w *Writer) WriteInt8(v uint64) error {
 	return err
 }
 
-// WriteLengthEncodedInt writes a length encoded integer.
-func (w *Writer) WriteLengthEncodedInt(v uint64) error {
+// LengthEncodeIntSize returns the size of a length encoded integer.
+func LengthEncodeIntSize(v uint64) int {
 	switch {
 	case v < 251:
-		return w.WriteInt1(uint8(v))
+		return 1
 	case v < 65536:
+		return 2
+	case v < 16777216:
+		return 3
+	default:
+		return 8
+	}
+}
+
+// WriteLengthEncodedInt writes a length encoded integer.
+func (w *Writer) WriteLengthEncodedInt(v uint64) error {
+	s := LengthEncodeIntSize(v)
+	switch s {
+	case 1:
+		return w.WriteInt1(uint8(v))
+	case 2:
 		if err := w.WriteInt1(0xFC); err != nil {
 			return err
 		}
 		return w.WriteInt2(uint16(v))
-	case v < 16777216:
+	case 3:
 		if err := w.WriteInt1(0xFD); err != nil {
 			return err
 		}
