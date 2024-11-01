@@ -19,24 +19,24 @@ import "io"
 // MySQL: Protocol::AuthSwitchRequest:
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase_packets_protocol_auth_switch_request.html
 
-// AuthSwitchRequestOption represents the AuthSwitchRequest option function
+// AuthSwitchRequestOption represents the AuthSwitchRequest option function.
 type AuthSwitchRequestOption func(*AuthSwitchRequest)
 
-// WithAuthSwitchRequestPluginName returns an AuthSwitchRequestOptionFn to set the plugin name
+// WithAuthSwitchRequestPluginName returns an AuthSwitchRequestOptionFn to set the plugin name.
 func WithAuthSwitchRequestPluginName(pluginName string) AuthSwitchRequestOption {
 	return func(req *AuthSwitchRequest) {
 		req.pluginName = pluginName
 	}
 }
 
-// WithAuthSwitchRequestAuthData returns an AuthSwitchRequestOptionFn to set the auth data
+// WithAuthSwitchRequestAuthData returns an AuthSwitchRequestOptionFn to set the auth data.
 func WithAuthSwitchRequestAuthData(authData string) AuthSwitchRequestOption {
 	return func(req *AuthSwitchRequest) {
 		req.authData = authData
 	}
 }
 
-// AuthSwitchRequest represents the MySQL Protocol::AuthSwitchRequest packet
+// AuthSwitchRequest represents the MySQL Protocol::AuthSwitchRequest packet.
 type AuthSwitchRequest struct {
 	*packet
 	status     byte
@@ -53,7 +53,7 @@ func newAuthSwitchRequestWithPacket(pkt *packet) *AuthSwitchRequest {
 	}
 }
 
-// NewAuthSwitchRequest creates a new AuthSwitchRequest packet
+// NewAuthSwitchRequest creates a new AuthSwitchRequest packet.
 func NewAuthSwitchRequest(opts ...AuthSwitchRequestOption) *AuthSwitchRequest {
 	pkt := newAuthSwitchRequestWithPacket(newPacket())
 	for _, opt := range opts {
@@ -62,7 +62,7 @@ func NewAuthSwitchRequest(opts ...AuthSwitchRequestOption) *AuthSwitchRequest {
 	return pkt
 }
 
-// NewAuthSwitchRequestFromReader returns a new AuthSwitchRequest from the reader
+// NewAuthSwitchRequestFromReader returns a new AuthSwitchRequest from the reader.
 func NewAuthSwitchRequestFromReader(reader io.Reader) (*AuthSwitchRequest, error) {
 	var err error
 
@@ -91,22 +91,22 @@ func NewAuthSwitchRequestFromReader(reader io.Reader) (*AuthSwitchRequest, error
 	return pkt, nil
 }
 
-// Status returns the status
+// Status returns the status.
 func (pkt *AuthSwitchRequest) Status() byte {
 	return pkt.status
 }
 
-// PluginName returns the plugin name
+// PluginName returns the plugin name.
 func (pkt *AuthSwitchRequest) PluginName() string {
 	return pkt.pluginName
 }
 
-// AuthData returns the auth data
+// AuthData returns the auth data.
 func (pkt *AuthSwitchRequest) AuthData() string {
 	return pkt.authData
 }
 
-// Bytes returns the packet bytes
+// Bytes returns the packet bytes.
 func (pkt *AuthSwitchRequest) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
