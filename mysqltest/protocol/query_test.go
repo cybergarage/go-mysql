@@ -93,7 +93,7 @@ func TestQuery(t *testing.T) {
 			}
 
 			if !bytes.Equal(pktBytes, testBytes) {
-				HexdumpErrors(t, testBytes, pktBytes)
+				HexdumpErrors(t, pktBytes, testBytes)
 			}
 		})
 	}
