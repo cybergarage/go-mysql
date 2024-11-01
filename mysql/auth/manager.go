@@ -15,6 +15,7 @@
 package auth
 
 import (
+	"github.com/cybergarage/go-mysql/mysql/net"
 	"github.com/cybergarage/go-sasl/sasl"
 )
 
@@ -31,7 +32,7 @@ func NewManager() *Manager {
 }
 
 // Authenticators returns the authenticators.
-func (mgr *Manager) Authenticate(q *Query) bool {
+func (mgr *Manager) Authenticate(conn net.Conn, q *Query) bool {
 	auths := mgr.Authenticators()
 	if len(auths) <= 0 {
 		return true
