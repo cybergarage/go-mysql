@@ -27,6 +27,7 @@ import (
 // Server represents a MySQL protocol server.
 type Server struct {
 	*Config
+	*auth.Manager
 	*mysqlnet.ConnManager
 	tracer.Tracer
 	lastConnID *Counter
@@ -38,6 +39,7 @@ type Server struct {
 func NewServer() *Server {
 	server := &Server{
 		Config:         NewDefaultConfig(),
+		Manager:        auth.NewManager(),
 		ConnManager:    mysqlnet.NewConnManager(),
 		Tracer:         tracer.NullTracer,
 		lastConnID:     NewCounter(),
@@ -200,10 +202,6 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		return err
 	}
 
-	defer func() {
-		conn.Close()
-	}()
-
 	// MySQL: Connection Phase
 	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase.html
 
@@ -244,22 +242,41 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			return err
 		}
 		tlsConnState := tlsConn.ConnectionState()
+		// Update TLS connection
+		server.RemoveConn(conn)
 		conn = NewConnWith(tlsConn, WithConnTLSConnectionState(&tlsConnState))
 	}
-
-	// Handshake Response Packet
-	handshakeRes, err := NewHandshakeResponseFromReader(reader)
-	if err != nil {
-		return err
-	}
-	conn.SetCapabilities(handshakeRes.CapabilityFlags())
-
-	// MySQL: Command Phase
-	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_command_phase.html
 
 	defer func() {
 		server.RemoveConn(conn)
 	}()
+
+	defer func() {
+		conn.Close()
+	}()
+
+	// Handshake Response Packet
+
+	handshakeRes, err := NewHandshakeResponseFromReader(reader)
+	if err != nil {
+		return err
+	}
+
+	authQuery := auth.NewQuery(
+		auth.WithQueryUsername(handshakeRes.Username()),
+		auth.WithQueryAuthResponse(handshakeRes.AuthResponse()),
+	)
+
+	ok := server.Authenticate(conn, authQuery)
+	if !ok {
+		conn.ResponseError(auth.ErrAccessDenied)
+		return err
+	}
+
+	// MySQL: Command Phase
+	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_command_phase.html
+
+	conn.SetCapabilities(handshakeRes.CapabilityFlags())
 
 	for {
 		var err error
