@@ -17,7 +17,6 @@ package v2
 import (
 	stderr "errors"
 
-	"github.com/cybergarage/go-mysql/mysql/auth"
 	"github.com/cybergarage/go-mysql/mysql/errors"
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 	"github.com/cybergarage/go-mysql/mysql/query"
@@ -25,7 +24,6 @@ import (
 
 // Server represents a base executor server.
 type Server struct {
-	*auth.Manager
 	*protocol.Server
 	executor      Executor
 	queryExecutor query.Executor
@@ -34,7 +32,6 @@ type Server struct {
 // NewServer returns a base executor server instance.
 func NewServer() *Server {
 	server := &Server{
-		Manager:       auth.NewManager(),
 		Server:        protocol.NewServer(),
 		executor:      nil,
 		queryExecutor: nil,
