@@ -297,13 +297,13 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	if !ok {
 		conn.ResponseError(
 			auth.ErrAccessDenied,
-			WithERRSecuenceID(handshakeRes.SequenceID()+1),
+			WithERRSecuenceID(handshakeRes.SequenceID().Next()),
 		)
 		return errors.Join(err, conn.Close())
 	}
 
 	err = conn.ResponseOK(
-		WithOKSecuenceID(handshakeRes.SequenceID() + 1),
+		WithOKSecuenceID(handshakeRes.SequenceID().Next()),
 	)
 	if err != nil {
 		return err
