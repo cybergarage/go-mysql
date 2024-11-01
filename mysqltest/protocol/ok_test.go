@@ -83,7 +83,7 @@ func TestOKPacket(t *testing.T) {
 			}
 
 			if !bytes.Equal(pktBytes, testBytes) {
-				HexdumpErrors(t, pktBytes, testBytes)
+				HexdumpErrors(t, testBytes, pktBytes)
 			}
 		})
 	}
