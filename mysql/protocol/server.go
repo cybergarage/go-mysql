@@ -16,6 +16,7 @@ package protocol
 
 import (
 	"crypto/tls"
+	"errors"
 	"net"
 	"strconv"
 
@@ -234,17 +235,25 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		tlsConfig, err := server.Config.TLSConfig()
 		if err != nil {
 			conn.ResponseError(err)
-			return err
+			return errors.Join(err, conn.Close())
 		}
 		tlsConn := tls.Server(conn, tlsConfig)
 		if err := tlsConn.Handshake(); err != nil {
 			conn.ResponseError(err)
-			return err
+			return errors.Join(err, conn.Close())
 		}
 		tlsConnState := tlsConn.ConnectionState()
-		// Update TLS connection
-		server.RemoveConn(conn)
-		conn = NewConnWith(tlsConn, WithConnTLSConnectionState(&tlsConnState))
+		// Update TLS connection to the connection manager
+		newConn := NewConnWith(
+			tlsConn,
+			WithConnID(conn.ID()),
+			WithConnUUID(conn.UUID()),
+			WithConnTLSConnectionState(&tlsConnState))
+		if err := server.UpdateConn(conn, newConn); err != nil {
+			conn.ResponseError(err)
+			return errors.Join(err, conn.Close())
+		}
+		conn = newConn
 	}
 
 	defer func() {
@@ -270,7 +279,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	ok := server.Authenticate(conn, authQuery)
 	if !ok {
 		conn.ResponseError(auth.ErrAccessDenied)
-		return err
+		return errors.Join(err, conn.Close())
 	}
 
 	// MySQL: Command Phase
