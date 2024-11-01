@@ -169,7 +169,12 @@ func NewCommand(cmdType CommandType, opts ...CommandOption) Command {
 func NewCommandFromReader(reader io.Reader, opts ...CommandOption) (Command, error) {
 	var err error
 
-	pkt, err := NewPacketHeaderWithReader(reader)
+	pkt, err := NewPacketWithReader(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	err = pkt.ReadHeader()
 	if err != nil {
 		return nil, err
 	}
