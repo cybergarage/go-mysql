@@ -28,6 +28,11 @@ func NewAttributeMap() *AttributeMap {
 	}
 }
 
+// AttributeKeys returns the attribute keys.
+func (attrMap *AttributeMap) AttributeKeys() []string {
+	return attrMap.keys
+}
+
 // AddAttribute adds an attribute.
 func (attrMap *AttributeMap) AddAttribute(key, value string) {
 	attrMap.keys = append(attrMap.keys, key)
