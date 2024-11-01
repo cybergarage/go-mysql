@@ -218,8 +218,8 @@ func (conn *conn) ResponseOK(opts ...OKOption) error {
 }
 
 // ResponseError sends an error response.
-func (conn *conn) ResponseError(err error) error {
-	pkt, err := NewERRFromError(err)
+func (conn *conn) ResponseError(err error, opts ...ERROption) error {
+	pkt, err := NewERRFromError(err, opts...)
 	if err != nil {
 		return err
 	}

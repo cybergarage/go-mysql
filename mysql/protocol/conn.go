@@ -34,5 +34,5 @@ type Conn interface {
 	ResponsePacket(resMsg Response) error
 	ResponsePackets(resMsgs []Response) error
 	ResponseOK(opts ...OKOption) error
-	ResponseError(err error) error
+	ResponseError(err error, opts ...ERROption) error
 }
