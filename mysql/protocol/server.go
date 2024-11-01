@@ -271,6 +271,8 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		return err
 	}
 
+	conn.SetCapabilities(handshakeRes.CapabilityFlags())
+
 	authQuery := auth.NewQuery(
 		auth.WithQueryUsername(handshakeRes.Username()),
 		auth.WithQueryAuthResponse(handshakeRes.AuthResponse()),
@@ -278,14 +280,22 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 
 	ok := server.Authenticate(conn, authQuery)
 	if !ok {
-		conn.ResponseError(auth.ErrAccessDenied)
+		conn.ResponseError(
+			auth.ErrAccessDenied,
+			WithERRSecuenceID(handshakeRes.SequenceID()+1),
+		)
 		return errors.Join(err, conn.Close())
+	}
+
+	err = conn.ResponseOK(
+		WithOKSecuenceID(handshakeRes.SequenceID() + 1),
+	)
+	if err != nil {
+		return err
 	}
 
 	// MySQL: Command Phase
 	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_command_phase.html
-
-	conn.SetCapabilities(handshakeRes.CapabilityFlags())
 
 	for {
 		var err error
