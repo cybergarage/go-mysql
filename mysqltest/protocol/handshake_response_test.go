@@ -26,6 +26,9 @@ import (
 //go:embed data/handshake-response-001.hex
 var handshakeResponseMsg001 string
 
+//go:embed data/handshake-response-002.hex
+var handshakeResponseMsg002 string
+
 func TestHandshakeResponsePacket(t *testing.T) {
 	// Packet Length: 89
 	// Packet Number: 1
@@ -86,6 +89,21 @@ func TestHandshakeResponsePacket(t *testing.T) {
 				zstdLevel:  0,
 			},
 		},
+		{
+			"handshake-response-002",
+			handshakeResponseMsg002,
+			expected{
+				capFlags:   protocol.CapabilityFlag(0x000fa68d),
+				maxPkt:     0,
+				charSet:    0,
+				username:   "",
+				authRes:    "",
+				database:   "",
+				pluginName: "",
+				attrs:      map[string]string{},
+				zstdLevel:  0,
+			},
+		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			testBytes, err := hexdump.NewBytesWithHexdumpString(test.data)
@@ -100,8 +118,46 @@ func TestHandshakeResponsePacket(t *testing.T) {
 				t.Error(err)
 			}
 
-			if pkt.CapabilityFlags() != test.expected.capFlags {
-				t.Errorf("expected %04X, got %04X", test.expected.capFlags, pkt.CapabilityFlags())
+			if test.expected.capFlags != 0 {
+				if pkt.CapabilityFlags() != test.expected.capFlags {
+					t.Errorf("expected %04X, got %04X", test.expected.capFlags, pkt.CapabilityFlags())
+				}
+			}
+
+			if test.expected.maxPkt != 0 {
+				if pkt.MaxPacketSize() != test.expected.maxPkt {
+					t.Errorf("expected %d, got %d", test.expected.maxPkt, pkt.MaxPacketSize())
+				}
+			}
+
+			if test.expected.charSet != 0 {
+				if pkt.CharSet() != test.expected.charSet {
+					t.Errorf("expected %d, got %d", test.expected.charSet, pkt.CharSet())
+				}
+			}
+
+			if 0 < len(test.expected.username) {
+				if pkt.Username() != test.expected.username {
+					t.Errorf("expected %s, got %s", test.expected.username, pkt.Username())
+				}
+			}
+
+			if 0 < len(test.expected.authRes) {
+				if pkt.AuthResponse() != test.expected.authRes {
+					t.Errorf("expected %s, got %s", test.expected.authRes, pkt.AuthResponse())
+				}
+			}
+
+			if 0 < len(test.expected.database) {
+				if pkt.Database() != test.expected.database {
+					t.Errorf("expected %s, got %s", test.expected.database, pkt.Database())
+				}
+			}
+
+			if 0 < len(test.expected.pluginName) {
+				if pkt.ClientPluginName() != test.expected.pluginName {
+					t.Errorf("expected %s, got %s", test.expected.pluginName, pkt.ClientPluginName())
+				}
 			}
 
 			// Compare the packet bytes
