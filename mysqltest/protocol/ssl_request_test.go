@@ -22,7 +22,7 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-func TestSSLRequest(t *testing.T) {
+func TestSSLRequestPacket(t *testing.T) {
 	req, err := protocol.NewSSLRequest()
 	if err != nil {
 		t.Error(err)
