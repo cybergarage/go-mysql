@@ -29,7 +29,7 @@ var queryPkt001 string
 //go:embed data/query-002.hex
 var queryPkt002 string
 
-func TestQuery(t *testing.T) {
+func TestQueryPacket(t *testing.T) {
 	type expected struct {
 		seqID protocol.SequenceID
 		query string
