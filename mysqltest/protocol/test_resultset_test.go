@@ -29,7 +29,7 @@ var textResultSetPkt001 string
 //go:embed data/text-resultset-002.hex
 var textResultSetPkt002 string
 
-func TestTextResultSet(t *testing.T) {
+func TestTextResultSetPacket(t *testing.T) {
 	type expected struct {
 	}
 	for _, test := range []struct {
