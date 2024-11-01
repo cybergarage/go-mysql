@@ -174,7 +174,7 @@ func TestHandshakeResponsePacket(t *testing.T) {
 			}
 
 			if !bytes.Equal(msgBytes, testBytes) {
-				HexdumpErrors(t, msgBytes, testBytes)
+				HexdumpErrors(t, testBytes, msgBytes)
 			}
 		})
 	}
