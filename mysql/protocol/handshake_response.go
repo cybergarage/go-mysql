@@ -203,6 +203,22 @@ func (pkt *HandshakeResponse) ClientPluginName() string {
 	return pkt.clientPluginName
 }
 
+// Attributes returns the attributes.
+func (pkt *HandshakeResponse) Attributes() map[string]string {
+	return pkt.attributes
+}
+
+// LookupAttribute returns the attribute value.
+func (pkt *HandshakeResponse) LookupAttribute(key string) (string, bool) {
+	v, ok := pkt.attributes[key]
+	return v, ok
+}
+
+// ZstdCompressionLevel returns the Zstd compression level.
+func (pkt *HandshakeResponse) ZstdCompressionLevel() uint8 {
+	return pkt.zstdCompressionLevel
+}
+
 // Bytes returns the packet bytes.
 func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
