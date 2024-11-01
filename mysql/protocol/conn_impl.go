@@ -86,6 +86,13 @@ func WithConnID(id uint64) func(*conn) {
 	}
 }
 
+// WithConnUUID sets a UUID.
+func WithConnUUID(id uuid.UUID) func(*conn) {
+	return func(conn *conn) {
+		conn.uuid = id
+	}
+}
+
 // WithConnCapabilities sets capabilities.
 func WithConnCapabilities(c CapabilityFlag) func(*conn) {
 	return func(conn *conn) {
