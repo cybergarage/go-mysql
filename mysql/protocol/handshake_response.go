@@ -32,7 +32,7 @@ type HandshakeResponse struct {
 	*packet
 	capabilityFlags      CapabilityFlag
 	maxPacketSize        uint32
-	chanteSet            uint8
+	charSet              uint8
 	username             string
 	authResponseLength   uint8
 	authResponse         string
@@ -47,7 +47,7 @@ func newHandshakeResponseWithPacket(pkt *packet) *HandshakeResponse {
 		packet:               pkt,
 		capabilityFlags:      0,
 		maxPacketSize:        0,
-		chanteSet:            0,
+		charSet:              0,
 		username:             "",
 		authResponseLength:   0,
 		authResponse:         "",
@@ -95,7 +95,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		return nil, err
 	}
 
-	pkt.chanteSet, err = pkt.ReadByte()
+	pkt.charSet, err = pkt.ReadByte()
 	if err != nil {
 		return nil, err
 	}
@@ -178,6 +178,11 @@ func (pkt *HandshakeResponse) MaxPacketSize() uint32 {
 	return pkt.maxPacketSize
 }
 
+// CharSet returns the character set.
+func (pkt *HandshakeResponse) CharSet() uint8 {
+	return pkt.charSet
+}
+
 // Username returns the username.
 func (pkt *HandshakeResponse) Username() string {
 	return pkt.username
@@ -193,6 +198,11 @@ func (pkt *HandshakeResponse) Database() string {
 	return pkt.database
 }
 
+// ClientPluginName returns the client plugin name.
+func (pkt *HandshakeResponse) ClientPluginName() string {
+	return pkt.clientPluginName
+}
+
 // Bytes returns the packet bytes.
 func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
@@ -205,7 +215,7 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	if err := w.WriteByte(pkt.chanteSet); err != nil {
+	if err := w.WriteByte(pkt.charSet); err != nil {
 		return nil, err
 	}
 
