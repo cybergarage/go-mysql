@@ -96,3 +96,8 @@ func (capFlg CapabilityFlag) IsEnabled(flag CapabilityFlag) bool {
 func (capFlg CapabilityFlag) IsDisabled(flag CapabilityFlag) bool {
 	return !capFlg.IsEnabled(flag)
 }
+
+// ToBytes returns the capability flag as bytes.
+func NewCapabilityFlagFromBytes(data []byte) CapabilityFlag {
+	return CapabilityFlag(uint32(data[0]) | uint32(data[1])<<8 | uint32(data[2])<<16 | uint32(data[3])<<24)
+}
