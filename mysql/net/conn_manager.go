@@ -22,10 +22,15 @@ import (
 	"github.com/google/uuid"
 )
 
-var ErrExists = errors.New("exists")
+var ErrExist = errors.New("exist")
+var ErrNotExist = errors.New("not exist")
 
-func newErrConnExists(s string) error {
-	return fmt.Errorf("connection (%s) is already %w", s, ErrExists)
+func newErrConnExist(s string) error {
+	return fmt.Errorf("connection (%s) is already %w", s, ErrExist)
+}
+
+func newErrConnNotExists(s string) error {
+	return fmt.Errorf("connection (%s) is not %w", s, ErrNotExist)
 }
 
 // ConnManager represents a connection map.
@@ -51,15 +56,35 @@ func (cm *ConnManager) AddConn(c Conn) error {
 
 	uuid := c.UUID()
 	if _, ok := cm.m[uuid]; ok {
-		return newErrConnExists(uuid.String())
+		return newErrConnExist(uuid.String())
 	}
 	uid := c.ID()
 	if _, ok := cm.uidMap[uid]; ok {
-		return newErrConnExists(fmt.Sprintf("%d", uid))
+		return newErrConnExist(fmt.Sprintf("%d", uid))
 	}
 
 	cm.m[uuid] = c
 	cm.uidMap[uid] = c
+
+	return nil
+}
+
+// UpdateConn updates the specified connection.
+func (cm *ConnManager) UpdateConn(from Conn, to Conn) error {
+	cm.mutex.Lock()
+	defer cm.mutex.Unlock()
+
+	uuid := from.UUID()
+	if _, ok := cm.m[uuid]; !ok {
+		return newErrConnNotExists(uuid.String())
+	}
+	uid := from.ID()
+	if _, ok := cm.uidMap[uid]; !ok {
+		return newErrConnNotExists(fmt.Sprintf("%d", uid))
+	}
+
+	cm.m[uuid] = to
+	cm.uidMap[uid] = to
 
 	return nil
 }
