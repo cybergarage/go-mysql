@@ -90,8 +90,15 @@ func TestHandshakeResponsePacket(t *testing.T) {
 				authRes:    "",
 				database:   "root",
 				pluginName: "mysql_native_password",
-				attrs:      map[string]string{},
-				zstdLevel:  0,
+				attrs: map[string]string{
+					"_os":          "debian",
+					"_client_name": "libmysql",
+					"_pid":         "2344",
+					"_client_ver":  "5.6.6-m9",
+					"_platform":    "x86_64",
+					"foo":          "bar",
+				},
+				zstdLevel: 0,
 			},
 		},
 	} {
