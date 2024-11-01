@@ -124,5 +124,5 @@ func (pkt *AuthSwitchRequest) Bytes() ([]byte, error) {
 
 	pkt.SetPayload(w.Bytes())
 
-	return w.Bytes(), nil
+	return pkt.packet.Bytes()
 }
