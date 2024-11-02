@@ -69,3 +69,7 @@ func newErrInvalidCommandType(v CommandType, expected CommandType) error {
 func newErrNotSupportedCommandType(v CommandType) error {
 	return fmt.Errorf("command (%02X) is %w", v, ErrNotSupported)
 }
+
+func newErrInvalidPacketLength(v uint32) error {
+	return fmt.Errorf("packet length is %w (%d)", ErrInvalid, v)
+}
