@@ -24,15 +24,15 @@ import (
 
 // Client represents a client for MySQL server.
 type Client struct {
-	Config
+	ClientConfig
 	db *sql.DB
 }
 
 // NewClient returns a client instance.
 func NewClient() *Client {
 	client := &Client{
-		Config: NewDefaultConfig(),
-		db:     nil,
+		ClientConfig: NewDefaultConfig(),
+		db:           nil,
 	}
 	return client
 }

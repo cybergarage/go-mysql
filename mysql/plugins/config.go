@@ -20,12 +20,8 @@ type Config interface {
 	SetAddress(host string)
 	// SetPort sets a listen port.
 	SetPort(port int)
-	// SetDatabase sets a host database.
-	SetDatabase(db string)
 	// Address returns a listen address.
 	Address() string
 	// Port returns a listen port.
 	Port() int
-	// Database returns a host database.
-	Database() string
 }

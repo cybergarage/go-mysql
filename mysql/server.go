@@ -15,14 +15,14 @@
 package mysql
 
 import (
-	v2 "github.com/cybergarage/go-mysql/examples/go-mysqld/v2"
-	vitesspg "github.com/cybergarage/go-mysql/mysql/plugins/vitess"
+	v2pg "github.com/cybergarage/go-mysql/examples/go-mysqld/v2"
+	vitesspg "github.com/cybergarage/go-mysql/examples/go-mysqld/vitess"
 	"github.com/cybergarage/go-tracing/tracer"
 )
 
 // Server represents a MySQL-compatible server interface.
 type Server interface {
-	Config
+	ServerConfig
 	tracer.Tracer
 	Start() error
 	Stop() error
@@ -31,12 +31,14 @@ type Server interface {
 
 // NewServer creates a new server instance.
 func NewServer() Server {
-	v2Server := v2.NewServer()
+	v2Server := v2pg.NewServer()
 	v2Server.SetProductName(PackageName)
 	v2Server.SetProductVersion(Version)
 
 	server := vitesspg.NewServer()
 	server.SetProductName(PackageName)
 	server.SetProductVersion(Version)
+
+	// return v2Server
 	return server
 }

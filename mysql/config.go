@@ -18,5 +18,17 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/plugins"
 )
 
-// Config stores server configuration parameters.
-type Config = plugins.Config
+// ServerConfig stores server configuration parameters.
+type ServerConfig = plugins.Config
+
+// ClientConfig stores client configuration parameters.
+type ClientConfig interface {
+	ServerConfig
+	// SetDatabase sets a host database.
+	SetDatabase(db string)
+	// Database returns a host database.
+	Database() string
+}
+
+// Config stores client configuration parameters.
+type Config = ClientConfig
