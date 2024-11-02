@@ -63,14 +63,19 @@ func (server *Server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protoc
 		return nil, server.queryExecutor.ParserError(conn, q.Query(), err)
 	}
 
+	seqID := q.SequenceID().Next()
 	for _, stmt := range stmts {
+		seqID = seqID.Next()
 		res, err := server.HandleStatement(conn, stmt)
 		if err != nil {
-			err = conn.ResponseError(err)
+			err = conn.ResponseError(err,
+				protocol.WithERRSecuenceID(seqID),
+			)
 			if err != nil {
 				return nil, err
 			}
 		} else if res != nil {
+			res.SetSequenceID(seqID)
 			err = conn.ResponsePacket(res)
 			if err != nil {
 				return nil, err
