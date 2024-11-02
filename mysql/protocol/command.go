@@ -169,23 +169,24 @@ func NewCommand(cmdType CommandType, opts ...CommandOption) Command {
 func NewCommandFromReader(reader io.Reader, opts ...CommandOption) (Command, error) {
 	var err error
 
-	pkt, err := NewPacketHeaderWithReader(reader)
+	pkt, err := NewPacketWithReader(reader)
 	if err != nil {
 		return nil, err
+	}
+
+	if pkt.PayloadLength() <= 0 {
+		return nil, newErrInvalidPacketLength(pkt.PayloadLength())
 	}
 
 	// Command Type
-	cmdType, err := pkt.ReadByte()
-	if err != nil {
-		return nil, err
-	}
-
 	cmd := &command{
-		cmdType:  CommandType(cmdType),
+		cmdType:  CommandType(pkt.payload[0]),
 		Packet:   pkt,
 		capFlags: 0,
 	}
+
 	cmd.SetOptions(opts...)
+
 	return cmd, nil
 }
 
