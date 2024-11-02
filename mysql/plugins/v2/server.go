@@ -56,12 +56,13 @@ func (server *Server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protoc
 	if server.queryExecutor == nil {
 		return nil, errors.ErrNotImplemented
 	}
+
 	parser := query.NewParser()
 	stmts, err := parser.ParseString(q.Query())
 	if err != nil {
-		recoveryErr := server.queryExecutor.ParserError(conn, q.Query(), err)
-		return nil, conn.ResponseError(recoveryErr)
+		return nil, server.queryExecutor.ParserError(conn, q.Query(), err)
 	}
+
 	for _, stmt := range stmts {
 		res, err := server.HandleStatement(conn, stmt)
 		if err != nil {
@@ -76,6 +77,7 @@ func (server *Server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protoc
 			}
 		}
 	}
+
 	return nil, nil
 }
 
