@@ -39,6 +39,6 @@ func NewServer() Server {
 	server.SetProductName(PackageName)
 	server.SetProductVersion(Version)
 
-	// return v2Server
-	return server
+	return v2Server
+	// return server
 }
