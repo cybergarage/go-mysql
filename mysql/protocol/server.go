@@ -369,6 +369,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 
 		if err == nil {
 			if res != nil {
+				res.SetSequenceID(cmd.SequenceID().Next())
 				err = conn.ResponsePacket(res)
 			}
 		} else {
