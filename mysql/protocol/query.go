@@ -15,6 +15,7 @@
 package protocol
 
 import (
+	"bytes"
 	"io"
 )
 
@@ -98,7 +99,9 @@ func NewQueryFromCommand(cmd Command, opts ...QueryOption) (*Query, error) {
 	var err error
 
 	pkt := newQueryWithCommand(cmd, opts...)
-	reader := cmd.Reader()
+
+	payload := cmd.Payload()
+	reader := NewPacketReaderWith(bytes.NewBuffer(payload[1:]))
 
 	if pkt.Capabilities().IsEnabled(ClientQueryAttributes) {
 		// parameter_count
