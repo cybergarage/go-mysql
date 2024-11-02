@@ -348,7 +348,9 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 				err = newErrNotSupportedCommandType(cmdType)
 			}
 		case ComQuit:
-			ok, err := NewOK()
+			ok, err := NewOK(
+				WithOKSecuenceID(cmd.SequenceID().Next()),
+			)
 			if err == nil {
 				err = conn.ResponsePacket(ok)
 			}
@@ -370,7 +372,9 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 				err = conn.ResponsePacket(res)
 			}
 		} else {
-			err = conn.ResponseError(err)
+			err = conn.ResponseError(err,
+				WithERRSecuenceID(cmd.SequenceID().Next()),
+			)
 		}
 
 		conn.FinishSpan()

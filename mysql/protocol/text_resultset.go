@@ -151,6 +151,19 @@ func (pkt *TextResultSet) SetOptions(opts ...TextResultSetOption) {
 	}
 }
 
+// SetSequenceID sets the packet sequence ID.
+func (pkt *TextResultSet) SetSequenceID(n SequenceID) {
+	pkt.columnCnt.SetSequenceID(n)
+	for _, colDef := range pkt.columnDefs {
+		n = n.Next()
+		colDef.SetSequenceID(n)
+	}
+	for _, row := range pkt.rows {
+		n = n.Next()
+		row.SetSequenceID(n)
+	}
+}
+
 // Capabilities returns the capabilities.
 func (pkt *TextResultSet) Capabilities() CapabilityFlag {
 	return pkt.capFlags
