@@ -287,6 +287,9 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	}
 
 	conn.SetCapabilities(handshakeRes.CapabilityFlags())
+	if !handshakeRes.CapabilityFlags().IsEnabled(ClientConnectWithDB) {
+		conn.SetDatabase(handshakeRes.Database())
+	}
 
 	authQuery := auth.NewQuery(
 		auth.WithQueryUsername(handshakeRes.Username()),
