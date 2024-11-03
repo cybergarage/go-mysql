@@ -73,15 +73,15 @@ func newPacket() *packet {
 // PacketOption represents a packet option.
 type PacketOption func(Packet)
 
-// PacketWithPayload returns a packet option to set the payload.
-func PacketWithPayload(payload []byte) PacketOption {
+// WithPacketPayload returns a packet option to set the payload.
+func WithPacketPayload(payload []byte) PacketOption {
 	return func(pkt Packet) {
 		pkt.SetPayload(payload)
 	}
 }
 
-// PacketWithSequenceID returns a packet option to set the sequence ID.
-func PacketWithSequenceID(n SequenceID) PacketOption {
+// WithPacketSequenceID returns a packet option to set the sequence ID.
+func WithPacketSequenceID(n SequenceID) PacketOption {
 	return func(pkt Packet) {
 		pkt.SetSequenceID(n)
 	}

@@ -211,8 +211,8 @@ func (pkt *Query) Bytes() ([]byte, error) {
 	pkt.Command = NewCommandWith(
 		ComQuery,
 		NewPacket(
-			PacketWithSequenceID(pkt.SequenceID()),
-			PacketWithPayload(w.Bytes()),
+			WithPacketSequenceID(pkt.SequenceID()),
+			WithPacketPayload(w.Bytes()),
 		),
 	)
 
