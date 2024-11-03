@@ -98,9 +98,7 @@ func WithPacketCapability(flags Capability) PacketOption {
 func NewPacket(opts ...PacketOption) *packet {
 	pkt := newPacket()
 	pkt.SetCapabilityEnabled(ClientProtocol41)
-	for _, opt := range opts {
-		opt(pkt)
-	}
+	pkt.SetOptions(opts...)
 	return pkt
 }
 
@@ -133,6 +131,13 @@ func NewPacketHeaderWithReader(reader io.Reader) (*packet, error) {
 		return nil, err
 	}
 	return pkt, nil
+}
+
+// SetOptions sets the options.
+func (pkt *packet) SetOptions(opts ...PacketOption) {
+	for _, opt := range opts {
+		opt(pkt)
+	}
 }
 
 // ReadHeader reads the packet header.
