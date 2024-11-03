@@ -153,7 +153,7 @@ func (pkt *TextResultSet) SetOptions(opts ...TextResultSetOption) {
 
 // SetCapability sets a capability flag.
 func (pkt *TextResultSet) SetCapability(c Capability) {
-	pkt.capFlags |= c
+	pkt.capFlags = c
 }
 
 // SetSequenceID sets the packet sequence ID.

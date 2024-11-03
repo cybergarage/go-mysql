@@ -358,6 +358,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			}
 		case ComQuit:
 			ok, err := NewOK(
+				WithOKCapability(connCaps),
 				WithOKSecuenceID(cmd.SequenceID().Next()),
 			)
 			if err == nil {
