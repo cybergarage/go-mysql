@@ -29,7 +29,7 @@ type ColumnCountOption func(*ColumnCount)
 // ColumnDef represents a MySQL Column Definition packet.
 type ColumnCount struct {
 	*packet
-	capFlags        CapabilityFlag
+	capFlags        Capability
 	metadataFollows ResultsetMetadata
 	count           uint64
 }
@@ -53,7 +53,7 @@ func WithColumnCount(c uint64) ColumnCountOption {
 	}
 }
 
-func WithColumnCountCapabilities(c CapabilityFlag) ColumnCountOption {
+func WithColumnCountCapabilities(c Capability) ColumnCountOption {
 	return func(pkt *ColumnCount) {
 		pkt.capFlags = c
 	}
@@ -98,7 +98,7 @@ func (pkt *ColumnCount) SetOptions(opts ...ColumnCountOption) {
 }
 
 // Capabilities returns the capabilities.
-func (pkt *ColumnCount) Capabilities() CapabilityFlag {
+func (pkt *ColumnCount) Capabilities() Capability {
 	return pkt.capFlags
 }
 

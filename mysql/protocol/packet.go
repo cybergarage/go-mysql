@@ -38,13 +38,13 @@ type Packet interface {
 	// PayloadLength returns the packet payload length.
 	PayloadLength() uint32
 	// SetCapability sets the packet capability flags.
-	SetCapability(CapabilityFlag)
+	SetCapability(Capability)
 	// SequenceID returns the packet sequence ID.
 	SequenceID() SequenceID
 	// Payload returns the packet payload.
 	Payload() []byte
 	// Capability returns the packet capability flags.
-	Capability() CapabilityFlag
+	Capability() Capability
 	// Reader returns the packet reader.
 	Reader() *PacketReader
 	// Bytes returns the packet bytes.
@@ -54,19 +54,19 @@ type Packet interface {
 // packet represents a MySQL packet.
 type packet struct {
 	*PacketReader
-	payloadLength   uint32
-	sequenceID      SequenceID
-	payload         []byte
-	capabilityFlags CapabilityFlag
+	payloadLength uint32
+	sequenceID    SequenceID
+	payload       []byte
+	Capabilitys   Capability
 }
 
 func newPacket() *packet {
 	return &packet{
-		PacketReader:    nil,
-		payloadLength:   0,
-		sequenceID:      SequenceID(0),
-		payload:         nil,
-		capabilityFlags: 0,
+		PacketReader:  nil,
+		payloadLength: 0,
+		sequenceID:    SequenceID(0),
+		payload:       nil,
+		Capabilitys:   0,
 	}
 }
 
@@ -191,24 +191,24 @@ func (pkt *packet) Payload() []byte {
 	return pkt.payload
 }
 
-// SetCapabilityFlags sets the packet capability flags.
-func (pkt *packet) SetCapability(flags CapabilityFlag) {
-	pkt.capabilityFlags = flags
+// SetCapabilitys sets the packet capability flags.
+func (pkt *packet) SetCapability(flags Capability) {
+	pkt.Capabilitys = flags
 }
 
-// CapabilityFlags returns the packet capability flags.
-func (pkt *packet) Capability() CapabilityFlag {
-	return pkt.capabilityFlags
+// Capabilitys returns the packet capability flags.
+func (pkt *packet) Capability() Capability {
+	return pkt.Capabilitys
 }
 
 // SetEnabled sets the specified flag.
-func (pkt *packet) SetCapabilityEnabled(flag CapabilityFlag) {
-	pkt.capabilityFlags |= flag
+func (pkt *packet) SetCapabilityEnabled(flag Capability) {
+	pkt.Capabilitys |= flag
 }
 
 // SetDisabled unsets the specified flag.
-func (pkt *packet) SetCapabilityDisabled(flag CapabilityFlag) {
-	pkt.capabilityFlags &^= flag
+func (pkt *packet) SetCapabilityDisabled(flag Capability) {
+	pkt.Capabilitys &^= flag
 }
 
 // Reader returns the packet reader.

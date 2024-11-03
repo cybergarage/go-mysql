@@ -37,7 +37,7 @@ type conn struct {
 	id        uint64
 	tracer.Context
 	tlsState     *tls.ConnectionState
-	capabilities CapabilityFlag
+	capabilities Capability
 }
 
 // NewConnWith returns a connection with a raw connection.
@@ -94,7 +94,7 @@ func WithConnUUID(id uuid.UUID) func(*conn) {
 }
 
 // WithConnCapabilities sets capabilities.
-func WithConnCapabilities(c CapabilityFlag) func(*conn) {
+func WithConnCapabilities(c Capability) func(*conn) {
 	return func(conn *conn) {
 		conn.capabilities = c
 	}
@@ -165,12 +165,12 @@ func (conn *conn) TLSConnectionState() (*tls.ConnectionState, bool) {
 }
 
 // SetCapabilities sets the capabilities.
-func (conn *conn) SetCapabilities(c CapabilityFlag) {
+func (conn *conn) SetCapabilities(c Capability) {
 	conn.capabilities = c
 }
 
 // Capabilities returns the capabilities.
-func (conn *conn) Capabilities() CapabilityFlag {
+func (conn *conn) Capabilities() Capability {
 	return conn.capabilities
 }
 

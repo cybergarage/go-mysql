@@ -48,7 +48,7 @@ func WithOKSecuenceID(n SequenceID) OKOption {
 }
 
 // WithOKCapability returns a OKOption that sets the capability flag.
-func WithOKCapability(c CapabilityFlag) OKOption {
+func WithOKCapability(c Capability) OKOption {
 	return func(pkt *OK) {
 		pkt.SetCapabilityEnabled(c)
 	}

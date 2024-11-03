@@ -35,7 +35,7 @@ func TestTextResultSetPacket(t *testing.T) {
 	for _, test := range []struct {
 		name     string
 		data     string
-		capFlags protocol.CapabilityFlag
+		capFlags protocol.Capability
 		expected
 	}{
 		{

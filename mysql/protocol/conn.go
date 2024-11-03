@@ -28,8 +28,8 @@ type Conn interface {
 	Database() string
 	IsTLSConnection() bool
 	TLSConnectionState() (*tls.ConnectionState, bool)
-	SetCapabilities(c CapabilityFlag)
-	Capabilities() CapabilityFlag
+	SetCapabilities(c Capability)
+	Capabilities() Capability
 	PacketReader() *PacketReader
 	ResponsePacket(resMsg Response) error
 	ResponsePackets(resMsgs []Response) error

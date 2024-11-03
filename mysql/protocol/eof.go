@@ -62,7 +62,7 @@ func WithEOFCSecuenceID(n SequenceID) EOFOption {
 }
 
 // WithEOFCapability returns a EOFOption that sets the capability flag.
-func WithEOFCapability(c CapabilityFlag) EOFOption {
+func WithEOFCapability(c Capability) EOFOption {
 	return func(pkt *EOF) error {
 		pkt.SetCapabilityEnabled(c)
 		return nil

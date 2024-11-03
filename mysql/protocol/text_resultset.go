@@ -28,7 +28,7 @@ import (
 
 // TextResultSet represents a MySQL text resultset response packet.
 type TextResultSet struct {
-	capFlags   CapabilityFlag
+	capFlags   Capability
 	columnCnt  *ColumnCount
 	columnDefs []*ColumnDef
 	rows       []ResultSetRow
@@ -49,7 +49,7 @@ func newTextResultSetWithPacket(opts ...TextResultSetOption) *TextResultSet {
 type TextResultSetOption func(*TextResultSet)
 
 // WithTextResultSetCapabilities returns a text resultset option to set the capabilities.
-func WithTextResultSetCapabilities(c CapabilityFlag) TextResultSetOption {
+func WithTextResultSetCapabilities(c Capability) TextResultSetOption {
 	return func(pkt *TextResultSet) {
 		pkt.capFlags = c
 	}
@@ -165,7 +165,7 @@ func (pkt *TextResultSet) SetSequenceID(n SequenceID) {
 }
 
 // Capabilities returns the capabilities.
-func (pkt *TextResultSet) Capabilities() CapabilityFlag {
+func (pkt *TextResultSet) Capabilities() Capability {
 	return pkt.capFlags
 }
 

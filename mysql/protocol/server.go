@@ -239,7 +239,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		if pkt.PayloadLength() < 4 {
 			return false
 		}
-		capFlags := NewCapabilityFlagFromBytes(pkt.Payload()[0:4])
+		capFlags := NewCapabilityFromBytes(pkt.Payload()[0:4])
 		return capFlags.IsEnabled(ClientSSL)
 	}
 

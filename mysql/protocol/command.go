@@ -25,7 +25,7 @@ import (
 type CommandOption func(Command)
 
 // WithCommandCapabilities returns a CommandOption that sets the capabilities.
-func WithCommandCapabilities(c CapabilityFlag) CommandOption {
+func WithCommandCapabilities(c Capability) CommandOption {
 	return func(cmd Command) {
 		cmd.SetCapabilities(c)
 	}
@@ -41,9 +41,9 @@ type Command interface {
 	// SkipPayload skips the payload.
 	SkipPayload() error
 	// SetCapabilities sets the capabilities.
-	SetCapabilities(CapabilityFlag)
+	SetCapabilities(Capability)
 	// Capabilities returns the capabilities.
-	Capabilities() CapabilityFlag
+	Capabilities() Capability
 }
 
 // CommandType represents a MySQL command type.
@@ -146,7 +146,7 @@ func (t CommandType) String() string {
 type command struct {
 	cmdType CommandType
 	Packet
-	capFlags CapabilityFlag
+	capFlags Capability
 }
 
 // NewCommandWith returns a new command with the specified type and packet.
@@ -211,12 +211,12 @@ func (cmd *command) IsType(t CommandType) error {
 }
 
 // SetCapabilities sets the capabilities.
-func (cmd *command) SetCapabilities(c CapabilityFlag) {
+func (cmd *command) SetCapabilities(c Capability) {
 	cmd.capFlags = c
 }
 
 // Capabilities returns the capabilities.
-func (cmd *command) Capabilities() CapabilityFlag {
+func (cmd *command) Capabilities() Capability {
 	return cmd.capFlags
 }
 

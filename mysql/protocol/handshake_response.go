@@ -32,7 +32,7 @@ const (
 // HandshakeResponse represents a MySQL Handshake Response packet.
 type HandshakeResponse struct {
 	*packet
-	capabilityFlags    CapabilityFlag
+	Capabilitys        Capability
 	maxPacketSize      uint32
 	charSet            uint8
 	username           string
@@ -47,7 +47,7 @@ type HandshakeResponse struct {
 func newHandshakeResponseWithPacket(pkt *packet) *HandshakeResponse {
 	return &HandshakeResponse{
 		packet:               pkt,
-		capabilityFlags:      0,
+		Capabilitys:          0,
 		maxPacketSize:        0,
 		charSet:              0,
 		username:             "",
@@ -83,7 +83,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 
 	pkt := newHandshakeResponseWithPacket(pktReader)
 
-	pkt.capabilityFlags, err = pkt.ReadCapability()
+	pkt.Capabilitys, err = pkt.ReadCapability()
 	if err != nil {
 		return nil, err
 	}
@@ -177,9 +177,9 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 	return pkt, nil
 }
 
-// CapabilityFlags returns the capability flags.
-func (pkt *HandshakeResponse) Capability() CapabilityFlag {
-	return CapabilityFlag(pkt.capabilityFlags)
+// Capabilitys returns the capability flags.
+func (pkt *HandshakeResponse) Capability() Capability {
+	return Capability(pkt.Capabilitys)
 }
 
 // MaxPacketSize returns the max packet size.
@@ -221,7 +221,7 @@ func (pkt *HandshakeResponse) ZstdCompressionLevel() uint8 {
 func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
-	if err := w.WriteCapability(pkt.capabilityFlags); err != nil {
+	if err := w.WriteCapability(pkt.Capabilitys); err != nil {
 		return nil, err
 	}
 

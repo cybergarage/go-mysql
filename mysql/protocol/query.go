@@ -66,7 +66,7 @@ func WithQueryString(v string) QueryOption {
 }
 
 // WithQueryCapabilities returns a QueryOption that sets the capabilities.
-func WithQueryCapabilities(c CapabilityFlag) QueryOption {
+func WithQueryCapabilities(c Capability) QueryOption {
 	return func(pkt *Query) {
 		pkt.SetCapabilities(c)
 	}

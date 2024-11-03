@@ -52,7 +52,7 @@ type Handshake struct {
 	protocolVersion   uint8
 	serverVersion     string
 	connectionID      uint32
-	capabilityFlags   uint32
+	Capabilitys       uint32
 	characterSet      uint8
 	statusFlags       uint16
 	authPluginDataLen uint8
@@ -67,7 +67,7 @@ func newHandshakeWithPacket(msg *packet) *Handshake {
 		protocolVersion:   uint8(ProtocolVersion10),
 		serverVersion:     "",
 		connectionID:      0,
-		capabilityFlags:   uint32(DefaultServerCapabilities),
+		Capabilitys:       uint32(DefaultServerCapabilities),
 		characterSet:      uint8(CharSetUTF8),
 		statusFlags:       uint16(DefaultServerStatus),
 		authPluginDataLen: 0,
@@ -102,9 +102,9 @@ func WithHandshakeConnectionID(v uint32) HandshakeOption {
 }
 
 // WithHandshakeCapability sets the capability flags.
-func WithHandshakeCapability(v CapabilityFlag) HandshakeOption {
+func WithHandshakeCapability(v Capability) HandshakeOption {
 	return func(pkt *Handshake) {
-		pkt.capabilityFlags = uint32(v)
+		pkt.Capabilitys = uint32(v)
 	}
 }
 
@@ -195,7 +195,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	if err != nil {
 		return nil, err
 	}
-	pkt.capabilityFlags = uint32(iv2)
+	pkt.Capabilitys = uint32(iv2)
 
 	pkt.characterSet, err = pkt.ReadByte()
 	if err != nil {
@@ -211,7 +211,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	if err != nil {
 		return nil, err
 	}
-	pkt.capabilityFlags |= (uint32(iv2) << 16)
+	pkt.Capabilitys |= (uint32(iv2) << 16)
 
 	pkt.authPluginDataLen = 0
 	iv1, err := pkt.ReadByte()
@@ -265,9 +265,9 @@ func (pkt *Handshake) AuthPluginData() []byte {
 	return append(pkt.authPluginData1, pkt.authPluginData2...)
 }
 
-// CapabilityFlags returns the capability flags.
-func (pkt *Handshake) Capability() CapabilityFlag {
-	return CapabilityFlag(pkt.capabilityFlags)
+// Capabilitys returns the capability flags.
+func (pkt *Handshake) Capability() Capability {
+	return Capability(pkt.Capabilitys)
 }
 
 // CharacterSet returns the character set.
@@ -303,7 +303,7 @@ func (pkt *Handshake) Bytes() ([]byte, error) {
 	if err := w.WriteByte(0x00); err != nil {
 		return nil, err
 	}
-	if err := w.WriteInt2(uint16(pkt.capabilityFlags & 0xFFFF)); err != nil {
+	if err := w.WriteInt2(uint16(pkt.Capabilitys & 0xFFFF)); err != nil {
 		return nil, err
 	}
 	if err := w.WriteByte(pkt.characterSet); err != nil {
@@ -312,7 +312,7 @@ func (pkt *Handshake) Bytes() ([]byte, error) {
 	if err := w.WriteInt2(pkt.statusFlags); err != nil {
 		return nil, err
 	}
-	if err := w.WriteInt2(uint16(pkt.capabilityFlags >> 16)); err != nil {
+	if err := w.WriteInt2(uint16(pkt.Capabilitys >> 16)); err != nil {
 		return nil, err
 	}
 	if pkt.Capability().IsEnabled(ClientPluginAuth) {

@@ -32,27 +32,27 @@ const (
 // SSLRequest represents a MySQL SSLRequest packet.
 type SSLRequest struct {
 	*packet
-	capabilityFlags CapabilityFlag
-	characterSet    uint8
-	maxPacketSize   uint32
+	Capabilitys   Capability
+	characterSet  uint8
+	maxPacketSize uint32
 }
 
 func newSSLRequestWithPacket(msg *packet) *SSLRequest {
 	return &SSLRequest{
-		packet:          msg,
-		capabilityFlags: DefaultSSLRequestCapabilities,
-		characterSet:    uint8(DefaultCharset),
-		maxPacketSize:   DefaultMaxPacketSize,
+		packet:        msg,
+		Capabilitys:   DefaultSSLRequestCapabilities,
+		characterSet:  uint8(DefaultCharset),
+		maxPacketSize: DefaultMaxPacketSize,
 	}
 }
 
 // SSLRequestOption represents a MySQL SSLRequest option.
 type SSLRequestOption func(*SSLRequest) error
 
-// WithSSLRequestCapabilityFlags sets the capability flags.
-func WithSSLRequestCapability(v CapabilityFlag) SSLRequestOption {
+// WithSSLRequestCapabilitys sets the capability flags.
+func WithSSLRequestCapability(v Capability) SSLRequestOption {
 	return func(h *SSLRequest) error {
-		h.capabilityFlags = v
+		h.Capabilitys = v
 		return nil
 	}
 }
@@ -87,12 +87,12 @@ func NewSSLRequestFromReader(reader io.Reader) (*SSLRequest, error) {
 
 	pkt := newSSLRequestWithPacket(msg)
 
-	pkt.capabilityFlags, err = pkt.ReadCapability()
+	pkt.Capabilitys, err = pkt.ReadCapability()
 	if err != nil {
 		return nil, err
 	}
 
-	if pkt.capabilityFlags.IsEnabled(ClientProtocol41) {
+	if pkt.Capabilitys.IsEnabled(ClientProtocol41) {
 		pkt.maxPacketSize, err = pkt.ReadInt4()
 		if err != nil {
 			return nil, err
@@ -117,9 +117,9 @@ func NewSSLRequestFromReader(reader io.Reader) (*SSLRequest, error) {
 	return pkt, err
 }
 
-// CapabilityFlags returns the capability flags.
-func (pkt *SSLRequest) Capability() CapabilityFlag {
-	return CapabilityFlag(pkt.capabilityFlags)
+// Capabilitys returns the capability flags.
+func (pkt *SSLRequest) Capability() Capability {
+	return Capability(pkt.Capabilitys)
 }
 
 // CharacterSet returns the character set.
@@ -131,7 +131,7 @@ func (pkt *SSLRequest) CharacterSet() CharSet {
 func (pkt *SSLRequest) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
-	if err := w.WriteCapability(pkt.capabilityFlags); err != nil {
+	if err := w.WriteCapability(pkt.Capabilitys); err != nil {
 		return nil, err
 	}
 

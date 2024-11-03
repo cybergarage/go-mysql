@@ -29,14 +29,14 @@ type GenericResponse interface {
 type GenericResponseOption func(*genericResponse)
 
 // WithGenericResponseCapability returns a generic response option to set the capabilities.
-func WithGenericResponseCapability(c CapabilityFlag) GenericResponseOption {
+func WithGenericResponseCapability(c Capability) GenericResponseOption {
 	return func(res *genericResponse) {
 		res.capFlags = c
 	}
 }
 
 type genericResponse struct {
-	capFlags CapabilityFlag
+	capFlags Capability
 }
 
 // NewOKFromReader returns a new OK packet from the reader.

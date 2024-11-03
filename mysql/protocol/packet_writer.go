@@ -31,8 +31,8 @@ func (w *PacketWriter) WriteCommandType(cmd Command) error {
 	return w.WriteByte(byte(cmd.Type()))
 }
 
-// WriteCapabilityFlags writes the capability flags.
-func (w *PacketWriter) WriteCapability(c CapabilityFlag) error {
+// WriteCapabilitys writes the capability flags.
+func (w *PacketWriter) WriteCapability(c Capability) error {
 	if c.IsEnabled(ClientProtocol41) {
 		return w.WriteInt4(uint32(c))
 	}
@@ -69,7 +69,7 @@ func (w *PacketWriter) WriteOK(opts ...any) error {
 		switch v := opt.(type) {
 		case SequenceID:
 			okOpts = append(okOpts, WithOKSecuenceID(v))
-		case CapabilityFlag:
+		case Capability:
 			okOpts = append(okOpts, WithOKCapability(v))
 		}
 	}
@@ -119,7 +119,7 @@ func (w *PacketWriter) WriteEOF(opts ...any) error {
 		switch v := opt.(type) {
 		case SequenceID:
 			eofOpts = append(eofOpts, WithEOFCSecuenceID(v))
-		case CapabilityFlag:
+		case Capability:
 			eofOpts = append(eofOpts, WithEOFCapability(v))
 		}
 	}

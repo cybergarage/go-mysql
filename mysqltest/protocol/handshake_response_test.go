@@ -34,7 +34,7 @@ var handshakeResponseMsg003 string
 
 func TestHandshakeResponsePacket(t *testing.T) {
 	type expected struct {
-		capFlags   protocol.CapabilityFlag
+		capFlags   protocol.Capability
 		maxPkt     uint32
 		charSet    uint8
 		username   string
@@ -53,7 +53,7 @@ func TestHandshakeResponsePacket(t *testing.T) {
 			"handshake-response-001",
 			handshakeResponseMsg001,
 			expected{
-				capFlags:   protocol.CapabilityFlag(0x000aa28d),
+				capFlags:   protocol.Capability(0x000aa28d),
 				maxPkt:     0,
 				charSet:    45,
 				username:   "skonno",
@@ -68,7 +68,7 @@ func TestHandshakeResponsePacket(t *testing.T) {
 			"handshake-response-002",
 			handshakeResponseMsg002,
 			expected{
-				capFlags:   protocol.CapabilityFlag(0x000fa68d),
+				capFlags:   protocol.Capability(0x000fa68d),
 				maxPkt:     0,
 				charSet:    0,
 				username:   "",
@@ -83,7 +83,7 @@ func TestHandshakeResponsePacket(t *testing.T) {
 			"handshake-response-003",
 			handshakeResponseMsg003,
 			expected{
-				capFlags:   protocol.CapabilityFlag(0x001ea285),
+				capFlags:   protocol.Capability(0x001ea285),
 				maxPkt:     0,
 				charSet:    0,
 				username:   "root",

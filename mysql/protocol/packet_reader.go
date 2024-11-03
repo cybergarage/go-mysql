@@ -30,58 +30,58 @@ func NewPacketReaderWith(reader io.Reader) *PacketReader {
 	}
 }
 
-// ReadCapabilityFlags reads the capability flags.
-func (reader *PacketReader) ReadCapability() (CapabilityFlag, error) {
-	var capabilityFlags CapabilityFlag
+// ReadCapabilitys reads the capability flags.
+func (reader *PacketReader) ReadCapability() (Capability, error) {
+	var Capabilitys Capability
 	v, err := reader.ReadInt2()
 	if err != nil {
 		return 0, err
 	}
-	capabilityFlags = CapabilityFlag(v)
+	Capabilitys = Capability(v)
 
-	if !capabilityFlags.IsEnabled(ClientProtocol41) {
-		return capabilityFlags, nil
+	if !Capabilitys.IsEnabled(ClientProtocol41) {
+		return Capabilitys, nil
 	}
 
-	capabilityFlags3, err := reader.ReadInt1()
+	Capabilitys3, err := reader.ReadInt1()
 	if err != nil {
 		return 0, err
 	}
-	capabilityFlags |= (CapabilityFlag)(capabilityFlags3) << 16
+	Capabilitys |= (Capability)(Capabilitys3) << 16
 
-	capabilityFlags4, err := reader.ReadInt1()
+	Capabilitys4, err := reader.ReadInt1()
 	if err != nil {
 		return 0, err
 	}
-	capabilityFlags |= (CapabilityFlag)(capabilityFlags4) << 24
+	Capabilitys |= (Capability)(Capabilitys4) << 24
 
-	return capabilityFlags, nil
+	return Capabilitys, nil
 }
 
-// PeekCapabilityFlags reads the capability flags.
-func (reader *PacketReader) PeekCapability() (CapabilityFlag, error) {
-	var capabilityFlags CapabilityFlag
+// PeekCapabilitys reads the capability flags.
+func (reader *PacketReader) PeekCapability() (Capability, error) {
+	var Capabilitys Capability
 	v, err := reader.PeekInt2()
 	if err != nil {
 		return 0, err
 	}
-	capabilityFlags = CapabilityFlag(v)
+	Capabilitys = Capability(v)
 
-	if !capabilityFlags.IsEnabled(ClientProtocol41) {
-		return capabilityFlags, nil
+	if !Capabilitys.IsEnabled(ClientProtocol41) {
+		return Capabilitys, nil
 	}
 
-	capabilityFlags3, err := reader.PeekInt1()
+	Capabilitys3, err := reader.PeekInt1()
 	if err != nil {
 		return 0, err
 	}
-	capabilityFlags |= (CapabilityFlag)(capabilityFlags3) << 16
+	Capabilitys |= (Capability)(Capabilitys3) << 16
 
-	capabilityFlags4, err := reader.PeekInt1()
+	Capabilitys4, err := reader.PeekInt1()
 	if err != nil {
 		return 0, err
 	}
-	capabilityFlags |= (CapabilityFlag)(capabilityFlags4) << 24
+	Capabilitys |= (Capability)(Capabilitys4) << 24
 
-	return capabilityFlags, nil
+	return Capabilitys, nil
 }

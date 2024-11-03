@@ -30,7 +30,7 @@ type Config struct {
 	*TLSConf
 	productName    string
 	productVersion string
-	capability     CapabilityFlag
+	capability     Capability
 	autuPluginName string
 }
 
@@ -101,12 +101,12 @@ func (config *Config) ServerVersion() string {
 }
 
 // SetCapability sets the capability flags to the configuration.
-func (config *Config) SetCapability(c CapabilityFlag) {
+func (config *Config) SetCapability(c Capability) {
 	config.capability = c
 }
 
 // Capability returns the capability flags from the configuration.
-func (config *Config) Capability() CapabilityFlag {
+func (config *Config) Capability() Capability {
 	return config.capability
 }
 
