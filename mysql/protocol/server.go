@@ -346,10 +346,9 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		case ComQuery:
 			if server.CommandHandler != nil {
 				var q *Query
-				opts := []QueryOption{
+				q, err = NewQueryFromCommand(cmd,
 					WithQueryCapabilities(connCaps),
-				}
-				q, err = NewQueryFromCommand(cmd, opts...)
+				)
 				if err == nil {
 					res, err = server.CommandHandler.HandleQuery(conn, q)
 				}
@@ -357,13 +356,10 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 				err = newErrNotSupportedCommandType(cmdType)
 			}
 		case ComQuit:
-			ok, err := NewOK(
+			err = conn.ResponseOK(
 				WithOKCapability(connCaps),
 				WithOKSecuenceID(cmd.SequenceID().Next()),
 			)
-			if err == nil {
-				err = conn.ResponsePacket(ok)
-			}
 			finishSpans()
 			return err
 		default:
@@ -379,9 +375,10 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 
 		if err == nil {
 			if res != nil {
-				res.SetCapability(connCaps)
-				res.SetSequenceID(cmd.SequenceID().Next())
-				err = conn.ResponsePacket(res)
+				err = conn.ResponsePacket(res,
+					WithResponseCapability(connCaps),
+					WithResponseSequenceID(cmd.SequenceID().Next()),
+				)
 			}
 		} else {
 			err = conn.ResponseError(err,

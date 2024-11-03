@@ -77,8 +77,10 @@ func (server *Server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protoc
 				return nil, err
 			}
 		} else if res != nil {
-			res.SetSequenceID(seqID)
-			err = conn.ResponsePacket(res)
+			err = conn.ResponsePacket(res,
+				protocol.WithResponseSequenceID(seqID),
+				protocol.WithResponseCapability(connCaps),
+			)
 			if err != nil {
 				return nil, err
 			}
