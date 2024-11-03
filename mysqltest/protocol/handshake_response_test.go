@@ -117,8 +117,8 @@ func TestHandshakeResponsePacket(t *testing.T) {
 			}
 
 			if test.expected.capFlags != 0 {
-				if pkt.CapabilityFlags() != test.expected.capFlags {
-					t.Errorf("expected %04X, got %04X", test.expected.capFlags, pkt.CapabilityFlags())
+				if pkt.Capability() != test.expected.capFlags {
+					t.Errorf("expected %04X, got %04X", test.expected.capFlags, pkt.Capability())
 				}
 			}
 

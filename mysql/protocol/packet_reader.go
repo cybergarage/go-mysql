@@ -31,7 +31,7 @@ func NewPacketReaderWith(reader io.Reader) *PacketReader {
 }
 
 // ReadCapabilityFlags reads the capability flags.
-func (reader *PacketReader) ReadCapabilityFlags() (CapabilityFlag, error) {
+func (reader *PacketReader) ReadCapability() (CapabilityFlag, error) {
 	var capabilityFlags CapabilityFlag
 	v, err := reader.ReadInt2()
 	if err != nil {
@@ -59,7 +59,7 @@ func (reader *PacketReader) ReadCapabilityFlags() (CapabilityFlag, error) {
 }
 
 // PeekCapabilityFlags reads the capability flags.
-func (reader *PacketReader) PeekCapabilityFlags() (CapabilityFlag, error) {
+func (reader *PacketReader) PeekCapability() (CapabilityFlag, error) {
 	var capabilityFlags CapabilityFlag
 	v, err := reader.PeekInt2()
 	if err != nil {

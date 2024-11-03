@@ -114,7 +114,7 @@ func NewEOFFromReader(reader io.Reader, opts ...EOFOption) (*EOF, error) {
 	}
 
 	// warnings and status flags
-	if pkt.PayloadLength() == 5 || pkt.CapabilityFlags().IsEnabled(ClientProtocol41) {
+	if pkt.PayloadLength() == 5 || pkt.Capability().IsEnabled(ClientProtocol41) {
 		// warnings
 		pkt.warnings, err = pkt.ReadInt2()
 		if err != nil {
@@ -156,7 +156,7 @@ func (pkt *EOF) Bytes() ([]byte, error) {
 	}
 
 	// warnings and status flags
-	if pkt.CapabilityFlags().IsEnabled(ClientProtocol41) {
+	if pkt.Capability().IsEnabled(ClientProtocol41) {
 		if err := w.WriteInt2(pkt.warnings); err != nil {
 			return nil, err
 		}

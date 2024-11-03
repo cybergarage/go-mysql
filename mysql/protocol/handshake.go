@@ -218,7 +218,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	if err != nil {
 		return nil, err
 	}
-	if pkt.CapabilityFlags().IsEnabled(ClientPluginAuth) {
+	if pkt.Capability().IsEnabled(ClientPluginAuth) {
 		pkt.authPluginDataLen = iv1
 	}
 
@@ -235,7 +235,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 		}
 	}
 
-	if pkt.CapabilityFlags().IsEnabled(ClientPluginAuth) {
+	if pkt.Capability().IsEnabled(ClientPluginAuth) {
 		pkt.authPluginName, err = pkt.ReadNullTerminatedString()
 		if err != nil {
 			return nil, err
@@ -266,7 +266,7 @@ func (pkt *Handshake) AuthPluginData() []byte {
 }
 
 // CapabilityFlags returns the capability flags.
-func (pkt *Handshake) CapabilityFlags() CapabilityFlag {
+func (pkt *Handshake) Capability() CapabilityFlag {
 	return CapabilityFlag(pkt.capabilityFlags)
 }
 
@@ -315,7 +315,7 @@ func (pkt *Handshake) Bytes() ([]byte, error) {
 	if err := w.WriteInt2(uint16(pkt.capabilityFlags >> 16)); err != nil {
 		return nil, err
 	}
-	if pkt.CapabilityFlags().IsEnabled(ClientPluginAuth) {
+	if pkt.Capability().IsEnabled(ClientPluginAuth) {
 		if err := w.WriteByte(uint8(len(pkt.authPluginData2) + authPluginDataPart1Len)); err != nil {
 			return nil, err
 		}
@@ -332,7 +332,7 @@ func (pkt *Handshake) Bytes() ([]byte, error) {
 			return nil, err
 		}
 	}
-	if pkt.CapabilityFlags().IsEnabled(ClientPluginAuth) {
+	if pkt.Capability().IsEnabled(ClientPluginAuth) {
 		if err := w.WriteNullTerminatedString(pkt.authPluginName); err != nil {
 			return nil, err
 		}

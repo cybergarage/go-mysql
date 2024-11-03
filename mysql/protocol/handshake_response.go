@@ -83,12 +83,12 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 
 	pkt := newHandshakeResponseWithPacket(pktReader)
 
-	pkt.capabilityFlags, err = pkt.ReadCapabilityFlags()
+	pkt.capabilityFlags, err = pkt.ReadCapability()
 	if err != nil {
 		return nil, err
 	}
 
-	if !pkt.CapabilityFlags().IsEnabled(ClientProtocol41) {
+	if !pkt.Capability().IsEnabled(ClientProtocol41) {
 		return nil, newErrNotSupported("HandshakeResponse320")
 	}
 
@@ -112,7 +112,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		return nil, err
 	}
 
-	if pkt.CapabilityFlags().IsEnabled(ClientPluginAuthLenencClientData) {
+	if pkt.Capability().IsEnabled(ClientPluginAuthLenencClientData) {
 		pkt.authResponse, err = pkt.ReadLengthEncodedString()
 		if err != nil {
 			return nil, err
@@ -128,21 +128,21 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		}
 	}
 
-	if pkt.CapabilityFlags().IsEnabled(ClientConnectWithDB) {
+	if pkt.Capability().IsEnabled(ClientConnectWithDB) {
 		pkt.database, err = pkt.ReadNullTerminatedString()
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if pkt.CapabilityFlags().IsEnabled(ClientPluginAuth) {
+	if pkt.Capability().IsEnabled(ClientPluginAuth) {
 		pkt.clientPluginName, err = pkt.ReadNullTerminatedString()
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if pkt.CapabilityFlags().IsEnabled(ClientConnectAttrs) {
+	if pkt.Capability().IsEnabled(ClientConnectAttrs) {
 		attrSize, err := pkt.ReadLengthEncodedInt()
 		if err != nil {
 			return nil, err
@@ -167,7 +167,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		}
 	}
 
-	if pkt.CapabilityFlags().IsEnabled(ClientZstdCompressionAlgorithm) {
+	if pkt.Capability().IsEnabled(ClientZstdCompressionAlgorithm) {
 		pkt.zstdCompressionLevel, err = pkt.ReadByte()
 		if err != nil {
 			return nil, err
@@ -178,7 +178,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 }
 
 // CapabilityFlags returns the capability flags.
-func (pkt *HandshakeResponse) CapabilityFlags() CapabilityFlag {
+func (pkt *HandshakeResponse) Capability() CapabilityFlag {
 	return CapabilityFlag(pkt.capabilityFlags)
 }
 
@@ -221,7 +221,7 @@ func (pkt *HandshakeResponse) ZstdCompressionLevel() uint8 {
 func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
-	if err := w.WriteCapabilityFlags(pkt.capabilityFlags); err != nil {
+	if err := w.WriteCapability(pkt.capabilityFlags); err != nil {
 		return nil, err
 	}
 
@@ -241,7 +241,7 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	if pkt.CapabilityFlags().IsEnabled(ClientPluginAuthLenencClientData) {
+	if pkt.Capability().IsEnabled(ClientPluginAuthLenencClientData) {
 		if err := w.WriteLengthEncodedString(pkt.authResponse); err != nil {
 			return nil, err
 		}
@@ -254,19 +254,19 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 		}
 	}
 
-	if pkt.CapabilityFlags().IsEnabled(ClientConnectWithDB) {
+	if pkt.Capability().IsEnabled(ClientConnectWithDB) {
 		if err := w.WriteNullTerminatedString(pkt.database); err != nil {
 			return nil, err
 		}
 	}
 
-	if pkt.CapabilityFlags().IsEnabled(ClientPluginAuth) {
+	if pkt.Capability().IsEnabled(ClientPluginAuth) {
 		if err := w.WriteNullTerminatedString(pkt.clientPluginName); err != nil {
 			return nil, err
 		}
 	}
 
-	if pkt.CapabilityFlags().IsEnabled(ClientConnectAttrs) {
+	if pkt.Capability().IsEnabled(ClientConnectAttrs) {
 		attrWriter := NewPacketWriter()
 		for _, key := range pkt.AttributeKeys() {
 			value, _ := pkt.LookupAttribute(key)
@@ -287,7 +287,7 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 		}
 	}
 
-	if pkt.CapabilityFlags().IsEnabled(ClientZstdCompressionAlgorithm) {
+	if pkt.Capability().IsEnabled(ClientZstdCompressionAlgorithm) {
 		if err := w.WriteByte(pkt.zstdCompressionLevel); err != nil {
 			return nil, err
 		}

@@ -37,14 +37,14 @@ type Packet interface {
 	SetPayload(payload []byte)
 	// PayloadLength returns the packet payload length.
 	PayloadLength() uint32
-	// SetCapabilityFlags sets the packet capability flags.
-	SetCapabilityFlags(CapabilityFlag)
+	// SetCapability sets the packet capability flags.
+	SetCapability(CapabilityFlag)
 	// SequenceID returns the packet sequence ID.
 	SequenceID() SequenceID
 	// Payload returns the packet payload.
 	Payload() []byte
-	// CapabilityFlags returns the packet capability flags.
-	CapabilityFlags() CapabilityFlag
+	// Capability returns the packet capability flags.
+	Capability() CapabilityFlag
 	// Reader returns the packet reader.
 	Reader() *PacketReader
 	// Bytes returns the packet bytes.
@@ -192,12 +192,12 @@ func (pkt *packet) Payload() []byte {
 }
 
 // SetCapabilityFlags sets the packet capability flags.
-func (pkt *packet) SetCapabilityFlags(flags CapabilityFlag) {
+func (pkt *packet) SetCapability(flags CapabilityFlag) {
 	pkt.capabilityFlags = flags
 }
 
 // CapabilityFlags returns the packet capability flags.
-func (pkt *packet) CapabilityFlags() CapabilityFlag {
+func (pkt *packet) Capability() CapabilityFlag {
 	return pkt.capabilityFlags
 }
 

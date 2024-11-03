@@ -50,7 +50,7 @@ func newSSLRequestWithPacket(msg *packet) *SSLRequest {
 type SSLRequestOption func(*SSLRequest) error
 
 // WithSSLRequestCapabilityFlags sets the capability flags.
-func WithSSLRequestCapabilityFlags(v CapabilityFlag) SSLRequestOption {
+func WithSSLRequestCapability(v CapabilityFlag) SSLRequestOption {
 	return func(h *SSLRequest) error {
 		h.capabilityFlags = v
 		return nil
@@ -87,7 +87,7 @@ func NewSSLRequestFromReader(reader io.Reader) (*SSLRequest, error) {
 
 	pkt := newSSLRequestWithPacket(msg)
 
-	pkt.capabilityFlags, err = pkt.ReadCapabilityFlags()
+	pkt.capabilityFlags, err = pkt.ReadCapability()
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +118,7 @@ func NewSSLRequestFromReader(reader io.Reader) (*SSLRequest, error) {
 }
 
 // CapabilityFlags returns the capability flags.
-func (pkt *SSLRequest) CapabilityFlags() CapabilityFlag {
+func (pkt *SSLRequest) Capability() CapabilityFlag {
 	return CapabilityFlag(pkt.capabilityFlags)
 }
 
@@ -131,11 +131,11 @@ func (pkt *SSLRequest) CharacterSet() CharSet {
 func (pkt *SSLRequest) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
-	if err := w.WriteCapabilityFlags(pkt.capabilityFlags); err != nil {
+	if err := w.WriteCapability(pkt.capabilityFlags); err != nil {
 		return nil, err
 	}
 
-	if pkt.CapabilityFlags().IsEnabled(ClientProtocol41) {
+	if pkt.Capability().IsEnabled(ClientProtocol41) {
 		if err := w.WriteInt4(pkt.maxPacketSize); err != nil {
 			return nil, err
 		}
