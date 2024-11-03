@@ -87,6 +87,13 @@ func WithPacketSequenceID(n SequenceID) PacketOption {
 	}
 }
 
+// WithPacketCapability returns a packet option to set the capability flags.
+func WithPacketCapability(flags Capability) PacketOption {
+	return func(pkt Packet) {
+		pkt.SetCapability(flags)
+	}
+}
+
 // NewPacket returns a new MySQL packet.
 func NewPacket(opts ...PacketOption) *packet {
 	pkt := newPacket()
