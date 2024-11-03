@@ -378,11 +378,13 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 
 		if err == nil {
 			if res != nil {
+				res.SetCapability(connCaps)
 				res.SetSequenceID(cmd.SequenceID().Next())
 				err = conn.ResponsePacket(res)
 			}
 		} else {
 			err = conn.ResponseError(err,
+				WithERRCapability(connCaps),
 				WithERRSecuenceID(cmd.SequenceID().Next()),
 			)
 		}
