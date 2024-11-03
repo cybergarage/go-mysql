@@ -31,8 +31,8 @@ type Conn interface {
 	SetCapabilities(c Capability)
 	Capabilities() Capability
 	PacketReader() *PacketReader
-	ResponsePacket(resMsg Response) error
-	ResponsePackets(resMsgs []Response) error
+	ResponsePacket(resMsg Response, opts ...ResponseOption) error
+	ResponsePackets(resMsgs []Response, opts ...ResponseOption) error
 	ResponseOK(opts ...OKOption) error
 	ResponseError(err error, opts ...ERROption) error
 }

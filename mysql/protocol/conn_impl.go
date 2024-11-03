@@ -180,9 +180,12 @@ func (conn *conn) PacketReader() *PacketReader {
 }
 
 // ResponsePacket sends a response.
-func (conn *conn) ResponsePacket(resMsg Response) error {
+func (conn *conn) ResponsePacket(resMsg Response, opts ...ResponseOption) error {
 	if resMsg == nil {
 		return nil
+	}
+	for _, opt := range opts {
+		opt(resMsg)
 	}
 	resBytes, err := resMsg.Bytes()
 	if err != nil {
@@ -195,12 +198,12 @@ func (conn *conn) ResponsePacket(resMsg Response) error {
 }
 
 // ResponsePackets sends response packets.
-func (conn *conn) ResponsePackets(resMsgs []Response) error {
+func (conn *conn) ResponsePackets(resMsgs []Response, opts ...ResponseOption) error {
 	if len(resMsgs) == 0 {
 		return nil
 	}
 	for _, resMsg := range resMsgs {
-		err := conn.ResponsePacket(resMsg)
+		err := conn.ResponsePacket(resMsg, opts...)
 		if err != nil {
 			return err
 		}

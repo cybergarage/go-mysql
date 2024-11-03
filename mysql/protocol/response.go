@@ -17,6 +17,23 @@ package protocol
 // MySQL: Text Resultset
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset.html
 
+// ResponseOption represents a response option.
+type ResponseOption func(Response)
+
+// WithResponseCapability returns a response option to set the capability.
+func WithResponseCapability(c Capability) ResponseOption {
+	return func(r Response) {
+		r.SetCapability(c)
+	}
+}
+
+// WithResponseSequenceID returns a response option to set the sequence ID.
+func WithResponseSequenceID(s SequenceID) ResponseOption {
+	return func(r Response) {
+		r.SetSequenceID(s)
+	}
+}
+
 // Response represents a response.
 type Response interface {
 	// SetCapability sets the capability flags.
