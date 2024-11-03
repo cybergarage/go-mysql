@@ -53,6 +53,8 @@ func (server *Server) QueryExecutor() query.Executor {
 
 // HandleQuery handles a query.
 func (server *Server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protocol.Response, error) {
+	connCaps := conn.Capabilities()
+
 	if server.queryExecutor == nil {
 		return nil, errors.ErrNotImplemented
 	}
@@ -68,6 +70,7 @@ func (server *Server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protoc
 		res, err := server.HandleStatement(conn, stmt)
 		if err != nil {
 			err = conn.ResponseError(err,
+				protocol.WithERRCapability(connCaps),
 				protocol.WithERRSecuenceID(seqID),
 			)
 			if err != nil {
