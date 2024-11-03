@@ -123,7 +123,7 @@ func (store *MemStore) CreateTable(conn net.Conn, stmt query.CreateTable) error 
 			return errors.NewErrTableExist(tableName)
 		}
 	}
-	return errors.ErrNotImplemented
+	return nil
 }
 
 // AlterTable should handle a ALTER table statement.
