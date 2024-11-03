@@ -19,6 +19,8 @@ package protocol
 
 // Response represents a response.
 type Response interface {
+	// SetCapability sets the capability flags.
+	SetCapability(Capability)
 	// SetSequenceID sets the sequence ID.
 	SetSequenceID(SequenceID)
 	// Bytes returns the packet bytes.

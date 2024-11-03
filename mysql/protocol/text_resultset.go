@@ -151,6 +151,11 @@ func (pkt *TextResultSet) SetOptions(opts ...TextResultSetOption) {
 	}
 }
 
+// SetCapability sets a capability flag.
+func (pkt *TextResultSet) SetCapability(c Capability) {
+	pkt.capFlags |= c
+}
+
 // SetSequenceID sets the packet sequence ID.
 func (pkt *TextResultSet) SetSequenceID(n SequenceID) {
 	pkt.columnCnt.SetSequenceID(n)
@@ -213,7 +218,11 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 
 	for _, row := range pkt.rows {
 		row.SetSequenceID(secuenceID)
-		err := w.WritePacket(row)
+		rowBytes, err := row.Bytes()
+		if err != nil {
+			return nil, err
+		}
+		_, err = w.WriteBytes(rowBytes)
 		if err != nil {
 			return nil, err
 		}
