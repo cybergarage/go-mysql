@@ -72,7 +72,7 @@ func (r *resultset) Next() bool {
 
 // Row returns the current row.
 func (r *resultset) Row() ResultSetRow {
-	if (r.rowCursor - 1) < len(r.rows) {
+	if len(r.rows) < (r.rowCursor - 1) {
 		return nil
 	}
 	return r.rows[r.rowCursor-1]
