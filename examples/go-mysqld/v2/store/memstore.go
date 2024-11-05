@@ -67,6 +67,13 @@ func (store *MemStore) Rollback(conn net.Conn, stmt query.Rollback) error {
 	return errors.ErrNotImplemented
 }
 
+// Use should handle a USE statement.
+func (store *MemStore) Use(conn net.Conn, stmt query.Use) error {
+	log.Debugf("%v", stmt)
+	conn.SetDatabase(stmt.DatabaseName())
+	return nil
+}
+
 // CreateDatabase should handle a CREATE database statement.
 func (store *MemStore) CreateDatabase(conn net.Conn, stmt query.CreateDatabase) error {
 	log.Debugf("%v", stmt)
@@ -145,14 +152,17 @@ func (store *MemStore) DropTable(conn net.Conn, stmt query.DropTable) error {
 		tableName := table.Name()
 		table, ok := db.LookupTable(tableName)
 		if !ok {
-			return errors.ErrNotImplemented
+			if stmt.IfExists() {
+				continue
+			}
+			return errors.NewErrTableNotExist(tableName)
 		}
 
 		if !db.DropTable(table) {
 			return fmt.Errorf("%s could not deleted", table.TableName())
 		}
 	}
-	return errors.ErrNotImplemented
+	return nil
 }
 
 // Insert should handle a INSERT statement.
