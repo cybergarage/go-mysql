@@ -135,6 +135,9 @@ func (server *Server) HandleStatement(conn protocol.Conn, stmt query.Statement) 
 	case query.DeleteStatement:
 		stmt := stmt.(query.Delete)
 		res, err = server.executor.Delete(conn, stmt)
+	case query.UseStatement:
+		stmt := stmt.(query.Use)
+		res, err = server.executor.Use(conn, stmt)
 	}
 
 	return res, err

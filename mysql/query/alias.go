@@ -48,6 +48,7 @@ type (
 	Rollback       = sql.Rollback
 	Vacuum         = sql.Vacuum
 	Truncate       = sql.Truncate
+	Use            = sql.Use
 	Schema         = sql.Schema
 	Column         = query.Column
 	ColumnList     = query.ColumnList

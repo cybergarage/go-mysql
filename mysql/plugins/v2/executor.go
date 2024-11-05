@@ -64,10 +64,17 @@ type TCLExecutor interface {
 	Rollback(Conn, sql.Rollback) (Response, error)
 }
 
+// ExtraExecutor defines a executor interface for extra operations.
+type ExtraExecutor interface {
+	// Use handles a USE query.
+	Use(net.Conn, sql.Use) (Response, error)
+}
+
 // QueryExecutor represents a user query message executor.
 type QueryExecutor interface {
 	DDOExecutor
 	DMOExecutor
+	ExtraExecutor
 }
 
 // ErrorHandler represents a user error handler.

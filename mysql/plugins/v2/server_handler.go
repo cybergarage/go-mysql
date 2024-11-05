@@ -100,6 +100,11 @@ func (server *Server) Rollback(conn Conn, stmt sql.Rollback) (Response, error) {
 	return protocol.NewResponseWithError(server.QueryExecutor().Rollback(conn, stmt))
 }
 
+// Use handles a USE query.
+func (server *Server) Use(conn Conn, stmt sql.Use) (Response, error) {
+	return protocol.NewResponseWithError(server.QueryExecutor().Use(conn, stmt))
+}
+
 // ErrorHandler represents a user error handler.
 func (server *Server) ParserError(conn Conn, stmt string, err error) (Response, error) {
 	return nil, err

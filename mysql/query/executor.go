@@ -56,10 +56,17 @@ type TCLExecutor interface {
 	Rollback(net.Conn, Rollback) error
 }
 
+// ExtraExecutor defines a executor interface for extra operations.
+type ExtraExecutor interface {
+	// Use handles a USE query.
+	Use(net.Conn, Use) error
+}
+
 // QueryExecutor represents a user query message executor.
 type QueryExecutor interface {
 	DDOExecutor
 	DMOExecutor
+	ExtraExecutor
 }
 
 // ErrorHandler represents a user error handler.

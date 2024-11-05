@@ -41,4 +41,5 @@ const (
 	TruncateStatement       = query.TruncateStatement
 	BeginStatement          = query.BeginStatement
 	RollbackStatement       = query.RollbackStatement
+	UseStatement            = query.UseStatement
 )
