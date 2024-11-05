@@ -50,9 +50,9 @@ type ColumnDef struct {
 	decimals         uint8
 }
 
-func newColumnDefWith(pkt *packet) *ColumnDef {
-	return &ColumnDef{
-		packet:           pkt,
+func newColumnDefWith(p *packet, opts ...ColumnDefOption) *ColumnDef {
+	pkt := &ColumnDef{
+		packet:           p,
 		catalog:          defaultColumnDefCatalog,
 		schema:           "",
 		table:            "",
@@ -66,6 +66,8 @@ func newColumnDefWith(pkt *packet) *ColumnDef {
 		flags:            0,
 		decimals:         0,
 	}
+	pkt.SetOptions(opts...)
+	return pkt
 }
 
 // WithColumnDefSchema returns a ColumnDefOption to set the schema.
@@ -141,8 +143,8 @@ func WithColumnDefDecimals(decimals uint8) ColumnDefOption {
 }
 
 // NewColumnDef returns a new ColumnDef.
-func NewColumnDef(...ColumnDefOption) *ColumnDef {
-	return newColumnDefWith(newPacket())
+func NewColumnDef(opts ...ColumnDefOption) *ColumnDef {
+	return newColumnDefWith(newPacket(), opts...)
 }
 
 // NewColumnDefFromReader returns a new ColumnDef from the reader.
