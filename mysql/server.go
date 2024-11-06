@@ -15,88 +15,30 @@
 package mysql
 
 import (
-	"net"
-	"strconv"
-
-	"github.com/cybergarage/go-logger/log"
+	v2pg "github.com/cybergarage/go-mysql/examples/go-mysqld/v2"
+	vitesspg "github.com/cybergarage/go-mysql/examples/go-mysqld/vitess"
 	"github.com/cybergarage/go-tracing/tracer"
 )
 
-// Server represents a MySQL-compatible server.
-type Server struct {
+// Server represents a MySQL-compatible server interface.
+type Server interface {
+	ServerConfig
 	tracer.Tracer
-	*Config
-	ConnManager
-	AuthHandler
-	QueryHandler
-	queryExecutor QueryExecutor
-	listener      *Listener
+	Start() error
+	Stop() error
+	Restart() error
 }
 
-// NewServer returns a new server instance.
-func NewServer() *Server {
-	server := &Server{
-		Tracer:        tracer.NullTracer,
-		Config:        NewDefaultConfig(),
-		ConnManager:   NewConnManager(),
-		AuthHandler:   NewDefaultAuthHandler(),
-		QueryHandler:  nil,
-		queryExecutor: nil,
-		listener:      nil,
-	}
-	return server
-}
+// NewServer creates a new server instance.
+func NewServer() Server {
+	v2Server := v2pg.NewServer()
+	v2Server.SetProductName(PackageName)
+	v2Server.SetProductVersion(Version)
 
-// SetTracer sets a tracing tracer.
-func (server *Server) SetTracer(t tracer.Tracer) {
-	server.Tracer = t
-}
+	server := vitesspg.NewServer()
+	server.SetProductName(PackageName)
+	server.SetProductVersion(Version)
 
-// SetAuthHandler sets a user authentication handler.
-func (server *Server) SetAuthHandler(h AuthHandler) {
-	server.AuthHandler = h
-}
-
-// SetQueryExecutor sets a query executor.
-func (server *Server) SetQueryExecutor(e QueryExecutor) {
-	server.queryExecutor = e
-}
-
-// Start starts the server.
-func (server *Server) Start() error {
-	hostPort := net.JoinHostPort(server.Address, strconv.Itoa(server.Port))
-	l, err := NewListener("tcp", hostPort, server, server, 0, 0, false)
-	if err != nil {
-		return err
-	}
-	server.listener = l
-
-	go server.listener.Accept()
-
-	log.Infof("%s/%s (%s) started", PackageName, Version, hostPort)
-
-	return nil
-}
-
-// Stop stops the server.
-func (server *Server) Stop() error {
-	if server.listener != nil {
-		server.listener.Close()
-		server.listener = nil
-	}
-
-	hostPort := net.JoinHostPort(server.Address, strconv.Itoa(server.Port))
-	log.Infof("%s/%s (%s) terminated", PackageName, Version, hostPort)
-
-	return nil
-}
-
-// Restart restarts the server.
-func (server *Server) Restart() error {
-	err := server.Stop()
-	if err != nil {
-		return err
-	}
-
-	return server.Start()
+	return v2Server
+	// return server
 }

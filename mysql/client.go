@@ -24,22 +24,22 @@ import (
 
 // Client represents a client for MySQL server.
 type Client struct {
-	*Config
+	ClientConfig
 	db *sql.DB
 }
 
 // NewClient returns a client instance.
 func NewClient() *Client {
 	client := &Client{
-		Config: NewDefaultConfig(),
-		db:     nil,
+		ClientConfig: NewDefaultConfig(),
+		db:           nil,
 	}
 	return client
 }
 
 // Open opens a database specified by the internal configuration.
 func (client *Client) Open() error {
-	dsName := fmt.Sprintf("tcp(%s:%d)/%s", client.Address, client.Port, client.Database)
+	dsName := fmt.Sprintf("tcp(%s:%d)/%s", client.Address(), client.Port(), client.Database())
 	db, err := sql.Open("mysql", dsName)
 	if err != nil {
 		return err
@@ -75,4 +75,15 @@ func (client *Client) Query(query string, args ...interface{}) (*sql.Rows, error
 		}
 	}
 	return client.db.Query(query, args...)
+}
+
+// Ping executes a ping to the database.
+func (client *Client) Ping() error {
+	if client.db == nil {
+		err := client.Open()
+		if err != nil {
+			return err
+		}
+	}
+	return client.db.Ping()
 }

@@ -31,7 +31,7 @@ func NewMyServer() *MyServer {
 	myserver := &MyServer{
 		Server: mysql.NewServer(),
 	}
-    Myserver.SetQueryExecutor(myserver)
+    Myserver.SetExecutor(myserver)
     return myserver
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2020 The go-mysql Authors. All rights reserved.
+// Copyright (C) 2024 The go-mysql Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,20 +15,10 @@
 package query
 
 import (
-	vitesssp "vitess.io/vitess/go/vt/sqlparser"
+	"github.com/cybergarage/go-sqlparser/sql"
 )
 
-// Parser represents a SQL parser.
-type Parser struct {
-}
-
-// NewParser returns a new Parser instance.
-func NewParser() *Parser {
-	return &Parser{}
-}
-
-// Parse parses a query string and returns the statement result.
-func (parser *Parser) Parse(query string) (Statement, error) {
-	stmt, err := vitesssp.Parse(query)
-	return stmt, err
+// NewParser returns a new SQL parser.
+func NewParser() sql.Parser {
+	return sql.NewParser()
 }

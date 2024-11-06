@@ -14,39 +14,21 @@
 
 package mysql
 
-const (
-	defaultAddr = ""
-	defaultPort = 3306
+import (
+	"github.com/cybergarage/go-mysql/mysql/plugins"
 )
 
-// Config stores server configuration parammeters.
-type Config struct {
-	Address  string
-	Port     int
-	Database string
+// ServerConfig stores server configuration parameters.
+type ServerConfig = plugins.Config
+
+// ClientConfig stores client configuration parameters.
+type ClientConfig interface {
+	ServerConfig
+	// SetDatabase sets a host database.
+	SetDatabase(db string)
+	// Database returns a host database.
+	Database() string
 }
 
-// NewDefaultConfig returns a default configuration instance.
-func NewDefaultConfig() *Config {
-	config := &Config{
-		Address:  defaultAddr,
-		Port:     defaultPort,
-		Database: "",
-	}
-	return config
-}
-
-// SetAddress sets a listen address.
-func (config *Config) SetAddress(host string) {
-	config.Address = host
-}
-
-// SetPort sets a listen port.
-func (config *Config) SetPort(port int) {
-	config.Port = port
-}
-
-// SetDatabase sets a host database.
-func (config *Config) SetDatabase(db string) {
-	config.Database = db
-}
+// Config stores client configuration parameters.
+type Config = ClientConfig

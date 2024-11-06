@@ -23,15 +23,15 @@ import (
 
 // Client represents a client for MySQL server.
 type MySQLClient struct {
-	*Config
+	ClientConfig
 	conn driver.Conn
 }
 
 // NewMySQLClient returns a client instance.
 func NewMySQLClient() *MySQLClient {
 	client := &MySQLClient{
-		Config: NewDefaultConfig(),
-		conn:   nil,
+		ClientConfig: NewDefaultConfig(),
+		conn:         nil,
 	}
 	return client
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2020 The go-mysql Authors. All rights reserved.
+// Copyright (C) 2024 The go-mysql Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,34 +15,32 @@
 package auth
 
 import (
-	vitessmy "vitess.io/vitess/go/mysql"
+	"github.com/cybergarage/go-mysql/mysql/net"
+	"github.com/cybergarage/go-sasl/sasl"
 )
 
-// AuthManager represents a manager for the user authentication.
-type AuthManager struct {
-	methods []AuthMethod
+// Manager represents a MySQL auth manager.
+type Manager struct {
+	*sasl.Server
 }
 
-// NewAuthManager returns a new manager.
-func NewAuthManager() *AuthManager {
-	return &AuthManager{
-		methods: make([]AuthMethod, 0),
+// NewManager returns a new SASL server.
+func NewManager() *Manager {
+	return &Manager{
+		Server: sasl.NewServer(),
 	}
 }
 
-// AddAuthMethod adds a new authentication method.
-func (mgr *AuthManager) AddAuthMethod(method AuthMethod) {
-	mgr.methods = append(mgr.methods, method)
-}
-
-// AuthMethods returns the list of registered auth methods
-// implemented by this auth server.
-func (mgr *AuthManager) AuthMethods() []AuthMethod {
-	return mgr.methods
-}
-
-// DefaultAuthMethodDescription returns MysqlNativePassword as the default
-// authentication method for the auth server implementation.
-func (mgr *AuthManager) DefaultAuthMethodDescription() AuthMethodDescription {
-	return vitessmy.MysqlNativePassword
+// Authenticators returns the authenticators.
+func (mgr *Manager) Authenticate(conn net.Conn, q *Query) bool {
+	auths := mgr.Authenticators()
+	if len(auths) == 0 {
+		return true
+	}
+	for _, auth := range auths {
+		if _, ok := auth.HasCredential(q); ok {
+			return true
+		}
+	}
+	return false
 }
