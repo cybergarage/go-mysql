@@ -16,7 +16,6 @@ package mysql
 
 import (
 	v2pg "github.com/cybergarage/go-mysql/examples/go-mysqld/v2"
-	vitesspg "github.com/cybergarage/go-mysql/examples/go-mysqld/vitess"
 	"github.com/cybergarage/go-tracing/tracer"
 )
 
@@ -31,14 +30,8 @@ type Server interface {
 
 // NewServer creates a new server instance.
 func NewServer() Server {
-	v2Server := v2pg.NewServer()
-	v2Server.SetProductName(PackageName)
-	v2Server.SetProductVersion(Version)
-
-	server := vitesspg.NewServer()
+	server := v2pg.NewServer()
 	server.SetProductName(PackageName)
 	server.SetProductVersion(Version)
-
-	return v2Server
-	// return server
+	return server
 }
