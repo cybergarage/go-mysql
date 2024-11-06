@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package v2
+package mysql
 
 import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
@@ -20,42 +20,42 @@ import (
 )
 
 // CreateDatabase handles a CREATE DATABASE query.
-func (server *Server) CreateDatabase(conn Conn, stmt sql.CreateDatabase) (Response, error) {
+func (server *server) CreateDatabase(conn Conn, stmt sql.CreateDatabase) (Response, error) {
 	return protocol.NewResponseWithError(server.QueryExecutor().CreateDatabase(conn, stmt))
 }
 
 // CreateTable handles a CREATE TABLE query.
-func (server *Server) CreateTable(conn Conn, stmt sql.CreateTable) (Response, error) {
+func (server *server) CreateTable(conn Conn, stmt sql.CreateTable) (Response, error) {
 	return protocol.NewResponseWithError(server.QueryExecutor().CreateTable(conn, stmt))
 }
 
 // AlterDatabase handles a ALTER DATABASE query.
-func (server *Server) AlterDatabase(conn Conn, stmt sql.AlterDatabase) (Response, error) {
+func (server *server) AlterDatabase(conn Conn, stmt sql.AlterDatabase) (Response, error) {
 	return protocol.NewResponseWithError(server.QueryExecutor().AlterDatabase(conn, stmt))
 }
 
 // AlterTable handles a ALTER TABLE query.
-func (server *Server) AlterTable(conn Conn, stmt sql.AlterTable) (Response, error) {
+func (server *server) AlterTable(conn Conn, stmt sql.AlterTable) (Response, error) {
 	return protocol.NewResponseWithError(server.QueryExecutor().AlterTable(conn, stmt))
 }
 
 // DropDatabase handles a DROP DATABASE query.
-func (server *Server) DropDatabase(conn Conn, stmt sql.DropDatabase) (Response, error) {
+func (server *server) DropDatabase(conn Conn, stmt sql.DropDatabase) (Response, error) {
 	return protocol.NewResponseWithError(server.QueryExecutor().DropDatabase(conn, stmt))
 }
 
 // DropIndex handles a DROP INDEX query.
-func (server *Server) DropTable(conn Conn, stmt sql.DropTable) (Response, error) {
+func (server *server) DropTable(conn Conn, stmt sql.DropTable) (Response, error) {
 	return protocol.NewResponseWithError(server.QueryExecutor().DropTable(conn, stmt))
 }
 
 // Insert handles a INSERT query.
-func (server *Server) Insert(conn Conn, stmt sql.Insert) (Response, error) {
+func (server *server) Insert(conn Conn, stmt sql.Insert) (Response, error) {
 	return protocol.NewResponseWithError(server.QueryExecutor().Insert(conn, stmt))
 }
 
 // Select handles a SELECT query.
-func (server *Server) Select(conn Conn, stmt sql.Select) (Response, error) {
+func (server *server) Select(conn Conn, stmt sql.Select) (Response, error) {
 	rs, err := server.QueryExecutor().Select(conn, stmt)
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (server *Server) Select(conn Conn, stmt sql.Select) (Response, error) {
 }
 
 // Update handles a UPDATE query.
-func (server *Server) Update(conn Conn, stmt sql.Update) (Response, error) {
+func (server *server) Update(conn Conn, stmt sql.Update) (Response, error) {
 	rs, err := server.QueryExecutor().Update(conn, stmt)
 	if err != nil {
 		return protocol.NewResponseWithError(err)
@@ -75,7 +75,7 @@ func (server *Server) Update(conn Conn, stmt sql.Update) (Response, error) {
 }
 
 // Delete handles a DELETE query.
-func (server *Server) Delete(conn Conn, stmt sql.Delete) (Response, error) {
+func (server *server) Delete(conn Conn, stmt sql.Delete) (Response, error) {
 	rs, err := server.QueryExecutor().Delete(conn, stmt)
 	if err != nil {
 		return protocol.NewResponseWithError(err)
@@ -86,26 +86,26 @@ func (server *Server) Delete(conn Conn, stmt sql.Delete) (Response, error) {
 }
 
 // Begin handles a BEGIN query.
-func (server *Server) Begin(conn Conn, stmt sql.Begin) (Response, error) {
+func (server *server) Begin(conn Conn, stmt sql.Begin) (Response, error) {
 	return protocol.NewResponseWithError(server.QueryExecutor().Begin(conn, stmt))
 }
 
 // Commit handles a COMMIT query.
-func (server *Server) Commit(conn Conn, stmt sql.Commit) (Response, error) {
+func (server *server) Commit(conn Conn, stmt sql.Commit) (Response, error) {
 	return protocol.NewResponseWithError(server.QueryExecutor().Commit(conn, stmt))
 }
 
 // Rollback handles a ROLLBACK query.
-func (server *Server) Rollback(conn Conn, stmt sql.Rollback) (Response, error) {
+func (server *server) Rollback(conn Conn, stmt sql.Rollback) (Response, error) {
 	return protocol.NewResponseWithError(server.QueryExecutor().Rollback(conn, stmt))
 }
 
 // Use handles a USE query.
-func (server *Server) Use(conn Conn, stmt sql.Use) (Response, error) {
+func (server *server) Use(conn Conn, stmt sql.Use) (Response, error) {
 	return protocol.NewResponseWithError(server.QueryExecutor().Use(conn, stmt))
 }
 
 // ErrorHandler represents a user error handler.
-func (server *Server) ParserError(conn Conn, stmt string, err error) (Response, error) {
+func (server *server) ParserError(conn Conn, stmt string, err error) (Response, error) {
 	return nil, err
 }

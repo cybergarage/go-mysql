@@ -12,16 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package plugins
+package mysql
 
-// Config stores server configuration parameters.
-type Config interface {
-	// SetAddress sets a listen address.
-	SetAddress(host string)
-	// SetPort sets a listen port.
-	SetPort(port int)
-	// Address returns a listen address.
-	Address() string
-	// Port returns a listen port.
-	Port() int
+import (
+	"testing"
+)
+
+// nolint: staticcheck, gosimple
+func TestServer(t *testing.T) {
+	server := NewServer()
+	_, ok := server.(Executor)
+	if !ok {
+		t.Error("NewServer() must implement Executor")
+	}
 }
