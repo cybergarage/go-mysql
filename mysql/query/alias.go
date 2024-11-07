@@ -64,6 +64,44 @@ type (
 	SelectOption   = query.SelectOption
 )
 
+const (
+	BigIntData       = query.BigIntData
+	BinaryData       = query.BinaryData
+	BitData          = query.BitData
+	BlobData         = query.BlobData
+	BooleanData      = query.BooleanData
+	CharData         = query.CharData
+	CharacterData    = query.CharacterData
+	ClobData         = query.ClobData
+	DateData         = query.DateData
+	DateTimeData     = query.DateTimeData
+	DecimalData      = query.DecimalData
+	DoubleData       = query.DoubleData
+	DoublePrecision  = query.DoublePrecision
+	FloatData        = query.FloatData
+	IntData          = query.IntData
+	IntegerData      = query.IntegerData
+	LongBlobData     = query.LongBlobData
+	LongTextData     = query.LongTextData
+	MediumBlobData   = query.MediumBlobData
+	MediumIntData    = query.MediumIntData
+	MediumTextData   = query.MediumTextData
+	NumericData      = query.NumericData
+	RealData         = query.RealData
+	SetData          = query.SetData
+	SmallIntData     = query.SmallIntData
+	TextData         = query.TextData
+	TimeData         = query.TimeData
+	TimeStampData    = query.TimeStampData
+	TinyBlobData     = query.TinyBlobData
+	TinyIntData      = query.TinyIntData
+	TinyTextData     = query.TinyTextData
+	VarBinaryData    = query.VarBinaryData
+	VarCharData      = query.VarCharData
+	VarCharacterData = query.VarCharacterData
+	YearData         = query.YearData
+)
+
 // Function represents a function.
 type Function = query.Function
 
