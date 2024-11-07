@@ -35,7 +35,6 @@ func TestSQLTestSuite(t *testing.T) {
 	defer server.Stop()
 
 	testNames := []string{
-		// TODO: Support timestamp
 		"SmplCrudText",
 		"SmplCrudInt",
 		"SmplCrudFloat",
