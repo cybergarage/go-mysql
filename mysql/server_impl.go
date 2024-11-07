@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package v2
+package mysql
 
 import (
 	stderr "errors"
@@ -22,16 +22,16 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/query"
 )
 
-// Server represents a base executor server.
-type Server struct {
+// server represents a base executor server.
+type server struct {
 	*protocol.Server
 	executor      Executor
 	queryExecutor query.Executor
 }
 
 // NewServer returns a base executor server instance.
-func NewServer() *Server {
-	server := &Server{
+func NewServer() Server {
+	server := &server{
 		Server:        protocol.NewServer(),
 		executor:      nil,
 		queryExecutor: nil,
@@ -42,17 +42,17 @@ func NewServer() *Server {
 }
 
 // SetExecutor sets an executor to the server.
-func (server *Server) SetQueryExecutor(executor query.Executor) {
+func (server *server) SetQueryExecutor(executor query.Executor) {
 	server.queryExecutor = executor
 }
 
 // QueryExecutor returns the executor of the server.
-func (server *Server) QueryExecutor() query.Executor {
+func (server *server) QueryExecutor() query.Executor {
 	return server.queryExecutor
 }
 
 // HandleQuery handles a query.
-func (server *Server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protocol.Response, error) {
+func (server *server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protocol.Response, error) {
 	connCaps := conn.Capabilities()
 
 	if server.queryExecutor == nil {
@@ -90,7 +90,7 @@ func (server *Server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protoc
 	return nil, nil
 }
 
-func (server *Server) HandleStatement(conn protocol.Conn, stmt query.Statement) (protocol.Response, error) {
+func (server *server) HandleStatement(conn protocol.Conn, stmt query.Statement) (protocol.Response, error) {
 	var err error
 	var res protocol.Response
 
@@ -144,7 +144,7 @@ func (server *Server) HandleStatement(conn protocol.Conn, stmt query.Statement) 
 }
 
 // Start starts the server.
-func (server *Server) Start() error {
+func (server *server) Start() error {
 	type starter interface {
 		Start() error
 	}
@@ -161,7 +161,7 @@ func (server *Server) Start() error {
 }
 
 // Stop stops the server.
-func (server *Server) Stop() error {
+func (server *server) Stop() error {
 	type stopper interface {
 		Stop() error
 	}
@@ -178,7 +178,7 @@ func (server *Server) Stop() error {
 }
 
 // Restart restarts the server.
-func (server *Server) Restart() error {
+func (server *server) Restart() error {
 	err := server.Stop()
 	if err != nil {
 		return err

@@ -1,4 +1,4 @@
-// Copyright (C) 2020 The go-mysql Authors. All rights reserved.
+// Copyright (C) 2024 The go-mysql Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,23 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package query
+package mysql
 
 import (
-	vitesssp "vitess.io/vitess/go/vt/sqlparser"
+	"testing"
 )
 
-// Parser represents a SQL parser.
-type Parser struct {
-}
-
-// NewParser returns a new Parser instance.
-func NewParser() *Parser {
-	return &Parser{}
-}
-
-// Parse parses a query string and returns the statement result.
-func (parser *Parser) Parse(query string) (Statement, error) {
-	stmt, err := vitesssp.Parse(query)
-	return stmt, err
+// nolint: staticcheck, gosimple
+func TestServer(t *testing.T) {
+	server := NewServer()
+	_, ok := server.(Executor)
+	if !ok {
+		t.Error("NewServer() must implement Executor")
+	}
 }

@@ -14,12 +14,17 @@
 
 package mysql
 
-import (
-	"github.com/cybergarage/go-mysql/mysql/plugins"
-)
-
 // ServerConfig stores server configuration parameters.
-type ServerConfig = plugins.Config
+type ServerConfig interface {
+	// SetAddress sets a listen address.
+	SetAddress(host string)
+	// SetPort sets a listen port.
+	SetPort(port int)
+	// Address returns a listen address.
+	Address() string
+	// Port returns a listen port.
+	Port() int
+}
 
 // ClientConfig stores client configuration parameters.
 type ClientConfig interface {

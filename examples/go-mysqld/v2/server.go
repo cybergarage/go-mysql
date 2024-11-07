@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package v2
+package mysql
 
 import (
 	"github.com/cybergarage/go-mysql/examples/go-mysqld/v2/store"
-	v2 "github.com/cybergarage/go-mysql/mysql/plugins/v2"
+	"github.com/cybergarage/go-mysql/mysql"
 )
 
 // Server represents a test server.
 // This Server struct behave as ${hoge}CommandExecutor.
 type Server struct {
-	*v2.Server
+	mysql.Server
 	Store
 }
 
 // NewServerWithStore returns a test server instance with the specified store.
 func NewServerWithStore(store Store) *Server {
 	server := &Server{
-		Server: v2.NewServer(),
+		Server: mysql.NewServer(),
 		Store:  store,
 	}
 	server.SetQueryExecutor(store)
