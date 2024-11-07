@@ -36,7 +36,7 @@ func TestSQLTestSuite(t *testing.T) {
 
 	testNames := []string{
 		// TODO: Support timestamp
-		// "SmplCrudText",
+		"SmplCrudText",
 		// "SmplCrudInt",
 		// "SmplCrudFloat",
 		// "SmplCrudTimestamp",

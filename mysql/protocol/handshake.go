@@ -128,7 +128,7 @@ func WithHandshakeAuthPluginData(v []byte) HandshakeOption {
 		if authPluginDataPartMaxLen < len(v) {
 			v = v[:authPluginDataPartMaxLen]
 		}
-		pkt.authPluginDataLen = uint8(len(v))
+		pkt.authPluginDataLen = uint8(len(v) & 0xFF)
 		if len(v) <= authPluginDataPart1Len {
 			pkt.authPluginData1 = v
 			pkt.authPluginData2 = nil
