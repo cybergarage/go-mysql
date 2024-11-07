@@ -12,7 +12,7 @@ The go-mysql handles [MySQL protocol](https://dev.mysql.com/doc/dev/mysql-server
 
 ![](doc/img/framework.png)
 
-Currently, the go-mysqld is based on [Vitess](https://vitess.io) which is a sharding framework for [MySQL](https://www.mysql.com/), and the go-mysqld makes it possible to implement your original [MySQL](https://www.mysql.com/)-compatible servers more easily reusing the binary protocol and query parser modules in [Vitess](https://vitess.io).
+In the past, go-mysql was based on [Vitess](https://vitess.io) which is a sharding framework for [MySQL](https://www.mysql.com/), but since version 2 the protocol layer and parser have been implemented independently and no longer depend on [Vitess](https://vitess.io/).　The go-mysqld provides a implementation framework of authentication and query handlers for MySQL protocol.The go-mysqld makes it possible to implement your original [MySQL](https://www.mysql.com/)-compatible servers more easily.
 
 ## Table of Contents
 
@@ -26,5 +26,7 @@ Currently, the go-mysqld is based on [Vitess](https://vitess.io) which is a shar
 ## References
 
 - [MySQL](https://www.mysql.com/)
-- [MySQL Packets – MySQL Internals Manual / MySQL Client/Server Protocol](https://dev.mysql.com/doc/dev/mysql-server/latest/)
-- [Vitess](https://github.com/vitessio/vitess)
+  - [MySQL: Client/Server Protocol](https://dev.mysql.com/doc/dev/mysql-server/latest/PAGE_PROTOCOL.html)
+- [MariaDB](https://mariadb.com/)
+  - [MariaDB Knowledge Base](https://mariadb.com/kb/en/)
+    - [Client/Server Protocol - MariaDB Knowledge Base](https://mariadb.com/kb/en/clientserver-protocol/)
