@@ -51,7 +51,8 @@ BINARIES=${EXAMPLE_BINARIES}
 all: test
 
 version:
-	@pushd ${PKG_SRC_ROOT} && ./version.gen > version.go && popd
+    @pushd ${PKG_SRC_ROOT} && ./version.gen > version.go && popd
+    -git commit ${PKG_SRC_ROOT}/version.go -m "Update version"
 
 format: version
 	gofmt -s -w ${PKG_SRC_ROOT} ${TEST_SRC_ROOT} ${EXAMPLES_SRC_ROOT}
