@@ -30,22 +30,34 @@ import (
 // https://mariadb.com/kb/en/resultset-row/
 
 // NewTextResultSetRowFromResultSetRow returns a new ResultSetRow from the specified ResultSetRow.
-func NewTextResultSetRowFromResultSetRow(rs query.ResultSetRow) ResultSetRow {
-	columns := make([]string, len(rs.Values()))
-	for n, v := range rs.Values() {
-		columns[n] = fmt.Sprintf("%s", v)
+func NewTextResultSetRowFromResultSetRow(schema query.ResultSetSchema, rsRow query.ResultSetRow) (ResultSetRow, error) {
+	schemaColumns := schema.Columns()
+	schemaColumnCount := len(schemaColumns)
+	rowColumns := make([]string, len(rsRow.Values()))
+	for n, v := range rsRow.Values() {
+		if schemaColumnCount <= n {
+			return nil, fmt.Errorf("schema column count (%d) is less than row column count (%d)", schemaColumnCount, n)
+		}
+		columnType := schemaColumns[n].Type()
+		switch columnType {
+		default:
+			rowColumns[n] = fmt.Sprintf("%s", v)
+		}
 	}
 	row := NewTextResultSetRow(
-		WithTextResultSetRowColmuns(columns),
+		WithTextResultSetRowColmuns(rowColumns),
 	)
-	return row
+	return row, nil
 }
 
 // NewTextResultSetRowsFromResultSet returns a new ResultSetRow list from the specified ResultSet.
 func NewTextResultSetRowsFromResultSet(rs query.ResultSet) ([]ResultSetRow, error) {
 	rows := []ResultSetRow{}
 	for rs.Next() {
-		row := NewTextResultSetRowFromResultSetRow(rs.Row())
+		row, err := NewTextResultSetRowFromResultSetRow(rs.Schema(), rs.Row())
+		if err != nil {
+			return nil, err
+		}
 		rows = append(rows, row)
 	}
 	return rows, nil
