@@ -259,7 +259,7 @@ func (store *MemStore) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, 
 		if err != nil {
 			return nil, err
 		}
-		rsCchemaColumn, err := query.NewResultSetColumnFrom(shemaColumn)
+		rsCchemaColumn, err := sql.NewResultSetColumnFrom(shemaColumn)
 		if err != nil {
 			return nil, err
 		}
