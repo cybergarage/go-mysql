@@ -17,7 +17,7 @@ package protocol
 import (
 	"fmt"
 
-	"github.com/cybergarage/go-mysql/mysql/query"
+	"github.com/cybergarage/go-sqlparser/sql"
 )
 
 // MySQL: Protocol::QueryResponse
@@ -30,7 +30,7 @@ import (
 // https://mariadb.com/kb/en/resultset-row/
 
 // NewTextResultSetRowFromResultSetRow returns a new ResultSetRow from the specified ResultSetRow.
-func NewTextResultSetRowFromResultSetRow(schema query.ResultSetSchema, rsRow query.ResultSetRow) (ResultSetRow, error) {
+func NewTextResultSetRowFromResultSetRow(schema sql.ResultSetSchema, rsRow sql.ResultSetRow) (ResultSetRow, error) {
 	schemaColumns := schema.Columns()
 	schemaColumnCount := len(schemaColumns)
 	rowColumns := make([]string, len(rsRow.Values()))
@@ -51,7 +51,7 @@ func NewTextResultSetRowFromResultSetRow(schema query.ResultSetSchema, rsRow que
 }
 
 // NewTextResultSetRowsFromResultSet returns a new ResultSetRow list from the specified ResultSet.
-func NewTextResultSetRowsFromResultSet(rs query.ResultSet) ([]ResultSetRow, error) {
+func NewTextResultSetRowsFromResultSet(rs sql.ResultSet) ([]ResultSetRow, error) {
 	rows := []ResultSetRow{}
 	for rs.Next() {
 		row, err := NewTextResultSetRowFromResultSetRow(rs.Schema(), rs.Row())

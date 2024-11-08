@@ -14,7 +14,9 @@
 
 package protocol
 
-import "github.com/cybergarage/go-mysql/mysql/query"
+import (
+	"github.com/cybergarage/go-sqlparser/sql"
+)
 
 // MySQL: Protocol::QueryResponse
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query.html
@@ -22,7 +24,7 @@ import "github.com/cybergarage/go-mysql/mysql/query"
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset.html
 
 // TextResultSet represents a MySQL text resultset response packet.
-func NewTextResultSetFromResultSet(rs query.ResultSet) (*TextResultSet, error) {
+func NewTextResultSetFromResultSet(rs sql.ResultSet) (*TextResultSet, error) {
 	columDefs, err := NewColumnDefsFromResultSet(rs)
 	if err != nil {
 		return nil, err

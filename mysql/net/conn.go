@@ -15,29 +15,8 @@
 package net
 
 import (
-	"time"
-
-	"github.com/cybergarage/go-tracing/tracer"
-	"github.com/google/uuid"
+	"github.com/cybergarage/go-sqlparser/sql/net"
 )
 
 // Conn represents a connection.
-type Conn interface {
-	tracer.Context
-	// Close closes the connection.
-	Close() error
-	// SetDatabase sets a database name.
-	SetDatabase(db string)
-	// Database returns a database name.
-	Database() string
-	// SetTimestamp sets a timestamp.
-	Timestamp() time.Time
-	// UUID returns a UUID.
-	UUID() uuid.UUID
-	// ID returns a connection ID.
-	ID() uint64
-	// SetSpanContext sets a span context.
-	SetSpanContext(ctx tracer.Context)
-	// SpanContext returns a span context.
-	SpanContext() tracer.Context
-}
+type Conn = net.Conn

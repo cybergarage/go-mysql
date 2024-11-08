@@ -14,15 +14,19 @@
 
 package query
 
+import (
+	"github.com/cybergarage/go-sqlparser/sql"
+)
+
 // NewResultSetColumnFrom returns a new resultset column from the specified column.
 func NewResultSetColumnFrom(column *Column) (ResultSetColumn, error) {
 	c, err := NewColumnDefFlagFrom(column.Constrains())
 	if err != nil {
 		return nil, err
 	}
-	return NewResultSetColumn(
-		WithResultSetColumnName(column.Name()),
-		WithResultSetColumnType(column.DataType()),
-		WithResultSetColumnConstraint(ColumnConstraint(c)),
+	return sql.NewResultSetColumn(
+		sql.WithResultSetColumnName(column.Name()),
+		sql.WithResultSetColumnType(column.DataType()),
+		sql.WithResultSetColumnConstraint(ColumnConstraint(c)),
 	), nil
 }

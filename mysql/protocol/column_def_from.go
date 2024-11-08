@@ -16,13 +16,14 @@ package protocol
 
 import (
 	"github.com/cybergarage/go-mysql/mysql/query"
+	"github.com/cybergarage/go-sqlparser/sql"
 )
 
 // MySQL: Column Definition
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset_column_definition.html
 
 // NewColumnDefFromReader returns a new ColumnDef from the reader.
-func NewColumnDefsFromResultSet(rs query.ResultSet) ([]*ColumnDef, error) {
+func NewColumnDefsFromResultSet(rs sql.ResultSet) ([]*ColumnDef, error) {
 	columns := rs.Columns()
 	columnDefs := make([]*ColumnDef, len(columns))
 	for n, column := range columns {

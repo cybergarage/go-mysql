@@ -21,6 +21,7 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/errors"
 	"github.com/cybergarage/go-mysql/mysql/net"
 	"github.com/cybergarage/go-mysql/mysql/query"
+	"github.com/cybergarage/go-sqlparser/sql"
 )
 
 type MemStore struct {
@@ -185,7 +186,7 @@ func (store *MemStore) Insert(conn net.Conn, stmt query.Insert) error {
 }
 
 // Update should handle a UPDATE statement.
-func (store *MemStore) Update(conn net.Conn, stmt query.Update) (query.ResultSet, error) {
+func (store *MemStore) Update(conn net.Conn, stmt query.Update) (sql.ResultSet, error) {
 	log.Debugf("%v", stmt)
 
 	_, tbl, err := store.LookupDatabaseTable(conn, conn.Database(), stmt.TableName())
@@ -198,13 +199,13 @@ func (store *MemStore) Update(conn net.Conn, stmt query.Update) (query.ResultSet
 		return nil, err
 	}
 
-	return query.NewResultSet(
-		query.WithResultSetRowsAffected(uint64(n)),
+	return sql.NewResultSet(
+		sql.WithResultSetRowsAffected(uint64(n)),
 	), nil
 }
 
 // Delete should handle a DELETE statement.
-func (store *MemStore) Delete(conn net.Conn, stmt query.Delete) (query.ResultSet, error) {
+func (store *MemStore) Delete(conn net.Conn, stmt query.Delete) (sql.ResultSet, error) {
 	log.Debugf("%v", stmt)
 
 	_, tbl, err := store.LookupDatabaseTable(conn, conn.Database(), stmt.TableName())
@@ -217,13 +218,13 @@ func (store *MemStore) Delete(conn net.Conn, stmt query.Delete) (query.ResultSet
 		return nil, err
 	}
 
-	return query.NewResultSet(
-		query.WithResultSetRowsAffected(uint64(n)),
+	return sql.NewResultSet(
+		sql.WithResultSetRowsAffected(uint64(n)),
 	), nil
 }
 
 // Select should handle a SELECT statement.
-func (store *MemStore) Select(conn net.Conn, stmt query.Select) (query.ResultSet, error) {
+func (store *MemStore) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, error) {
 	log.Debugf("%v", stmt)
 
 	from := stmt.From()
@@ -251,7 +252,7 @@ func (store *MemStore) Select(conn net.Conn, stmt query.Select) (query.ResultSet
 	}
 
 	schema := tbl.Schema
-	rsSchemaColums := []query.ResultSetColumn{}
+	rsSchemaColums := []sql.ResultSetColumn{}
 	for _, selector := range selectors {
 		colName := selector.Name()
 		shemaColumn, err := schema.LookupColumn(colName)
@@ -265,16 +266,16 @@ func (store *MemStore) Select(conn net.Conn, stmt query.Select) (query.ResultSet
 		rsSchemaColums = append(rsSchemaColums, rsCchemaColumn)
 	}
 
-	rsSchema := query.NewResultSetSchema(
-		query.WithResultSetSchemaDatabaseName(conn.Database()),
-		query.WithResultSetSchemaTableName(tblName),
-		query.WithResultSetSchemaResultSetColumns(rsSchemaColums),
+	rsSchema := sql.NewResultSetSchema(
+		sql.WithResultSetSchemaDatabaseName(conn.Database()),
+		sql.WithResultSetSchemaTableName(tblName),
+		sql.WithResultSetSchemaResultSetColumns(rsSchemaColums),
 	)
 
 	// Data row response
 
 	rowIdx := 0
-	rsRows := []query.ResultSetRow{}
+	rsRows := []sql.ResultSetRow{}
 	if !selectors.HasAggregateFunction() {
 		offset := stmt.Limit().Offset()
 		limit := stmt.Limit().Limit()
@@ -291,8 +292,8 @@ func (store *MemStore) Select(conn net.Conn, stmt query.Select) (query.ResultSet
 				}
 				rowValues = append(rowValues, value)
 			}
-			rsRow := query.NewResultSetRow(
-				query.WithResultSetRowValues(rowValues),
+			rsRow := sql.NewResultSetRow(
+				sql.WithResultSetRowValues(rowValues),
 			)
 			rsRows = append(rsRows, rsRow)
 			rowIdx++
@@ -303,10 +304,10 @@ func (store *MemStore) Select(conn net.Conn, stmt query.Select) (query.ResultSet
 	}
 	// Return a result set
 
-	rs := query.NewResultSet(
-		query.WithResultSetSchema(rsSchema),
-		query.WithResultSetRowsAffected(uint64(rowIdx)),
-		query.WithResultSetRows(rsRows),
+	rs := sql.NewResultSet(
+		sql.WithResultSetSchema(rsSchema),
+		sql.WithResultSetRowsAffected(uint64(rowIdx)),
+		sql.WithResultSetRows(rsRows),
 	)
 
 	return rs, nil
