@@ -150,7 +150,7 @@ func (store *MemStore) DropTable(conn net.Conn, stmt query.DropTable) error {
 		return errors.NewErrDatabaseNotExist(dbName)
 	}
 	for _, table := range stmt.Tables() {
-		tableName := table.Name()
+		tableName := table.TableName()
 		table, ok := db.LookupTable(tableName)
 		if !ok {
 			if stmt.IfExists() {
