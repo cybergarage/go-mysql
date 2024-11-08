@@ -849,7 +849,7 @@
      showguides="false"
      inkscape:window-width="2560"
      inkscape:window-height="1387"
-     inkscape:window-x="1548"
+     inkscape:window-x="1512"
      inkscape:window-y="25"
      inkscape:window-maximized="0"
      inkscape:snap-global="true"
@@ -1055,7 +1055,7 @@
          x="312.42648"
          sodipodi:role="line"
          style="font-size:10px;line-height:1.25"
-         id="tspan12849">Manager</tspan></text>
+         id="tspan12849">Handler</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none"
@@ -1178,7 +1178,7 @@
          x="418.17648"
          sodipodi:role="line"
          style="font-size:10px;line-height:1.25"
-         id="tspan6">Handler</tspan></text>
+         id="tspan1">Executor</tspan></text>
     <text
        id="text8"
        y="281.5387"
