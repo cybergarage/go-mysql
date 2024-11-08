@@ -39,7 +39,7 @@ import (
 	"syscall"
 
 	clog "github.com/cybergarage/go-logger/log"
-	v2 "github.com/cybergarage/go-mysql/examples/go-mysqld/v2"
+	v2 "github.com/cybergarage/go-mysql/examples/go-mysqld/server"
 )
 
 const (

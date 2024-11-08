@@ -15,7 +15,7 @@
 package mysql
 
 import (
-	"github.com/cybergarage/go-mysql/examples/go-mysqld/v2/store"
+	"github.com/cybergarage/go-mysql/examples/go-mysqld/server/store"
 	"github.com/cybergarage/go-mysql/mysql"
 )
 

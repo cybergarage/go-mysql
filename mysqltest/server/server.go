@@ -15,7 +15,7 @@
 package server
 
 import (
-	v2 "github.com/cybergarage/go-mysql/examples/go-mysqld/v2"
+	v2 "github.com/cybergarage/go-mysql/examples/go-mysqld/server"
 )
 
 // Server represents a test server.
