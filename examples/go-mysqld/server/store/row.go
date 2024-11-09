@@ -145,14 +145,14 @@ func (row Row) IsMatched(cond query.Condition) bool {
 func (row Row) Update(colums []query.Column) {
 	for _, col := range colums {
 		colName := col.Name()
-		if exe := col.Executor(); exe != nil {
-			v, err := col.ExecuteUpdator(row)
+		if fn, ok := col.IsFunction(); ok {
+			v, err := fn.Execute(col, row)
 			if err != nil {
 				continue
 			}
 			row[colName] = v
 		} else {
-			if col.HasLiteral() {
+			if col.HasValue() {
 				row[colName] = col.Value()
 			}
 		}

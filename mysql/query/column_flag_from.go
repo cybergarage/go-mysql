@@ -18,8 +18,8 @@ import (
 	"github.com/cybergarage/go-sqlparser/sql/query"
 )
 
-// NewColumnDefFlagFrom converts a given ColumnConstraint into a ColumnDefFlag.
-func NewColumnDefFlagFrom(c query.ColumnConstraint) (ColumnDefFlag, error) {
+// NewColumnDefFlagFrom converts a given Constraint into a ColumnDefFlag.
+func NewColumnDefFlagFrom(c query.Constraint) (ColumnDefFlag, error) {
 	cdf := ColumnDefFlag(0)
 	if (c & query.PrimaryKeyConstraint) != 0 {
 		cdf |= PriKeyFlag

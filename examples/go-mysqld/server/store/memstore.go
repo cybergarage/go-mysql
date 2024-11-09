@@ -247,7 +247,7 @@ func (store *MemStore) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, 
 	// Row description response
 
 	selectors := stmt.Selectors()
-	if selectors.IsSelectAll() {
+	if selectors.IsAsterisk() {
 		selectors = tbl.Selectors()
 	}
 

@@ -19,7 +19,7 @@ import (
 )
 
 type DataType = query.DataType
-type ColumnConstraint = query.ColumnConstraint
+type Constraint = query.Constraint
 
 // ResultSetColumn represents a column interface in a resultset.
 type ResultSetColumn interface {
@@ -28,7 +28,7 @@ type ResultSetColumn interface {
 	// Type returns the data type.
 	Type() DataType
 	// Constraint returns the column constraint.
-	Constraint() ColumnConstraint
+	Constraint() Constraint
 }
 
 // ResultSetSchema represents a schema interface in a resultset.
