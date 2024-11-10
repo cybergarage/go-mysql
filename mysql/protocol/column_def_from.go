@@ -24,7 +24,8 @@ import (
 
 // NewColumnDefFromReader returns a new ColumnDef from the reader.
 func NewColumnDefsFromResultSet(rs sql.ResultSet) ([]*ColumnDef, error) {
-	columns := rs.Columns()
+	schema := rs.Schema()
+	columns := schema.Columns()
 	columnDefs := make([]*ColumnDef, len(columns))
 	for n, column := range columns {
 		t, err := query.NewFieldTypeFrom(column.DataType())
@@ -36,8 +37,8 @@ func NewColumnDefsFromResultSet(rs sql.ResultSet) ([]*ColumnDef, error) {
 			return nil, err
 		}
 		columnDef := NewColumnDef(
-			WithColumnDefSchema(rs.DatabaseName()),
-			WithColumnDefTable(rs.TableName()),
+			WithColumnDefSchema(schema.DatabaseName()),
+			WithColumnDefTable(schema.TableName()),
 			WithColumnDefName(column.Name()),
 			WithColumnDefType(uint8(t)),
 			WithColumnDefFlags(uint16(c)),
