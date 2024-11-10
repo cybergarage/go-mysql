@@ -27,7 +27,7 @@ func NewColumnDefsFromResultSet(rs sql.ResultSet) ([]*ColumnDef, error) {
 	columns := rs.Columns()
 	columnDefs := make([]*ColumnDef, len(columns))
 	for n, column := range columns {
-		t, err := query.NewFieldTypeFrom(column.Type())
+		t, err := query.NewFieldTypeFrom(column.DataType())
 		if err != nil {
 			return nil, err
 		}

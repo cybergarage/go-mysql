@@ -38,7 +38,7 @@ func NewTextResultSetRowFromResultSetRow(schema sql.ResultSetSchema, rsRow sql.R
 		if schemaColumnCount <= n {
 			return nil, fmt.Errorf("schema column count (%d) is less than row column count (%d)", schemaColumnCount, n)
 		}
-		columnType := schemaColumns[n].Type()
+		columnType := schemaColumns[n].DataType()
 		switch columnType {
 		default:
 			rowColumns[n] = fmt.Sprintf("%s", v)
