@@ -16,6 +16,7 @@ package mysql
 
 // ServerConfig stores server configuration parameters.
 type ServerConfig interface {
+	TLSConfig
 	// SetAddress sets a listen address.
 	SetAddress(host string)
 	// SetPort sets a listen port.

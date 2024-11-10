@@ -24,14 +24,16 @@ type config struct {
 	address  string
 	port     int
 	database string
+	*tlsConfig
 }
 
 // NewDefaultConfig returns a default configuration instance.
 func NewDefaultConfig() Config {
 	config := &config{
-		address:  defaultAddr,
-		port:     defaultPort,
-		database: "",
+		address:   defaultAddr,
+		port:      defaultPort,
+		database:  "",
+		tlsConfig: NewTLSConf(),
 	}
 	return config
 }
