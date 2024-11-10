@@ -15,6 +15,7 @@
 package protocol
 
 import (
+	"context"
 	"crypto/tls"
 	"net"
 	"time"
@@ -29,30 +30,30 @@ type ConnOption = func(*conn)
 // conn represents a connection of MySQL binary.
 type conn struct {
 	net.Conn
-	isClosed  bool
-	msgReader *PacketReader
-	db        string
-	ts        time.Time
-	uuid      uuid.UUID
-	id        uint64
-	tracer.Context
-	tlsState     *tls.ConnectionState
-	capabilities Capability
+	isClosed      bool
+	msgReader     *PacketReader
+	db            string
+	ts            time.Time
+	uuid          uuid.UUID
+	id            uint64
+	tracerContext tracer.Context
+	tlsState      *tls.ConnectionState
+	capabilities  Capability
 }
 
 // NewConnWith returns a connection with a raw connection.
 func NewConnWith(netConn net.Conn, opts ...ConnOption) Conn {
 	conn := &conn{
-		Conn:         netConn,
-		isClosed:     false,
-		msgReader:    NewPacketReaderWith(netConn),
-		db:           "",
-		ts:           time.Now(),
-		uuid:         uuid.New(),
-		id:           0,
-		Context:      nil,
-		tlsState:     nil,
-		capabilities: 0,
+		Conn:          netConn,
+		isClosed:      false,
+		msgReader:     NewPacketReaderWith(netConn),
+		db:            "",
+		ts:            time.Now(),
+		uuid:          uuid.New(),
+		id:            0,
+		tracerContext: nil,
+		tlsState:      nil,
+		capabilities:  0,
 	}
 	conn.SetOptions(opts...)
 	return conn
@@ -68,7 +69,7 @@ func WithConnDatabase(name string) func(*conn) {
 // WithConnTracer sets a tracer context.
 func WithConnTracer(t tracer.Context) func(*conn) {
 	return func(conn *conn) {
-		conn.Context = t
+		conn.tracerContext = t
 	}
 }
 
@@ -144,14 +145,34 @@ func (conn *conn) ID() uint64 {
 	return conn.id
 }
 
+// Context returns the context of the connection.
+func (conn *conn) Context() context.Context {
+	return context.Background()
+}
+
 // SetSpanContext sets the tracer span context of the connection.
 func (conn *conn) SetSpanContext(ctx tracer.Context) {
-	conn.Context = ctx
+	conn.tracerContext = ctx
 }
 
 // SpanContext returns the tracer span context of the connection.
 func (conn *conn) SpanContext() tracer.Context {
-	return conn.Context
+	return conn.tracerContext
+}
+
+// Span returns the current top tracer span on the tracer span stack.
+func (conn *conn) Span() tracer.Span {
+	return conn.tracerContext.Span()
+}
+
+// StartSpan starts a new child tracer span and pushes it onto the tracer span stack.
+func (conn *conn) StartSpan(name string) bool {
+	return conn.tracerContext.StartSpan(name)
+}
+
+// FinishSpan ends the current top tracer span and pops it from the tracer span stack.
+func (conn *conn) FinishSpan() bool {
+	return conn.tracerContext.FinishSpan()
 }
 
 // IsTLSConnection return true if the connection is enabled TLS.
