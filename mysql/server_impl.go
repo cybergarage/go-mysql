@@ -26,7 +26,7 @@ import (
 type server struct {
 	*protocol.Server
 	executor      Executor
-	queryExecutor query.Executor
+	queryExecutor SQLExecutor
 }
 
 // NewServer returns a base executor server instance.
@@ -42,12 +42,12 @@ func NewServer() Server {
 }
 
 // SetExecutor sets an executor to the server.
-func (server *server) SetQueryExecutor(executor query.Executor) {
+func (server *server) SetSQLExecutor(executor SQLExecutor) {
 	server.queryExecutor = executor
 }
 
-// QueryExecutor returns the executor of the server.
-func (server *server) QueryExecutor() query.Executor {
+// SQLExecutor returns the executor of the server.
+func (server *server) SQLExecutor() SQLExecutor {
 	return server.queryExecutor
 }
 

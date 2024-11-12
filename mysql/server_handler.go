@@ -21,42 +21,42 @@ import (
 
 // CreateDatabase handles a CREATE DATABASE query.
 func (server *server) CreateDatabase(conn Conn, stmt sql.CreateDatabase) (Response, error) {
-	return protocol.NewResponseWithError(server.QueryExecutor().CreateDatabase(conn, stmt))
+	return protocol.NewResponseWithError(server.SQLExecutor().CreateDatabase(conn, stmt))
 }
 
 // CreateTable handles a CREATE TABLE query.
 func (server *server) CreateTable(conn Conn, stmt sql.CreateTable) (Response, error) {
-	return protocol.NewResponseWithError(server.QueryExecutor().CreateTable(conn, stmt))
+	return protocol.NewResponseWithError(server.SQLExecutor().CreateTable(conn, stmt))
 }
 
 // AlterDatabase handles a ALTER DATABASE query.
 func (server *server) AlterDatabase(conn Conn, stmt sql.AlterDatabase) (Response, error) {
-	return protocol.NewResponseWithError(server.QueryExecutor().AlterDatabase(conn, stmt))
+	return protocol.NewResponseWithError(server.SQLExecutor().AlterDatabase(conn, stmt))
 }
 
 // AlterTable handles a ALTER TABLE query.
 func (server *server) AlterTable(conn Conn, stmt sql.AlterTable) (Response, error) {
-	return protocol.NewResponseWithError(server.QueryExecutor().AlterTable(conn, stmt))
+	return protocol.NewResponseWithError(server.SQLExecutor().AlterTable(conn, stmt))
 }
 
 // DropDatabase handles a DROP DATABASE query.
 func (server *server) DropDatabase(conn Conn, stmt sql.DropDatabase) (Response, error) {
-	return protocol.NewResponseWithError(server.QueryExecutor().DropDatabase(conn, stmt))
+	return protocol.NewResponseWithError(server.SQLExecutor().DropDatabase(conn, stmt))
 }
 
 // DropIndex handles a DROP INDEX query.
 func (server *server) DropTable(conn Conn, stmt sql.DropTable) (Response, error) {
-	return protocol.NewResponseWithError(server.QueryExecutor().DropTable(conn, stmt))
+	return protocol.NewResponseWithError(server.SQLExecutor().DropTable(conn, stmt))
 }
 
 // Insert handles a INSERT query.
 func (server *server) Insert(conn Conn, stmt sql.Insert) (Response, error) {
-	return protocol.NewResponseWithError(server.QueryExecutor().Insert(conn, stmt))
+	return protocol.NewResponseWithError(server.SQLExecutor().Insert(conn, stmt))
 }
 
 // Select handles a SELECT query.
 func (server *server) Select(conn Conn, stmt sql.Select) (Response, error) {
-	rs, err := server.QueryExecutor().Select(conn, stmt)
+	rs, err := server.SQLExecutor().Select(conn, stmt)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (server *server) Select(conn Conn, stmt sql.Select) (Response, error) {
 
 // Update handles a UPDATE query.
 func (server *server) Update(conn Conn, stmt sql.Update) (Response, error) {
-	rs, err := server.QueryExecutor().Update(conn, stmt)
+	rs, err := server.SQLExecutor().Update(conn, stmt)
 	if err != nil {
 		return protocol.NewResponseWithError(err)
 	}
@@ -76,7 +76,7 @@ func (server *server) Update(conn Conn, stmt sql.Update) (Response, error) {
 
 // Delete handles a DELETE query.
 func (server *server) Delete(conn Conn, stmt sql.Delete) (Response, error) {
-	rs, err := server.QueryExecutor().Delete(conn, stmt)
+	rs, err := server.SQLExecutor().Delete(conn, stmt)
 	if err != nil {
 		return protocol.NewResponseWithError(err)
 	}
@@ -87,22 +87,22 @@ func (server *server) Delete(conn Conn, stmt sql.Delete) (Response, error) {
 
 // Begin handles a BEGIN query.
 func (server *server) Begin(conn Conn, stmt sql.Begin) (Response, error) {
-	return protocol.NewResponseWithError(server.QueryExecutor().Begin(conn, stmt))
+	return protocol.NewResponseWithError(server.SQLExecutor().Begin(conn, stmt))
 }
 
 // Commit handles a COMMIT query.
 func (server *server) Commit(conn Conn, stmt sql.Commit) (Response, error) {
-	return protocol.NewResponseWithError(server.QueryExecutor().Commit(conn, stmt))
+	return protocol.NewResponseWithError(server.SQLExecutor().Commit(conn, stmt))
 }
 
 // Rollback handles a ROLLBACK query.
 func (server *server) Rollback(conn Conn, stmt sql.Rollback) (Response, error) {
-	return protocol.NewResponseWithError(server.QueryExecutor().Rollback(conn, stmt))
+	return protocol.NewResponseWithError(server.SQLExecutor().Rollback(conn, stmt))
 }
 
 // Use handles a USE query.
 func (server *server) Use(conn Conn, stmt sql.Use) (Response, error) {
-	return protocol.NewResponseWithError(server.QueryExecutor().Use(conn, stmt))
+	return protocol.NewResponseWithError(server.SQLExecutor().Use(conn, stmt))
 }
 
 // ErrorHandler represents a user error handler.

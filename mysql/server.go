@@ -15,15 +15,20 @@
 package mysql
 
 import (
-	"github.com/cybergarage/go-mysql/mysql/query"
+	"github.com/cybergarage/go-sqlparser/sql"
 	"github.com/cybergarage/go-tracing/tracer"
 )
+
+// SQLExecutor represents a frontend message executor.
+type SQLExecutor interface {
+	sql.Executor
+}
 
 // Server represents a MySQL-compatible server interface.
 type Server interface {
 	ServerConfig
 	tracer.Tracer
-	SetQueryExecutor(executor query.Executor)
+	SetSQLExecutor(executor SQLExecutor)
 	SetProductName(v string)
 	SetProductVersion(v string)
 	Start() error
