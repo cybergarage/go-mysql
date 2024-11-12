@@ -51,8 +51,8 @@ type DMOExecutor interface {
 	Delete(Conn, sql.Delete) (Response, error)
 }
 
-// TCLExecutor defines a executor interface for TCL (Transaction Control Language).
-type TCLExecutor interface {
+// TCOExecutor defines a executor interface for TCL (Transaction Control Operations).
+type TCOExecutor interface {
 	// Begin handles a BEGIN query.
 	Begin(Conn, sql.Begin) (Response, error)
 	// Commit handles a COMMIT query.
@@ -69,6 +69,7 @@ type ExtraExecutor interface {
 
 // QueryExecutor represents a user query message executor.
 type QueryExecutor interface {
+	TCOExecutor
 	DDOExecutor
 	DMOExecutor
 	ExtraExecutor
@@ -81,7 +82,6 @@ type ErrorHandler interface {
 
 // Executor represents a frontend message executor.
 type Executor interface { // nolint: interfacebloat
-	TCLExecutor
 	QueryExecutor
 	ErrorHandler
 }
