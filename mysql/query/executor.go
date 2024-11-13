@@ -12,24 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mysql
+package query
 
 import (
-	"github.com/cybergarage/go-mysql/mysql/query"
-	"github.com/cybergarage/go-tracing/tracer"
+	"github.com/cybergarage/go-sqlparser/sql"
 )
 
-// SQLExecutor represents a SQL executor.
-type SQLExecutor = query.SQLExecutor
-
-// Server represents a MySQL-compatible server interface.
-type Server interface {
-	ServerConfig
-	tracer.Tracer
-	SetSQLExecutor(executor SQLExecutor)
-	SetProductName(v string)
-	SetProductVersion(v string)
-	Start() error
-	Stop() error
-	Restart() error
+// SQLExecutor represents a frontend message executor.
+type SQLExecutor interface {
+	sql.Executor
 }
