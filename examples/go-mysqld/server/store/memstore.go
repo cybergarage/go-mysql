@@ -313,6 +313,7 @@ func (store *MemStore) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, 
 	return rs, nil
 }
 
+// SystemSelect should handle a system SELECT statement.
 func (store *MemStore) SystemSelect(conn net.Conn, stmt query.Select) (sql.ResultSet, error) {
 	log.Debugf("%v", stmt)
 	return nil, errors.NewErrNotImplemented("SystemSelect")
