@@ -22,6 +22,7 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/net"
 	"github.com/cybergarage/go-mysql/mysql/query"
 	"github.com/cybergarage/go-sqlparser/sql"
+	"github.com/cybergarage/go-sqlparser/sql/response/resultset"
 )
 
 type MemStore struct {
@@ -199,8 +200,8 @@ func (store *MemStore) Update(conn net.Conn, stmt query.Update) (sql.ResultSet, 
 		return nil, err
 	}
 
-	return sql.NewResultSet(
-		sql.WithResultSetRowsAffected(uint64(n)),
+	return resultset.NewResultSet(
+		resultset.WithRowsAffected(uint64(n)),
 	), nil
 }
 
@@ -218,8 +219,8 @@ func (store *MemStore) Delete(conn net.Conn, stmt query.Delete) (sql.ResultSet, 
 		return nil, err
 	}
 
-	return sql.NewResultSet(
-		sql.WithResultSetRowsAffected(uint64(n)),
+	return resultset.NewResultSet(
+		resultset.WithRowsAffected(uint64(n)),
 	), nil
 }
 
@@ -259,17 +260,17 @@ func (store *MemStore) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, 
 		if err != nil {
 			return nil, err
 		}
-		rsCchemaColumn, err := sql.NewResultSetColumnFrom(shemaColumn)
+		rsCchemaColumn, err := resultset.NewColumnFrom(shemaColumn)
 		if err != nil {
 			return nil, err
 		}
 		rsSchemaColums = append(rsSchemaColums, rsCchemaColumn)
 	}
 
-	rsSchema := sql.NewResultSetSchema(
-		sql.WithResultSetSchemaDatabaseName(conn.Database()),
-		sql.WithResultSetSchemaTableName(tblName),
-		sql.WithResultSetSchemaResultSetColumns(rsSchemaColums),
+	rsSchema := resultset.NewSchema(
+		resultset.WithSchemaDatabaseName(conn.Database()),
+		resultset.WithSchemaTableName(tblName),
+		resultset.WithSchemaResultSetColumns(rsSchemaColums),
 	)
 
 	// Data row response
@@ -292,8 +293,8 @@ func (store *MemStore) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, 
 				}
 				rowValues = append(rowValues, value)
 			}
-			rsRow := sql.NewResultSetRow(
-				sql.WithResultSetRowValues(rowValues),
+			rsRow := resultset.NewRow(
+				resultset.WithRowValues(rowValues),
 			)
 			rsRows = append(rsRows, rsRow)
 			rowIdx++
@@ -304,10 +305,10 @@ func (store *MemStore) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, 
 	}
 	// Return a result set
 
-	rs := sql.NewResultSet(
-		sql.WithResultSetSchema(rsSchema),
-		sql.WithResultSetRowsAffected(uint64(rowIdx)),
-		sql.WithResultSetRows(rsRows),
+	rs := resultset.NewResultSet(
+		resultset.WithSchema(rsSchema),
+		resultset.WithRowsAffected(uint64(rowIdx)),
+		resultset.WithRows(rsRows),
 	)
 
 	return rs, nil
