@@ -294,7 +294,7 @@ func (store *MemStore) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, 
 				rowValues = append(rowValues, value)
 			}
 			rsRow := resultset.NewRow(
-				resultset.WithRowValues(rowValues),
+				resultset.WithRowObjects(rowValues),
 			)
 			rsRows = append(rsRows, rsRow)
 			rowIdx++
