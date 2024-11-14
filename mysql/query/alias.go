@@ -51,12 +51,14 @@ type (
 	Use            = sql.Use
 	Schema         = sql.Schema
 	Column         = query.Column
-	ColumnList     = query.ColumnList
+	Columns        = query.Columns
+	Index          = query.Index
+	Indexes        = query.Indexes
 	Table          = query.Table
 	TableList      = query.TableList
 	Condition      = query.Condition
 	Selector       = query.Selector
-	SelectorList   = query.SelectorList
+	Selectors      = query.Selectors
 	Expr           = query.Expr
 	CmpExpr        = query.CmpExpr
 	AndExpr        = query.AndExpr
