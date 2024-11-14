@@ -22,7 +22,7 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/net"
 	"github.com/cybergarage/go-mysql/mysql/query"
 	"github.com/cybergarage/go-sqlparser/sql"
-	"github.com/cybergarage/go-sqlparser/sql/response/resultset"
+	"github.com/cybergarage/go-sqlparser/sql/query/response/resultset"
 )
 
 type MemStore struct {
