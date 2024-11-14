@@ -33,8 +33,8 @@ import (
 func NewTextResultSetRowFromResultSetRow(schema sql.ResultSetSchema, rsRow sql.ResultSetRow) (ResultSetRow, error) {
 	schemaColumns := schema.Columns()
 	schemaColumnCount := len(schemaColumns)
-	rowColumns := make([]string, len(rsRow.Values()))
-	for n, v := range rsRow.Values() {
+	rowColumns := make([]string, len(rsRow.Objects()))
+	for n, v := range rsRow.Objects() {
 		if schemaColumnCount <= n {
 			return nil, fmt.Errorf("schema column count (%d) is less than row column count (%d)", schemaColumnCount, n)
 		}
