@@ -26,6 +26,7 @@ type SQLExecutor = query.SQLExecutor
 type Server interface {
 	ServerConfig
 	tracer.Tracer
+	SetTracer(tracer.Tracer)
 	SetSQLExecutor(executor SQLExecutor)
 	SetProductName(v string)
 	SetProductVersion(v string)
