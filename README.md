@@ -14,7 +14,7 @@ The go-mysql handles [MySQL protocol](https://dev.mysql.com/doc/dev/mysql-server
 
 The go-mysqld provides a implementation framework of authentication and query handlers for MySQL protocol.The go-mysqld makes it possible to implement your original [MySQL](https://www.mysql.com/)-compatible servers more easily.
 
-In the past, go-mysql was based on [Vitess](https://vitess.io) which is a sharding framework for [MySQL](https://www.mysql.com/), but since version 2 the protocol layer and parser have been implemented independently and no longer depend on [Vitess](https://vitess.io/).　
+In the past, go-mysql was based on [Vitess](https://vitess.io) which is a sharding framework for [MySQL](https://www.mysql.com/), but since version 1.1 the protocol layer and parser have been implemented independently and no longer depend on [Vitess](https://vitess.io/).　
 The protocol handler has been re-implemented independently to support good extensions for both MySQL and MariaDB, and its SQL parser is based on [go-sqlparser](https://github.com/cybergarage/go-sqlparser), aiming to support SQL92 compliant queries.
 
 ## Table of Contents
