@@ -16,7 +16,11 @@ package protocol
 
 import (
 	"fmt"
+	"strconv"
+	"time"
 
+	"github.com/cybergarage/go-mysql/mysql/query"
+	"github.com/cybergarage/go-safecast/safecast"
 	"github.com/cybergarage/go-sqlparser/sql"
 )
 
@@ -29,8 +33,25 @@ import (
 // Resultset row - MariaDB Knowledge Base
 // https://mariadb.com/kb/en/resultset-row/
 
-// NewTextResultSetRowFromResultSetRow returns a new ResultSetRow from the specified ResultSetRow.
-func NewTextResultSetRowFromResultSetRow(schema sql.ResultSetSchema, rsRow sql.ResultSetRow) (ResultSetRow, error) {
+const (
+	DateTimeFormat = "2006-01-02 15:04:05"
+)
+
+// NewTextResultSetRowsFromResultSet returns a new ResultSetRow list from the specified ResultSet.
+func NewTextResultSetRowsFromResultSet(rs sql.ResultSet) ([]ResultSetRow, error) {
+	rows := []ResultSetRow{}
+	for rs.Next() {
+		row, err := NewTextResultSetRowFrom(rs.Schema(), rs.Row())
+		if err != nil {
+			return nil, err
+		}
+		rows = append(rows, row)
+	}
+	return rows, nil
+}
+
+// NewTextResultSetRowFrom returns a new ResultSetRow from the specified ResultSetSchema and ResultSetRow.
+func NewTextResultSetRowFrom(schema sql.ResultSetSchema, rsRow sql.ResultSetRow) (ResultSetRow, error) {
 	schemaColumns := schema.Columns()
 	schemaColumnCount := len(schemaColumns)
 	rowColumns := make([]string, len(rsRow.Values()))
@@ -39,10 +60,11 @@ func NewTextResultSetRowFromResultSetRow(schema sql.ResultSetSchema, rsRow sql.R
 			return nil, fmt.Errorf("schema column count (%d) is less than row column count (%d)", schemaColumnCount, n)
 		}
 		columnType := schemaColumns[n].DataType()
-		switch columnType {
-		default:
-			rowColumns[n] = fmt.Sprintf("%s", v)
+		rowValue, err := NewTextResultSetRowValueFrom(columnType, v)
+		if err != nil {
+			return nil, err
 		}
+		rowColumns[n] = rowValue
 	}
 	row := NewTextResultSetRow(
 		WithTextResultSetRowColmuns(rowColumns),
@@ -50,15 +72,33 @@ func NewTextResultSetRowFromResultSetRow(schema sql.ResultSetSchema, rsRow sql.R
 	return row, nil
 }
 
-// NewTextResultSetRowsFromResultSet returns a new ResultSetRow list from the specified ResultSet.
-func NewTextResultSetRowsFromResultSet(rs sql.ResultSet) ([]ResultSetRow, error) {
-	rows := []ResultSetRow{}
-	for rs.Next() {
-		row, err := NewTextResultSetRowFromResultSetRow(rs.Schema(), rs.Row())
+// NewTextResultSetRowValueFrom returns a new ResultSetRowValue from the specified DataType and value.
+func NewTextResultSetRowValueFrom(t query.DataType, v any) (string, error) {
+	switch t {
+	case query.CharData, query.CharacterData, query.VarCharData, query.VarCharacterData, query.TextData, query.TinyTextData, query.LongTextData:
+		return fmt.Sprintf("%s", v), nil
+	case query.IntData, query.IntegerData, query.SmallIntData, query.MediumIntData, query.TinyIntData:
+		var rv int
+		err := safecast.ToInt(v, &rv)
 		if err != nil {
-			return nil, err
+			return "", err
 		}
-		rows = append(rows, row)
+		return strconv.Itoa(rv), nil
+	case query.FloatData, query.DoubleData, query.RealData:
+		var rv float64
+		err := safecast.ToFloat64(v, &rv)
+		if err != nil {
+			return "", err
+		}
+		return strconv.FormatFloat(rv, 'f', -1, 64), nil
+	case query.TimeStampData, query.DateTimeData:
+		var rv time.Time
+		err := safecast.ToTime(v, &rv)
+		if err != nil {
+			return "", err
+		}
+		return rv.Format(DateTimeFormat), nil
+	default:
 	}
-	return rows, nil
+	return fmt.Sprintf("%s", v), nil
 }
