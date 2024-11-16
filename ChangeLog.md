@@ -1,15 +1,16 @@
 # Changelog
 
-## v1.2.0 (2023-xx-xx)
-- Updated executor interfaces to support major MySQL commands
+## v2.1.x (2024-11-xx)
+- Support TLS connections
+- Support major authentication methods
 
-## v1.1.0 (2023-10-xx)
-- Added transaction executor interface
-
+## v2.0.0 (2024-11-16)
+- Re-implemented the protocol layer and parser independently
+  - Removed dependency on Vitess.
 
 ## v1.0.6 (2024-05-14)
 - Fixed dependabot alerts
-- 
+
 ## v1.0.5 (2023-10-27)
 - Updated
   - Connection
