@@ -1,10 +1,10 @@
 # Changelog
 
-## v2.1.x (2024-11-xx)
+## v1.1.x (2024-11-xx)
 - Support TLS connections
 - Support major authentication methods
 
-## v2.0.0 (2024-11-16)
+## v1.1.0 (2024-11-16)
 - Re-implemented the protocol layer and parser independently
   - Removed dependency on Vitess.
 
