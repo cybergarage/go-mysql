@@ -36,6 +36,8 @@ func NewServer() Server {
 		executor:      nil,
 		queryExecutor: nil,
 	}
+	server.SetProductName(PackageName)
+	server.SetProductVersion(Version)
 	server.executor = server
 	server.Server.SetCommandHandler(server)
 	return server
