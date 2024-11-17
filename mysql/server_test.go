@@ -21,7 +21,7 @@ import (
 // nolint: staticcheck, gosimple
 func TestServer(t *testing.T) {
 	server := NewServer()
-	_, ok := server.(Executor)
+	_, ok := server.(ProtocolExecutor)
 	if !ok {
 		t.Error("NewServer() must implement Executor")
 	}

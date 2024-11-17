@@ -25,46 +25,59 @@ import (
 // server represents a base executor server.
 type server struct {
 	*protocol.Server
-	executor      Executor
-	queryExecutor SQLExecutor
+	sqlExecutor   SQLExecutor
+	queryExecutor QueryExecutor
+	errorHandler  ErrorHandler
 }
 
 // NewServer returns a base executor server instance.
 func NewServer() Server {
 	server := &server{
 		Server:        protocol.NewServer(),
-		executor:      nil,
+		sqlExecutor:   nil,
 		queryExecutor: nil,
+		errorHandler:  nil,
 	}
 	server.Server.SetProductName(PackageName)
 	server.Server.SetProductVersion(Version)
-	server.executor = server
+	server.queryExecutor = server
+	server.errorHandler = server
 	server.Server.SetCommandHandler(server)
 	return server
 }
 
 // SetExecutor sets an executor to the server.
 func (server *server) SetSQLExecutor(executor SQLExecutor) {
+	server.sqlExecutor = executor
+}
+
+// SetQueryExecutor sets a user query executor.
+func (server *server) SetQueryExecutor(executor QueryExecutor) {
 	server.queryExecutor = executor
+}
+
+// SetErrorHandler sets a user error handler.
+func (server *server) SetErrorHandler(handler ErrorHandler) {
+	server.errorHandler = handler
 }
 
 // SQLExecutor returns the executor of the server.
 func (server *server) SQLExecutor() SQLExecutor {
-	return server.queryExecutor
+	return server.sqlExecutor
 }
 
 // HandleQuery handles a query.
 func (server *server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protocol.Response, error) {
 	connCaps := conn.Capabilities()
 
-	if server.queryExecutor == nil {
+	if server.sqlExecutor == nil {
 		return nil, errors.ErrNotImplemented
 	}
 
 	parser := query.NewParser()
 	stmts, err := parser.ParseString(q.Query())
 	if err != nil {
-		return nil, server.queryExecutor.ParserError(conn, q.Query(), err)
+		return server.errorHandler.ParserError(conn, q.Query(), err)
 	}
 
 	seqID := q.SequenceID().Next()
@@ -100,46 +113,46 @@ func (server *server) HandleStatement(conn protocol.Conn, stmt query.Statement) 
 	switch stmt.StatementType() {
 	case query.BeginStatement:
 		stmt := stmt.(query.Begin)
-		res, err = server.executor.Begin(conn, stmt)
+		res, err = server.queryExecutor.Begin(conn, stmt)
 	case query.CommitStatement:
 		stmt := stmt.(query.Commit)
-		res, err = server.executor.Commit(conn, stmt)
+		res, err = server.queryExecutor.Commit(conn, stmt)
 	case query.RollbackStatement:
 		stmt := stmt.(query.Rollback)
-		res, err = server.executor.Rollback(conn, stmt)
+		res, err = server.queryExecutor.Rollback(conn, stmt)
 	case query.CreateDatabaseStatement:
 		stmt := stmt.(query.CreateDatabase)
-		res, err = server.executor.CreateDatabase(conn, stmt)
+		res, err = server.queryExecutor.CreateDatabase(conn, stmt)
 	case query.CreateTableStatement:
 		stmt := stmt.(query.CreateTable)
-		res, err = server.executor.CreateTable(conn, stmt)
+		res, err = server.queryExecutor.CreateTable(conn, stmt)
 	case query.AlterDatabaseStatement:
 		stmt := stmt.(query.AlterDatabase)
-		res, err = server.executor.AlterDatabase(conn, stmt)
+		res, err = server.queryExecutor.AlterDatabase(conn, stmt)
 	case query.AlterTableStatement:
 		stmt := stmt.(query.AlterTable)
-		res, err = server.executor.AlterTable(conn, stmt)
+		res, err = server.queryExecutor.AlterTable(conn, stmt)
 	case query.DropDatabaseStatement:
 		stmt := stmt.(query.DropDatabase)
-		res, err = server.executor.DropDatabase(conn, stmt)
+		res, err = server.queryExecutor.DropDatabase(conn, stmt)
 	case query.DropTableStatement:
 		stmt := stmt.(query.DropTable)
-		res, err = server.executor.DropTable(conn, stmt)
+		res, err = server.queryExecutor.DropTable(conn, stmt)
 	case query.InsertStatement:
 		stmt := stmt.(query.Insert)
-		res, err = server.executor.Insert(conn, stmt)
+		res, err = server.queryExecutor.Insert(conn, stmt)
 	case query.SelectStatement:
 		stmt := stmt.(query.Select)
-		res, err = server.executor.Select(conn, stmt)
+		res, err = server.queryExecutor.Select(conn, stmt)
 	case query.UpdateStatement:
 		stmt := stmt.(query.Update)
-		res, err = server.executor.Update(conn, stmt)
+		res, err = server.queryExecutor.Update(conn, stmt)
 	case query.DeleteStatement:
 		stmt := stmt.(query.Delete)
-		res, err = server.executor.Delete(conn, stmt)
+		res, err = server.queryExecutor.Delete(conn, stmt)
 	case query.UseStatement:
 		stmt := stmt.(query.Use)
-		res, err = server.executor.Use(conn, stmt)
+		res, err = server.queryExecutor.Use(conn, stmt)
 	}
 
 	return res, err

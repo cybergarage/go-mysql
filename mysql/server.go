@@ -22,6 +22,24 @@ import (
 // SQLExecutor represents a SQL executor.
 type SQLExecutor = query.SQLExecutor
 
+// QueryExecutor represents a user query message executor.
+type QueryExecutor interface {
+	TCOExecutor
+	DDOExecutor
+	DMOExecutor
+}
+
+// ErrorHandler represents a user error handler.
+type ErrorHandler interface {
+	ParserError(Conn, string, error) (Response, error)
+}
+
+// ProtocolExecutor represents a frontend message executor.
+type ProtocolExecutor interface {
+	QueryExecutor
+	ErrorHandler
+}
+
 // Server represents a MySQL-compatible server interface.
 type Server interface {
 	ServerConfig
@@ -30,6 +48,10 @@ type Server interface {
 	SetTracer(tracer.Tracer)
 	// SetSQLExecutor sets an SQL executor to the server.
 	SetSQLExecutor(executor SQLExecutor)
+	// SetQueryExecutor sets a user query executor.
+	SetQueryExecutor(QueryExecutor)
+	// SetErrorHandler sets a user error handler.
+	SetErrorHandler(ErrorHandler)
 	// Start starts the server.
 	Start() error
 	// Stop stops the server.
