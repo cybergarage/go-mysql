@@ -41,6 +41,8 @@ type DDOExecutor interface {
 
 // DMOExecutor defines a executor interface for DMO (Data Manipulation Operations).
 type DMOExecutor interface {
+	// Use handles a USE query.
+	Use(net.Conn, sql.Use) (Response, error)
 	// Insert handles a INSERT query.
 	Insert(Conn, sql.Insert) (Response, error)
 	// Select handles a SELECT query.
@@ -59,29 +61,4 @@ type TCOExecutor interface {
 	Commit(Conn, sql.Commit) (Response, error)
 	// Rollback handles a ROLLBACK query.
 	Rollback(Conn, sql.Rollback) (Response, error)
-}
-
-// ExtraExecutor defines a executor interface for extra operations.
-type ExtraExecutor interface {
-	// Use handles a USE query.
-	Use(net.Conn, sql.Use) (Response, error)
-}
-
-// QueryExecutor represents a user query message executor.
-type QueryExecutor interface {
-	TCOExecutor
-	DDOExecutor
-	DMOExecutor
-	ExtraExecutor
-}
-
-// ErrorHandler represents a user error handler.
-type ErrorHandler interface {
-	ParserError(Conn, string, error) (Response, error)
-}
-
-// Executor represents a frontend message executor.
-type Executor interface { // nolint: interfacebloat
-	QueryExecutor
-	ErrorHandler
 }
