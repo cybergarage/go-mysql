@@ -21,6 +21,7 @@ import (
 	"net"
 	"strconv"
 
+	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/mysql/auth"
 	mysqlnet "github.com/cybergarage/go-mysql/mysql/net"
 	"github.com/cybergarage/go-tracing/tracer"
@@ -76,6 +77,9 @@ func (server *Server) Start() error {
 
 	go server.serve()
 
+	addr := net.JoinHostPort(server.Address(), strconv.Itoa(server.Port()))
+	log.Infof("%s/%s (%s) started", server.ProductName(), server.ProductVersion(), addr)
+
 	return nil
 }
 
@@ -89,6 +93,9 @@ func (server *Server) Stop() error {
 	if err != nil {
 		return err
 	}
+
+	addr := net.JoinHostPort(server.Address(), strconv.Itoa(server.Port()))
+	log.Infof("%s/%s (%s) terminated", server.ProductName(), server.ProductVersion(), addr)
 
 	return nil
 }
