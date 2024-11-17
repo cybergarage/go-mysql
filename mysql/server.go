@@ -26,11 +26,14 @@ type SQLExecutor = query.SQLExecutor
 type Server interface {
 	ServerConfig
 	tracer.Tracer
+	// SetTracer sets a tracing tracer.
 	SetTracer(tracer.Tracer)
+	// SetSQLExecutor sets an SQL executor to the server.
 	SetSQLExecutor(executor SQLExecutor)
-	SetProductName(v string)
-	SetProductVersion(v string)
+	// Start starts the server.
 	Start() error
+	// Stop stops the server.
 	Stop() error
+	// Restart restarts the server.
 	Restart() error
 }
