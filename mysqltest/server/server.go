@@ -15,18 +15,18 @@
 package server
 
 import (
-	v2 "github.com/cybergarage/go-mysql/examples/go-mysqld/server"
+	server "github.com/cybergarage/go-mysql/examples/go-mysqld/server"
 )
 
 // Server represents a test server.
 type Server struct {
-	*v2.Server
+	*server.Server
 }
 
 // NewServer returns a test server instance.
 func NewServer() *Server {
 	s := &Server{
-		Server: v2.NewServer(),
+		Server: server.NewServer(),
 	}
 	return s
 }
