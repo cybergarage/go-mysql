@@ -44,14 +44,24 @@ type ProtocolExecutor interface {
 type Server interface {
 	ServerConfig
 	tracer.Tracer
+
 	// SetTracer sets a tracing tracer.
 	SetTracer(tracer.Tracer)
+
 	// SetSQLExecutor sets an SQL executor to the server.
 	SetSQLExecutor(executor SQLExecutor)
 	// SetQueryExecutor sets a user query executor.
 	SetQueryExecutor(QueryExecutor)
 	// SetErrorHandler sets a user error handler.
 	SetErrorHandler(ErrorHandler)
+
+	// SQLExecutor returns the SQL executor.
+	SQLExecutor() SQLExecutor
+	// QueryExecutor returns the user query executor.
+	QueryExecutor() QueryExecutor
+	// ErrorHandler returns the user error handler.
+	ErrorHandler() ErrorHandler
+
 	// Start starts the server.
 	Start() error
 	// Stop stops the server.
