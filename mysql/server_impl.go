@@ -66,6 +66,16 @@ func (server *server) SQLExecutor() SQLExecutor {
 	return server.sqlExecutor
 }
 
+// QueryExecutor returns the user query executor.
+func (server *server) QueryExecutor() QueryExecutor {
+	return server.queryExecutor
+}
+
+// ErrorHandler returns the user error handler.
+func (server *server) ErrorHandler() ErrorHandler {
+	return server.errorHandler
+}
+
 // HandleQuery handles a query.
 func (server *server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protocol.Response, error) {
 	connCaps := conn.Capabilities()
