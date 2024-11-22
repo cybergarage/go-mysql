@@ -275,40 +275,29 @@ func (store *MemStore) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, 
 
 	// Data row response
 
-	rowIdx := 0
 	rsRows := []sql.ResultSetRow{}
-	if !selectors.HasAggregateFunction() {
-		offset := stmt.Limit().Offset()
-		limit := stmt.Limit().Limit()
-		for rowNo, row := range rows {
-			if 0 < offset && rowNo < offset {
-				continue
+	for _, row := range rows {
+		rowValues := []any{}
+		for _, selector := range selectors {
+			colName := selector.Name()
+			value, err := row.ValueByName(colName)
+			if err != nil {
+				return nil, err
 			}
-			rowValues := []any{}
-			for _, selector := range selectors {
-				colName := selector.Name()
-				value, err := row.ValueByName(colName)
-				if err != nil {
-					return nil, err
-				}
-				rowValues = append(rowValues, value)
-			}
-			rsRow := resultset.NewRow(
-				resultset.WithRowSchema(rsSchema),
-				resultset.WithRowValues(rowValues),
-			)
-			rsRows = append(rsRows, rsRow)
-			rowIdx++
-			if 0 < limit && limit <= rowIdx {
-				break
-			}
+			rowValues = append(rowValues, value)
 		}
+		rsRow := resultset.NewRow(
+			resultset.WithRowSchema(rsSchema),
+			resultset.WithRowValues(rowValues),
+		)
+		rsRows = append(rsRows, rsRow)
 	}
+
 	// Return a result set
 
 	rs := resultset.NewResultSet(
 		resultset.WithSchema(rsSchema),
-		resultset.WithRowsAffected(uint64(rowIdx)),
+		resultset.WithRowsAffected(uint64(len(rsRows))),
 		resultset.WithRows(rsRows),
 	)
 
