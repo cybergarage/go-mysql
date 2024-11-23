@@ -13,7 +13,8 @@ The SystemQueryExecutor is implemented by default as required and generally does
 
 ## STEP1: Inheriting Server
 
-The go-mysql offers a core server, [mysql.Server](../mysql/server.go), and so inherit the core server in your instance as the following.
+
+The go-mysql library provides a core server, [mysql.Server](../mysql/server.go), which is responsible for handling MySQL protocol messages. To implement your MySQL-compatible server, you should inherit the MySQL core server in your instance, as shown below.
 
 ```
 import (
@@ -21,7 +22,7 @@ import (
 )
 
 type MyServer struct {
-	*mysql.Server
+	mysql.Server
 }
 
 func NewMyServer() *MyServer {
@@ -31,34 +32,60 @@ func NewMyServer() *MyServer {
 }
 ```
 
+The inherited server instance is responsible for handling MySQL protocol messages. While the default message executors are implemented in the server instance, you will need to provide a SQL executor to handle SQL queries in the next step.
+
 ## STEP2: Preparing Query Handler
 
-To handle queries to the your server, prepare a query handler according to [mysql.QueryExecutor](../mysql/executor.go) interface.
+The inherited server instance is responsible for processing MySQL protocol messages and is configured with a default message executors, but no SQL executor. 
 
+The SQL executor is defined in the [go-sqlparser](https://github.com/cybergarage/go-sqlparser) as the [sql.Executor](https://github.com/cybergarage/go-sqlparser/blob/master/sql/executor.go) interface. It has no dependencies on go-mysql and is also compatible with [go-postgresql](https://github.com/cybergarage/go-postgresql). The executor is defined as follows:
+
+```go
+type Executor interface {
+	Begin(Conn, Begin) error
+	Commit(Conn, Commit) error
+	Rollback(Conn, Rollback) error	
+	CreateDatabase(Conn, CreateDatabase) error
+	CreateTable(Conn, CreateTable) error
+	AlterDatabase(Conn, AlterDatabase) error
+	AlterTable(Conn, AlterTable) error
+	DropDatabase(Conn, DropDatabase) error
+	DropTable(Conn, DropTable) error}
+	Insert(Conn, Insert) error
+	Select(Conn, Select) (ResultSet, error)
+	Update(Conn, Update) (ResultSet, error)
+	Delete(Conn, Delete) (ResultSet, error)	
+	SystemSelect(Conn, Select) (ResultSet, error)
+	Use(Conn, Use) error
+}
 ```
+
+
+To handle SQL queries on your server, prepare a query handler that conforms to the [`sql.Executor`](https://github.com/cybergarage/go-sqlparser/blob/master/sql/executor.go) interface. Then, set the SQL executor to the server instance using [mysql.Server::SetSQLExecutor](../mysql/server.go) as shown below.
+
+```go
 func NewMyServer() *MyServer {
-	myserver := &MyServer{
+	myServer := &MyServer{
 		Server: mysql.NewServer(),
 	}
-    Myserver.SetExecutor(myserver)
+    myServer.SetSQLExecutor(myserver)
     return myserver
 }
 
-func (server *MyServer) Insert(*Conn, *query.Insert) (*Result, error) {
+func (server *MyServer) Select(conn Conn, stmt Select) (ResultSet, error) {
     .....
 }
-
 ....
 ```
 
-The go-mysql offers the stub query executor, [mysql.BaseExecutor](../mysql/executor_base.go) which returns a success status for any query requests.
-To inheriting the stub executor, you can start to implement only minimum query handle functions such as INSERT and SELECT.
+Although it is possible to replace all the default message executors with your own implementation, this chapter has provided an example where only the SQL executor has been implemented.
 
 ## STEP3: Starting Server 
 
 After implementing the query handler, start your server using  [mysql.Server::Start()](../mysql/server.go).
 
-```
+
+```go
 server := NewServer()
 
 err := server.Start()
