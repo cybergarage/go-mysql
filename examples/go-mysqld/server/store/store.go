@@ -18,9 +18,9 @@ import (
 	"fmt"
 
 	"github.com/cybergarage/go-logger/log"
-	"github.com/cybergarage/go-postgresql/postgresql/errors"
-	"github.com/cybergarage/go-postgresql/postgresql/net"
-	"github.com/cybergarage/go-postgresql/postgresql/query"
+	"github.com/cybergarage/go-mysql/mysql/errors"
+	"github.com/cybergarage/go-mysql/mysql/net"
+	"github.com/cybergarage/go-mysql/mysql/query"
 	"github.com/cybergarage/go-sqlparser/sql"
 	"github.com/cybergarage/go-sqlparser/sql/query/response/resultset"
 )
