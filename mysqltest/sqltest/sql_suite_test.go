@@ -35,11 +35,7 @@ func TestSQLTestSuite(t *testing.T) {
 	defer server.Stop()
 
 	testNames := []string{
-		"SmplCrudText",
-		"SmplCrudInt",
-		"SmplCrudFloat",
-		"SmplCrudTimestamp",
-		"SmplCrudDouble",
+		"SmplCrud*",
 		"YcsbWorkload",
 	}
 
