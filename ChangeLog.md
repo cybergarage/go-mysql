@@ -6,8 +6,9 @@
   - Support for major authentication methods.
 
 ## v1.1.1 (2024-11-24)
-- **Updates**:
-  - Adapted to the latest SQL executor interface from `go-sqlparser`.
+- Updates:
+  - Adapted to the latest SQL executor interface provided by `go-sqlparser`.
+  - Updated example to share a common SQL executor with `go-postgresql`
 
 ## v1.1.0 (2024-11-16)
 - **Improvements**:
