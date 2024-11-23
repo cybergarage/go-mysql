@@ -23,26 +23,15 @@ import (
 // This Server struct behave as ${hoge}CommandExecutor.
 type Server struct {
 	mysql.Server
-	Store
-}
-
-// NewServerWithStore returns a test server instance with the specified store.
-func NewServerWithStore(store Store) *Server {
-	server := &Server{
-		Server: mysql.NewServer(),
-		Store:  store,
-	}
-	server.SetSQLExecutor(store)
-	return server
+	*store.Store
 }
 
 // NewServer returns a test server instance.
 func NewServer() *Server {
-	// NOTE: MemStore is a sample implementation. So, change to use your implementation.
-	return NewServerWithStore(store.NewMemStore())
-}
-
-// GetStore returns a store in the server.
-func (server *Server) GetStore() Store {
-	return server.Store
+	server := &Server{
+		Server: mysql.NewServer(),
+		Store:  store.NewStore(),
+	}
+	server.SetSQLExecutor(server.Store)
+	return server
 }
