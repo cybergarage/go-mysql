@@ -1,4 +1,4 @@
-// Copyright (C) 2019 The go-postgresql Authors. All rights reserved.
+// Copyright (C) 2024 The go-postgresql Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package certs
 import (
 	"testing"
 
-	"github.com/cybergarage/go-postgresql/postgresql"
+	"github.com/cybergarage/go-mysql/mysql"
 )
 
 const (
@@ -27,7 +27,7 @@ const (
 )
 
 func TestCerts(t *testing.T) {
-	conf := postgresql.NewTLSConfig()
+	conf := mysql.NewTLSConfig()
 	conf.SetServerCertFile(certFile)
 	conf.SetServerKeyFile(keyFile)
 	conf.SetRootCertFiles(caCertFile)
