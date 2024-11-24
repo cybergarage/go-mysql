@@ -21,6 +21,11 @@ import (
 	"github.com/cybergarage/go-mysql/mysql"
 )
 
+const (
+	clientKey  = "../certs/key.pem"
+	clientCert = "../certs/cert.pem"
+)
+
 var testQueries []string = []string{
 	"CREATE DATABASE IF NOT EXISTS ycsb",
 	"USE ycsb",
@@ -32,41 +37,58 @@ var testQueries []string = []string{
 func TestServer(t *testing.T) {
 	log.SetStdoutDebugEnbled(true)
 
-	server := NewServer()
-
-	err := server.Start()
-	if err != nil {
-		t.Error(err)
-		return
+	settings := []struct {
+		isTLSEnabled bool
+	}{
+		{isTLSEnabled: false},
+		{isTLSEnabled: false},
 	}
 
-	client := mysql.NewClient()
-	client.SetDatabase("ycsb")
-	err = client.Open()
-	defer client.Close()
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	for _, setting := range settings {
+		t.Logf("TLS enabled: %v", setting.isTLSEnabled)
 
-	err = client.Ping()
-	if err != nil {
-		t.Error(err)
-		return
-	}
+		server := NewServer()
 
-	for n, query := range testQueries {
-		t.Logf("[%d] %s", n, query)
-		rows, err := client.Query(query)
+		err := server.Start()
 		if err != nil {
 			t.Error(err)
+			return
 		}
-		rows.Close()
-	}
 
-	err = server.Stop()
-	if err != nil {
-		t.Error(err)
-		return
+		client := mysql.NewClient()
+		if setting.isTLSEnabled {
+			client.SetClientKeyFile(clientKey)
+			client.SetClientCertFile(clientCert)
+			client.SetRootCertFile(rootCert)
+		}
+
+		client.SetDatabase("ycsb")
+		err = client.Open()
+		defer client.Close()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		err = client.Ping()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		for n, query := range testQueries {
+			t.Logf("[%d] %s", n, query)
+			rows, err := client.Query(query)
+			if err != nil {
+				t.Error(err)
+			}
+			rows.Close()
+		}
+
+		err = server.Stop()
+		if err != nil {
+			t.Error(err)
+			return
+		}
 	}
 }

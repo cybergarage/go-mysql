@@ -15,75 +15,14 @@
 package mysql
 
 import (
-	"database/sql"
-	"fmt"
-	"time"
-
+	"github.com/cybergarage/go-sqltest/sqltest"
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// Client represents a client for MySQL server.
-type Client struct {
-	ClientConfig
-	db *sql.DB
-}
+// Client represents a PostgreSQL client interface.
+type Client = sqltest.Client
 
-// NewClient returns a client instance.
-func NewClient() *Client {
-	client := &Client{
-		ClientConfig: NewDefaultConfig(),
-		db:           nil,
-	}
-	return client
-}
-
-// Open opens a database specified by the internal configuration.
-func (client *Client) Open() error {
-	dsName := fmt.Sprintf("tcp(%s:%d)/%s", client.Address(), client.Port(), client.Database())
-	db, err := sql.Open("mysql", dsName)
-	if err != nil {
-		return err
-	}
-
-	// See: https://github.com/go-sql-driver/mysql
-	// Important settings
-	db.SetConnMaxLifetime(time.Minute * 3)
-	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(10)
-	client.db = db
-	return nil
-}
-
-// Close closes opens a database specified by the internal configuration.
-func (client *Client) Close() error {
-	if client.db == nil {
-		return nil
-	}
-	if err := client.db.Close(); err != nil {
-		return err
-	}
-	client.db = nil
-	return nil
-}
-
-// Query executes a query that returns rows.
-func (client *Client) Query(query string, args ...interface{}) (*sql.Rows, error) {
-	if client.db == nil {
-		err := client.Open()
-		if err != nil {
-			return nil, err
-		}
-	}
-	return client.db.Query(query, args...)
-}
-
-// Ping executes a ping to the database.
-func (client *Client) Ping() error {
-	if client.db == nil {
-		err := client.Open()
-		if err != nil {
-			return err
-		}
-	}
-	return client.db.Ping()
+// NewDefaultClient returns a new default PostgreSQL client.
+func NewClient() Client {
+	return sqltest.NewMySQLClient()
 }
