@@ -19,10 +19,14 @@ import (
 	_ "embed"
 	"testing"
 
+	"github.com/cybergarage/go-logger/log/hexdump"
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-func TestSSLRequestPacket(t *testing.T) {
+//go:embed data/ssl-request-001.hex
+var sslRequestMsg001 string
+
+func TestSSLNewRequestPacket(t *testing.T) {
 	req, err := protocol.NewSSLRequest()
 	if err != nil {
 		t.Error(err)
@@ -46,5 +50,47 @@ func TestSSLRequestPacket(t *testing.T) {
 
 	if !bytes.Equal(reqBytes, req2Bytes) {
 		t.Error("Invalid SSL request")
+	}
+}
+
+func TestSSLRequestPacket(t *testing.T) {
+	type expected struct {
+	}
+	for _, test := range []struct {
+		name string
+		data string
+		expected
+	}{
+		{
+			"ssl-request-001",
+			sslRequestMsg001,
+			expected{},
+		},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			testBytes, err := hexdump.NewBytesWithHexdumpString(test.data)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			reader := bytes.NewReader(testBytes)
+
+			pkt, err := protocol.NewSSLRequestFromReader(reader)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			// Compare the packet bytes
+
+			msgBytes, err := pkt.Bytes()
+			if err != nil {
+				t.Error(err)
+				return
+			}
+
+			if !bytes.Equal(msgBytes, testBytes) {
+				HexdumpErrors(t, testBytes, msgBytes)
+			}
+		})
 	}
 }
