@@ -42,7 +42,7 @@ type ProtocolExecutor interface {
 
 // Server represents a MySQL-compatible server interface.
 type Server interface {
-	ServerConfig
+	Config
 	tracer.Tracer
 
 	// SetTracer sets a tracing tracer.
