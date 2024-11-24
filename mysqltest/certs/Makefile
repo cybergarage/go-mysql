@@ -16,9 +16,6 @@
 
 all: certgen
 
-# PostgreSQL: Documentation: 16: 19.9. Secure TCP/IP Connections with SSL
-# https://www.postgresql.org/docs/current/ssl-tcp.html#SSL-CERTIFICATE-CREATION
-
 certgen: clean
 	openssl req -new -x509 -days 36500 -nodes -text -out cert.pem -keyout key.pem -extensions san -config san.cfg -subj "/CN=localhost"
 	chmod og-rwx key.pem
