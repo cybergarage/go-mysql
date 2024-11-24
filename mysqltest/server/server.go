@@ -15,7 +15,15 @@
 package server
 
 import (
+	"crypto/tls"
+
 	server "github.com/cybergarage/go-mysql/examples/go-mysqld/server"
+)
+
+const (
+	serverKey  = "../certs/key.pem"
+	serverCert = "../certs/cert.pem"
+	rootCert   = "../certs/root_cert.pem"
 )
 
 // Server represents a test server.
@@ -25,8 +33,14 @@ type Server struct {
 
 // NewServer returns a test server instance.
 func NewServer() *Server {
-	s := &Server{
+	server := &Server{
 		Server: server.NewServer(),
 	}
-	return s
+
+	server.SetServerKeyFile(serverKey)
+	server.SetServerCertFile(serverCert)
+	server.SetRootCertFiles(rootCert)
+	server.SetClientAuthType(tls.RequireAndVerifyClientCert)
+
+	return server
 }
