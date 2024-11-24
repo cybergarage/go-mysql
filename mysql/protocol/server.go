@@ -63,6 +63,15 @@ func (server *Server) SetCommandHandler(h CommandHandler) {
 	server.CommandHandler = h
 }
 
+// Capability returns the capability flags from the configuration.
+func (server *Server) Capability() Capability {
+	capability := server.Config.Capability()
+	if server.IsTLSEnabled() {
+		capability |= ClientSSL
+	}
+	return capability
+}
+
 // Start starts the server.
 func (server *Server) Start() error {
 	err := server.ConnManager.Start()
