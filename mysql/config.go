@@ -14,8 +14,8 @@
 
 package mysql
 
-// ServerConfig stores server configuration parameters.
-type ServerConfig interface {
+// Config represents a MySQL server configuration.
+type Config interface {
 	TLSConfig
 	// SetAddress sets a listen address.
 	SetAddress(host string)
@@ -26,15 +26,3 @@ type ServerConfig interface {
 	// Port returns a listen port.
 	Port() int
 }
-
-// ClientConfig stores client configuration parameters.
-type ClientConfig interface {
-	ServerConfig
-	// SetDatabase sets a host database.
-	SetDatabase(db string)
-	// Database returns a host database.
-	Database() string
-}
-
-// Config stores client configuration parameters.
-type Config = ClientConfig
