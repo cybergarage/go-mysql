@@ -33,7 +33,7 @@ func NewDefaultConfig() Config {
 		address:   defaultAddr,
 		port:      defaultPort,
 		database:  "",
-		tlsConfig: NewTLSConf(),
+		tlsConfig: NewTLSConfig(),
 	}
 	return config
 }
