@@ -40,7 +40,7 @@ func TestServer(t *testing.T) {
 	settings := []struct {
 		isTLSEnabled bool
 	}{
-		// {isTLSEnabled: true},
+		{isTLSEnabled: true},
 		{isTLSEnabled: false},
 	}
 
