@@ -237,7 +237,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		return err
 	}
 
-	// Initial Handshake Response Packet
+	// Read initial Handshake Response Packet
 
 	firstPkt, err := NewPacketWithReader(reader)
 	if err != nil {
@@ -265,6 +265,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		if err != nil {
 			return err
 		}
+
 		// SSL exchange
 		tlsConfig, err := server.Config.TLSConfig()
 		if err != nil {
@@ -277,6 +278,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			return errors.Join(err, conn.Close())
 		}
 		tlsConnState := tlsConn.ConnectionState()
+
 		// Update TLS connection to the connection manager
 		newConn := NewConnWith(
 			tlsConn,
@@ -287,7 +289,24 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			conn.ResponseError(err)
 			return errors.Join(err, conn.Close())
 		}
+		// Update reader to the new connection
+
 		conn = newConn
+		reader = conn.PacketReader()
+
+		// Read initial Handshake Response Packet
+
+		firstPkt, err := NewPacketWithReader(reader)
+		if err != nil {
+			return err
+		}
+
+		firstPktBytes, err := firstPkt.Bytes()
+		if err != nil {
+			return err
+		}
+
+		firstPktReader = bytes.NewBuffer(firstPktBytes)
 	}
 
 	defer func() {
