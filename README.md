@@ -25,6 +25,8 @@ The protocol handler has been re-implemented independently to support good exten
 
 - [Examples](doc/examples.md)
 	- [go-mysqld](examples/go-mysqld)
+	- [go-sqlserver](https://github.com/cybergarage/go-sqlserver)
+	- [PuzzleDB](https://github.com/cybergarage/puzzledb-go)
 
 ## References
 
