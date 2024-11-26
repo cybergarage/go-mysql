@@ -41,7 +41,11 @@ const (
 func NewTextResultSetRowsFromResultSet(rs sql.ResultSet) ([]ResultSetRow, error) {
 	rows := []ResultSetRow{}
 	for rs.Next() {
-		row, err := NewTextResultSetRowFrom(rs.Schema(), rs.Row())
+		rsRow, err := rs.Row()
+		if err != nil {
+			return nil, err
+		}
+		row, err := NewTextResultSetRowFrom(rs.Schema(), rsRow)
 		if err != nil {
 			return nil, err
 		}
