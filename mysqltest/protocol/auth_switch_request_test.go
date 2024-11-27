@@ -16,32 +16,31 @@ package protocol
 
 import (
 	"bytes"
-	_ "embed"
 	"testing"
 
 	"github.com/cybergarage/go-logger/log/hexdump"
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-//go:embed data/auth-switch-request-001.hex
-var textAuthSwitchRequestPkt001 string
-
 func TestAuthSwitchRequest(t *testing.T) {
 	type expected struct {
 	}
 	for _, test := range []struct {
 		name string
-		data string
 		expected
 	}{
 		{
-			"auth-switch-request-001",
-			textAuthSwitchRequestPkt001,
+			"data/auth-switch-request-001.hex",
 			expected{},
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			testBytes, err := hexdump.NewBytesWithHexdumpString(test.data)
+			testData, err := testPackettFiles.ReadFile(test.name)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return

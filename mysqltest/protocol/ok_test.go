@@ -23,9 +23,6 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-//go:embed data/ok-001.hex
-var okPkt001 string
-
 func TestOKPacket(t *testing.T) {
 	type expected struct {
 		seqID        protocol.SequenceID
@@ -34,13 +31,11 @@ func TestOKPacket(t *testing.T) {
 	}
 	for _, test := range []struct {
 		name string
-		data string
 		opts []protocol.OKOption
 		expected
 	}{
 		{
-			"ok001",
-			okPkt001,
+			"data/ok-001.hex",
 			[]protocol.OKOption{protocol.WithOKCapability(protocol.ClientProtocol41)},
 			expected{
 				seqID:        protocol.SequenceID(2),
@@ -50,7 +45,12 @@ func TestOKPacket(t *testing.T) {
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			testBytes, err := hexdump.NewBytesWithHexdumpString(test.data)
+			testData, err := testPackettFiles.ReadFile(test.name)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return

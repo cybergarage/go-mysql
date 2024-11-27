@@ -23,9 +23,6 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-//go:embed data/err-001.hex
-var errPkt001 string
-
 func TestErrPacket(t *testing.T) {
 	type expected struct {
 		seqID       protocol.SequenceID
@@ -36,12 +33,10 @@ func TestErrPacket(t *testing.T) {
 	}
 	for _, test := range []struct {
 		name string
-		data string
 		expected
 	}{
 		{
-			"err001",
-			errPkt001,
+			"data/err-001.hex",
 			expected{
 				seqID:       protocol.SequenceID(1),
 				errCode:     0x0448,
@@ -52,7 +47,12 @@ func TestErrPacket(t *testing.T) {
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			testBytes, err := hexdump.NewBytesWithHexdumpString(test.data)
+			testData, err := testPackettFiles.ReadFile(test.name)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return
