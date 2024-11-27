@@ -23,15 +23,6 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-//go:embed data/handshake-response-001.hex
-var handshakeResponseMsg001 string
-
-//go:embed data/handshake-response-002.hex
-var handshakeResponseMsg002 string
-
-//go:embed data/handshake-response-003.hex
-var handshakeResponseMsg003 string
-
 func TestHandshakeResponsePacket(t *testing.T) {
 	type expected struct {
 		capFlags   protocol.Capability
@@ -46,12 +37,10 @@ func TestHandshakeResponsePacket(t *testing.T) {
 	}
 	for _, test := range []struct {
 		name string
-		data string
 		expected
 	}{
 		{
-			"handshake-response-001",
-			handshakeResponseMsg001,
+			"data/handshake-response-001.hex",
 			expected{
 				capFlags:   protocol.Capability(0x000aa28d),
 				maxPkt:     0,
@@ -65,8 +54,7 @@ func TestHandshakeResponsePacket(t *testing.T) {
 			},
 		},
 		{
-			"handshake-response-002",
-			handshakeResponseMsg002,
+			"data/handshake-response-002.hex",
 			expected{
 				capFlags:   protocol.Capability(0x000fa68d),
 				maxPkt:     0,
@@ -80,8 +68,7 @@ func TestHandshakeResponsePacket(t *testing.T) {
 			},
 		},
 		{
-			"handshake-response-003",
-			handshakeResponseMsg003,
+			"data/handshake-response-003.hex",
 			expected{
 				capFlags:   protocol.Capability(0x001ea285),
 				maxPkt:     0,
@@ -103,7 +90,12 @@ func TestHandshakeResponsePacket(t *testing.T) {
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			testBytes, err := hexdump.NewBytesWithHexdumpString(test.data)
+			testData, err := testPackettFiles.ReadFile(test.name)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return

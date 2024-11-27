@@ -23,9 +23,6 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-//go:embed data/ssl-request-001.hex
-var sslRequestMsg001 string
-
 func TestSSLNewRequestPacket(t *testing.T) {
 	req, err := protocol.NewSSLRequest()
 	if err != nil {
@@ -58,17 +55,20 @@ func TestSSLRequestPacket(t *testing.T) {
 	}
 	for _, test := range []struct {
 		name string
-		data string
 		expected
 	}{
 		{
-			"ssl-request-001",
-			sslRequestMsg001,
+			"data/ssl-request-001.hex",
 			expected{},
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			testBytes, err := hexdump.NewBytesWithHexdumpString(test.data)
+			testData, err := testPackettFiles.ReadFile(test.name)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return

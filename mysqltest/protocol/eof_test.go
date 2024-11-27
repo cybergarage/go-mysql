@@ -23,9 +23,6 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-//go:embed data/eof-001.hex
-var eofPkt001 string
-
 func TestEOFPacket(t *testing.T) {
 	type expected struct {
 		seqID    protocol.SequenceID
@@ -34,12 +31,10 @@ func TestEOFPacket(t *testing.T) {
 	}
 	for _, test := range []struct {
 		name string
-		data string
 		expected
 	}{
 		{
-			"eof001",
-			eofPkt001,
+			"data/eof-001.hex",
 			expected{
 				seqID:    protocol.SequenceID(5),
 				warnings: 0,
@@ -48,7 +43,12 @@ func TestEOFPacket(t *testing.T) {
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			testBytes, err := hexdump.NewBytesWithHexdumpString(test.data)
+			testData, err := testPackettFiles.ReadFile(test.name)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return

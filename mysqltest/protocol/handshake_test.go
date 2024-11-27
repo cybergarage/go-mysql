@@ -24,9 +24,6 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-//go:embed data/handshake-001.hex
-var handshakeMsg001 string
-
 func TestHandshakePacket(t *testing.T) {
 	// Packet Length: 87
 	// Packet Number: 0
@@ -103,12 +100,10 @@ func TestHandshakePacket(t *testing.T) {
 	}
 	for _, test := range []struct {
 		name string
-		data string
 		expected
 	}{
 		{
-			"handshake001",
-			handshakeMsg001,
+			"data/handshake-001.hex",
 			expected{
 				seqID:          protocol.SequenceID(0),
 				protocolVer:    protocol.ProtocolVersion10,
@@ -122,7 +117,12 @@ func TestHandshakePacket(t *testing.T) {
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			testBytes, err := hexdump.NewBytesWithHexdumpString(test.data)
+			testData, err := testPackettFiles.ReadFile(test.name)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return

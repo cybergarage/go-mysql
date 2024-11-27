@@ -23,36 +23,32 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-//go:embed data/text-resultset-001.hex
-var textResultSetPkt001 string
-
-//go:embed data/text-resultset-002.hex
-var textResultSetPkt002 string
-
 func TestTextResultSetPacket(t *testing.T) {
 	type expected struct {
 	}
 	for _, test := range []struct {
 		name     string
-		data     string
 		capFlags protocol.Capability
 		expected
 	}{
 		{
-			"text-resultset-001",
-			textResultSetPkt001,
+			"data/text-resultset-001.hex",
 			(protocol.ClientProtocol41 | protocol.ClientQueryAttributes),
 			expected{},
 		},
 		{
-			"text-resultset-002",
-			textResultSetPkt002,
+			"data/text-resultset-002.hex",
 			(protocol.ClientProtocol41 | protocol.ClientQueryAttributes),
 			expected{},
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			testBytes, err := hexdump.NewBytesWithHexdumpString(test.data)
+			testData, err := testPackettFiles.ReadFile(test.name)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return

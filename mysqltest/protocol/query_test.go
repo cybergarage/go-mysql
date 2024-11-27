@@ -23,12 +23,6 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-//go:embed data/query-001.hex
-var queryPkt001 string
-
-//go:embed data/query-002.hex
-var queryPkt002 string
-
 func TestQueryPacket(t *testing.T) {
 	type expected struct {
 		seqID protocol.SequenceID
@@ -36,13 +30,11 @@ func TestQueryPacket(t *testing.T) {
 	}
 	for _, test := range []struct {
 		name     string
-		data     string
 		capFlags protocol.Capability
 		expected
 	}{
 		{
-			"query001",
-			queryPkt001,
+			"data/query-001.hex",
 			protocol.ClientQueryAttributes,
 			expected{
 				seqID: protocol.SequenceID(0),
@@ -50,8 +42,7 @@ func TestQueryPacket(t *testing.T) {
 			},
 		},
 		{
-			"query002",
-			queryPkt002,
+			"data/query-002.hex",
 			0,
 			expected{
 				seqID: protocol.SequenceID(0),
@@ -60,7 +51,12 @@ func TestQueryPacket(t *testing.T) {
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			testBytes, err := hexdump.NewBytesWithHexdumpString(test.data)
+			testData, err := testPackettFiles.ReadFile(test.name)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return
