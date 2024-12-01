@@ -18,7 +18,7 @@ PREFIX?=$(shell pwd)
 
 GOBIN := $(shell go env GOPATH)/bin
 PATH := $(GOBIN):$(PATH)
-LDFLAGS=-checklinkname=0
+LDFLAGS=
 
 GIT_ROOT=github.com/cybergarage
 PRODUCT_NAME=go-mysql
