@@ -15,8 +15,6 @@
 package query
 
 import (
-	"fmt"
-
 	"github.com/cybergarage/go-mysql/mysql/errors"
 	"github.com/cybergarage/go-sqlparser/sql/query"
 )
@@ -73,6 +71,8 @@ func NewFieldTypeFrom(t query.DataType) (FieldType, error) {
 		return MySQLTypeString, nil
 	case query.TimeData:
 		return MySQLTypeTime, nil
+	case query.DateTimeData:
+		return MySQLTypeDatetime, nil
 	case query.TimeStampData:
 		return MySQLTypeTimestamp, nil
 	case query.TinyBlobData:
@@ -89,5 +89,5 @@ func NewFieldTypeFrom(t query.DataType) (FieldType, error) {
 		return MySQLTypeYear, nil
 	}
 
-	return 0, fmt.Errorf("%w", errors.ErrInvalid)
+	return 0, errors.NewErrUnsupported(t.String())
 }
