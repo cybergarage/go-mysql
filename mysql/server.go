@@ -29,6 +29,12 @@ type QueryExecutor interface {
 	DMOExecutor
 }
 
+// ExQueryExecutor represents a user extended query message executor.
+type ExQueryExecutor interface {
+	DDOExExecutor
+	DMOExExecutor
+}
+
 // ErrorHandler represents a user error handler.
 type ErrorHandler interface {
 	ParserError(Conn, string, error) (Response, error)
@@ -38,6 +44,11 @@ type ErrorHandler interface {
 type ProtocolExecutor interface {
 	QueryExecutor
 	ErrorHandler
+}
+
+// SQLExecutorSetter represents a SQL executor setter.
+type SQLExecutorSetter interface {
+	SetSQLExecutor(SQLExecutor)
 }
 
 // Server represents a MySQL-compatible server interface.
@@ -52,6 +63,8 @@ type Server interface {
 	SetSQLExecutor(executor SQLExecutor)
 	// SetQueryExecutor sets a user query executor.
 	SetQueryExecutor(QueryExecutor)
+	// SetExQueryExecutor sets a user extended query executor.
+	SetExQueryExecutor(ExQueryExecutor)
 	// SetErrorHandler sets a user error handler.
 	SetErrorHandler(ErrorHandler)
 

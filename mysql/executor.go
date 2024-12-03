@@ -39,6 +39,14 @@ type DDOExecutor interface {
 	DropTable(Conn, sql.DropTable) (Response, error)
 }
 
+// DDOExExecutor defines a executor interface for extended DDO (Data Definition Operations).
+type DDOExExecutor interface {
+	// CreateIndex handles a CREATE INDEX query.
+	CreateIndex(Conn, sql.CreateIndex) (Response, error)
+	// DropIndex handles a DROP INDEX query.
+	DropIndex(Conn, sql.DropIndex) (Response, error)
+}
+
 // DMOExecutor defines a executor interface for DMO (Data Manipulation Operations).
 type DMOExecutor interface {
 	// Use handles a USE query.
@@ -51,6 +59,12 @@ type DMOExecutor interface {
 	Update(Conn, sql.Update) (Response, error)
 	// Delete handles a DELETE query.
 	Delete(Conn, sql.Delete) (Response, error)
+}
+
+// DMOExExecutor defines a executor interface for extended DMO (Data Manipulation Operations).
+type DMOExExecutor interface {
+	// Truncate handles a TRUNCATE query.
+	Truncate(Conn, sql.Truncate) (Response, error)
 }
 
 // TCOExecutor defines a executor interface for TCL (Transaction Control Operations).
