@@ -5,6 +5,10 @@
   - Support for TLS connections.
   - Support for major authentication methods.
 
+## v1.1.2 (2024-12-XX)
+- **New Features**:
+  - Supported converting `CREATE INDEX` and `DROP INDEX` commands to `ALTER TABLE`.
+
 ## v1.1.1 (2024-11-24)
 - Updates:
   - Adapted to the latest SQL executor interface provided by `go-sqlparser`.
