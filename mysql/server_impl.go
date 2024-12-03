@@ -25,35 +25,56 @@ import (
 // server represents a base executor server.
 type server struct {
 	*protocol.Server
-	sqlExecutor   SQLExecutor
-	queryExecutor QueryExecutor
-	errorHandler  ErrorHandler
+	sqlExecutor     SQLExecutor
+	queryExecutor   QueryExecutor
+	exQueryExecutor ExQueryExecutor
+	errorHandler    ErrorHandler
 }
 
 // NewServer returns a base executor server instance.
 func NewServer() Server {
 	server := &server{
-		Server:        protocol.NewServer(),
-		sqlExecutor:   nil,
-		queryExecutor: nil,
-		errorHandler:  nil,
+		Server:          protocol.NewServer(),
+		sqlExecutor:     nil,
+		queryExecutor:   NewDefaultQueryExecutor(),
+		exQueryExecutor: nil,
+		errorHandler:    nil,
 	}
+
+	server.exQueryExecutor = NewDefaultExQueryExecutorWith(
+		server.queryExecutor,
+	)
+
 	server.Server.SetProductName(PackageName)
 	server.Server.SetProductVersion(Version)
-	server.queryExecutor = server
-	server.errorHandler = server
 	server.Server.SetCommandHandler(server)
+
 	return server
 }
 
 // SetExecutor sets an executor to the server.
-func (server *server) SetSQLExecutor(executor SQLExecutor) {
-	server.sqlExecutor = executor
+func (server *server) SetSQLExecutor(sqlExeutor SQLExecutor) {
+	server.sqlExecutor = sqlExeutor
+	executors := []any{
+		server.queryExecutor,
+		server.exQueryExecutor,
+		server.errorHandler,
+	}
+	for _, executor := range executors {
+		if setter, ok := executor.(SQLExecutorSetter); ok {
+			setter.SetSQLExecutor(sqlExeutor)
+		}
+	}
 }
 
 // SetQueryExecutor sets a user query executor.
 func (server *server) SetQueryExecutor(executor QueryExecutor) {
 	server.queryExecutor = executor
+}
+
+// SetExQueryExecutor sets a user extended query executor.
+func (server *server) SetExQueryExecutor(executor ExQueryExecutor) {
+	server.exQueryExecutor = executor
 }
 
 // SetErrorHandler sets a user error handler.
@@ -136,6 +157,9 @@ func (server *server) HandleStatement(conn protocol.Conn, stmt query.Statement) 
 	case query.CreateTableStatement:
 		stmt := stmt.(query.CreateTable)
 		res, err = server.queryExecutor.CreateTable(conn, stmt)
+	case query.CreateIndexStatement:
+		stmt := stmt.(query.CreateIndex)
+		res, err = server.exQueryExecutor.CreateIndex(conn, stmt)
 	case query.AlterDatabaseStatement:
 		stmt := stmt.(query.AlterDatabase)
 		res, err = server.queryExecutor.AlterDatabase(conn, stmt)
@@ -148,6 +172,9 @@ func (server *server) HandleStatement(conn protocol.Conn, stmt query.Statement) 
 	case query.DropTableStatement:
 		stmt := stmt.(query.DropTable)
 		res, err = server.queryExecutor.DropTable(conn, stmt)
+	case query.DropIndexStatement:
+		stmt := stmt.(query.DropIndex)
+		res, err = server.exQueryExecutor.DropIndex(conn, stmt)
 	case query.InsertStatement:
 		stmt := stmt.(query.Insert)
 		res, err = server.queryExecutor.Insert(conn, stmt)
@@ -163,6 +190,9 @@ func (server *server) HandleStatement(conn protocol.Conn, stmt query.Statement) 
 	case query.UseStatement:
 		stmt := stmt.(query.Use)
 		res, err = server.queryExecutor.Use(conn, stmt)
+	case query.TruncateStatement:
+		stmt := stmt.(query.Truncate)
+		res, err = server.exQueryExecutor.Truncate(conn, stmt)
 	}
 
 	return res, err
