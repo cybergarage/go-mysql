@@ -49,6 +49,8 @@ type (
 	Vacuum         = sql.Vacuum
 	Truncate       = sql.Truncate
 	Use            = sql.Use
+	CreateIndex    = sql.CreateIndex
+	DropIndex      = sql.DropIndex
 	Schema         = sql.Schema
 	Column         = query.Column
 	Columns        = query.Columns
