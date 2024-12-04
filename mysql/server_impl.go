@@ -61,6 +61,9 @@ func (server *server) SetSQLExecutor(sqlExeutor SQLExecutor) {
 		server.errorHandler,
 	}
 	for _, executor := range executors {
+		if executor == nil {
+			continue
+		}
 		if setter, ok := executor.(SQLExecutorSetter); ok {
 			setter.SetSQLExecutor(sqlExeutor)
 		}
