@@ -8,10 +8,8 @@ github.com/cybergarage/go-safecast v1.2.5 h1:ZDiKmdsE15RTKETRXKAKbYTDIhAzNONwJEf
 github.com/cybergarage/go-safecast v1.2.5/go.mod h1:fw2lE/5DIOjmyPj5kx0aYZSAL2bSFoh/Zith5TWVTz8=
 github.com/cybergarage/go-sasl v1.2.1 h1:m+WtlO9B0LjQ82On35mmQTcyKotHizzT+26cRdHRkrM=
 github.com/cybergarage/go-sasl v1.2.1/go.mod h1:IrVfwO6JkYw/bpOJV6HIc5nBe+DReYOOFw5uFCO7GnU=
-github.com/cybergarage/go-sqlparser v1.4.2-0.20241203032155-ff2cc1b5ac93 h1:pQ0f9xyNU54r+0BHCk5FKxB+93oywB9wgCBAkS3IcY0=
-github.com/cybergarage/go-sqlparser v1.4.2-0.20241203032155-ff2cc1b5ac93/go.mod h1:HBuMdIfxBitv7erYTdFoSjC0J3HzCfyBxVnlqi6KN2Q=
-github.com/cybergarage/go-sqlparser v1.4.2-0.20241204110332-62e7e67439b8 h1:ZLt2P/NkmIfDBYgt6v0HqwFJIvrMCpvtkCjKEDID/gg=
-github.com/cybergarage/go-sqlparser v1.4.2-0.20241204110332-62e7e67439b8/go.mod h1:HBuMdIfxBitv7erYTdFoSjC0J3HzCfyBxVnlqi6KN2Q=
+github.com/cybergarage/go-sqlparser v1.4.2 h1:VPNEim2v9A4ZNT55u7TMRokoL46b9aVahosXbiMERiM=
+github.com/cybergarage/go-sqlparser v1.4.2/go.mod h1:+of/1SNcwb0ElxSiuQgHisWD1nGWnn/i/WlLdwhF5Kg=
 github.com/cybergarage/go-sqltest v1.4.3-0.20241209165639-9f1469bc7ce2 h1:BzDb3aHGT3lrGykFrgxR22Az4cvqXJ3wypVb4uxiZWY=
 github.com/cybergarage/go-sqltest v1.4.3-0.20241209165639-9f1469bc7ce2/go.mod h1:SRIIHpeCehkJHqcxr9+0jnw6unM2N0wEEE+x/SdE87o=
 github.com/cybergarage/go-tracing v1.1.3 h1:UU7C7LRT6gaPmezl15PwNLrvIrdZCqFcZL1Iw/YzMlk=
@@ -42,10 +40,10 @@ github.com/stretchr/testify v1.8.1 h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKs
 github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
 golang.org/x/crypto v0.23.0 h1:dIJU/v2J8Mdglj/8rJ6UUOM3Zc9zLZxVZwwxMooUSAI=
 golang.org/x/crypto v0.23.0/go.mod h1:CKFgDieR+mRhux2Lsu27y0fO304Db0wZe70UKqHu0v8=
-golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c h1:7dEasQXItcW1xKJ2+gg5VOiBnqWrJc+rq0DPKyvvdbY=
-golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c/go.mod h1:NQtJDoLvd6faHhE7m4T/1IY708gDefGGjR/iUW8yQQ8=
-golang.org/x/sync v0.8.0 h1:3NFvSEYkUoMifnESzZl15y791HH1qU2xm6eCJU5ZPXQ=
-golang.org/x/sync v0.8.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
+golang.org/x/exp v0.0.0-20241210194714-1829a127f884 h1:Y/Mj/94zIQQGHVSv1tTtQBDaQaJe62U9bkDZKKyhPCU=
+golang.org/x/exp v0.0.0-20241210194714-1829a127f884/go.mod h1:qj5a5QZpwLU2NLQudwIN5koi3beDhSAlJwa67PuM98c=
+golang.org/x/sync v0.10.0 h1:3NQrjDixjgGwUOCaF8w2+VYHv0Ve/vGYSbdkTa98gmQ=
+golang.org/x/sync v0.10.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
 golang.org/x/text v0.15.0 h1:h1V/4gjBv8v9cjcR6+AR5+/cIYK5N/WAgiv4xlsEtAk=
 golang.org/x/text v0.15.0/go.mod h1:18ZOQIKpY8NJVqYksKHtTdi31H5itFRjB5/qKTNYzSU=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
