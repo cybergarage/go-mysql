@@ -17,35 +17,25 @@ package auth
 import (
 	"github.com/cybergarage/go-authenticator/auth"
 	"github.com/cybergarage/go-mysql/mysql/net"
-	"github.com/cybergarage/go-sasl/sasl"
 )
 
-// Manager represents a MySQL auth manager.
-type Manager struct {
+// manager represents a MySQL auth manager.
+type manager struct {
 	auth.Manager
-	sasl.Server
 }
 
-// NewManager returns a new SASL server.
-func NewManager() *Manager {
-	return &Manager{
+// Manager represents a MySQL auth manager.
+func NewManager() Manager {
+	return &manager{
 		Manager: auth.NewManager(),
-		Server:  sasl.NewServer(),
 	}
 }
 
 // Authenticate	authenticates a connection with a query.
-func (mgr *Manager) Authenticate(conn net.Conn, q Query) bool {
-	/*
-		auths := mgr.Authenticators()
-		if len(auths) == 0 {
-			return true
-		}
-		for _, auth := range auths {
-			if _, ok := auth.HasCredential(q); ok {
-				return true
-			}
-		}
-	*/
-	return true
+func (mgr *manager) Authenticate(conn net.Conn, q Query) bool {
+	ok, err := mgr.Manager.VerifyCredential(conn, q)
+	if err != nil {
+		return false
+	}
+	return ok
 }

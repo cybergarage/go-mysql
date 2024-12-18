@@ -30,7 +30,7 @@ import (
 // Server represents a MySQL protocol server.
 type Server struct {
 	*Config
-	*auth.Manager
+	auth.Manager
 	*mysqlnet.ConnManager
 	tracer.Tracer
 	lastConnID *Counter
