@@ -15,26 +15,26 @@
 package auth
 
 import (
-	"github.com/cybergarage/go-sasl/sasl/cred"
+	"github.com/cybergarage/go-sasl/sasl/auth"
 )
 
 // Query represents a credential query.
-type Query = cred.Query
+type Query = auth.Query
 
 // QueryOptionFn is a query option function.
-type QueryOptionFn = cred.QueryOptionFn
+type QueryOptionFn = auth.QueryOptionFn
 
 // NewQuery returns a new query with options.
-func NewQuery(opts ...QueryOptionFn) *Query {
-	return cred.NewQuery(opts...)
+func NewQuery(opts ...QueryOptionFn) Query {
+	return auth.NewQuery(opts...)
 }
 
 // WithQueryUsername returns an option to set the username.
 func WithQueryUsername(username string) QueryOptionFn {
-	return cred.WithQueryUsername(username)
+	return auth.WithQueryUsername(username)
 }
 
 // WithQueryAuthResponse returns an option to set the password.
 func WithQueryAuthResponse(password string) QueryOptionFn {
-	return cred.WithQueryPassword(password)
+	return auth.WithQueryPassword(password)
 }
