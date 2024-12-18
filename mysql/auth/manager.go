@@ -34,7 +34,7 @@ func NewManager() *Manager {
 	}
 }
 
-// Authenticators returns the authenticators.
+// Authenticate	authenticates a connection with a query.
 func (mgr *Manager) Authenticate(conn net.Conn, q Query) bool {
 	/*
 		auths := mgr.Authenticators()
