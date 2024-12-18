@@ -18,6 +18,9 @@ import (
 	"github.com/cybergarage/go-authenticator/auth"
 )
 
+// CredentialAuthenticator is the credential authenticator.
+type CredentialStore = auth.CredentialStore
+
 // CertificateAuthenticator is the interface for authenticating a client using certificate.
 type CertificateAuthenticator = auth.CertificateAuthenticator
 
