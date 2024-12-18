@@ -15,25 +15,11 @@
 package auth
 
 import (
-	"crypto/x509"
-	"tls"
-
-	"github.com/cybergarage/go-mysql/mysql/net"
+	"github.com/cybergarage/go-authenticator/auth"
 )
 
-// TLSAuthenticator is the interface for authenticating a client using TLS.
-type TLSAuthenticator interface {
-	// VerifyCertificate verifies the client certificate.
-	VerifyCertificate(conn tls.Conn, certs []*x509.Certificate) error
-}
-
-// Credential is the interface for client credential.
-type Credential interface {
-	Username() string
-}
+// CertificateAuthenticator is the interface for authenticating a client using certificate.
+type CertificateAuthenticator = auth.CertificateAuthenticator
 
 // CredentialAuthenticator is the interface for authenticating a client using credential.
-type CredentialAuthenticator interface {
-	// VerifyCredential verifies the client credential.
-	VerifyCredential(conn net.Conn, cred Credential) error
-}
+type CredentialAuthenticator = auth.CredentialAuthenticator
