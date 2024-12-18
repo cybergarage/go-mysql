@@ -15,33 +15,18 @@
 package auth
 
 import (
-	"github.com/cybergarage/go-authenticator/auth"
 	"github.com/cybergarage/go-authenticator/auth/tls"
 	"github.com/cybergarage/go-mysql/mysql/net"
 )
 
-// manager represents a MySQL auth manager.
-type manager struct {
-	auth.Manager
-}
-
 // Manager represents a MySQL auth manager.
-func NewManager() Manager {
-	return &manager{
-		Manager: auth.NewManager(),
-	}
-}
-
-// Authenticate	authenticates a connection with a query.
-func (mgr *manager) Authenticate(conn net.Conn, q Query) bool {
-	ok, err := mgr.Manager.VerifyCredential(conn, q)
-	if err != nil {
-		return false
-	}
-	return ok
-}
-
-// VerifyCertificate verifies the client certificate.
-func (mgr *manager) VerifyCertificate(conn tls.Conn) (bool, error) {
-	return mgr.Manager.VerifyCertificate(conn)
+type Manager interface {
+	// SetCredentialStore sets the credential store.
+	SetCredentialStore(store CredentialStore)
+	// SetCertificateAuthenticator sets the certificate authenticator.
+	SetCertificateAuthenticator(auth CertificateAuthenticator)
+	// Authenticate authenticates a connection with a query.
+	Authenticate(conn net.Conn, q Query) bool
+	// VerifyCertificate verifies the client certificate.
+	VerifyCertificate(conn tls.Conn) (bool, error)
 }
