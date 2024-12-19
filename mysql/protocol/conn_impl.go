@@ -37,7 +37,7 @@ type conn struct {
 	uuid          uuid.UUID
 	id            uint64
 	tracerContext tracer.Context
-	tlsState      *tls.ConnectionState
+	tlsConn       *tls.Conn
 	capabilities  Capability
 }
 
@@ -52,7 +52,7 @@ func NewConnWith(netConn net.Conn, opts ...ConnOption) Conn {
 		uuid:          uuid.New(),
 		id:            0,
 		tracerContext: nil,
-		tlsState:      nil,
+		tlsConn:       nil,
 		capabilities:  0,
 	}
 	conn.SetOptions(opts...)
@@ -74,9 +74,9 @@ func WithConnTracer(t tracer.Context) func(*conn) {
 }
 
 // WithConnTLSConnectionState sets a TLS connection state.
-func WithConnTLSConnectionState(s *tls.ConnectionState) func(*conn) {
+func WithConnTLSConn(s *tls.Conn) func(*conn) {
 	return func(conn *conn) {
-		conn.tlsState = s
+		conn.tlsConn = s
 	}
 }
 
@@ -177,12 +177,12 @@ func (conn *conn) FinishSpan() bool {
 
 // IsTLSConnection return true if the connection is enabled TLS.
 func (conn *conn) IsTLSConnection() bool {
-	return conn.tlsState != nil
+	return conn.tlsConn != nil
 }
 
-// TLSConnectionState returns the TLS connection state.
-func (conn *conn) TLSConnectionState() (*tls.ConnectionState, bool) {
-	return conn.tlsState, conn.tlsState != nil
+// TLSConn returns the TLS connection.
+func (conn *conn) TLSConn() *tls.Conn {
+	return conn.tlsConn
 }
 
 // SetCapabilities sets the capabilities.
