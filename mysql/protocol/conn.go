@@ -27,7 +27,7 @@ type Conn interface {
 	SetDatabase(db string)
 	Database() string
 	IsTLSConnection() bool
-	TLSConnectionState() (*tls.ConnectionState, bool)
+	TLSConn() *tls.Conn
 	SetCapabilities(c Capability)
 	Capabilities() Capability
 	PacketReader() *PacketReader

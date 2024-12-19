@@ -277,14 +277,13 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			conn.ResponseError(err)
 			return errors.Join(err, conn.Close())
 		}
-		tlsConnState := tlsConn.ConnectionState()
 
 		// Update TLS connection to the connection manager
 		newConn := NewConnWith(
 			tlsConn,
 			WithConnID(conn.ID()),
 			WithConnUUID(conn.UUID()),
-			WithConnTLSConnectionState(&tlsConnState))
+			WithConnTLSConn(tlsConn))
 		if err := server.UpdateConn(conn, newConn); err != nil {
 			conn.ResponseError(err)
 			return errors.Join(err, conn.Close())
