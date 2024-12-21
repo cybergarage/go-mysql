@@ -277,6 +277,11 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			conn.ResponseError(err)
 			return errors.Join(err, conn.Close())
 		}
+		ok, err := server.Manager.VerifyCertificate(tlsConn)
+		if !ok {
+			log.Error(err)
+			return err
+		}
 
 		// Update TLS connection to the connection manager
 		newConn := NewConnWith(
