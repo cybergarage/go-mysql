@@ -14,9 +14,14 @@
 
 package mysql
 
+import (
+	"github.com/cybergarage/go-authenticator/auth"
+)
+
 // Config represents a MySQL server configuration.
 type Config interface {
-	TLSConfig
+	auth.CertConfig
+
 	// SetAddress sets a listen address.
 	SetAddress(host string)
 	// SetPort sets a listen port.

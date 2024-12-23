@@ -27,7 +27,7 @@ const (
 )
 
 func TestCerts(t *testing.T) {
-	conf := mysql.NewTLSConfig()
+	conf := mysql.NewDefaultConfig()
 	conf.SetServerCertFile(certFile)
 	conf.SetServerKeyFile(keyFile)
 	conf.SetRootCertFiles(caCertFile)
