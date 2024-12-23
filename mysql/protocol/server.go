@@ -29,7 +29,7 @@ import (
 
 // Server represents a MySQL protocol server.
 type Server struct {
-	*Config
+	Config
 	auth.Manager
 	*mysqlnet.ConnManager
 	tracer.Tracer
@@ -122,7 +122,7 @@ func (server *Server) Restart() error {
 // open opens a listen socket.
 func (server *Server) open() error {
 	var err error
-	addr := net.JoinHostPort(server.addr, strconv.Itoa(server.port))
+	addr := net.JoinHostPort(server.Address(), strconv.Itoa(server.Port()))
 	server.tcpListener, err = net.Listen("tcp", addr)
 	if err != nil {
 		return err
@@ -369,7 +369,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 
 		cmdType := cmd.Type()
 
-		loopSpan := server.Tracer.StartSpan(server.productName)
+		loopSpan := server.Tracer.StartSpan(server.ProductName())
 		conn.SetSpanContext(loopSpan)
 		conn.StartSpan(cmdType.String())
 
