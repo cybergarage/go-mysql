@@ -14,6 +14,8 @@
 
 package mysql
 
+import "github.com/cybergarage/go-authenticator/auth"
+
 const (
 	defaultAddr = ""
 	defaultPort = 3306
@@ -24,16 +26,16 @@ type config struct {
 	address  string
 	port     int
 	database string
-	*tlsConfig
+	auth.CertConfig
 }
 
 // NewDefaultConfig returns a default configuration instance.
 func NewDefaultConfig() Config {
 	config := &config{
-		address:   defaultAddr,
-		port:      defaultPort,
-		database:  "",
-		tlsConfig: NewTLSConfig(),
+		address:    defaultAddr,
+		port:       defaultPort,
+		database:   "",
+		CertConfig: auth.NewCertConfig(),
 	}
 	return config
 }
