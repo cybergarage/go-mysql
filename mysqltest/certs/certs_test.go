@@ -17,7 +17,7 @@ package certs
 import (
 	"testing"
 
-	"github.com/cybergarage/go-mysql/mysql"
+	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
 const (
@@ -27,7 +27,7 @@ const (
 )
 
 func TestCerts(t *testing.T) {
-	conf := mysql.NewDefaultConfig()
+	conf := protocol.NewDefaultConfig()
 	conf.SetServerCertFile(certFile)
 	conf.SetServerKeyFile(keyFile)
 	conf.SetRootCertFiles(caCertFile)

@@ -16,6 +16,8 @@ package protocol
 
 import (
 	"fmt"
+
+	"github.com/cybergarage/go-authenticator/auth"
 )
 
 const (
@@ -24,10 +26,10 @@ const (
 )
 
 // Config stores server configuration parammeters.
-type Config struct {
+type config struct {
 	addr string
 	port int
-	*TLSConf
+	auth.CertConfig
 	productName    string
 	productVersion string
 	capability     Capability
@@ -35,11 +37,11 @@ type Config struct {
 }
 
 // NewDefaultConfig returns a default configuration instance.
-func NewDefaultConfig() *Config {
-	config := &Config{
+func NewDefaultConfig() Config {
+	config := &config{
 		addr:           DefaultAddr,
 		port:           DefaultPort,
-		TLSConf:        NewTLSConf(),
+		CertConfig:     auth.NewCertConfig(),
 		productName:    DefaultProductName,
 		productVersion: "",
 		capability:     DefaultServerCapabilities,
@@ -49,47 +51,47 @@ func NewDefaultConfig() *Config {
 }
 
 // SetProuctName sets a product name to the configuration.
-func (config *Config) SetProductName(v string) {
+func (config *config) SetProductName(v string) {
 	config.productName = v
 }
 
 // SetProductVersion sets a product version to the configuration.
-func (config *Config) SetProductVersion(v string) {
+func (config *config) SetProductVersion(v string) {
 	config.productVersion = v
 }
 
 // SetAddress sets a listen address to the configuration.
-func (config *Config) SetAddress(addr string) {
+func (config *config) SetAddress(addr string) {
 	config.addr = addr
 }
 
 // SetPort sets a listen port to the configuration.
-func (config *Config) SetPort(port int) {
+func (config *config) SetPort(port int) {
 	config.port = port
 }
 
 // Address returns the listen address from the configuration.
-func (config *Config) Address() string {
+func (config *config) Address() string {
 	return config.addr
 }
 
 // Port returns the listen port from the configuration.
-func (config *Config) Port() int {
+func (config *config) Port() int {
 	return config.port
 }
 
 // ProductName returns the product name from the configuration.
-func (config *Config) ProductName() string {
+func (config *config) ProductName() string {
 	return config.productName
 }
 
 // ProductVersion returns the product version from the configuration.
-func (config *Config) ProductVersion() string {
+func (config *config) ProductVersion() string {
 	return config.productVersion
 }
 
 // ServerVersion returns the server version for the handshake.
-func (config *Config) ServerVersion() string {
+func (config *config) ServerVersion() string {
 	ver := SupportVersion
 	if 0 < len(config.productName) {
 		ver = fmt.Sprintf("%s-%s", ver, config.productName)
@@ -101,21 +103,21 @@ func (config *Config) ServerVersion() string {
 }
 
 // SetCapability sets the capability flags to the configuration.
-func (config *Config) SetCapability(c Capability) {
+func (config *config) SetCapability(c Capability) {
 	config.capability = c
 }
 
 // Capability returns the capability flags from the configuration.
-func (config *Config) Capability() Capability {
+func (config *config) Capability() Capability {
 	return config.capability
 }
 
 // SetAuthPluginName sets the auth plugin name to the configuration.
-func (config *Config) SetAuthPluginName(v string) {
+func (config *config) SetAuthPluginName(v string) {
 	config.autuPluginName = v
 }
 
 // AuthPluginName returns the auth plugin name from the configuration.
-func (config *Config) AuthPluginName() string {
+func (config *config) AuthPluginName() string {
 	return config.autuPluginName
 }
