@@ -30,6 +30,7 @@ type config struct {
 	addr string
 	port int
 	tls.CertConfig
+	tlsEnabled     bool
 	productName    string
 	productVersion string
 	capability     Capability
@@ -42,6 +43,7 @@ func NewDefaultConfig() Config {
 		addr:           DefaultAddr,
 		port:           DefaultPort,
 		CertConfig:     tls.NewCertConfig(),
+		tlsEnabled:     true,
 		productName:    DefaultProductName,
 		productVersion: "",
 		capability:     DefaultServerCapabilities,
@@ -120,4 +122,14 @@ func (config *config) SetAuthPluginName(v string) {
 // AuthPluginName returns the auth plugin name from the configuration.
 func (config *config) AuthPluginName() string {
 	return config.autuPluginName
+}
+
+// SetTLSEnabled sets a TLS enabled flag.
+func (config *config) SetTLSEnabled(enabled bool) {
+	config.tlsEnabled = enabled
+}
+
+// IsEnabled returns true if the TLS is enabled.
+func (config *config) IsTLSEnabled() bool {
+	return config.tlsEnabled
 }
