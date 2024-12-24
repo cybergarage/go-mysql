@@ -18,6 +18,7 @@ import (
 	"crypto/tls"
 
 	server "github.com/cybergarage/go-mysql/examples/go-mysqld/server"
+	"github.com/cybergarage/go-mysql/mysql/auth"
 )
 
 const (
@@ -41,6 +42,13 @@ func NewServer() *Server {
 	server.SetServerCertFile(serverCert)
 	server.SetRootCertFiles(rootCert)
 	server.SetClientAuthType(tls.RequireAndVerifyClientCert)
+
+	ca, err := auth.NewCertificateAuthenticator(
+		auth.WithCommonNameRegexp("localhost"),
+	)
+	if err != nil {
+		server.SetCertificateAuthenticator(ca)
+	}
 
 	return server
 }
