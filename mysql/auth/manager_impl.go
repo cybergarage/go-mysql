@@ -16,7 +16,6 @@ package auth
 
 import (
 	"github.com/cybergarage/go-authenticator/auth"
-	"github.com/cybergarage/go-authenticator/auth/tls"
 	"github.com/cybergarage/go-mysql/mysql/net"
 )
 
@@ -39,9 +38,4 @@ func (mgr *manager) Authenticate(conn net.Conn, q Query) bool {
 		return false
 	}
 	return ok
-}
-
-// VerifyCertificate verifies the client certificate.
-func (mgr *manager) VerifyCertificate(conn tls.Conn) (bool, error) {
-	return mgr.Manager.VerifyCertificate(conn)
 }
