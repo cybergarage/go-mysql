@@ -16,7 +16,6 @@ package protocol
 
 import (
 	"embed"
-	_ "embed"
 )
 
 //go:embed data/*.hex
