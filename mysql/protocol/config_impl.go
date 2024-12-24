@@ -17,7 +17,7 @@ package protocol
 import (
 	"fmt"
 
-	"github.com/cybergarage/go-authenticator/auth"
+	"github.com/cybergarage/go-authenticator/auth/tls"
 )
 
 const (
@@ -29,7 +29,7 @@ const (
 type config struct {
 	addr string
 	port int
-	auth.CertConfig
+	tls.CertConfig
 	productName    string
 	productVersion string
 	capability     Capability
@@ -41,7 +41,7 @@ func NewDefaultConfig() Config {
 	config := &config{
 		addr:           DefaultAddr,
 		port:           DefaultPort,
-		CertConfig:     auth.NewCertConfig(),
+		CertConfig:     tls.NewCertConfig(),
 		productName:    DefaultProductName,
 		productVersion: "",
 		capability:     DefaultServerCapabilities,
