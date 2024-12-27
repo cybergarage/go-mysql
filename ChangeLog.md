@@ -2,11 +2,12 @@
 
 ## v1.2.0 (2024-12-xx)
 - New Features:
-  - Support for TLS connections.
   - Support for major authentication methods.
 
-## v1.1.3 (2024-12-xx)
-- Supported certificate authentication for TLS connection
+## v1.1.3 (2024-12-28)
+- New Features:
+  - Supported for TLS connections.
+  - Supported certificate authentication for TLS connection
 
 ## v1.1.2 (2024-12-11)
 - New Features:
