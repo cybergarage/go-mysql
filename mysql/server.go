@@ -56,7 +56,6 @@ type SQLExecutorSetter interface {
 type Server interface {
 	auth.Manager
 	Config
-	tracer.Tracer
 
 	// SetTracer sets a tracing tracer.
 	SetTracer(tracer.Tracer)
