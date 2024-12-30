@@ -21,6 +21,8 @@ import (
 
 // Manager represents a MySQL auth manager.
 type Manager interface {
+	// SetCredentialAuthenticator sets the credential authenticator.
+	SetCredentialAuthenticator(auth CredentialAuthenticator)
 	// SetCredentialStore sets the credential store.
 	SetCredentialStore(store CredentialStore)
 	// SetCertificateAuthenticator sets the certificate authenticator.
