@@ -4,6 +4,10 @@
 - New Features:
   - Support for major authentication methods.
 
+## v1.1.4 (2024-12-31)
+- Updates:
+  - Authentication interfaces
+
 ## v1.1.3 (2024-12-28)
 - New Features:
   - Supported for TLS connections.
