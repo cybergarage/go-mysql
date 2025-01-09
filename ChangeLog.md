@@ -1,9 +1,12 @@
 # Changelog
 
-## v1.2.0 (2024-12-xx)
+## v1.2.0 (2025-01-xx)
 - New Features:
   - Support for major authentication methods.
+    - mysql_native_password
+    - caching_sha2_password
 
+- New Features:
 ## v1.1.4 (2024-12-31)
 - Updates:
   - Authentication interfaces
