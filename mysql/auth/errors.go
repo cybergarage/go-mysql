@@ -19,5 +19,6 @@ import (
 )
 
 var (
-	ErrAccessDenied = errors.New("access denied")
+	ErrAccessDenied    = errors.New("access denied")
+	ErrInvalidArgument = errors.New("invalid argument")
 )
