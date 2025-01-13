@@ -20,6 +20,8 @@ import (
 
 // nolint: gosec
 const (
+	// MySQL: Authentication Methods
+	// https://dev.mysql.com/doc/dev/mysql-server/8.4.2/page_protocol_connection_phase_authentication_methods.html#page_protocol_connection_phase_authentication_methods_old_password_authentication
 	MySQLOldPassword = "mysql_old_password"
 
 	// MySQL: Native Authentication
