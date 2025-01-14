@@ -17,6 +17,7 @@ package server
 import (
 	"testing"
 
+	"github.com/cybergarage/go-authenticator/auth"
 	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/mysql"
 )
@@ -37,17 +38,43 @@ var testQueries []string = []string{
 func TestServer(t *testing.T) {
 	log.SetStdoutDebugEnbled(true)
 
+	const (
+		username = "testuser"
+		password = "testpassword"
+	)
+
 	settings := []struct {
-		isTLSEnabled bool
+		isTLSEnabled      bool
+		isPasswordEnabled bool
 	}{
-		{isTLSEnabled: true},
-		{isTLSEnabled: false},
+		{
+			isTLSEnabled:      true,
+			isPasswordEnabled: false,
+		},
+		{
+			isTLSEnabled:      false,
+			isPasswordEnabled: false,
+		},
+		// {
+		// 	isTLSEnabled:      false,
+		// 	isPasswordEnabled: true,
+		// },
 	}
 
 	for _, setting := range settings {
 		t.Logf("TLS enabled: %v", setting.isTLSEnabled)
+		t.Logf("Password enabled: %v", setting.isPasswordEnabled)
 
 		server := NewServer()
+
+		if setting.isPasswordEnabled {
+			cred := auth.NewCredential(
+				auth.WithCredentialUsername(username),
+				auth.WithCredentialPassword(password),
+			)
+			server.SetCredentialStore(server)
+			server.SetCredential(cred)
+		}
 
 		err := server.Start()
 		if err != nil {
@@ -61,8 +88,12 @@ func TestServer(t *testing.T) {
 			client.SetClientCertFile(clientCert)
 			client.SetRootCertFile(rootCert)
 		}
-
+		if setting.isPasswordEnabled {
+			client.SetUser(username)
+			client.SetPassword(password)
+		}
 		client.SetDatabase("ycsb")
+
 		err = client.Open()
 		defer client.Close()
 		if err != nil {
