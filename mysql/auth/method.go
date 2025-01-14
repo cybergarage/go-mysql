@@ -46,3 +46,17 @@ func NewAuthenticationMethodFromID(id string) (AuthenticationMethod, error) {
 		return 0, newErrUnknownAuthenticationMethod(id)
 	}
 }
+
+// String returns the string representation of the authentication method.
+func (method AuthenticationMethod) String() string {
+	switch method {
+	case MySQLOldPassword:
+		return MySQLOldPasswordID
+	case MySQLNativePassword:
+		return MySQLNativePasswordID
+	case MySQLCachingSHA2Password:
+		return MySQLCachingSHA2PasswordID
+	default:
+		return ""
+	}
+}
