@@ -47,6 +47,16 @@ func NewAuthenticationMethodFromID(id string) (AuthenticationMethod, error) {
 	}
 }
 
+// EncryptFunc represents the function for encrypting a password.
+func (method AuthenticationMethod) EncryptFunc() (EncryptFunc, error) {
+	switch method {
+	case MySQLNativePassword:
+		return NativeEncrypt, nil
+	default:
+		return nil, newErrNotSupported(method.String())
+	}
+}
+
 // String returns the string representation of the authentication method.
 func (method AuthenticationMethod) String() string {
 	switch method {
