@@ -57,3 +57,8 @@ func WithQueryClientPluginName(clientPluginName string) QueryOptionFn {
 		return nil
 	}
 }
+
+// WithQueryAuthPluginData returns an option to set the auth plugin data.
+func WithQueryAuthPluginData(data []byte) QueryOptionFn {
+	return auth.WithQueryArguments(data)
+}
