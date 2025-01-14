@@ -20,20 +20,14 @@ package auth
 // AuthenticationMethod represents the authentication method.
 type AuthenticationMethod int
 
-// Authentication methods.
 const (
-	MySQLOldPassword AuthenticationMethod = iota
-	// MySQL: Native Authentication
-	// https://dev.mysql.com/doc/dev/mysql-server/8.4.2/page_protocol_connection_phase_authentication_methods_native_password_authentication.html
+	MySQLAuthenticationNone AuthenticationMethod = iota
+	MySQLOldPassword
 	MySQLNativePassword
-	// MySQL: Caching_sha2_password information
-	// https://dev.mysql.com/doc/dev/mysql-server/8.4.2/page_caching_sha2_authentication_exchanges.html
 	MySQLCachingSHA2Password
 )
 
 const (
-	// MySQL: Authentication Methods
-	// https://dev.mysql.com/doc/dev/mysql-server/8.4.2/page_protocol_connection_phase_authentication_methods.html#page_protocol_connection_phase_authentication_methods_old_password_authentication
 	MySQLOldPasswordID         = "mysql_old_password"
 	MySQLNativePasswordID      = "mysql_native_password"
 	MySQLCachingSHA2PasswordID = "caching_sha2_password"
