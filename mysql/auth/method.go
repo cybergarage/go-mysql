@@ -17,11 +17,11 @@ package auth
 // MySQL: Authentication Methods
 // https://dev.mysql.com/doc/dev/mysql-server/8.4.2/page_protocol_connection_phase_authentication_methods.html#page_protocol_connection_phase_authentication_methods_old_password_authentication
 
-// AuthenticationMethod represents the authentication method.
-type AuthenticationMethod int
+// AuthMethod represents the authentication method.
+type AuthMethod int
 
 const (
-	MySQLAuthenticationNone AuthenticationMethod = iota
+	MySQLAuthenticationNone AuthMethod = iota
 	MySQLOldPassword
 	MySQLNativePassword
 	MySQLCachingSHA2Password
@@ -33,8 +33,8 @@ const (
 	MySQLCachingSHA2PasswordID = "caching_sha2_password"
 )
 
-// NewAuthenticationMethodFromID creates a new authentication method from the ID.
-func NewAuthenticationMethodFromID(id string) (AuthenticationMethod, error) {
+// NewAuthMethodFromID creates a new authentication method from the ID.
+func NewAuthMethodFromID(id string) (AuthMethod, error) {
 	switch id {
 	case MySQLOldPasswordID:
 		return MySQLOldPassword, nil
@@ -48,7 +48,7 @@ func NewAuthenticationMethodFromID(id string) (AuthenticationMethod, error) {
 }
 
 // EncryptFunc represents the function for encrypting a password.
-func (method AuthenticationMethod) EncryptFunc() (EncryptFunc, error) {
+func (method AuthMethod) EncryptFunc() (EncryptFunc, error) {
 	switch method {
 	case MySQLNativePassword:
 		return NativeEncrypt, nil
@@ -58,7 +58,7 @@ func (method AuthenticationMethod) EncryptFunc() (EncryptFunc, error) {
 }
 
 // String returns the string representation of the authentication method.
-func (method AuthenticationMethod) String() string {
+func (method AuthMethod) String() string {
 	switch method {
 	case MySQLOldPassword:
 		return MySQLOldPasswordID
