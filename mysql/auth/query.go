@@ -25,7 +25,7 @@ type Query = auth.Query
 type QueryOptionFn = auth.QueryOptionFn
 
 // NewQuery returns a new query with options.
-func NewQuery(opts ...QueryOptionFn) Query {
+func NewQuery(opts ...QueryOptionFn) (Query, error) {
 	return auth.NewQuery(opts...)
 }
 
@@ -37,4 +37,23 @@ func WithQueryUsername(username string) QueryOptionFn {
 // WithQueryAuthResponse returns an option to set the password.
 func WithQueryAuthResponse(password string) QueryOptionFn {
 	return auth.WithQueryPassword(password)
+}
+
+// WithQueryClientPluginName returns an option to set the client plugin name.
+func WithQueryClientPluginName(clientPluginName string) QueryOptionFn {
+	return func(q Query) error {
+		method, err := NewAuthMethodFromID(clientPluginName)
+		if err != nil {
+			return err
+		}
+		if method == MySQLAuthenticationNone {
+			return nil
+		}
+		encryptFunc, err := method.EncryptFunc()
+		if err != nil {
+			return err
+		}
+		q.SetEncryptFunc(encryptFunc)
+		return nil
+	}
 }
