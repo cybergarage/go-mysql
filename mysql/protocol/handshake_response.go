@@ -215,11 +215,11 @@ func (pkt *HandshakeResponse) ClientPluginName() string {
 }
 
 // AutMethod returns the authentication method.
-func (pkt *HandshakeResponse) AutMethod() (auth.AuthenticationMethod, error) {
+func (pkt *HandshakeResponse) AutMethod() (auth.AuthMethod, error) {
 	if len(pkt.clientPluginName) == 0 {
 		return auth.MySQLAuthenticationNone, nil
 	}
-	return auth.NewAuthenticationMethodFromID(pkt.clientPluginName)
+	return auth.NewAuthMethodFromID(pkt.clientPluginName)
 }
 
 // ZstdCompressionLevel returns the Zstd compression level.
