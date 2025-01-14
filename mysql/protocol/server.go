@@ -330,10 +330,14 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		conn.SetDatabase(handshakeRes.Database())
 	}
 
-	authQuery := auth.NewQuery(
+	authQuery, err := auth.NewQuery(
 		auth.WithQueryUsername(handshakeRes.Username()),
 		auth.WithQueryAuthResponse(handshakeRes.AuthResponse()),
+		auth.WithQueryClientPluginName(handshakeRes.ClientPluginName()),
 	)
+	if err != nil {
+		return err
+	}
 
 	ok := server.Authenticate(conn, authQuery)
 	if !ok {
