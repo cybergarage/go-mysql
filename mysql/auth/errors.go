@@ -20,10 +20,15 @@ import (
 )
 
 var (
+	ErrNotSupported                = errors.New("not supported")
 	ErrAccessDenied                = errors.New("access denied")
 	ErrInvalidArgument             = errors.New("invalid argument")
 	ErrUnknownAuthenticationMethod = errors.New("unknown authentication method")
 )
+
+func newErrNotSupported(s string) error {
+	return fmt.Errorf("%w %s", ErrNotSupported, s)
+}
 
 func newErrUnknownAuthenticationMethod(id string) error {
 	return fmt.Errorf("%w: %s", ErrUnknownAuthenticationMethod, id)
