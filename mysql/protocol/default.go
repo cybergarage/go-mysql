@@ -40,5 +40,5 @@ const (
 
 	DefaultServerStatus = 0x0000
 
-	DefaultAuthPluginName = auth.MySQLNativePassword
+	DefaultAuthPluginName = auth.MySQLNativePasswordID
 )
