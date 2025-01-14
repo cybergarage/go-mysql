@@ -334,6 +334,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		auth.WithQueryUsername(handshakeRes.Username()),
 		auth.WithQueryAuthResponse(handshakeRes.AuthResponse()),
 		auth.WithQueryClientPluginName(handshakeRes.ClientPluginName()),
+		auth.WithQueryAuthPluginData(handshakeMsg.AuthPluginData()),
 	)
 	if err != nil {
 		return err
