@@ -16,6 +16,8 @@ package protocol
 
 import (
 	"io"
+
+	"github.com/cybergarage/go-mysql/mysql/auth"
 )
 
 // MySQL: Connection Phase
@@ -210,6 +212,14 @@ func (pkt *HandshakeResponse) Database() string {
 // ClientPluginName returns the client plugin name.
 func (pkt *HandshakeResponse) ClientPluginName() string {
 	return pkt.clientPluginName
+}
+
+// AutMethod returns the authentication method.
+func (pkt *HandshakeResponse) AutMethod() (auth.AuthenticationMethod, error) {
+	if len(pkt.clientPluginName) == 0 {
+		return auth.MySQLAuthenticationNone, nil
+	}
+	return auth.NewAuthenticationMethodFromID(pkt.clientPluginName)
 }
 
 // ZstdCompressionLevel returns the Zstd compression level.
