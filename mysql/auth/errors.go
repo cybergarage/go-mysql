@@ -16,9 +16,15 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 )
 
 var (
-	ErrAccessDenied    = errors.New("access denied")
-	ErrInvalidArgument = errors.New("invalid argument")
+	ErrAccessDenied                = errors.New("access denied")
+	ErrInvalidArgument             = errors.New("invalid argument")
+	ErrUnknownAuthenticationMethod = errors.New("unknown authentication method")
 )
+
+func newErrUnknownAuthenticationMethod(id string) error {
+	return fmt.Errorf("%w: %s", ErrUnknownAuthenticationMethod, id)
+}
