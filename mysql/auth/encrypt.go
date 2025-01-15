@@ -27,8 +27,8 @@ type EncryptFunc = auth.EncryptFunc
 // MySQL: Native Authentication
 // https://dev.mysql.com/doc/dev/mysql-server/8.4.2/page_protocol_connection_phase_authentication_methods_native_password_authentication.html
 // NativeEncrypt encrypts the password using the native MySQL password encryption algorithm.
-func NativeEncrypt(passwd string, args ...any) (string, error) {
-	nativeEncrypt := func(passwd string, rndData []byte) string {
+func NativeEncrypt(passwd any, args ...any) (any, error) {
+	nativeEncrypt := func(passwd any, rndData []byte) (string, error) {
 		// SHA1( password ) XOR SHA1( "20-bytes random data from server" <concat> SHA1( SHA1( password ) ) )
 		xor := func(a, b []byte) []byte {
 			minLength := min(len(a), len(b))
@@ -39,9 +39,19 @@ func NativeEncrypt(passwd string, args ...any) (string, error) {
 			return result
 		}
 
+		var bytesPasswd []byte
+		switch v := passwd.(type) {
+		case string:
+			bytesPasswd = []byte(v)
+		case []byte:
+			bytesPasswd = v
+		default:
+			return "", ErrInvalidArgument
+		}
+
 		h := sha1.New()
 
-		h.Write([]byte(passwd))
+		h.Write(bytesPasswd)
 		passwdHash := h.Sum(nil)
 
 		h.Reset()
@@ -53,7 +63,7 @@ func NativeEncrypt(passwd string, args ...any) (string, error) {
 		h.Write(passwdHashHash)
 		rndDataHash := h.Sum(nil)
 
-		return hex.EncodeToString(xor(passwdHash, rndDataHash))
+		return hex.EncodeToString(xor(passwdHash, rndDataHash)), nil
 	}
 
 	if len(args) == 0 {
@@ -67,5 +77,5 @@ func NativeEncrypt(passwd string, args ...any) (string, error) {
 		return "", ErrInvalidArgument
 	}
 
-	return nativeEncrypt(passwd, rndData), nil
+	return nativeEncrypt(passwd, rndData)
 }
