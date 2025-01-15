@@ -55,10 +55,14 @@ func TestServer(t *testing.T) {
 			isTLSEnabled:      false,
 			isPasswordEnabled: false,
 		},
-		// {
-		// 	isTLSEnabled:      false,
-		// 	isPasswordEnabled: true,
-		// },
+		{
+			isTLSEnabled:      false,
+			isPasswordEnabled: true,
+		},
+		{
+			isTLSEnabled:      true,
+			isPasswordEnabled: true,
+		},
 	}
 
 	for _, setting := range settings {
