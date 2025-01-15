@@ -39,7 +39,7 @@ type HandshakeResponse struct {
 	charSet            uint8
 	username           string
 	authResponseLength uint8
-	authResponse       string
+	authResponse       []byte
 	database           string
 	clientPluginName   string
 	*AttributeMap
@@ -54,7 +54,7 @@ func newHandshakeResponseWithPacket(pkt *packet) *HandshakeResponse {
 		charSet:              0,
 		username:             "",
 		authResponseLength:   0,
-		authResponse:         "",
+		authResponse:         []byte{},
 		database:             "",
 		clientPluginName:     "",
 		AttributeMap:         NewAttributeMap(),
@@ -115,7 +115,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 	}
 
 	if pkt.Capability().IsEnabled(ClientPluginAuthLenencClientData) {
-		pkt.authResponse, err = pkt.ReadLengthEncodedString()
+		pkt.authResponse, err = pkt.ReadLengthEncodedBytes()
 		if err != nil {
 			return nil, err
 		}
@@ -124,7 +124,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		if err != nil {
 			return nil, err
 		}
-		pkt.authResponse, err = pkt.ReadFixedLengthString(int(pkt.authResponseLength))
+		pkt.authResponse, err = pkt.ReadFixedLengthBytes(int(pkt.authResponseLength))
 		if err != nil {
 			return nil, err
 		}
@@ -200,7 +200,7 @@ func (pkt *HandshakeResponse) Username() string {
 }
 
 // AuthResponse returns the auth response.
-func (pkt *HandshakeResponse) AuthResponse() string {
+func (pkt *HandshakeResponse) AuthResponse() []byte {
 	return pkt.authResponse
 }
 
@@ -252,14 +252,14 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 	}
 
 	if pkt.Capability().IsEnabled(ClientPluginAuthLenencClientData) {
-		if err := w.WriteLengthEncodedString(pkt.authResponse); err != nil {
+		if err := w.WriteLengthEncodedBytes(pkt.authResponse); err != nil {
 			return nil, err
 		}
 	} else {
 		if err := w.WriteByte(pkt.authResponseLength); err != nil {
 			return nil, err
 		}
-		if err := w.WriteFixedLengthString(pkt.authResponse, int(pkt.authResponseLength)); err != nil {
+		if err := w.WriteFixedLengthBytes(pkt.authResponse, int(pkt.authResponseLength)); err != nil {
 			return nil, err
 		}
 	}

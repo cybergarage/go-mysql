@@ -29,7 +29,7 @@ func TestHandshakeResponsePacket(t *testing.T) {
 		maxPkt     uint32
 		charSet    uint8
 		username   string
-		authRes    string
+		authRes    []byte
 		database   string
 		pluginName string
 		attrs      map[string]string
@@ -46,7 +46,7 @@ func TestHandshakeResponsePacket(t *testing.T) {
 				maxPkt:     0,
 				charSet:    45,
 				username:   "skonno",
-				authRes:    "",
+				authRes:    nil,
 				database:   "sqltest1727254524366662000",
 				pluginName: "mysql_native_password",
 				attrs:      map[string]string{},
@@ -60,7 +60,7 @@ func TestHandshakeResponsePacket(t *testing.T) {
 				maxPkt:     0,
 				charSet:    0,
 				username:   "",
-				authRes:    "",
+				authRes:    nil,
 				database:   "test",
 				pluginName: "mysql_native_password",
 				attrs:      map[string]string{},
@@ -74,7 +74,7 @@ func TestHandshakeResponsePacket(t *testing.T) {
 				maxPkt:     0,
 				charSet:    0,
 				username:   "root",
-				authRes:    "",
+				authRes:    nil,
 				database:   "",
 				pluginName: "mysql_native_password",
 				attrs: map[string]string{
@@ -133,7 +133,7 @@ func TestHandshakeResponsePacket(t *testing.T) {
 			}
 
 			if 0 < len(test.expected.authRes) {
-				if pkt.AuthResponse() != test.expected.authRes {
+				if !bytes.Equal(pkt.AuthResponse(), test.expected.authRes) {
 					t.Errorf("expected %s, got %s", test.expected.authRes, pkt.AuthResponse())
 				}
 			}
