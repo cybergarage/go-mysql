@@ -16,7 +16,6 @@ package auth
 
 import (
 	"crypto/sha1"
-	"encoding/hex"
 
 	"github.com/cybergarage/go-authenticator/auth"
 )
@@ -28,7 +27,7 @@ type EncryptFunc = auth.EncryptFunc
 // https://dev.mysql.com/doc/dev/mysql-server/8.4.2/page_protocol_connection_phase_authentication_methods_native_password_authentication.html
 // NativeEncrypt encrypts the password using the native MySQL password encryption algorithm.
 func NativeEncrypt(passwd any, args ...any) (any, error) {
-	nativeEncrypt := func(passwd any, rndData []byte) (string, error) {
+	nativeEncrypt := func(passwd any, rndData []byte) ([]byte, error) {
 		// SHA1( password ) XOR SHA1( "20-bytes random data from server" <concat> SHA1( SHA1( password ) ) )
 		xor := func(a, b []byte) []byte {
 			minLength := min(len(a), len(b))
@@ -46,7 +45,7 @@ func NativeEncrypt(passwd any, args ...any) (any, error) {
 		case []byte:
 			bytesPasswd = v
 		default:
-			return "", ErrInvalidArgument
+			return nil, ErrInvalidArgument
 		}
 
 		h := sha1.New()
@@ -63,7 +62,7 @@ func NativeEncrypt(passwd any, args ...any) (any, error) {
 		h.Write(passwdHashHash)
 		rndDataHash := h.Sum(nil)
 
-		return hex.EncodeToString(xor(passwdHash, rndDataHash)), nil
+		return xor(passwdHash, rndDataHash), nil
 	}
 
 	if len(args) == 0 {
