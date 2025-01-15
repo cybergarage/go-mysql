@@ -35,7 +35,7 @@ func WithQueryUsername(username string) QueryOptionFn {
 }
 
 // WithQueryAuthResponse returns an option to set the password.
-func WithQueryAuthResponse(password string) QueryOptionFn {
+func WithQueryAuthResponse(password any) QueryOptionFn {
 	return auth.WithQueryPassword(password)
 }
 
