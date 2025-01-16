@@ -80,11 +80,11 @@ run: install
 	$(GOBIN)/${EXAMPLES_DEAMON_BIN}
 
 image: test
-	docker image build -t${EXAMPLES_DOCKER_TAG} .
+	docker image build -t ${EXAMPLES_DOCKER_TAG} .
 	docker push ${EXAMPLES_DOCKER_TAG}
 
 image-push: image
-	docker image build -t${EXAMPLES_DOCKER_TAG_LATEST}
+	docker image build -t ${EXAMPLES_DOCKER_TAG_LATEST}
 	docker push ${EXAMPLES_DOCKER_TAG_LATEST}
 
 rund: image
