@@ -24,7 +24,7 @@ The protocol handler has been re-implemented independently to support good exten
 ## Examples
 
 - [Examples](doc/examples.md)
-	- [go-mysqld](examples/go-mysqld) ![Docker Image Version](https://img.shields.io/docker/v/cybergarage/go-mysqld)
+	- [go-mysqld](examples/go-mysqld) ![Docker Image Version](https://img.shields.io/docker/v/cybergarage/go-mysqld?link=https%3A%2F%2Fhub.docker.com%2Frepository%2Fdocker%2Fcybergarage%2Fgo-mysqld%2Fgeneral)
 	- [go-sqlserver](https://github.com/cybergarage/go-sqlserver)
 	- [PuzzleDB](https://github.com/cybergarage/puzzledb-go)
 
