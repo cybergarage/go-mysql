@@ -242,6 +242,15 @@ func (reader *Reader) ReadNullTerminatedString() (string, error) {
 	return string(strBytes), nil
 }
 
+// ReadNullTerminatedString reads a string until NULL.
+func (reader *Reader) ReadNullTerminatedBytes() ([]byte, error) {
+	bytes, err := reader.ReadBytesUntil(0x00)
+	if err != nil {
+		return nil, err
+	}
+	return bytes, nil
+}
+
 // ReadEOFTerminatedString reads a string until EOF.
 func (reader *Reader) ReadEOFTerminatedString() (string, error) {
 	buf := make([]byte, 0)
