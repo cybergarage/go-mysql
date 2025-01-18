@@ -48,11 +48,11 @@ func TestServer(t *testing.T) {
 		isPasswordEnabled bool
 	}{
 		{
-			isTLSEnabled:      true,
+			isTLSEnabled:      false,
 			isPasswordEnabled: false,
 		},
 		{
-			isTLSEnabled:      false,
+			isTLSEnabled:      true,
 			isPasswordEnabled: false,
 		},
 		{
