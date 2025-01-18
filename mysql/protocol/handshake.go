@@ -124,6 +124,9 @@ func WithHandshakeStatusFlags(v StatusFlag) HandshakeOption {
 
 // WithHandshakeAuthPluginData1 sets the auth plugin data.
 func WithHandshakeAuthPluginData(v []byte) HandshakeOption {
+	// NOTE: mysql-server 5.7 send_server_handshake_packet()
+	// https://github.com/mysql/mysql-server/blob/5.7/sql/auth/sql_authentication.cc#L512
+	// " \0 byte, terminating the second part of a scramble"
 	return func(pkt *Handshake) {
 		if authPluginDataPartMaxLen < len(v) {
 			v = v[:authPluginDataPartMaxLen]
@@ -233,6 +236,10 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 		if err != nil {
 			return nil, err
 		}
+		// mysql-server 5.7 send_server_handshake_packet()
+		// https://github.com/mysql/mysql-server/blob/5.7/sql/auth/sql_authentication.cc#L512
+		// NOTE: " \0 byte, terminating the second part of a scramble"
+		pkt.authPluginData2 = pkt.authPluginData2[:len(pkt.authPluginData2)-1]
 	}
 
 	if pkt.Capability().IsEnabled(ClientPluginAuth) {
@@ -316,7 +323,10 @@ func (pkt *Handshake) Bytes() ([]byte, error) {
 		return nil, err
 	}
 	if pkt.Capability().IsEnabled(ClientPluginAuth) {
-		if err := w.WriteByte(uint8(len(pkt.authPluginData2) + authPluginDataPart1Len)); err != nil {
+		// mysql-server 5.7 send_server_handshake_packet()
+		// https://github.com/mysql/mysql-server/blob/5.7/sql/auth/sql_authentication.cc#L512
+		// NOTE: " \0 byte, terminating the second part of a scramble"
+		if err := w.WriteByte(uint8(len(pkt.authPluginData2)+authPluginDataPart1Len) + 1); err != nil {
 			return nil, err
 		}
 	} else {
@@ -328,12 +338,12 @@ func (pkt *Handshake) Bytes() ([]byte, error) {
 		return nil, err
 	}
 	if 0 < len(pkt.authPluginData2) {
-		// NOTE: mysql-server 5.7 send_server_handshake_packet()
-		// https://github.com/mysql/mysql-server/blob/5.7/sql/auth/sql_authentication.cc#L512
-		// " \0 byte, terminating the second part of a scramble"
 		if err := w.WriteFixedLengthBytes(pkt.authPluginData2, len(pkt.authPluginData2)); err != nil {
 			return nil, err
 		}
+		// mysql-server 5.7 send_server_handshake_packet()
+		// https://github.com/mysql/mysql-server/blob/5.7/sql/auth/sql_authentication.cc#L512
+		// NOTE: " \0 byte, terminating the second part of a scramble"
 		if err := w.WriteByte(0x00); err != nil {
 			return nil, err
 		}
