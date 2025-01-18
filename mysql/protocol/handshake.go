@@ -328,7 +328,13 @@ func (pkt *Handshake) Bytes() ([]byte, error) {
 		return nil, err
 	}
 	if 0 < len(pkt.authPluginData2) {
+		// NOTE: mysql-server 5.7 send_server_handshake_packet()
+		// https://github.com/mysql/mysql-server/blob/5.7/sql/auth/sql_authentication.cc#L512
+		// " \0 byte, terminating the second part of a scramble"
 		if err := w.WriteFixedLengthBytes(pkt.authPluginData2, len(pkt.authPluginData2)); err != nil {
+			return nil, err
+		}
+		if err := w.WriteByte(0x00); err != nil {
 			return nil, err
 		}
 	}
