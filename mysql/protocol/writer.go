@@ -143,6 +143,19 @@ func (w *Writer) WriteNullTerminatedString(s string) error {
 	return nil
 }
 
+// WriteNullTerminatedBytes writes a null terminated bytes.
+func (w *Writer) WriteNullTerminatedBytes(b []byte) error {
+	_, err := w.WriteBytes(b)
+	if err != nil {
+		return err
+	}
+	err = w.WriteByte(0)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // WriteEOFTerminatedString writes a EOF terminated string.
 func (w *Writer) WriteEOFTerminatedString(s string) error {
 	_, err := w.WriteString(s)
