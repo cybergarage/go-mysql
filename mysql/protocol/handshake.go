@@ -231,15 +231,13 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	}
 
 	if 0 < pkt.authPluginDataLen {
-		authPluginDataLen := max(13, pkt.authPluginDataLen-8)
-		pkt.authPluginData2, err = pkt.ReadFixedLengthBytes(int(authPluginDataLen))
-		if err != nil {
-			return nil, err
-		}
 		// mysql-server 5.7 send_server_handshake_packet()
 		// https://github.com/mysql/mysql-server/blob/5.7/sql/auth/sql_authentication.cc#L512
 		// NOTE: " \0 byte, terminating the second part of a scramble"
-		pkt.authPluginData2 = pkt.authPluginData2[:len(pkt.authPluginData2)-1]
+		pkt.authPluginData2, err = pkt.ReadNullTerminatedBytes()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if pkt.Capability().IsEnabled(ClientPluginAuth) {
@@ -326,7 +324,8 @@ func (pkt *Handshake) Bytes() ([]byte, error) {
 		// mysql-server 5.7 send_server_handshake_packet()
 		// https://github.com/mysql/mysql-server/blob/5.7/sql/auth/sql_authentication.cc#L512
 		// NOTE: " \0 byte, terminating the second part of a scramble"
-		if err := w.WriteByte(uint8(len(pkt.authPluginData2)+authPluginDataPart1Len) + 1); err != nil {
+		authPluginDataLen := authPluginDataPart1Len + len(pkt.authPluginData2) + 1
+		if err := w.WriteByte(uint8(authPluginDataLen)); err != nil {
 			return nil, err
 		}
 	} else {
