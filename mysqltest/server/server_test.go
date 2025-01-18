@@ -66,8 +66,7 @@ func TestServer(t *testing.T) {
 	}
 
 	for _, setting := range settings {
-		t.Logf("TLS enabled: %v", setting.isTLSEnabled)
-		t.Logf("Password enabled: %v", setting.isPasswordEnabled)
+		t.Logf("TLS: %v, Password: %v", setting.isTLSEnabled, setting.isPasswordEnabled)
 
 		server := NewServer()
 
