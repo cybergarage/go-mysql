@@ -5,7 +5,7 @@
   - Support for major authentication methods.
     - caching_sha2_password
 
-## v1.2.1 (2025-01-xx)
+## v1.2.1 (2025-01-18)
 - Updated authenticator interface
 - Updated mysql_native_password
   - Fixed handshake packet to terminate the second part of the scramble with a zero byte, similar to MySQL 5.7.
