@@ -164,6 +164,22 @@ func (server *Server) serve() error {
 	return nil
 }
 
+// GenerateHandshakeForConn returns a handshake packet for the specified connection and server status.
+func (server *Server) GenerateHandshakeForConn(conn mysqlnet.Conn) (*Handshake, error) {
+	salt, err := auth.NewSalt(DefaultAuthPluginDataPartLen)
+	if err != nil {
+		return nil, err
+	}
+	return NewHandshake(
+		WithHandshakeCharacterSet(CharSetUTF8),
+		WithHandshakeCapability(server.Capability()),
+		WithHandshakeServerVersion(server.ServerVersion()),
+		WithHandshakeConnectionID(uint32(conn.ID())),
+		WithHandshakeAuthPluginData(salt),
+		WithHandshakeAuthPluginName(server.AuthPluginName()),
+	), nil
+}
+
 // receive handles client packets.
 func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintidx
 	// MySQL: Connection Lifecycle
@@ -211,22 +227,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 
 	// Initial Handshake Packet
 
-	generateHandshakeForConn := func(conn mysqlnet.Conn) (*Handshake, error) {
-		salt, err := auth.NewSalt(DefaultAuthPluginDataPartLen)
-		if err != nil {
-			return nil, err
-		}
-		return NewHandshake(
-			WithHandshakeCharacterSet(CharSetUTF8),
-			WithHandshakeCapability(server.Capability()),
-			WithHandshakeServerVersion(server.ServerVersion()),
-			WithHandshakeConnectionID(uint32(conn.ID())),
-			WithHandshakeAuthPluginData(salt),
-			WithHandshakeAuthPluginName(server.AuthPluginName()),
-		), nil
-	}
-
-	handshakeMsg, err := generateHandshakeForConn(conn)
+	handshakeMsg, err := server.GenerateHandshakeForConn(conn)
 	if err != nil {
 		return err
 	}
