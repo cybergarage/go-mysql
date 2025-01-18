@@ -15,7 +15,6 @@
   - Support for major authentication methods
     - mysql_native_password
 
-- New Features:
 ## v1.1.4 (2024-12-31)
 - Updates:
   - Authentication interfaces
