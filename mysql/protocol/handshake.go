@@ -230,14 +230,16 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 		return nil, err
 	}
 
-	if 0 < pkt.authPluginDataLen {
+	authPluginData2Len := max(13, pkt.authPluginDataLen-8)
+	if 0 < authPluginData2Len {
 		// mysql-server 5.7 send_server_handshake_packet()
 		// https://github.com/mysql/mysql-server/blob/5.7/sql/auth/sql_authentication.cc#L512
 		// NOTE: " \0 byte, terminating the second part of a scramble"
-		pkt.authPluginData2, err = pkt.ReadNullTerminatedBytes()
+		pkt.authPluginData2, err = pkt.ReadFixedLengthBytes(int(authPluginData2Len))
 		if err != nil {
 			return nil, err
 		}
+		pkt.authPluginData2 = pkt.authPluginData2[:authPluginData2Len-1]
 	}
 
 	if pkt.Capability().IsEnabled(ClientPluginAuth) {
