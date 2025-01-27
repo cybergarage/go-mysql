@@ -17,15 +17,14 @@ package sqltest
 import (
 	"testing"
 
+	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/mysqltest/server"
 	"github.com/cybergarage/go-sqltest/sqltest"
 )
 
 // TestSQLTest is a temporary debug test to check only the specified test cases.
 func TestSQLTest(t *testing.T) {
-	testFilenames := []string{
-		// NOTE: Add your test files in 'untests' directory into the filename array
-	}
+	log.SetStdoutDebugEnbled(true)
 
 	server := server.NewServer()
 	err := server.Start()
@@ -35,5 +34,10 @@ func TestSQLTest(t *testing.T) {
 	}
 	defer server.Stop()
 
-	sqltest.RunScenarioFiles(t, testFilenames)
+	// NOTE: Add your test files in 'untests' directory into the filename array
+	testNames := []string{
+		// "SmplCrudInt",
+	}
+
+	sqltest.RunEmbedSuites(t, sqltest.NewMySQLClient(), testNames...)
 }
