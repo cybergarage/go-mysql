@@ -19,9 +19,6 @@ import (
 	"io"
 )
 
-// MySQL: COM_STMT_PREPARE
-// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_stmt_prepare.html
-
 // StmtPrepare represents a COM_STMT_PREPARE packet.
 type StmtPrepare struct {
 	Command
