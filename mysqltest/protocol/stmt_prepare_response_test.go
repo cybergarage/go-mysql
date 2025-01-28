@@ -31,13 +31,9 @@ func TestStmtPrepareResponsePacket(t *testing.T) {
 		expected
 	}{
 		{
-			"data/stmt-prepare-001.hex",
+			"data/stmt-prepare-response-001.hex",
 			expected{},
 		},
-		// {
-		// 	"data/stmt-prepare-002.hex",
-		// 	expected{},
-		// },
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			testData, err := testPackettFiles.ReadFile(test.name)
@@ -52,7 +48,7 @@ func TestStmtPrepareResponsePacket(t *testing.T) {
 			}
 			reader := bytes.NewReader(testBytes)
 
-			pkt, err := protocol.NewStmtPrepareFromReader(reader)
+			pkt, err := protocol.NewStmtPrepareResponseFromReader(reader)
 			if err != nil {
 				t.Error(err)
 				return
