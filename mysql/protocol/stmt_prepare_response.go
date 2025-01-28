@@ -20,6 +20,8 @@ import (
 
 // MySQL: COM_STMT_PREPARE Response
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_stmt_prepare.html
+// COM_STMT_PREPARE response - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/com_stmt_prepare/
 // Server Response Packets (Binary Protocol) - MariaDB Knowledge Base
 // https://mariadb.com/kb/en/server-response-packets-binary-protocol/
 
