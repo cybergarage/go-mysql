@@ -28,6 +28,7 @@ type StatementID uint32
 type StmtPrepareResponse struct {
 	*packet
 	caps              Capability
+	status            Status
 	stmtID            StatementID
 	columns           []*ColumnDef
 	params            []*ColumnDef
@@ -39,6 +40,7 @@ func newStmtPrepareResponseWithPacket(pkt *packet) *StmtPrepareResponse {
 	return &StmtPrepareResponse{
 		packet:            pkt,
 		caps:              DefaultServerCapabilities,
+		status:            Status(0),
 		stmtID:            0,
 		columns:           []*ColumnDef{},
 		params:            []*ColumnDef{},
@@ -112,11 +114,17 @@ func NewStmtPrepareResponseFromReader(reader io.Reader) (*StmtPrepareResponse, e
 
 	pkt := newStmtPrepareResponseWithPacket(pktReader)
 
-	v, err := pktReader.ReadInt4()
+	i1, err := pktReader.ReadInt1()
 	if err != nil {
 		return nil, err
 	}
-	pkt.stmtID = StatementID(v)
+	pkt.status = Status(i1)
+
+	i4, err := pktReader.ReadInt4()
+	if err != nil {
+		return nil, err
+	}
+	pkt.stmtID = StatementID(i4)
 
 	numColumns, err := pktReader.ReadInt2()
 	if err != nil {
@@ -221,6 +229,10 @@ func (pkt *StmtPrepareResponse) Capability() Capability {
 // Bytes returns the packet bytes.
 func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
+
+	if err := w.WriteInt1(byte(pkt.status)); err != nil {
+		return nil, err
+	}
 
 	if err := w.WriteInt4(uint32(pkt.stmtID)); err != nil {
 		return nil, err
