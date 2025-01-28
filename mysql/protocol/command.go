@@ -92,6 +92,18 @@ const (
 	ComConnectOut CommandType = 0x14
 	// ComRegisterSlave: Command Register Slave.
 	ComRegisterSlave CommandType = 0x15
+	// ComStmtPrepare: Command Stmt Prepare.
+	ComStmtPrepare CommandType = 0x16
+	// ComStmtExecute: Command Stmt Execute
+	ComStmtExecute CommandType = 0x17
+	// ComStmtSendLongData: Command Stmt Send Long Data.
+	ComStmtSendLongData CommandType = 0x18
+	// ComStmtClose: Command Stmt Close.
+	ComStmtClose CommandType = 0x19
+	// ComStmtReset: Command Stmt Reset.
+	ComStmtReset CommandType = 0x1a
+	// ComStmeFetch: Command Stmt Fetch.
+	ComStmtFetch CommandType = 0x1b
 )
 
 // String returns the string representation of the command type.
