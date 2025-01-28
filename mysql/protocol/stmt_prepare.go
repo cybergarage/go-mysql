@@ -58,7 +58,7 @@ func NewStmtPrepareFromReader(reader io.Reader, opts ...StmtPrepareOption) (*Stm
 		return nil, err
 	}
 
-	if err = cmd.IsType(ComQuery); err != nil {
+	if err = cmd.IsType(ComStmtPrepare); err != nil {
 		return nil, err
 	}
 
