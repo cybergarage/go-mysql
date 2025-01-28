@@ -43,6 +43,12 @@ func TestStmtPreparePacket(t *testing.T) {
 				query: "SELECT * FROM test WHERE cint = ?;",
 			},
 		},
+		{
+			"data/stmt-prepare-003.hex",
+			expected{
+				query: "SELECT * FROM test_bind_result",
+			},
+		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			testData, err := testPackettFiles.ReadFile(test.name)
@@ -66,7 +72,7 @@ func TestStmtPreparePacket(t *testing.T) {
 			// Compare the packet fields
 
 			if pkt.Query() != test.query {
-				t.Errorf("Query: expected %v, got %v", test.query, pkt.Query())
+				t.Errorf("Query: expected %v, got %v", pkt.Query(), test.query)
 			}
 
 			// Compare the packet bytes
