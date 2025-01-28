@@ -37,6 +37,12 @@ func TestStmtPreparePacket(t *testing.T) {
 				query: "SELECT CONCAT(?, ?) AS col1",
 			},
 		},
+		{
+			"data/stmt-prepare-002.hex",
+			expected{
+				query: "SELECT * FROM test WHERE cint = ?;",
+			},
+		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			testData, err := testPackettFiles.ReadFile(test.name)
