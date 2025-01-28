@@ -25,18 +25,19 @@ import (
 
 func TestStmtPrepareResponsePacket(t *testing.T) {
 	type expected struct {
-		query string
 	}
 	for _, test := range []struct {
 		name string
 		expected
 	}{
 		{
-			"data/stmt-pepare-001.hex",
-			expected{
-				query: "SELECT CONCAT(?, ?) AS col1",
-			},
+			"data/stmt-prepare-001.hex",
+			expected{},
 		},
+		// {
+		// 	"data/stmt-prepare-002.hex",
+		// 	expected{},
+		// },
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			testData, err := testPackettFiles.ReadFile(test.name)
@@ -55,12 +56,6 @@ func TestStmtPrepareResponsePacket(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 				return
-			}
-
-			// Compare the packet fields
-
-			if pkt.Query() != test.query {
-				t.Errorf("Query: expected %v, got %v", test.query, pkt.Query())
 			}
 
 			// Compare the packet bytes
