@@ -23,7 +23,7 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
-func TestStmtPrepareResponsePacket(t *testing.T) {
+func TestStmtPreparePacket(t *testing.T) {
 	type expected struct {
 		query string
 	}
@@ -34,7 +34,7 @@ func TestStmtPrepareResponsePacket(t *testing.T) {
 		{
 			"data/prepare-001.hex",
 			expected{
-				query: "select @@version_comment limit 1",
+				query: "SELECT CONCAT(?, ?) AS col1",
 			},
 		},
 	} {
