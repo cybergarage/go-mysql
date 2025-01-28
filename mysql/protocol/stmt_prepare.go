@@ -21,6 +21,8 @@ import (
 
 // MySQL: COM_STMT_PREPARE
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_stmt_prepare.html
+// COM_STMT_PREPARE - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/com_stmt_prepare/
 
 // StmtPrepare represents a COM_STMT_PREPARE packet.
 type StmtPrepare struct {
