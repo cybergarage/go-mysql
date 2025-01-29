@@ -22,6 +22,8 @@ import (
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_stmt_prepare.html
 // COM_STMT_PREPARE response - MariaDB Knowledge Base
 // https://mariadb.com/kb/en/com_stmt_prepare/
+// 3 - Binary Protocol (Prepared Statements) - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/3-binary-protocol-prepared-statements/
 // Server Response Packets (Binary Protocol) - MariaDB Knowledge Base
 // https://mariadb.com/kb/en/server-response-packets-binary-protocol/
 
