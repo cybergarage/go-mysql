@@ -150,10 +150,6 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 		return nil, err
 	}
 
-	if pkt.PayloadLength() < 12 {
-		return pkt, nil
-	}
-
 	pkt.warningCount, err = pktReader.ReadInt2()
 	if err != nil {
 		return nil, err
