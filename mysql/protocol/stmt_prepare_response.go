@@ -33,7 +33,6 @@ type StatementID uint32
 // StmtPrepareResponse represents a MySQL Prepare Response packet.
 type StmtPrepareResponse struct {
 	*packet
-	caps              Capability
 	status            Status
 	stmtID            StatementID
 	columns           []*ColumnDef
@@ -45,7 +44,6 @@ type StmtPrepareResponse struct {
 func newStmtPrepareResponseWithPacket(pkt *packet, opts ...StmtPrepareResponseOption) *StmtPrepareResponse {
 	prPkt := &StmtPrepareResponse{
 		packet:            pkt,
-		caps:              DefaultServerCapabilities,
 		status:            Status(0),
 		stmtID:            0,
 		columns:           []*ColumnDef{},
@@ -64,43 +62,43 @@ type StmtPrepareResponseOption func(*StmtPrepareResponse)
 
 // WithStmtPrepareResponseCapability sets the capabilitys.
 func WithStmtPrepareResponseCapability(cap Capability) StmtPrepareResponseOption {
-	return func(h *StmtPrepareResponse) {
-		h.caps = cap
+	return func(pkt *StmtPrepareResponse) {
+		pkt.SetCapability(cap)
 	}
 }
 
 // WithStmtPrepareResponseStatementID sets the statement ID.
 func WithStmtPrepareResponseStatementID(stmdID StatementID) StmtPrepareResponseOption {
-	return func(h *StmtPrepareResponse) {
-		h.stmtID = stmdID
+	return func(pkt *StmtPrepareResponse) {
+		pkt.stmtID = stmdID
 	}
 }
 
 // WithStmtPrepareResponseColumns sets the columns.
 func WithStmtPrepareResponseColumns(columns []*ColumnDef) StmtPrepareResponseOption {
-	return func(h *StmtPrepareResponse) {
-		h.columns = columns
+	return func(pkt *StmtPrepareResponse) {
+		pkt.columns = columns
 	}
 }
 
 // WithStmtPrepareResponseParams sets the params.
 func WithStmtPrepareResponseParams(params []*ColumnDef) StmtPrepareResponseOption {
-	return func(h *StmtPrepareResponse) {
-		h.params = params
+	return func(pkt *StmtPrepareResponse) {
+		pkt.params = params
 	}
 }
 
 // WithStmtPrepareResponseWarningCount sets the warning count.
 func WithStmtPrepareResponseWarningCount(warningCount uint16) StmtPrepareResponseOption {
-	return func(h *StmtPrepareResponse) {
-		h.warningCount = warningCount
+	return func(pkt *StmtPrepareResponse) {
+		pkt.warningCount = warningCount
 	}
 }
 
 // WithStmtPrepareResponseResultSetMetadata sets the result set metadata.
 func WithStmtPrepareResponseResultSetMetadata(metadata ResultsetMetadata) StmtPrepareResponseOption {
-	return func(h *StmtPrepareResponse) {
-		h.resultSetMetadata = metadata
+	return func(pkt *StmtPrepareResponse) {
+		pkt.resultSetMetadata = metadata
 	}
 }
 
@@ -161,7 +159,7 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 		return nil, err
 	}
 
-	if pkt.Capabilitys.IsEnabled(ClientOptionalResultsetMetadata) {
+	if pkt.capability.IsEnabled(ClientOptionalResultsetMetadata) {
 		v, err := pktReader.ReadByte()
 		if err != nil {
 			return nil, err
@@ -231,11 +229,6 @@ func (pkt *StmtPrepareResponse) ResultSetMetadata() ResultsetMetadata {
 	return pkt.resultSetMetadata
 }
 
-// Capability returns the capability.
-func (pkt *StmtPrepareResponse) Capability() Capability {
-	return pkt.caps
-}
-
 // Bytes returns the packet bytes.
 func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
@@ -264,7 +257,7 @@ func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	if pkt.Capabilitys.IsEnabled(ClientOptionalResultsetMetadata) {
+	if pkt.Capability().IsEnabled(ClientOptionalResultsetMetadata) {
 		if err := w.WriteByte(byte(pkt.resultSetMetadata)); err != nil {
 			return nil, err
 		}

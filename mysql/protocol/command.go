@@ -94,7 +94,7 @@ const (
 	ComRegisterSlave CommandType = 0x15
 	// ComStmtPrepare: Command Stmt Prepare.
 	ComStmtPrepare CommandType = 0x16
-	// ComStmtExecute: Command Stmt Execute
+	// ComStmtExecute: Command Stmt Execute.
 	ComStmtExecute CommandType = 0x17
 	// ComStmtSendLongData: Command Stmt Send Long Data.
 	ComStmtSendLongData CommandType = 0x18

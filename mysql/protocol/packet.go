@@ -57,7 +57,7 @@ type packet struct {
 	payloadLength uint32
 	sequenceID    SequenceID
 	payload       []byte
-	Capabilitys   Capability
+	capability    Capability
 }
 
 func newPacket() *packet {
@@ -66,7 +66,7 @@ func newPacket() *packet {
 		payloadLength: 0,
 		sequenceID:    SequenceID(0),
 		payload:       nil,
-		Capabilitys:   0,
+		capability:    0,
 	}
 }
 
@@ -205,22 +205,22 @@ func (pkt *packet) Payload() []byte {
 
 // SetCapabilitys sets the packet capability flags.
 func (pkt *packet) SetCapability(flags Capability) {
-	pkt.Capabilitys = flags
+	pkt.capability = flags
 }
 
 // Capabilitys returns the packet capability flags.
 func (pkt *packet) Capability() Capability {
-	return pkt.Capabilitys
+	return pkt.capability
 }
 
 // SetEnabled sets the specified flag.
 func (pkt *packet) SetCapabilityEnabled(flag Capability) {
-	pkt.Capabilitys |= flag
+	pkt.capability |= flag
 }
 
 // SetDisabled unsets the specified flag.
 func (pkt *packet) SetCapabilityDisabled(flag Capability) {
-	pkt.Capabilitys &^= flag
+	pkt.capability &^= flag
 }
 
 // Reader returns the packet reader.
