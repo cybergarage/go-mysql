@@ -167,7 +167,7 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 		return pkt, nil
 	}
 
-	pkt.params = make([]*ColumnDef, 0, numParams)
+	pkt.params = make([]*ColumnDef, numParams)
 	for n := 0; n < int(numParams); n++ {
 		param, err := NewColumnDefFromReader(pktReader)
 		if err != nil {
@@ -182,7 +182,7 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 		}
 	}
 
-	pkt.columns = make([]*ColumnDef, 0, numColumns)
+	pkt.columns = make([]*ColumnDef, numColumns)
 	for n := 0; n < int(numColumns); n++ {
 		column, err := NewColumnDefFromReader(pktReader)
 		if err != nil {
