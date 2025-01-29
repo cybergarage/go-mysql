@@ -28,10 +28,12 @@ func TestStmtPrepareResponsePacket(t *testing.T) {
 	}
 	for _, test := range []struct {
 		name string
+		protocol.Capability
 		expected
 	}{
 		{
 			"data/stmt-prepare-response-001.hex",
+			protocol.ClientOptionalResultsetMetadata,
 			expected{},
 		},
 	} {
@@ -48,7 +50,10 @@ func TestStmtPrepareResponsePacket(t *testing.T) {
 			}
 			reader := bytes.NewReader(testBytes)
 
-			pkt, err := protocol.NewStmtPrepareResponseFromReader(reader)
+			opts := []protocol.StmtPrepareResponseOption{
+				protocol.WithStmtPrepareResponseCapability(test.Capability),
+			}
+			pkt, err := protocol.NewStmtPrepareResponseFromReader(reader, opts...)
 			if err != nil {
 				t.Error(err)
 				return
