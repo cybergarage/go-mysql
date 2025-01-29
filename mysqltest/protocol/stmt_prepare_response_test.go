@@ -33,7 +33,7 @@ func TestStmtPrepareResponsePacket(t *testing.T) {
 	}{
 		{
 			"data/stmt-prepare-response-001.hex",
-			protocol.ClientOptionalResultsetMetadata,
+			protocol.DefaultServerCapabilities,
 			expected{},
 		},
 	} {
