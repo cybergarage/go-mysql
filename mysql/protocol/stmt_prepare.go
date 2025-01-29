@@ -85,8 +85,8 @@ func NewStmtPrepareFromCommand(cmd Command, opts ...StmtPrepareOption) (*StmtPre
 }
 
 // Query returns the query string.
-func (stmt *StmtPrepare) Query() string {
-	return stmt.query
+func (pkt *StmtPrepare) Query() string {
+	return pkt.query
 }
 
 // Bytes returns the packet bytes.
