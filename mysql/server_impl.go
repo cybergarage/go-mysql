@@ -20,11 +20,13 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/errors"
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 	"github.com/cybergarage/go-mysql/mysql/query"
+	"github.com/cybergarage/go-mysql/mysql/stmt"
 )
 
 // server represents a base executor server.
 type server struct {
 	*protocol.Server
+	*stmt.PreparedManager
 	sqlExecutor     SQLExecutor
 	queryExecutor   QueryExecutor
 	exQueryExecutor ExQueryExecutor
@@ -35,6 +37,7 @@ type server struct {
 func NewServer() Server {
 	server := &server{
 		Server:          protocol.NewServer(),
+		PreparedManager: stmt.NewPreparedManager(),
 		sqlExecutor:     nil,
 		queryExecutor:   NewDefaultQueryExecutor(),
 		exQueryExecutor: nil,
