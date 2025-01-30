@@ -249,6 +249,7 @@ func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
 	if err := w.WriteByte(0x00); err != nil {
 		return nil, err
 	}
+
 	if err := w.WriteInt2(pkt.warningCount); err != nil {
 		return nil, err
 	}
@@ -263,27 +264,35 @@ func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
 		return pkt.packet.Bytes()
 	}
 
+	secuenceID := pkt.SequenceID()
+	secuenceID = secuenceID.Next()
+
 	for _, param := range pkt.params {
+		param.SetSequenceID(secuenceID)
 		if err := w.WritePacket(param); err != nil {
 			return nil, err
 		}
+		secuenceID = secuenceID.Next()
 	}
 	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
-		if err := w.WriteEOF(pkt.Capability()); err != nil {
+		if err := w.WriteEOF(secuenceID, pkt.Capability()); err != nil {
 			return nil, err
 		}
+		secuenceID = secuenceID.Next()
 	}
 
 	for _, column := range pkt.columns {
+		column.SetSequenceID(secuenceID)
 		if err := w.WritePacket(column); err != nil {
 			return nil, err
 		}
+		secuenceID = secuenceID.Next()
 	}
 	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
-		if err := w.WriteEOF(pkt.Capability()); err != nil {
+		if err := w.WriteEOF(secuenceID, pkt.Capability()); err != nil {
 			return nil, err
 		}
 	}
 
-	return pkt.packet.Bytes()
+	return w.Bytes(), nil
 }
