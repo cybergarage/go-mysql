@@ -29,11 +29,19 @@ func TestStmtPrepareResponsePacket(t *testing.T) {
 	for _, test := range []struct {
 		name string
 		protocol.Capability
+		protocol.ServerStatus
 		expected
 	}{
 		{
 			"data/stmt-prepare-response-001.hex",
 			protocol.DefaultServerCapabilities,
+			protocol.DefaultServerStatus,
+			expected{},
+		},
+		{
+			"data/stmt-prepare-response-002.hex",
+			protocol.DefaultServerCapabilities,
+			protocol.DefaultServerStatus,
 			expected{},
 		},
 	} {
@@ -52,6 +60,7 @@ func TestStmtPrepareResponsePacket(t *testing.T) {
 
 			opts := []protocol.StmtPrepareResponseOption{
 				protocol.WithStmtPrepareResponseCapability(test.Capability),
+				protocol.WithStmtPrepareResponseServerStatus(test.ServerStatus),
 			}
 			pkt, err := protocol.NewStmtPrepareResponseFromReader(reader, opts...)
 			if err != nil {
