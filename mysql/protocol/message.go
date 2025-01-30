@@ -19,8 +19,19 @@ package protocol
 
 // Message represents a MySQL message.
 type Message struct {
-	*Header
+	length  uint32
+	typ     uint8
 	payload []byte
+}
+
+// Length returns the message length.
+func (msg *Message) Length() uint32 {
+	return msg.length
+}
+
+// Type returns the message type.
+func (msg *Message) Type() uint8 {
+	return msg.typ
 }
 
 // Payload returns the message payload.
