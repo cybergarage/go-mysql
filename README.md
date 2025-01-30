@@ -31,7 +31,11 @@ The protocol handler has been re-implemented independently to support good exten
 ## References
 
 - [MySQL](https://www.mysql.com/)
-	- [MySQL: Client/Server Protocol](https://dev.mysql.com/doc/dev/mysql-server/latest/PAGE_PROTOCOL.html)
+	- [MySQL: Welcome](https://dev.mysql.com/doc/dev/mysql-server/latest/)
+		- [MySQL: Client/Server Protocol](https://dev.mysql.com/doc/dev/mysql-server/latest/PAGE_PROTOCOL.html)
+	- [Contributing to MySQL](https://dev.mysql.com/community/contributing/)
 - [MariaDB](https://mariadb.com/)
 	- [MariaDB Knowledge Base](https://mariadb.com/kb/en/)
 		- [Client/Server Protocol - MariaDB Knowledge Base](https://mariadb.com/kb/en/clientserver-protocol/)
+		- [Contributing and Contributors](https://mariadb.com/kb/en/meta/contributing-and-contributors/)
+	- [MariaDB: Contribute](https://mariadb.org/contribute/)
