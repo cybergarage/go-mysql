@@ -88,13 +88,13 @@ const (
 )
 
 // IsEnabled returns true if the specified flag is set.
-func (capFlg Capability) IsEnabled(flag Capability) bool {
-	return (capFlg & flag) != 0
+func (c Capability) IsEnabled(flag Capability) bool {
+	return (c & flag) != 0
 }
 
 // IsDisabled returns true if the specified flag is not set.
-func (capFlg Capability) IsDisabled(flag Capability) bool {
-	return !capFlg.IsEnabled(flag)
+func (c Capability) IsDisabled(flag Capability) bool {
+	return !c.IsEnabled(flag)
 }
 
 // ToBytes returns the capability flag as bytes.

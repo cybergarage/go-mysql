@@ -64,9 +64,9 @@ func newStmtPrepareResponseWithPacket(pkt *packet, opts ...StmtPrepareResponseOp
 type StmtPrepareResponseOption func(*StmtPrepareResponse)
 
 // WithStmtPrepareResponseCapability sets the capabilitys.
-func WithStmtPrepareResponseCapability(cap Capability) StmtPrepareResponseOption {
+func WithStmtPrepareResponseCapability(c Capability) StmtPrepareResponseOption {
 	return func(pkt *StmtPrepareResponse) {
-		pkt.SetCapability(cap)
+		pkt.SetCapability(c)
 	}
 }
 
