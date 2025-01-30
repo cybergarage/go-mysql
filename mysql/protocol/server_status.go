@@ -28,7 +28,7 @@ const (
 	ServerQueryNoIndexUsed         ServerStatus = 32
 	ServerStatusCursorExists       ServerStatus = 64
 	ServerStatusLastRowSent        ServerStatus = 128
-	ServerStatusDbDropped          ServerStatus = 256
+	ServerStatusDBDropped          ServerStatus = 256
 	ServerStatusNoBackslashEscapes ServerStatus = 512
 	ServerStatusMetadataChanged    ServerStatus = 1024
 	ServerQueryWasSlow             ServerStatus = 2048
