@@ -71,6 +71,8 @@ func (w *PacketWriter) WriteOK(opts ...any) error {
 			okOpts = append(okOpts, WithOKSecuenceID(v))
 		case Capability:
 			okOpts = append(okOpts, WithOKCapability(v))
+		case ServerStatus:
+			okOpts = append(okOpts, WithOKServerStatus(v))
 		}
 	}
 	ok, err := NewOK(okOpts...)
@@ -121,6 +123,8 @@ func (w *PacketWriter) WriteEOF(opts ...any) error {
 			eofOpts = append(eofOpts, WithEOFCSecuenceID(v))
 		case Capability:
 			eofOpts = append(eofOpts, WithEOFCapability(v))
+		case ServerStatus:
+			eofOpts = append(eofOpts, WithEOFServerStatus(v))
 		}
 	}
 	eof, err := NewEOF(eofOpts...)
