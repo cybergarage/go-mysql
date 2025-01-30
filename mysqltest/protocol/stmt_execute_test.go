@@ -32,7 +32,7 @@ func TestStmtExecutePacket(t *testing.T) {
 		expected
 	}{
 		{
-			"data/stmt-reset-001.hex",
+			"data/stmt-execute-001.hex",
 			expected{
 				stmtID: 1,
 			},
@@ -58,6 +58,7 @@ func TestStmtExecutePacket(t *testing.T) {
 			}
 
 			// Compare the packet fields
+
 			if pkt.StatementID() != test.stmtID {
 				t.Errorf("stmtID = %d, want %d", pkt.StatementID(), test.stmtID)
 			}
