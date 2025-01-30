@@ -52,9 +52,7 @@ type Handshake struct {
 	protocolVersion   uint8
 	serverVersion     string
 	connectionID      uint32
-	Capabilitys       uint32
 	characterSet      uint8
-	statusFlags       uint16
 	authPluginDataLen uint8
 	authPluginData1   []byte
 	authPluginData2   []byte
@@ -62,19 +60,20 @@ type Handshake struct {
 }
 
 func newHandshakeWithPacket(msg *packet) *Handshake {
-	return &Handshake{
+	pkt := &Handshake{
 		packet:            msg,
 		protocolVersion:   uint8(ProtocolVersion10),
 		serverVersion:     "",
 		connectionID:      0,
-		Capabilitys:       uint32(DefaultServerCapabilities),
 		characterSet:      uint8(CharSetUTF8),
-		statusFlags:       uint16(DefaultServerStatus),
 		authPluginDataLen: 0,
 		authPluginData1:   nil,
 		authPluginData2:   nil,
 		authPluginName:    "",
 	}
+	pkt.SetCapability(DefaultServerCapabilities)
+	pkt.SetServerStatus(DefaultServerStatus)
+	return pkt
 }
 
 // HandshakeOption represents a MySQL Handshake option.
@@ -104,7 +103,7 @@ func WithHandshakeConnectionID(v uint32) HandshakeOption {
 // WithHandshakeCapability sets the capability flags.
 func WithHandshakeCapability(v Capability) HandshakeOption {
 	return func(pkt *Handshake) {
-		pkt.Capabilitys = uint32(v)
+		pkt.SetCapability(v)
 	}
 }
 
@@ -115,10 +114,10 @@ func WithHandshakeCharacterSet(v CharSet) HandshakeOption {
 	}
 }
 
-// WithHandshakeStatusFlags sets the status flags.
-func WithHandshakeStatusFlags(v StatusFlag) HandshakeOption {
+// WithHandshakeServerStatusFlags sets the status flags.
+func WithHandshakeServerStatusFlags(v ServerStatus) HandshakeOption {
 	return func(pkt *Handshake) {
-		pkt.statusFlags = uint16(v)
+		pkt.SetServerStatus(v)
 	}
 }
 
@@ -198,14 +197,9 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	if err != nil {
 		return nil, err
 	}
-	pkt.Capabilitys = uint32(iv2)
+	pkt.SetCapability(Capability(iv2))
 
 	pkt.characterSet, err = pkt.ReadByte()
-	if err != nil {
-		return nil, err
-	}
-
-	pkt.statusFlags, err = pkt.ReadInt2()
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +208,13 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	if err != nil {
 		return nil, err
 	}
-	pkt.Capabilitys |= (uint32(iv2) << 16)
+	pkt.SetServerStatus(ServerStatus(iv2))
+
+	iv2, err = pkt.ReadInt2()
+	if err != nil {
+		return nil, err
+	}
+	pkt.SetCapabilityEnabled(Capability((uint32(iv2) << 16)))
 
 	pkt.authPluginDataLen = 0
 	iv1, err := pkt.ReadByte()
@@ -272,19 +272,9 @@ func (pkt *Handshake) AuthPluginData() []byte {
 	return append(pkt.authPluginData1, pkt.authPluginData2...)
 }
 
-// Capabilitys returns the capability flags.
-func (pkt *Handshake) Capability() Capability {
-	return Capability(pkt.Capabilitys)
-}
-
 // CharacterSet returns the character set.
 func (pkt *Handshake) CharacterSet() CharSet {
 	return CharSet(pkt.characterSet)
-}
-
-// StatusFlags returns the status flags.
-func (pkt *Handshake) StatusFlags() StatusFlag {
-	return StatusFlag(pkt.statusFlags)
 }
 
 // AuthPluginName returns the auth plugin name.
@@ -310,16 +300,16 @@ func (pkt *Handshake) Bytes() ([]byte, error) {
 	if err := w.WriteByte(0x00); err != nil {
 		return nil, err
 	}
-	if err := w.WriteInt2(uint16(pkt.Capabilitys & 0xFFFF)); err != nil {
+	if err := w.WriteInt2(uint16(pkt.Capability() & 0xFFFF)); err != nil {
 		return nil, err
 	}
 	if err := w.WriteByte(pkt.characterSet); err != nil {
 		return nil, err
 	}
-	if err := w.WriteInt2(pkt.statusFlags); err != nil {
+	if err := w.WriteInt2(uint16(pkt.ServerStatus())); err != nil {
 		return nil, err
 	}
-	if err := w.WriteInt2(uint16(pkt.Capabilitys >> 16)); err != nil {
+	if err := w.WriteInt2(uint16(pkt.Capability() >> 16)); err != nil {
 		return nil, err
 	}
 	if pkt.Capability().IsEnabled(ClientPluginAuth) {

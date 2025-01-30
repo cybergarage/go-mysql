@@ -32,7 +32,6 @@ type EOF struct {
 	*packet
 	header   uint8
 	warnings uint16
-	status   StatusFlag
 }
 
 // EOFOption represents a MySQL EOF packet option.
@@ -43,7 +42,6 @@ func newEOFPacket(p *packet, opts ...EOFOption) (*EOF, error) {
 		packet:   p,
 		header:   eofPacketHeader,
 		warnings: 0,
-		status:   0,
 	}
 	for _, opt := range opts {
 		if err := opt(pkt); err != nil {
@@ -77,10 +75,10 @@ func WithEOFWarnings(warnings uint16) EOFOption {
 	}
 }
 
-// WithEOFStatus returns a EOFOption that sets the status flag.
-func WithEOFStatus(status StatusFlag) EOFOption {
+// WithEOFServerStatus returns a EOFOption that sets the server status flag.
+func WithEOFServerStatus(status ServerStatus) EOFOption {
 	return func(pkt *EOF) error {
-		pkt.status = status
+		pkt.SetServerStatus(status)
 		return nil
 	}
 }
@@ -125,7 +123,7 @@ func NewEOFFromReader(reader io.Reader, opts ...EOFOption) (*EOF, error) {
 		if err != nil {
 			return nil, err
 		}
-		pkt.status = StatusFlag(v)
+		pkt.SetServerStatus(ServerStatus(v))
 	}
 
 	return pkt, err
@@ -139,11 +137,6 @@ func (pkt *EOF) Header() uint8 {
 // Warnings returns the number of warnings.
 func (pkt *EOF) Warnings() uint16 {
 	return pkt.warnings
-}
-
-// Status returns the status flag.
-func (pkt *EOF) Status() StatusFlag {
-	return pkt.status
 }
 
 // Bytes returns a byte sequence of the EOF packet.
@@ -160,7 +153,7 @@ func (pkt *EOF) Bytes() ([]byte, error) {
 		if err := w.WriteInt2(pkt.warnings); err != nil {
 			return nil, err
 		}
-		if err := w.WriteInt2(uint16(pkt.status)); err != nil {
+		if err := w.WriteInt2(uint16(pkt.ServerStatus())); err != nil {
 			return nil, err
 		}
 	}

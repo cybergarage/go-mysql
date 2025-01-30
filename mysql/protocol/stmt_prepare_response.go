@@ -70,6 +70,13 @@ func WithStmtPrepareResponseCapability(cap Capability) StmtPrepareResponseOption
 	}
 }
 
+// WithStmtPrepareResponseServerStatus sets the server status.
+func WithStmtPrepareResponseServerStatus(status ServerStatus) StmtPrepareResponseOption {
+	return func(pkt *StmtPrepareResponse) {
+		pkt.SetServerStatus(status)
+	}
+}
+
 // WithStmtPrepareResponseStatementID sets the statement ID.
 func WithStmtPrepareResponseStatementID(stmdID StatementID) StmtPrepareResponseOption {
 	return func(pkt *StmtPrepareResponse) {
@@ -274,7 +281,7 @@ func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
 	}
 
 	if pkt.resultSetMetadata == ResultsetMetadataNone && len(pkt.params) == 0 && len(pkt.columns) == 0 {
-		return pkt.packet.Bytes()
+		return w.Bytes(), nil
 	}
 
 	secuenceID := pkt.SequenceID()
@@ -288,7 +295,7 @@ func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
 		secuenceID = secuenceID.Next()
 	}
 	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
-		if err := w.WriteEOF(secuenceID, pkt.Capability()); err != nil {
+		if err := w.WriteEOF(secuenceID, pkt.Capability(), pkt.ServerStatus()); err != nil {
 			return nil, err
 		}
 		secuenceID = secuenceID.Next()
@@ -302,7 +309,7 @@ func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
 		secuenceID = secuenceID.Next()
 	}
 	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
-		if err := w.WriteEOF(secuenceID, pkt.Capability()); err != nil {
+		if err := w.WriteEOF(secuenceID, pkt.Capability(), pkt.ServerStatus()); err != nil {
 			return nil, err
 		}
 	}

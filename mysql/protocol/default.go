@@ -38,7 +38,7 @@ const (
 	DefaultSSLRequestCapabilities = DefaultServerCapabilities |
 		ClientSSL
 
-	DefaultServerStatus = 0x0000
+	DefaultServerStatus = ServerStatusAutocommit
 
 	DefaultAuthPluginName = auth.MySQLNativePasswordID
 )

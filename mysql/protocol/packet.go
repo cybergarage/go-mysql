@@ -35,16 +35,22 @@ type Packet interface {
 	SetSequenceID(n SequenceID)
 	// SetPayload sets the packet payload.
 	SetPayload(payload []byte)
-	// PayloadLength returns the packet payload length.
-	PayloadLength() uint32
+	// SetPayloadLength sets only the payload length without the payload bytes.
+	SetPayloadLength(l int)
 	// SetCapability sets the packet capability flags.
 	SetCapability(Capability)
+	// SetServerStatus sets the packet server status.
+	SetServerStatus(ServerStatus)
 	// SequenceID returns the packet sequence ID.
 	SequenceID() SequenceID
+	// PayloadLength returns the packet payload length.
+	PayloadLength() uint32
 	// Payload returns the packet payload.
 	Payload() []byte
 	// Capability returns the packet capability flags.
 	Capability() Capability
+	// ServerStatus returns the packet server status.
+	ServerStatus() ServerStatus
 	// Reader returns the packet reader.
 	Reader() *PacketReader
 	// Bytes returns the packet bytes.
@@ -58,6 +64,7 @@ type packet struct {
 	sequenceID    SequenceID
 	payload       []byte
 	capability    Capability
+	serverStat    ServerStatus
 }
 
 func newPacket() *packet {
@@ -67,6 +74,7 @@ func newPacket() *packet {
 		sequenceID:    SequenceID(0),
 		payload:       nil,
 		capability:    0,
+		serverStat:    0,
 	}
 }
 
@@ -91,6 +99,13 @@ func WithPacketSequenceID(n SequenceID) PacketOption {
 func WithPacketCapability(flags Capability) PacketOption {
 	return func(pkt Packet) {
 		pkt.SetCapability(flags)
+	}
+}
+
+// WithPacketServerStatus returns a packet option to set the server status.
+func WithPacketServerStatus(status ServerStatus) PacketOption {
+	return func(pkt Packet) {
+		pkt.SetServerStatus(status)
 	}
 }
 
@@ -193,6 +208,16 @@ func (pkt *packet) SetSequenceID(n SequenceID) {
 	pkt.sequenceID = n
 }
 
+// SetCapabilitys sets the packet capability flags.
+func (pkt *packet) SetCapability(flags Capability) {
+	pkt.capability = flags
+}
+
+// SetServerStatus sets the packet server status.
+func (pkt *packet) SetServerStatus(status ServerStatus) {
+	pkt.serverStat = status
+}
+
 // PayloadLength returns the packet payload length.
 func (pkt *packet) PayloadLength() uint32 {
 	return pkt.payloadLength
@@ -208,11 +233,6 @@ func (pkt *packet) Payload() []byte {
 	return pkt.payload
 }
 
-// SetCapabilitys sets the packet capability flags.
-func (pkt *packet) SetCapability(flags Capability) {
-	pkt.capability = flags
-}
-
 // Capabilitys returns the packet capability flags.
 func (pkt *packet) Capability() Capability {
 	return pkt.capability
@@ -226,6 +246,11 @@ func (pkt *packet) SetCapabilityEnabled(flag Capability) {
 // SetDisabled unsets the specified flag.
 func (pkt *packet) SetCapabilityDisabled(flag Capability) {
 	pkt.capability &^= flag
+}
+
+// ServerStatus returns the packet server status.
+func (pkt *packet) ServerStatus() ServerStatus {
+	return pkt.serverStat
 }
 
 // Reader returns the packet reader.

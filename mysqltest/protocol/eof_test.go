@@ -27,7 +27,7 @@ func TestEOFPacket(t *testing.T) {
 	type expected struct {
 		seqID    protocol.SequenceID
 		warnings uint16
-		status   protocol.StatusFlag
+		status   protocol.ServerStatus
 	}
 	for _, test := range []struct {
 		name string
@@ -69,8 +69,8 @@ func TestEOFPacket(t *testing.T) {
 				t.Errorf("expected %d, got %d", test.expected.warnings, pkt.Warnings())
 			}
 
-			if pkt.Status() != test.expected.status {
-				t.Errorf("expected %d, got %d", test.expected.status, pkt.Status())
+			if pkt.ServerStatus() != test.expected.status {
+				t.Errorf("expected %d, got %d", test.expected.status, pkt.ServerStatus())
 			}
 
 			// Compare the packet bytes

@@ -95,7 +95,7 @@ func TestHandshakePacket(t *testing.T) {
 		conID          uint32
 		capFlags       protocol.Capability
 		charSet        protocol.CharSet
-		statusFlags    protocol.StatusFlag
+		serverStatus   protocol.ServerStatus
 		authPluginName string
 	}
 	for _, test := range []struct {
@@ -111,7 +111,7 @@ func TestHandshakePacket(t *testing.T) {
 				conID:          1,
 				capFlags:       protocol.Capability(0),
 				charSet:        protocol.CharSet(protocol.CharSetUTF8),
-				statusFlags:    protocol.StatusFlag(0),
+				serverStatus:   protocol.ServerStatus(0),
 				authPluginName: "mysql_native_password",
 			},
 		},
@@ -154,8 +154,8 @@ func TestHandshakePacket(t *testing.T) {
 				t.Errorf("expected %d, got %d", test.expected.charSet, pkt.CharacterSet())
 			}
 
-			if pkt.StatusFlags() != test.expected.statusFlags {
-				t.Errorf("expected %d, got %d", test.expected.statusFlags, pkt.StatusFlags())
+			if pkt.ServerStatus() != test.expected.serverStatus {
+				t.Errorf("expected %d, got %d", test.expected.serverStatus, pkt.ServerStatus())
 			}
 
 			if pkt.AuthPluginName() != test.expected.authPluginName {

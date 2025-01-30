@@ -14,6 +14,9 @@
 
 package protocol
 
+// MySQL: Server Status Flag
+// https://dev.mysql.com/doc/dev/mysql-server/latest/mysql__com_8h.html
+
 // ServerStatus represents a MySQL server status flag.
 type ServerStatus uint16
 
@@ -33,3 +36,8 @@ const (
 	ServerStatusInTransReadonly    ServerStatus = 8192
 	ServerSessionStateChanged      ServerStatus = (1 << 14)
 )
+
+// IsEnabled returns true if the status flag is enabled.
+func (statFlag ServerStatus) IsEnabled(flag ServerStatus) bool {
+	return (statFlag & flag) != 0
+}

@@ -68,10 +68,10 @@ func WithOKLastInsertID(v uint64) OKOption {
 	}
 }
 
-// WithOKStatus returns a OKOption that sets the status flag.
-func WithOKStatus(v StatusFlag) OKOption {
+// WithOKServerStatus returns a OKOption that sets the server status flag.
+func WithOKServerStatus(v ServerStatus) OKOption {
 	return func(pkt *OK) {
-		pkt.status = uint16(v)
+		pkt.SetServerStatus(v)
 	}
 }
 
@@ -165,7 +165,7 @@ func NewOKFromReader(reader io.Reader, opts ...OKOption) (*OK, error) {
 		if err != nil {
 			return nil, err
 		}
-		if pkt.Status().IsEnabled(StatusSessionStateChanged) {
+		if pkt.ServerStatus().IsEnabled(ServerSessionStateChanged) {
 			// sessionStateInfo
 			pkt.sessionStateInfo, err = pkt.ReadLengthEncodedString()
 			if err != nil {
@@ -206,11 +206,6 @@ func (pkt *OK) AffectedRows() uint64 {
 // LastInsertID returns the last insert ID.
 func (pkt *OK) LastInsertID() uint64 {
 	return pkt.lastInsertID
-}
-
-// Status returns the status flag.
-func (pkt *OK) Status() StatusFlag {
-	return StatusFlag(pkt.status)
 }
 
 // Warnings returns the number of warnings.
@@ -268,7 +263,7 @@ func (pkt *OK) Bytes() ([]byte, error) {
 		if err := w.WriteLengthEncodedString(pkt.info); err != nil {
 			return nil, err
 		}
-		if pkt.Status().IsEnabled(StatusSessionStateChanged) {
+		if pkt.ServerStatus().IsEnabled(ServerSessionStateChanged) {
 			// sessionStateInfo
 			if err := w.WriteLengthEncodedString(pkt.sessionStateInfo); err != nil {
 				return nil, err
