@@ -19,16 +19,25 @@ import (
 	"io"
 )
 
+// MySQL: COM_STMT_EXECUTE
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_stmt_execute.html
+// COM_STMT_EXECUTE - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/com_stmt_execute/
+
 // StmtExecute represents a COM_STMT_EXECUTE packet.
 type StmtExecute struct {
 	Command
-	stmdID StatementID
+	stmdID     StatementID
+	cursorType CursorType
+	iterCnt    uint32
 }
 
 func newStmtExecuteWithCommand(cmd Command, opts ...StmtExecuteOption) *StmtExecute {
 	q := &StmtExecute{
-		Command: cmd,
-		stmdID:  0,
+		Command:    cmd,
+		stmdID:     0,
+		cursorType: CursorTypeNoCursor,
+		iterCnt:    1,
 	}
 	for _, opt := range opts {
 		opt(q)
@@ -43,6 +52,20 @@ type StmtExecuteOption func(*StmtExecute)
 func WithStmtExecuteStatementID(stmdID StatementID) StmtExecuteOption {
 	return func(q *StmtExecute) {
 		q.stmdID = stmdID
+	}
+}
+
+// WithStmtExecuteCursorType sets the cursor type.
+func WithStmtExecuteCursorType(cursorType CursorType) StmtExecuteOption {
+	return func(q *StmtExecute) {
+		q.cursorType = cursorType
+	}
+}
+
+// WithStmtExecuteIterationCount sets the iteration count.
+func WithStmtExecuteIterationCount(iterCnt uint32) StmtExecuteOption {
+	return func(q *StmtExecute) {
+		q.iterCnt = iterCnt
 	}
 }
 
@@ -69,13 +92,24 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 	pkt := newStmtExecuteWithCommand(cmd, opts...)
 
 	payload := cmd.Payload()
-	reader := NewPacketReaderWith(bytes.NewBuffer(payload[1:]))
+	pktReader := NewPacketReaderWith(bytes.NewBuffer(payload[1:]))
 
-	v, err := reader.ReadInt4()
+	iv4, err := pktReader.ReadInt4()
 	if err != nil {
 		return nil, err
 	}
-	pkt.stmdID = StatementID(v)
+	pkt.stmdID = StatementID(iv4)
+
+	iv1, err := pktReader.ReadInt1()
+	if err != nil {
+		return nil, err
+	}
+	pkt.cursorType = CursorType(iv1)
+
+	pkt.iterCnt, err = pktReader.ReadInt4()
+	if err != nil {
+		return nil, err
+	}
 
 	return pkt, nil
 }
@@ -83,6 +117,11 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 // StatementID returns the statement ID.
 func (pkt *StmtExecute) StatementID() StatementID {
 	return pkt.stmdID
+}
+
+// CursorType returns the cursor type.
+func (pkt *StmtExecute) CursorType() CursorType {
+	return pkt.cursorType
 }
 
 // Bytes returns the packet bytes.
@@ -94,6 +133,14 @@ func (pkt *StmtExecute) Bytes() ([]byte, error) {
 	}
 
 	if err := w.WriteInt4(uint32(pkt.stmdID)); err != nil {
+		return nil, err
+	}
+
+	if err := w.WriteInt1(byte(pkt.cursorType)); err != nil {
+		return nil, err
+	}
+
+	if err := w.WriteInt4(pkt.iterCnt); err != nil {
 		return nil, err
 	}
 
