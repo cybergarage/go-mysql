@@ -51,6 +51,9 @@ func newStmtPrepareResponseWithPacket(pkt *packet, opts ...StmtPrepareResponseOp
 		warningCount:      0,
 		resultSetMetadata: ResultsetMetadataNone,
 	}
+
+	prPkt.SetSequenceID(1)
+
 	for _, opt := range opts {
 		opt(prPkt)
 	}
@@ -227,7 +230,17 @@ func (pkt *StmtPrepareResponse) ResultSetMetadata() ResultsetMetadata {
 
 // Bytes returns the packet bytes.
 func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
+	payloadLen := 1 + 4 + 2 + 2 + 1 + 2
+	if pkt.Capability().IsEnabled(ClientOptionalResultsetMetadata) {
+		payloadLen++
+	}
+	pkt.SetPayloadLength(payloadLen)
+
 	w := NewPacketWriter()
+
+	if _, err := w.WriteBytes(pkt.HeaderBytes()); err != nil {
+		return nil, err
+	}
 
 	if err := w.WriteInt1(byte(pkt.status)); err != nil {
 		return nil, err

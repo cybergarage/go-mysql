@@ -233,13 +233,18 @@ func (pkt *packet) Reader() *PacketReader {
 	return pkt.PacketReader
 }
 
-// Bytes returns the packet bytes.
-func (pkt *packet) Bytes() ([]byte, error) {
+// HeaderBytes returns the packet header bytes.
+func (pkt *packet) HeaderBytes() []byte {
 	payloadLengthBuf := []byte{
 		byte(pkt.payloadLength & 0xFF),
 		byte((pkt.payloadLength >> 8) & 0xFF),
 		byte((pkt.payloadLength >> 16) & 0xFF),
 	}
 	seqIDByte := byte(pkt.sequenceID)
-	return slices.Concat(payloadLengthBuf, []byte{seqIDByte}, pkt.payload), nil
+	return slices.Concat(payloadLengthBuf, []byte{seqIDByte})
+}
+
+// Bytes returns the packet bytes.
+func (pkt *packet) Bytes() ([]byte, error) {
+	return slices.Concat(pkt.HeaderBytes(), pkt.payload), nil
 }
