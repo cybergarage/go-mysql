@@ -183,6 +183,11 @@ func (pkt *packet) SetPayload(payload []byte) {
 	pkt.payloadLength = uint32(len(payload))
 }
 
+// SetPayloadLength sets only the payload length without the payload bytes.
+func (pkt *packet) SetPayloadLength(l int) {
+	pkt.payloadLength = uint32(l)
+}
+
 // SetSequenceID sets the packet sequence ID.
 func (pkt *packet) SetSequenceID(n SequenceID) {
 	pkt.sequenceID = n
