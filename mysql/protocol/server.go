@@ -325,7 +325,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		return err
 	}
 
-	conn.SetCapabilities(handshakeRes.Capability())
+	conn.SetCapability(handshakeRes.Capability())
 	if handshakeRes.Capability().IsEnabled(ClientConnectWithDB) {
 		conn.SetDatabase(handshakeRes.Database())
 	}

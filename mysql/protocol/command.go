@@ -27,7 +27,7 @@ type CommandOption func(Command)
 // WithCommandCapabilities returns a CommandOption that sets the capabilities.
 func WithCommandCapabilities(c Capability) CommandOption {
 	return func(cmd Command) {
-		cmd.SetCapabilities(c)
+		cmd.SetCapability(c)
 	}
 }
 
@@ -40,8 +40,8 @@ type Command interface {
 	IsType(t CommandType) error
 	// SkipPayload skips the payload.
 	SkipPayload() error
-	// SetCapabilities sets the capabilities.
-	SetCapabilities(Capability)
+	// SetCapability sets the capabilities.
+	SetCapability(Capability)
 	// Capabilities returns the capabilities.
 	Capabilities() Capability
 }
@@ -222,8 +222,8 @@ func (cmd *command) IsType(t CommandType) error {
 	return nil
 }
 
-// SetCapabilities sets the capabilities.
-func (cmd *command) SetCapabilities(c Capability) {
+// SetCapability sets the capabilities.
+func (cmd *command) SetCapability(c Capability) {
 	cmd.capFlags = c
 }
 

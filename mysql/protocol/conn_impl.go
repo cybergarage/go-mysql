@@ -185,8 +185,8 @@ func (conn *conn) TLSConn() *tls.Conn {
 	return conn.tlsConn
 }
 
-// SetCapabilities sets the capabilities.
-func (conn *conn) SetCapabilities(c Capability) {
+// SetCapability sets the capabilities.
+func (conn *conn) SetCapability(c Capability) {
 	conn.capabilities = c
 }
 

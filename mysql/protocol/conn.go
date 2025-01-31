@@ -28,7 +28,7 @@ type Conn interface {
 	Database() string
 	IsTLSConnection() bool
 	TLSConn() *tls.Conn
-	SetCapabilities(c Capability)
+	SetCapability(c Capability)
 	Capabilities() Capability
 	PacketReader() *PacketReader
 	ResponsePacket(resMsg Response, opts ...ResponseOption) error
