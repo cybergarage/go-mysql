@@ -53,7 +53,7 @@ func WithColumnCount(c uint64) ColumnCountOption {
 	}
 }
 
-func WithColumnCountCapabilities(c Capability) ColumnCountOption {
+func WithColumnCountCapability(c Capability) ColumnCountOption {
 	return func(pkt *ColumnCount) {
 		pkt.capFlags = c
 	}
@@ -75,7 +75,7 @@ func NewColumnCountFromReader(r io.Reader, opts ...ColumnCountOption) (*ColumnCo
 
 	pkt := newColumnCountWith(pktReader, opts...)
 
-	if pkt.Capabilities().IsEnabled(ClientOptionalResultsetMetadata) {
+	if pkt.Capability().IsEnabled(ClientOptionalResultsetMetadata) {
 		pkt.metadataFollows, err = pkt.ReadByte()
 		if err != nil {
 			return nil, err
@@ -97,8 +97,8 @@ func (pkt *ColumnCount) SetOptions(opts ...ColumnCountOption) {
 	}
 }
 
-// Capabilities returns the capabilities.
-func (pkt *ColumnCount) Capabilities() Capability {
+// Capability returns the capabilities.
+func (pkt *ColumnCount) Capability() Capability {
 	return pkt.capFlags
 }
 
@@ -116,7 +116,7 @@ func (pkt *ColumnCount) ColumnCount() uint64 {
 func (pkt *ColumnCount) Bytes() ([]byte, error) {
 	w := NewWriter()
 
-	if pkt.Capabilities().IsEnabled(ClientOptionalResultsetMetadata) {
+	if pkt.Capability().IsEnabled(ClientOptionalResultsetMetadata) {
 		err := w.WriteByte(pkt.metadataFollows)
 		if err != nil {
 			return nil, err

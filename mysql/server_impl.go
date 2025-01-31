@@ -108,7 +108,7 @@ func (server *server) ErrorHandler() ErrorHandler {
 
 // HandleQuery handles a query.
 func (server *server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protocol.Response, error) {
-	connCaps := conn.Capabilities()
+	connCaps := conn.Capability()
 
 	if server.sqlExecutor == nil {
 		return nil, errors.ErrNotImplemented

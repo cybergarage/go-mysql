@@ -56,7 +56,7 @@ func TestTextResultSetPacket(t *testing.T) {
 			reader := bytes.NewReader(testBytes)
 
 			opts := []protocol.TextResultSetOption{
-				protocol.WithTextResultSetCapabilities(test.capFlags),
+				protocol.WithTextResultSetCapability(test.capFlags),
 			}
 			pkt, err := protocol.NewTextResultSetFromReader(reader, opts...)
 			if err != nil {

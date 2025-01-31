@@ -95,7 +95,7 @@ func WithConnUUID(id uuid.UUID) func(*conn) {
 }
 
 // WithConnCapabilities sets capabilities.
-func WithConnCapabilities(c Capability) func(*conn) {
+func WithConnCapability(c Capability) func(*conn) {
 	return func(conn *conn) {
 		conn.capabilities = c
 	}
@@ -190,8 +190,8 @@ func (conn *conn) SetCapability(c Capability) {
 	conn.capabilities = c
 }
 
-// Capabilities returns the capabilities.
-func (conn *conn) Capabilities() Capability {
+// Capability returns the capabilities.
+func (conn *conn) Capability() Capability {
 	return conn.capabilities
 }
 

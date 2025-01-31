@@ -66,7 +66,7 @@ func WithQueryString(v string) QueryOption {
 }
 
 // WithQueryCapabilities returns a QueryOption that sets the capabilities.
-func WithQueryCapabilities(c Capability) QueryOption {
+func WithQueryCapability(c Capability) QueryOption {
 	return func(pkt *Query) {
 		pkt.SetCapability(c)
 	}
@@ -103,7 +103,7 @@ func NewQueryFromCommand(cmd Command, opts ...QueryOption) (*Query, error) {
 	payload := cmd.Payload()
 	reader := NewPacketReaderWith(bytes.NewBuffer(payload[1:]))
 
-	if pkt.Capabilities().IsEnabled(ClientQueryAttributes) {
+	if pkt.Capability().IsEnabled(ClientQueryAttributes) {
 		// parameter_count
 		pkt.paramCnt, err = reader.ReadLengthEncodedInt()
 		if err != nil {
@@ -170,7 +170,7 @@ func (pkt *Query) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	if pkt.Capabilities().IsEnabled(ClientQueryAttributes) {
+	if pkt.Capability().IsEnabled(ClientQueryAttributes) {
 		// parameter_count
 		if err := w.WriteLengthEncodedInt(pkt.paramCnt); err != nil {
 			return nil, err

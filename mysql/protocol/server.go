@@ -359,13 +359,13 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	// MySQL: Command Phase
 	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_command_phase.html
 
-	connCaps := conn.Capabilities()
+	connCaps := conn.Capability()
 	for {
 		var err error
 		var cmd Command
 
 		opts := []CommandOption{
-			WithCommandCapabilities(connCaps),
+			WithCommandCapability(connCaps),
 		}
 		cmd, err = NewCommandFromReader(conn, opts...)
 		if err != nil {
@@ -391,7 +391,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			if server.CommandHandler != nil {
 				var cmd *Query
 				cmd, err = NewQueryFromCommand(cmd,
-					WithQueryCapabilities(connCaps),
+					WithQueryCapability(connCaps),
 				)
 				if err == nil {
 					res, err = server.CommandHandler.HandleQuery(conn, cmd)

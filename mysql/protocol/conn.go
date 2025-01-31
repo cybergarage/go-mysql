@@ -29,7 +29,9 @@ type Conn interface {
 	IsTLSConnection() bool
 	TLSConn() *tls.Conn
 	SetCapability(c Capability)
-	Capabilities() Capability
+	SetServerStatus(s ServerStatus)
+	Capability() Capability
+	ServerStatus() ServerStatus
 	PacketReader() *PacketReader
 	ResponsePacket(resMsg Response, opts ...ResponseOption) error
 	ResponsePackets(resMsgs []Response, opts ...ResponseOption) error

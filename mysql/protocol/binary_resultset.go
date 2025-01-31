@@ -49,7 +49,7 @@ func newBinaryResultSetWithPacket(opts ...BinaryResultSetOption) *BinaryResultSe
 type BinaryResultSetOption func(*BinaryResultSet)
 
 // WithBinaryResultSetCapabilities returns a binary resultset option to set the capabilities.
-func WithBinaryResultSetCapabilities(c Capability) BinaryResultSetOption {
+func WithBinaryResultSetCapability(c Capability) BinaryResultSetOption {
 	return func(pkt *BinaryResultSet) {
 		pkt.capFlags = c
 	}
@@ -90,7 +90,7 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 	pkt := newBinaryResultSetWithPacket(opts...)
 
 	columnCountOpts := []ColumnCountOption{
-		WithColumnCountCapabilities(pkt.Capabilities()),
+		WithColumnCountCapability(pkt.Capability()),
 	}
 	pkt.columnCnt, err = NewColumnCountFromReader(reader, columnCountOpts...)
 	if err != nil {
@@ -99,7 +99,7 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 
 	columnCount := pkt.columnCnt.ColumnCount()
 
-	if pkt.Capabilities().IsDisabled(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
+	if pkt.Capability().IsDisabled(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
 		for i := 0; i < int(columnCount); i++ {
 			colDef, err := NewColumnDefFromReader(reader)
 			if err != nil {
@@ -109,8 +109,8 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 		}
 	}
 
-	if pkt.Capabilities().IsDisabled(ClientDeprecateEOF) {
-		_, err := NewEOFFromReader(reader, WithEOFCapability(pkt.Capabilities()))
+	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
+		_, err := NewEOFFromReader(reader, WithEOFCapability(pkt.Capability()))
 		if err != nil {
 			return nil, err
 		}
@@ -169,8 +169,8 @@ func (pkt *BinaryResultSet) SetSequenceID(n SequenceID) {
 	}
 }
 
-// Capabilities returns the capabilities.
-func (pkt *BinaryResultSet) Capabilities() Capability {
+// Capability returns the capabilities.
+func (pkt *BinaryResultSet) Capability() Capability {
 	return pkt.capFlags
 }
 
@@ -195,7 +195,7 @@ func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 	secuenceID := pkt.columnCnt.SequenceID()
 	secuenceID = secuenceID.Next()
 
-	if pkt.Capabilities().IsDisabled(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
+	if pkt.Capability().IsDisabled(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
 		for _, colDef := range pkt.columnDefs {
 			colDef.SetSequenceID(secuenceID)
 			err := w.WritePacket(colDef)
@@ -206,8 +206,8 @@ func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 		}
 	}
 
-	if pkt.Capabilities().IsDisabled(ClientDeprecateEOF) {
-		err := w.WriteEOF(secuenceID, pkt.Capabilities())
+	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
+		err := w.WriteEOF(secuenceID, pkt.Capability())
 		if err != nil {
 			return nil, err
 		}
@@ -229,13 +229,13 @@ func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 		secuenceID = secuenceID.Next()
 	}
 
-	if pkt.Capabilities().IsEnabled(ClientDeprecateEOF) {
-		err := w.WriteOK(secuenceID, pkt.Capabilities())
+	if pkt.Capability().IsEnabled(ClientDeprecateEOF) {
+		err := w.WriteOK(secuenceID, pkt.Capability())
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		err := w.WriteEOF(secuenceID, pkt.Capabilities())
+		err := w.WriteEOF(secuenceID, pkt.Capability())
 		if err != nil {
 			return nil, err
 		}

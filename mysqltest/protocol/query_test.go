@@ -64,7 +64,7 @@ func TestQueryPacket(t *testing.T) {
 			reader := bytes.NewReader(testBytes)
 
 			opts := []protocol.QueryOption{
-				protocol.WithQueryCapabilities(test.capFlags),
+				protocol.WithQueryCapability(test.capFlags),
 			}
 			pkt, err := protocol.NewQueryFromReader(reader, opts...)
 			if err != nil {
