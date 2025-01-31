@@ -114,8 +114,8 @@ func WithHandshakeCharacterSet(v CharSet) HandshakeOption {
 	}
 }
 
-// WithHandshakeServerStatusFlags sets the status flags.
-func WithHandshakeServerStatusFlags(v ServerStatus) HandshakeOption {
+// WithHandshakeServerStatus sets the status flags.
+func WithHandshakeServerStatus(v ServerStatus) HandshakeOption {
 	return func(pkt *Handshake) {
 		pkt.SetServerStatus(v)
 	}
