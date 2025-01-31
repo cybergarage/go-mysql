@@ -34,6 +34,7 @@ type config struct {
 	productName    string
 	productVersion string
 	capability     Capability
+	serverStatus   ServerStatus
 	autuPluginName string
 }
 
@@ -47,6 +48,7 @@ func NewDefaultConfig() Config {
 		productName:    DefaultProductName,
 		productVersion: "",
 		capability:     DefaultServerCapability,
+		serverStatus:   DefaultServerStatus,
 		autuPluginName: DefaultAuthPluginName,
 	}
 	return config
@@ -112,6 +114,16 @@ func (config *config) SetCapability(c Capability) {
 // Capability returns the capability flags from the configuration.
 func (config *config) Capability() Capability {
 	return config.capability
+}
+
+// SetServerStatus sets the server status to the configuration.
+func (config *config) SetServerStatus(status ServerStatus) {
+	config.serverStatus = status
+}
+
+// ServerStatus returns the server status from the configuration.
+func (config *config) ServerStatus() ServerStatus {
+	return config.serverStatus
 }
 
 // SetAuthPluginName sets the auth plugin name to the configuration.

@@ -74,10 +74,16 @@ type Config interface {
 
 	// ServerVersion returns the server version for the handshake.
 	ServerVersion() string
+
 	// SetCapability sets the capability flags to the configuration.
 	SetCapability(c Capability)
 	// Capability returns the capability flags from the configuration.
 	Capability() Capability
+
+	// SetServerStatus sets the server status to the configuration.
+	SetServerStatus(status ServerStatus)
+	// ServerStatus returns the server status from the configuration.
+	ServerStatus() ServerStatus
 
 	// SetAuthPluginName sets the auth plugin name to the configuration.
 	SetAuthPluginName(v string)
