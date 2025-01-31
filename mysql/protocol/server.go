@@ -394,26 +394,26 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			res, err = NewOK()
 		case ComQuery:
 			if server.CommandHandler != nil {
-				var cmd *Query
-				cmd, err = NewQueryFromCommand(cmd,
+				var q *Query
+				q, err = NewQueryFromCommand(cmd,
 					WithQueryCapability(connCaps),
 				)
 				if err == nil {
-					res, err = server.CommandHandler.HandleQuery(conn, cmd)
+					res, err = server.CommandHandler.HandleQuery(conn, q)
 				}
 			} else {
 				err = newErrNotSupportedCommandType(cmdType)
 			}
 		case ComStmtPrepare:
 			if server.CommandHandler != nil {
-				var cmd *StmtPrepare
-				cmd, err = NewStmtPrepareFromCommand(cmd,
+				var stmt *StmtPrepare
+				stmt, err = NewStmtPrepareFromCommand(cmd,
 					WithStmtPrepareCapability(connCaps),
 					WithStmtPrepareServerStatus(connServerStatus),
 				)
 				if err == nil {
 					var cmdRes *StmtPrepareResponse
-					cmdRes, err = server.CommandHandler.PrepareStatement(conn, cmd)
+					cmdRes, err = server.CommandHandler.PrepareStatement(conn, stmt)
 					res = cmdRes
 				}
 			} else {
