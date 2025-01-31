@@ -25,11 +25,10 @@ type Conn interface {
 	net.Conn
 	mysqlnet.Conn
 	SetDatabase(db string)
+	SetCapability(c Capability)
 	Database() string
 	IsTLSConnection() bool
 	TLSConn() *tls.Conn
-	//SetCapability(c Capability)
-	SetServerStatus(s ServerStatus)
 	Capability() Capability
 	ServerStatus() ServerStatus
 	PacketReader() *PacketReader

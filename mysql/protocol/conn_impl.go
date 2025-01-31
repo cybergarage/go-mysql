@@ -204,6 +204,11 @@ func (conn *conn) Capability() Capability {
 	return conn.caps
 }
 
+// ServerStatus returns the server status.
+func (conn *conn) ServerStatus() ServerStatus {
+	return conn.serverStatus
+}
+
 // PacketReader returns a packet reader.
 func (conn *conn) PacketReader() *PacketReader {
 	return conn.msgReader

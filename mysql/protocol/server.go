@@ -210,6 +210,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 
 			conn = NewConnWith(netConn,
 				WithConnID(uint64(nextConnID)),
+				WithConnSeverStatus(server.ServerStatus()),
 			)
 		}
 	}
@@ -288,7 +289,9 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			tlsConn,
 			WithConnID(conn.ID()),
 			WithConnUUID(conn.UUID()),
-			WithConnTLSConn(tlsConn))
+			WithConnTLSConn(tlsConn),
+			WithConnSeverStatus(conn.ServerStatus()),
+		)
 		if err := server.UpdateConn(conn, newConn); err != nil {
 			conn.ResponseError(err)
 			return errors.Join(err, conn.Close())
@@ -360,6 +363,8 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_command_phase.html
 
 	connCaps := conn.Capability()
+	connServerStatus := conn.ServerStatus()
+
 	for {
 		var err error
 		var cmd Command
@@ -404,7 +409,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 				var cmd *StmtPrepare
 				cmd, err = NewStmtPrepareFromCommand(cmd,
 					WithStmtPrepareCapability(connCaps),
-					// WithStmtPrepareServerStatus(conn.ServerStatus()),
+					WithStmtPrepareServerStatus(connServerStatus),
 				)
 				if err == nil {
 					var cmdRes *StmtPrepareResponse
