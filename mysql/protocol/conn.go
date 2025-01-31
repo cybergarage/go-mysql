@@ -28,7 +28,7 @@ type Conn interface {
 	Database() string
 	IsTLSConnection() bool
 	TLSConn() *tls.Conn
-	SetCapability(c Capability)
+	//SetCapability(c Capability)
 	SetServerStatus(s ServerStatus)
 	Capability() Capability
 	ServerStatus() ServerStatus

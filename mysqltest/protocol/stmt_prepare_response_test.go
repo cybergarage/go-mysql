@@ -34,13 +34,13 @@ func TestStmtPrepareResponsePacket(t *testing.T) {
 	}{
 		{
 			"data/stmt-prepare-response-001.hex",
-			protocol.DefaultServerCapabilities,
+			protocol.DefaultServerCapability,
 			protocol.DefaultServerStatus,
 			expected{},
 		},
 		{
 			"data/stmt-prepare-response-002.hex",
-			protocol.DefaultServerCapabilities,
+			protocol.DefaultServerCapability,
 			protocol.DefaultServerStatus,
 			expected{},
 		},

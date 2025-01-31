@@ -49,7 +49,7 @@ func NewServer() *Server {
 		CommandHandler: nil,
 		tcpListener:    nil,
 	}
-	server.SetCapability(DefaultServerCapabilities)
+	server.SetCapability(DefaultServerCapability)
 	return server
 }
 

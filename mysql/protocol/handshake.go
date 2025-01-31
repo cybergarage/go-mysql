@@ -71,7 +71,7 @@ func newHandshakeWithPacket(msg *packet) *Handshake {
 		authPluginData2:   nil,
 		authPluginName:    "",
 	}
-	pkt.SetCapability(DefaultServerCapabilities)
+	pkt.SetCapability(DefaultServerCapability)
 	pkt.SetServerStatus(DefaultServerStatus)
 	return pkt
 }

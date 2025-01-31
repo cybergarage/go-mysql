@@ -38,7 +38,8 @@ type conn struct {
 	id            uint64
 	tracerContext tracer.Context
 	tlsConn       *tls.Conn
-	capabilities  Capability
+	caps          Capability
+	serverStatus  ServerStatus
 }
 
 // NewConnWith returns a connection with a raw connection.
@@ -53,7 +54,8 @@ func NewConnWith(netConn net.Conn, opts ...ConnOption) Conn {
 		id:            0,
 		tracerContext: nil,
 		tlsConn:       nil,
-		capabilities:  0,
+		caps:          0,
+		serverStatus:  0,
 	}
 	conn.SetOptions(opts...)
 	return conn
@@ -97,7 +99,14 @@ func WithConnUUID(id uuid.UUID) func(*conn) {
 // WithConnCapabilities sets capabilities.
 func WithConnCapability(c Capability) func(*conn) {
 	return func(conn *conn) {
-		conn.capabilities = c
+		conn.caps = c
+	}
+}
+
+// WithConnSeverStatus sets the server status.
+func WithConnSeverStatus(s ServerStatus) func(*conn) {
+	return func(conn *conn) {
+		conn.serverStatus = s
 	}
 }
 
@@ -187,12 +196,12 @@ func (conn *conn) TLSConn() *tls.Conn {
 
 // SetCapability sets the capabilities.
 func (conn *conn) SetCapability(c Capability) {
-	conn.capabilities = c
+	conn.caps = c
 }
 
 // Capability returns the capabilities.
 func (conn *conn) Capability() Capability {
-	return conn.capabilities
+	return conn.caps
 }
 
 // PacketReader returns a packet reader.

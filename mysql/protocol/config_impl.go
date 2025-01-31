@@ -46,7 +46,7 @@ func NewDefaultConfig() Config {
 		tlsEnabled:     true,
 		productName:    DefaultProductName,
 		productVersion: "",
-		capability:     DefaultServerCapabilities,
+		capability:     DefaultServerCapability,
 		autuPluginName: DefaultAuthPluginName,
 	}
 	return config

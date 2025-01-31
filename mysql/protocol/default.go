@@ -26,16 +26,16 @@ const (
 
 	SupportVersion = "5.7.9"
 
-	DefaultServerCapabilities = ClientLongPassword |
+	DefaultServerCapability = ClientLongPassword |
 		ClientFoundRows |
 		ClientLongColumnFlag |
 		ClientProtocol41 |
 		ClientPluginAuth
 
-	DefaultHandshakeServerCapabilities = DefaultServerCapabilities |
+	DefaultHandshakeServerCapabilities = DefaultServerCapability |
 		ClientConnectWithDB
 
-	DefaultSSLRequestCapabilities = DefaultServerCapabilities |
+	DefaultSSLRequestCapabilities = DefaultServerCapability |
 		ClientSSL
 
 	DefaultServerStatus = ServerStatusAutocommit
