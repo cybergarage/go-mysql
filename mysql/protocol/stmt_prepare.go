@@ -51,6 +51,20 @@ func WithStmtPrepareQuery(query string) StmtPrepareOption {
 	}
 }
 
+// WithStmtPrepareCapability sets the capability.
+func WithStmtPrepareCapability(c Capability) StmtPrepareOption {
+	return func(q *StmtPrepare) {
+		q.Command.SetCapability(c)
+	}
+}
+
+// WithStmtPrepareServerStatus sets the server status.
+func WithStmtPrepareServerStatus(s ServerStatus) StmtPrepareOption {
+	return func(q *StmtPrepare) {
+		q.Command.SetServerStatus(s)
+	}
+}
+
 // NewStmtPrepareFromReader reads a COM_STMT_PREPARE packet.
 func NewStmtPrepareFromReader(reader io.Reader, opts ...StmtPrepareOption) (*StmtPrepare, error) {
 	var err error
