@@ -145,6 +145,24 @@ func (server *server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protoc
 	return nil, nil
 }
 
+// PrepareStatement prepares a statement.
+func (server *server) PrepareStatement(conn protocol.Conn, stmt *protocol.StmtPrepare) (*protocol.StmtPrepareResponse, error) {
+	// nolint: forcetypeassert
+	return nil, errors.ErrNotImplemented
+}
+
+// ExecuteStatement executes a statement.
+func (server *server) ExecuteStatement(conn protocol.Conn, stmt *protocol.StmtExecute) (protocol.Response, error) {
+	// nolint: forcetypeassert
+	return nil, errors.ErrNotImplemented
+}
+
+// CloseStatement closes a statement.
+func (server *server) CloseStatement(conn protocol.Conn, stmt *protocol.StmtClose) (protocol.Response, error) {
+	// nolint: forcetypeassert
+	return nil, errors.ErrNotImplemented
+}
+
 func (server *server) HandleStatement(conn protocol.Conn, stmt query.Statement) (protocol.Response, error) {
 	var err error
 	var res protocol.Response

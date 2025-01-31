@@ -16,5 +16,12 @@ package protocol
 
 // CommandHandler represents a MySQL command handler.
 type CommandHandler interface {
-	HandleQuery(conn Conn, q *Query) (Response, error)
+	// HandleQuery handles a query command.
+	HandleQuery(Conn, *Query) (Response, error)
+	// PrepareStatement prepares a statement.
+	PrepareStatement(Conn, *StmtPrepare) (*StmtPrepareResponse, error)
+	// ExecuteStatement executes a statement.
+	ExecuteStatement(Conn, *StmtExecute) (Response, error)
+	// CloseStatement closes a statement.
+	CloseStatement(Conn, *StmtClose) (Response, error)
 }
