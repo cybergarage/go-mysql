@@ -389,12 +389,27 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			res, err = NewOK()
 		case ComQuery:
 			if server.CommandHandler != nil {
-				var q *Query
-				q, err = NewQueryFromCommand(cmd,
+				var cmd *Query
+				cmd, err = NewQueryFromCommand(cmd,
 					WithQueryCapabilities(connCaps),
 				)
 				if err == nil {
-					res, err = server.CommandHandler.HandleQuery(conn, q)
+					res, err = server.CommandHandler.HandleQuery(conn, cmd)
+				}
+			} else {
+				err = newErrNotSupportedCommandType(cmdType)
+			}
+		case ComStmtPrepare:
+			if server.CommandHandler != nil {
+				var cmd *StmtPrepare
+				cmd, err = NewStmtPrepareFromCommand(cmd,
+					WithStmtPrepareCapability(connCaps),
+					// WithStmtPrepareServerStatus(conn.ServerStatus()),
+				)
+				if err == nil {
+					var cmdRes *StmtPrepareResponse
+					cmdRes, err = server.CommandHandler.PrepareStatement(conn, cmd)
+					res = cmdRes
 				}
 			} else {
 				err = newErrNotSupportedCommandType(cmdType)
