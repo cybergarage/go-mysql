@@ -14,7 +14,13 @@
 
 package stmt
 
+import (
+	"sync"
+)
+
 type PreparedManager struct {
+	mutex           sync.Mutex
+	lastStatementID StatementID
 	// stmts is the map of prepared statements.
 	stmts map[StatementID]PreparedStatement
 }
@@ -22,7 +28,9 @@ type PreparedManager struct {
 // NewPreparedManager creates a new PreparedManager instance.
 func NewPreparedManager() *PreparedManager {
 	return &PreparedManager{
-		stmts: make(map[StatementID]PreparedStatement),
+		mutex:           sync.Mutex{},
+		lastStatementID: 1,
+		stmts:           make(map[StatementID]PreparedStatement),
 	}
 }
 

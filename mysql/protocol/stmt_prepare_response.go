@@ -27,9 +27,6 @@ import (
 // Server Response Packets (Binary Protocol) - MariaDB Knowledge Base
 // https://mariadb.com/kb/en/server-response-packets-binary-protocol/
 
-// StatementID represents a statement ID.
-type StatementID uint32
-
 // StmtPrepareResponse represents a MySQL Prepare Response packet.
 type StmtPrepareResponse struct {
 	*packet
