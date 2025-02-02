@@ -19,12 +19,14 @@ import (
 )
 
 type preparedStmt struct {
+	*protocol.StmtPrepare
 	*protocol.StmtPrepareResponse
 }
 
 // NewPreparedStatmentWith creates a new prepared statement with the packet.
-func NewPreparedStatmentWith(pkt *protocol.StmtPrepareResponse) PreparedStatement {
+func NewPreparedStatmentWith(prePkt *protocol.StmtPrepare, resPkt *protocol.StmtPrepareResponse) PreparedStatement {
 	return &preparedStmt{
-		StmtPrepareResponse: pkt,
+		StmtPrepare:         prePkt,
+		StmtPrepareResponse: resPkt,
 	}
 }
