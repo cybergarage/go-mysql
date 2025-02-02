@@ -391,7 +391,9 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		var res Response
 		switch cmdType {
 		case ComPing:
-			res, err = NewOK()
+			res, err = NewOK(
+				WithOKCapability(connCaps),
+			)
 		case ComQuery:
 			if server.CommandHandler != nil {
 				var q *Query
@@ -415,6 +417,26 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 					var cmdRes *StmtPrepareResponse
 					cmdRes, err = server.CommandHandler.PrepareStatement(conn, stmt)
 					res = cmdRes
+				}
+			} else {
+				err = newErrNotSupportedCommandType(cmdType)
+			}
+		case ComStmtExecute:
+			if server.CommandHandler != nil {
+				var stmt *StmtExecute
+				stmt, err = NewStmtExecuteFromCommand(cmd)
+				if err == nil {
+					res, err = server.CommandHandler.ExecuteStatement(conn, stmt)
+				}
+			} else {
+				err = newErrNotSupportedCommandType(cmdType)
+			}
+		case ComStmtClose:
+			if server.CommandHandler != nil {
+				var stmt *StmtClose
+				stmt, err = NewStmtCloseFromCommand(cmd)
+				if err == nil {
+					res, err = server.CommandHandler.CloseStatement(conn, stmt)
 				}
 			} else {
 				err = newErrNotSupportedCommandType(cmdType)
