@@ -26,8 +26,8 @@ func NewPreparedManager() *PreparedManager {
 	}
 }
 
-// Add adds a prepared statement to the manager.
-func (manager *PreparedManager) Add(stmt PreparedStatement) {
+// AddPreparedStatement adds a prepared statement to the manager.
+func (manager *PreparedManager) AddPreparedStatement(stmt PreparedStatement) {
 	manager.stmts[stmt.StatementID()] = stmt
 }
 
@@ -35,4 +35,9 @@ func (manager *PreparedManager) Add(stmt PreparedStatement) {
 func (manager *PreparedManager) PreparedStatement(stmtID StatementID) (PreparedStatement, bool) {
 	stmt, ok := manager.stmts[stmtID]
 	return stmt, ok
+}
+
+// RemovePreparedStatement removes a prepared statement by the statement ID.
+func (manager *PreparedManager) RemovePreparedStatement(stmtID StatementID) {
+	delete(manager.stmts, stmtID)
 }
