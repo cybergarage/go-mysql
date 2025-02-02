@@ -19,6 +19,11 @@ import (
 	"io"
 )
 
+// MySQL: COM_STMT_CLOSE
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_stmt_close.html
+// COM_STMT_CLOSE - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/3-binary-protocol-prepared-statements-com_stmt_close/
+
 // StmtClose represents a COM_STMT_CLOSE packet.
 type StmtClose struct {
 	Command
