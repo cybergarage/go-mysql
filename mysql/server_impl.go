@@ -159,8 +159,8 @@ func (server *server) ExecuteStatement(conn protocol.Conn, stmt *protocol.StmtEx
 
 // CloseStatement closes a statement.
 func (server *server) CloseStatement(conn protocol.Conn, stmt *protocol.StmtClose) (protocol.Response, error) {
-	// nolint: forcetypeassert
-	return nil, errors.ErrNotImplemented
+	server.RemovePreparedStatement(stmt.StatementID())
+	return nil, nil
 }
 
 func (server *server) HandleStatement(conn protocol.Conn, stmt query.Statement) (protocol.Response, error) {
