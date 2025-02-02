@@ -14,12 +14,8 @@
 
 package stmt
 
-import (
-	"sync"
-)
-
+// PreparedStatement represents a prepared statement.
 type PreparedManager struct {
-	mutex           sync.Mutex
 	lastStatementID StatementID
 	// stmts is the map of prepared statements.
 	stmts map[StatementID]PreparedStatement
@@ -28,10 +24,14 @@ type PreparedManager struct {
 // NewPreparedManager creates a new PreparedManager instance.
 func NewPreparedManager() *PreparedManager {
 	return &PreparedManager{
-		mutex:           sync.Mutex{},
 		lastStatementID: 1,
 		stmts:           make(map[StatementID]PreparedStatement),
 	}
+}
+
+// NextPreparedStatementID returns the next prepared statement ID.
+func (manager *PreparedManager) NextPreparedStatementID() (StatementID, error) {
+	return manager.lastStatementID.NextStatementID()
 }
 
 // AddPreparedStatement adds a prepared statement to the manager.
