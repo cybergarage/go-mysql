@@ -133,14 +133,42 @@ func (pkt *StmtPrepare) Query() string {
 	return pkt.query
 }
 
-// Database returns the database name.
-func (pkt *StmtPrepare) Database() string {
+// DatabaseName returns the database name.
+func (pkt *StmtPrepare) DatabaseName() string {
 	return pkt.dbName
 }
 
 // Statement returns the statement.
 func (pkt *StmtPrepare) Statement() query.Statement {
 	return pkt.stmt
+}
+
+// TableName returns the table name.
+func (pkt *StmtPrepare) TableName() (string, error) {
+	if pkt.stmt == nil {
+		return "", newInvalidStatement(pkt.query)
+	}
+
+	switch pkt.stmt.StatementType() {
+	case query.InsertStatement:
+		stmt := pkt.stmt.(query.Insert)
+		return stmt.TableName(), nil
+	case query.SelectStatement:
+		stmt := pkt.stmt.(query.Select)
+		tables := stmt.From().TableNames()
+		if len(tables) != 1 {
+			return "", newInvalidStatement(pkt.query)
+		}
+		return stmt.From().TableNames()[0], nil
+	case query.UpdateStatement:
+		stmt := pkt.stmt.(query.Update)
+		return stmt.TableName(), nil
+	case query.DeleteStatement:
+		stmt := pkt.stmt.(query.Delete)
+		return stmt.TableName(), nil
+	}
+
+	return "", newInvalidStatement(pkt.query)
 }
 
 // Bytes returns the packet bytes.
