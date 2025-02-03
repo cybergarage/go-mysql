@@ -29,8 +29,9 @@ import (
 // StmtPrepare represents a COM_STMT_PREPARE packet.
 type StmtPrepare struct {
 	Command
-	stmt  query.Statement
-	query string
+	dbName string
+	stmt   query.Statement
+	query  string
 }
 
 func newStmtPrepareWithCommand(cmd Command, opts ...StmtPrepareOption) *StmtPrepare {
@@ -65,6 +66,13 @@ func WithStmtPrepareCapability(c Capability) StmtPrepareOption {
 func WithStmtPrepareServerStatus(s ServerStatus) StmtPrepareOption {
 	return func(q *StmtPrepare) {
 		q.Command.SetServerStatus(s)
+	}
+}
+
+// WithStmtPrepareDatabase sets the database name.
+func WithStmtPrepareDatabase(dbName string) StmtPrepareOption {
+	return func(q *StmtPrepare) {
+		q.dbName = dbName
 	}
 }
 
@@ -123,6 +131,11 @@ func (pkt *StmtPrepare) parseQuery() error {
 // Query returns the query string.
 func (pkt *StmtPrepare) Query() string {
 	return pkt.query
+}
+
+// Database returns the database name.
+func (pkt *StmtPrepare) Database() string {
+	return pkt.dbName
 }
 
 // Statement returns the statement.
