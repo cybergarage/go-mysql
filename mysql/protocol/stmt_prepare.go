@@ -29,15 +29,23 @@ import (
 // StmtPrepare represents a COM_STMT_PREPARE packet.
 type StmtPrepare struct {
 	Command
-	dbName string
-	stmt   query.Statement
-	query  string
+	dbName               string
+	tblNames             []string
+	stmt                 query.Statement
+	query                string
+	resultSetColumnNames []string
+	parameterColumnNames []string
 }
 
 func newStmtPrepareWithCommand(cmd Command, opts ...StmtPrepareOption) *StmtPrepare {
 	q := &StmtPrepare{
-		Command: cmd,
-		query:   "",
+		Command:              cmd,
+		query:                "",
+		stmt:                 nil,
+		dbName:               "",
+		tblNames:             nil,
+		resultSetColumnNames: nil,
+		parameterColumnNames: nil,
 	}
 	for _, opt := range opts {
 		opt(q)
@@ -124,6 +132,62 @@ func (pkt *StmtPrepare) parseQuery() error {
 	}
 
 	pkt.stmt = stmts[0]
+	pkt.resultSetColumnNames = []string{}
+	pkt.parameterColumnNames = []string{}
+
+	var parameterColumnsFromExpr func(expr query.Expr) []string
+	parameterColumnsFromExpr = func(expr query.Expr) []string {
+		columns := []string{}
+		switch expr := expr.(type) {
+		case *query.CmpExpr:
+			if expr.Right().IsPlaceHolder() {
+				columns = append(columns, expr.Left().Name())
+			}
+		case *query.AndExpr:
+			columns = append(columns, parameterColumnsFromExpr(expr.Left)...)
+			columns = append(columns, parameterColumnsFromExpr(expr.Right)...)
+		case *query.OrExpr:
+			columns = append(columns, parameterColumnsFromExpr(expr.Left)...)
+			columns = append(columns, parameterColumnsFromExpr(expr.Right)...)
+		}
+		return columns
+	}
+
+	parameterColumnsFromCondition := func(cond query.Condition) []string {
+		if !cond.HasConditions() {
+			return []string{}
+		}
+		return parameterColumnsFromExpr(cond.Expr())
+	}
+
+	switch pkt.stmt.StatementType() {
+	case query.InsertStatement:
+		stmt := pkt.stmt.(query.Insert)
+		pkt.tblNames = []string{stmt.TableName()}
+		for _, col := range stmt.Columns() {
+			if !col.IsPlaceHolder() {
+				continue
+			}
+			pkt.parameterColumnNames = append(pkt.parameterColumnNames, col.Name())
+		}
+	case query.SelectStatement:
+		stmt := pkt.stmt.(query.Select)
+		pkt.tblNames = stmt.From().TableNames()
+		for _, sel := range stmt.Selectors() {
+			pkt.resultSetColumnNames = append(pkt.resultSetColumnNames, sel.Name())
+		}
+		pkt.parameterColumnNames = parameterColumnsFromCondition(stmt.Where())
+	case query.UpdateStatement:
+		stmt := pkt.stmt.(query.Update)
+		pkt.tblNames = []string{stmt.TableName()}
+		pkt.parameterColumnNames = parameterColumnsFromCondition(stmt.Where())
+	case query.DeleteStatement:
+		stmt := pkt.stmt.(query.Delete)
+		pkt.tblNames = []string{stmt.TableName()}
+		pkt.parameterColumnNames = parameterColumnsFromCondition(stmt.Where())
+	default:
+		return newInvalidStatement(pkt.query)
+	}
 
 	return nil
 }
@@ -143,32 +207,19 @@ func (pkt *StmtPrepare) Statement() query.Statement {
 	return pkt.stmt
 }
 
-// TableName returns the table name.
-func (pkt *StmtPrepare) TableName() (string, error) {
-	if pkt.stmt == nil {
-		return "", newInvalidStatement(pkt.query)
-	}
+// TableNames returns the table names.
+func (pkt *StmtPrepare) TableNames() []string {
+	return pkt.tblNames
+}
 
-	switch pkt.stmt.StatementType() {
-	case query.InsertStatement:
-		stmt := pkt.stmt.(query.Insert)
-		return stmt.TableName(), nil
-	case query.SelectStatement:
-		stmt := pkt.stmt.(query.Select)
-		tables := stmt.From().TableNames()
-		if len(tables) != 1 {
-			return "", newInvalidStatement(pkt.query)
-		}
-		return stmt.From().TableNames()[0], nil
-	case query.UpdateStatement:
-		stmt := pkt.stmt.(query.Update)
-		return stmt.TableName(), nil
-	case query.DeleteStatement:
-		stmt := pkt.stmt.(query.Delete)
-		return stmt.TableName(), nil
-	}
+// SetResultSetColumnNames sets the result set column names.
+func (pkt *StmtPrepare) ResultSetColumnNames() []string {
+	return pkt.resultSetColumnNames
+}
 
-	return "", newInvalidStatement(pkt.query)
+// SetParameterColumnNames sets the parameter column names.
+func (pkt *StmtPrepare) ParameterColumnNames() []string {
+	return pkt.parameterColumnNames
 }
 
 // Bytes returns the packet bytes.
