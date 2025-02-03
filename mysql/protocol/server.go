@@ -412,6 +412,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 				stmt, err = NewStmtPrepareFromCommand(cmd,
 					WithStmtPrepareCapability(connCaps),
 					WithStmtPrepareServerStatus(connServerStatus),
+					WithStmtPrepareDatabase(conn.Database()),
 				)
 				if err == nil {
 					var cmdRes *StmtPrepareResponse
