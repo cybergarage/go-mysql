@@ -17,6 +17,8 @@ package protocol
 import (
 	"bytes"
 	"io"
+
+	"github.com/cybergarage/go-mysql/mysql/query"
 )
 
 // MySQL: COM_STMT_PREPARE
@@ -27,6 +29,7 @@ import (
 // StmtPrepare represents a COM_STMT_PREPARE packet.
 type StmtPrepare struct {
 	Command
+	stmt  query.Statement
 	query string
 }
 
@@ -95,12 +98,36 @@ func NewStmtPrepareFromCommand(cmd Command, opts ...StmtPrepareOption) (*StmtPre
 		return nil, err
 	}
 
+	if err = pkt.parseQuery(); err != nil {
+		return nil, err
+	}
+
 	return pkt, nil
+}
+
+func (pkt *StmtPrepare) parseQuery() error {
+	parser := query.NewParser()
+	stmts, err := parser.ParseString(pkt.query)
+	if err != nil {
+		return err
+	}
+	if len(stmts) != 1 {
+		return newInvalidStatement(pkt.query)
+	}
+
+	pkt.stmt = stmts[0]
+
+	return nil
 }
 
 // Query returns the query string.
 func (pkt *StmtPrepare) Query() string {
 	return pkt.query
+}
+
+// Statement returns the statement.
+func (pkt *StmtPrepare) Statement() query.Statement {
+	return pkt.stmt
 }
 
 // Bytes returns the packet bytes.
