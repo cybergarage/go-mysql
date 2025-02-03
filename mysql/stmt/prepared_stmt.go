@@ -16,12 +16,17 @@ package stmt
 
 import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
+	"github.com/cybergarage/go-mysql/mysql/query"
 )
 
 // StatementID is the type of statement ID.
 type StatementID = protocol.StatementID
 
+// Statement is the type of statement.
+type Statement = query.Statement
+
 // PreparedStatement is the interface of prepared statement.
 type PreparedStatement interface {
 	StatementID() StatementID
+	Statement() Statement
 }
