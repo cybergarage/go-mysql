@@ -28,6 +28,7 @@ type Statement = query.Statement
 // PreparedStatement is the interface of prepared statement.
 type PreparedStatement interface {
 	StatementID() StatementID
-	Database() string
+	DatabaseName() string
 	Statement() Statement
+	TableNames() []string
 }
