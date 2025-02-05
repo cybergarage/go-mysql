@@ -24,22 +24,41 @@ import (
 // COM_STMT_EXECUTE - MariaDB Knowledge Base
 // https://mariadb.com/kb/en/com_stmt_execute/
 
+// StatementBindSendType represents a statement bind send type.
+type StatementBindSendType uint8
+
+const (
+	// StatementBindSendTypeToServer represents a statement bind send type to server.
+	StatementBindSendTypeToServer StatementBindSendType = 0x01
+)
+
+// IsToServer returns true if the statement bind send type is to server.
+func (t StatementBindSendType) IsToServer() bool {
+	return t == StatementBindSendTypeToServer
+}
+
 // StmtExecute represents a COM_STMT_EXECUTE packet.
 type StmtExecute struct {
 	Command
-	stmdID     StatementID
-	cursorType CursorType
-	iterCnt    uint32
-	NumParams  uint16
+	stmdID       StatementID
+	cursorType   CursorType
+	iterCnt      uint32
+	numParams    uint16
+	bindSendType StatementBindSendType
+	paramValues  [][]byte
+	paramTypes   []FieldType
 }
 
 func newStmtExecuteWithCommand(cmd Command, opts ...StmtExecuteOption) *StmtExecute {
 	q := &StmtExecute{
-		Command:    cmd,
-		stmdID:     0,
-		cursorType: CursorTypeNoCursor,
-		iterCnt:    1,
-		NumParams:  0,
+		Command:      cmd,
+		stmdID:       0,
+		cursorType:   CursorTypeNoCursor,
+		iterCnt:      1,
+		numParams:    0,
+		bindSendType: 0,
+		paramValues:  [][]byte{},
+		paramTypes:   []FieldType{},
 	}
 	for _, opt := range opts {
 		opt(q)
@@ -74,7 +93,7 @@ func WithStmtExecuteIterationCount(iterCnt uint32) StmtExecuteOption {
 // WithStmtExecuteNumParams sets the number of parameters.
 func WithStmtExecuteNumParams(numParams uint16) StmtExecuteOption {
 	return func(q *StmtExecute) {
-		q.NumParams = numParams
+		q.numParams = numParams
 	}
 }
 
@@ -120,6 +139,43 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 		return nil, err
 	}
 
+	if pkt.numParams == 0 {
+		return pkt, nil
+	}
+
+	nullBitmapLen := int((pkt.numParams + 7) / 8)
+	if 0 < nullBitmapLen {
+		if err := pktReader.SkipBytes(nullBitmapLen); err != nil {
+			return nil, err
+		}
+	}
+
+	iv1, err = pktReader.ReadInt1()
+	if err != nil {
+		return nil, err
+	}
+	pkt.bindSendType = StatementBindSendType(iv1)
+
+	if pkt.bindSendType.IsToServer() {
+		pkt.paramTypes = make([]FieldType, pkt.numParams)
+		for n := 0; n < int(pkt.numParams); n++ {
+			iv2, err := pktReader.ReadInt2()
+			if err != nil {
+				return nil, err
+			}
+			pkt.paramTypes[n] = FieldType(iv2)
+		}
+	}
+
+	pkt.paramValues = make([][]byte, pkt.numParams)
+	for n := 0; n < int(pkt.numParams); n++ {
+		paramValue, err := pktReader.ReadLengthEncodedBytes()
+		if err != nil {
+			return nil, err
+		}
+		pkt.paramValues[n] = paramValue
+	}
+
 	return pkt, nil
 }
 
@@ -151,6 +207,30 @@ func (pkt *StmtExecute) Bytes() ([]byte, error) {
 
 	if err := w.WriteInt4(pkt.iterCnt); err != nil {
 		return nil, err
+	}
+
+	if 0 < pkt.numParams {
+		if err := w.WriteFixedLengthNullBytes(int((pkt.numParams + 7) / 8)); err != nil {
+			return nil, err
+		}
+	}
+
+	if err := w.WriteInt1(byte(pkt.bindSendType)); err != nil {
+		return nil, err
+	}
+
+	if pkt.bindSendType.IsToServer() {
+		for _, paramType := range pkt.paramTypes {
+			if err := w.WriteInt2(uint16(paramType)); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	for _, paramValue := range pkt.paramValues {
+		if err := w.WriteLengthEncodedBytes(paramValue); err != nil {
+			return nil, err
+		}
 	}
 
 	pkt.SetPayload(w.Bytes())
