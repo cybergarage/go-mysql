@@ -28,11 +28,13 @@ func TestStmtExecutePacket(t *testing.T) {
 		stmtID protocol.StatementID
 	}
 	for _, test := range []struct {
-		name string
+		name      string
+		numParams uint16
 		expected
 	}{
 		{
 			"data/stmt-execute-001.hex",
+			1,
 			expected{
 				stmtID: 1,
 			},
@@ -51,7 +53,9 @@ func TestStmtExecutePacket(t *testing.T) {
 			}
 			reader := bytes.NewReader(testBytes)
 
-			pkt, err := protocol.NewStmtExecuteFromReader(reader)
+			pkt, err := protocol.NewStmtExecuteFromReader(reader,
+				protocol.WithStmtExecuteNumParams(test.numParams),
+			)
 			if err != nil {
 				t.Error(err)
 				return
