@@ -40,9 +40,12 @@ func (manager *PreparedManager) AddPreparedStatement(stmt PreparedStatement) {
 }
 
 // PreparedStatement returns a prepared statement by the statement ID.
-func (manager *PreparedManager) PreparedStatement(stmtID StatementID) (PreparedStatement, bool) {
+func (manager *PreparedManager) PreparedStatement(stmtID StatementID) (PreparedStatement, error) {
 	stmt, ok := manager.stmts[stmtID]
-	return stmt, ok
+	if !ok {
+		return nil, newInvalidStatementID(stmtID)
+	}
+	return stmt, nil
 }
 
 // RemovePreparedStatement removes a prepared statement by the statement ID.
