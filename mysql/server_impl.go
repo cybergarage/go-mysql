@@ -153,6 +153,10 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmt *protocol.StmtPr
 
 // ExecuteStatement executes a statement.
 func (server *server) ExecuteStatement(conn protocol.Conn, stmt *protocol.StmtExecute) (protocol.Response, error) {
+	_, err := server.PreparedStatement(stmt.StatementID())
+	if err != nil {
+		return nil, err
+	}
 	// nolint: forcetypeassert
 	return nil, errors.ErrNotImplemented
 }
