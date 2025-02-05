@@ -97,5 +97,7 @@ func (pkt *StmtReset) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
+	pkt.SetPayload(w.Bytes())
+
 	return pkt.Command.Bytes()
 }
