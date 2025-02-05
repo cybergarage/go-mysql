@@ -30,6 +30,7 @@ type StmtExecute struct {
 	stmdID     StatementID
 	cursorType CursorType
 	iterCnt    uint32
+	NumParams  uint16
 }
 
 func newStmtExecuteWithCommand(cmd Command, opts ...StmtExecuteOption) *StmtExecute {
@@ -38,6 +39,7 @@ func newStmtExecuteWithCommand(cmd Command, opts ...StmtExecuteOption) *StmtExec
 		stmdID:     0,
 		cursorType: CursorTypeNoCursor,
 		iterCnt:    1,
+		NumParams:  0,
 	}
 	for _, opt := range opts {
 		opt(q)
@@ -66,6 +68,13 @@ func WithStmtExecuteCursorType(cursorType CursorType) StmtExecuteOption {
 func WithStmtExecuteIterationCount(iterCnt uint32) StmtExecuteOption {
 	return func(q *StmtExecute) {
 		q.iterCnt = iterCnt
+	}
+}
+
+// WithStmtExecuteNumParams sets the number of parameters.
+func WithStmtExecuteNumParams(numParams uint16) StmtExecuteOption {
+	return func(q *StmtExecute) {
+		q.NumParams = numParams
 	}
 }
 
