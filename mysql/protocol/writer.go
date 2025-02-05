@@ -192,6 +192,11 @@ func (w *Writer) WriteFixedLengthString(s string, n int) error {
 	return w.writeFixedLengthBytes([]byte(s), 0x00, n)
 }
 
+// WriteFixedLengthNullBytes writes a fixed length null bytes.
+func (w *Writer) WriteFixedLengthNullBytes(n int) error {
+	return w.writeFixedLengthBytes(nil, 0x00, n)
+}
+
 // WriteVariableLengthString writes a variable length string.
 func (w *Writer) WriteVariableLengthString(s string) error {
 	_, err := w.WriteString(s)
