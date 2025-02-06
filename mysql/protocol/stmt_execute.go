@@ -47,9 +47,11 @@ type StmtExecute struct {
 	iterCnt      uint32
 	numParams    uint16
 	bindSendType StatementBindSendType
+	paramNames   []string
 	paramValues  [][]byte
 	paramTypes   []FieldType
 	stmtMgr      stmt.StatementManager
+	params       []stmt.Parameter
 }
 
 func newStmtExecuteWithCommand(cmd Command, opts ...StmtExecuteOption) *StmtExecute {
@@ -60,6 +62,7 @@ func newStmtExecuteWithCommand(cmd Command, opts ...StmtExecuteOption) *StmtExec
 		iterCnt:      1,
 		numParams:    0,
 		bindSendType: 0,
+		paramNames:   []string{},
 		paramValues:  [][]byte{},
 		paramTypes:   []FieldType{},
 		stmtMgr:      nil,
@@ -193,6 +196,23 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 			return nil, err
 		}
 		pkt.paramValues[n] = paramValue
+	}
+
+	// Create parameters
+
+	pkt.params = make([]stmt.Parameter, pkt.numParams)
+	for n := 0; n < int(pkt.numParams); n++ {
+		paramOpts := []stmt.ParameterOption{}
+		if n < len(pkt.paramNames) {
+			paramOpts = append(paramOpts, stmt.WithParameterName(pkt.paramNames[n]))
+		}
+		if n < len(pkt.paramTypes) {
+			paramOpts = append(paramOpts, stmt.WithParameterType(pkt.paramTypes[n]))
+		}
+		if n < len(pkt.paramValues) {
+			paramOpts = append(paramOpts, stmt.WithParameterValue(pkt.paramValues[n]))
+		}
+		pkt.params[n] = stmt.NewParameter(paramOpts...)
 	}
 
 	return pkt, nil
