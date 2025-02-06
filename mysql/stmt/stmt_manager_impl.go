@@ -43,7 +43,7 @@ func (mgr *stmtManager) AddPreparedStatement(stmt PreparedStatement) {
 func (mgr *stmtManager) PreparedStatement(stmtID StatementID) (PreparedStatement, error) {
 	stmt, ok := mgr.stmts[stmtID]
 	if !ok {
-		return nil, newInvalidStatementID(stmtID)
+		return nil, newErrInvalidStatementID(stmtID)
 	}
 	return stmt, nil
 }

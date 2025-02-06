@@ -25,6 +25,10 @@ var ErrInvalid = errors.New("invalid")
 // ErrOverflow is returned when the value is overflow.
 var ErrOverflow = errors.New("overflow")
 
-func newInvalidStatementID(stmdID StatementID) error {
+func newErrInvalidStatementID(stmdID StatementID) error {
 	return fmt.Errorf("%w statement ID: %d", ErrInvalid, stmdID)
+}
+
+func newErrInvalidParameters() error {
+	return fmt.Errorf("%w parameters", ErrInvalid)
 }

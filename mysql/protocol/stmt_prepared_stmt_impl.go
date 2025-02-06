@@ -44,3 +44,16 @@ func NewPreparedStatmentWith(prePkt *StmtPrepare, resPkt *StmtPrepareResponse) s
 func (p *preparedStmt) Parameters() []stmt.Parameter {
 	return p.params
 }
+
+// Bind binds the parameters to the prepared statement.
+func (p *preparedStmt) Bind(params []stmt.Parameter) (stmt.Statement, error) {
+	if len(params) != len(p.params) {
+		return nil, stmt.ErrInvalidParameters
+	}
+	for n, param := range params {
+		if p.params[n].Type() != param.Type() {
+			return nil, stmt.ErrInvalidParameters
+		}
+	}
+	return NewStatementWith(p.Statement(), params), nil
+}
