@@ -18,15 +18,44 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/stmt"
 )
 
+type preparedParameter struct {
+	name string
+	typ  stmt.FieldType
+}
+
+func (p *preparedParameter) Name() string {
+	return p.name
+}
+
+func (p *preparedParameter) Type() stmt.FieldType {
+	return p.typ
+}
+
 type preparedStmt struct {
 	*StmtPrepare
 	*StmtPrepareResponse
+	params []stmt.Parameter
 }
 
 // NewPreparedStatmentWith creates a new prepared statement with the packet.
 func NewPreparedStatmentWith(prePkt *StmtPrepare, resPkt *StmtPrepareResponse) stmt.PreparedStatement {
-	return &preparedStmt{
+	preStmt := &preparedStmt{
 		StmtPrepare:         prePkt,
 		StmtPrepareResponse: resPkt,
 	}
+
+	resParams := resPkt.Params()
+	preStmt.params = make([]stmt.Parameter, len(resParams))
+	for n, resParam := range resParams {
+		preStmt.params[n] = &preparedParameter{
+			name: resParam.Name(),
+			typ:  stmt.FieldType(resParam.ColType()),
+		}
+	}
+
+	return preStmt
+}
+
+func (p *preparedStmt) Parameters() []stmt.Parameter {
+	return p.params
 }

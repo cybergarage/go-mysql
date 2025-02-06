@@ -30,7 +30,7 @@ import (
 type BinaryResultSet struct {
 	capFlags   Capability
 	columnCnt  *ColumnCount
-	columnDefs []*ColumnDef
+	columnDefs []ColumnDef
 	rows       []ResultSetRow
 }
 
@@ -38,7 +38,7 @@ func newBinaryResultSetWithPacket(opts ...BinaryResultSetOption) *BinaryResultSe
 	q := &BinaryResultSet{
 		capFlags:   0,
 		columnCnt:  NewColumnCount(),
-		columnDefs: []*ColumnDef{},
+		columnDefs: []ColumnDef{},
 		rows:       []ResultSetRow{},
 	}
 	q.SetOptions(opts...)
@@ -63,7 +63,7 @@ func WithBinaryResultSetMetadataFollows(m ResultsetMetadata) BinaryResultSetOpti
 }
 
 // WithBinaryResultSetColumnDefs returns a binary resultset option to set the column definitions.
-func WithBinaryResultSetColumnDefs(colDefs []*ColumnDef) BinaryResultSetOption {
+func WithBinaryResultSetColumnDefs(colDefs []ColumnDef) BinaryResultSetOption {
 	return func(pkt *BinaryResultSet) {
 		pkt.columnCnt.count = uint64(len(colDefs))
 		pkt.columnDefs = colDefs

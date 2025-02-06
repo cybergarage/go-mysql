@@ -23,10 +23,10 @@ import (
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset_column_definition.html
 
 // NewColumnDefFromReader returns a new ColumnDef from the reader.
-func NewColumnDefsFromResultSet(rs sql.ResultSet) ([]*ColumnDef, error) {
+func NewColumnDefsFromResultSet(rs sql.ResultSet) ([]ColumnDef, error) {
 	schema := rs.Schema()
 	columns := schema.Columns()
-	columnDefs := make([]*ColumnDef, len(columns))
+	columnDefs := make([]ColumnDef, len(columns))
 	for n, column := range columns {
 		t, err := query.NewFieldTypeFrom(column.DataType())
 		if err != nil {

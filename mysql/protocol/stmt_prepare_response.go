@@ -32,8 +32,8 @@ type StmtPrepareResponse struct {
 	*packet
 	status            Status
 	stmtID            StatementID
-	columns           []*ColumnDef
-	params            []*ColumnDef
+	columns           []ColumnDef
+	params            []ColumnDef
 	warningCount      uint16
 	resultSetMetadata ResultsetMetadata
 }
@@ -43,8 +43,8 @@ func newStmtPrepareResponseWithPacket(pkt *packet, opts ...StmtPrepareResponseOp
 		packet:            pkt,
 		status:            Status(0),
 		stmtID:            0,
-		columns:           []*ColumnDef{},
-		params:            []*ColumnDef{},
+		columns:           []ColumnDef{},
+		params:            []ColumnDef{},
 		warningCount:      0,
 		resultSetMetadata: ResultsetMetadataNone,
 	}
@@ -82,14 +82,14 @@ func WithStmtPrepareResponseStatementID(stmdID StatementID) StmtPrepareResponseO
 }
 
 // WithStmtPrepareResponseColumns sets the columns.
-func WithStmtPrepareResponseColumns(columns []*ColumnDef) StmtPrepareResponseOption {
+func WithStmtPrepareResponseColumns(columns []ColumnDef) StmtPrepareResponseOption {
 	return func(pkt *StmtPrepareResponse) {
 		pkt.columns = columns
 	}
 }
 
 // WithStmtPrepareResponseParams sets the params.
-func WithStmtPrepareResponseParams(params []*ColumnDef) StmtPrepareResponseOption {
+func WithStmtPrepareResponseParams(params []ColumnDef) StmtPrepareResponseOption {
 	return func(pkt *StmtPrepareResponse) {
 		pkt.params = params
 	}
@@ -174,7 +174,7 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 		return pkt, nil
 	}
 
-	pkt.params = make([]*ColumnDef, numParams)
+	pkt.params = make([]ColumnDef, numParams)
 	for n := 0; n < int(numParams); n++ {
 		param, err := NewColumnDefFromReader(pktReader)
 		if err != nil {
@@ -189,7 +189,7 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 		}
 	}
 
-	pkt.columns = make([]*ColumnDef, numColumns)
+	pkt.columns = make([]ColumnDef, numColumns)
 	for n := 0; n < int(numColumns); n++ {
 		column, err := NewColumnDefFromReader(pktReader)
 		if err != nil {
@@ -213,12 +213,12 @@ func (pkt *StmtPrepareResponse) StatementID() StatementID {
 }
 
 // Columns returns the columns.
-func (pkt *StmtPrepareResponse) Columns() []*ColumnDef {
+func (pkt *StmtPrepareResponse) Columns() []ColumnDef {
 	return pkt.columns
 }
 
 // Params returns the params.
-func (pkt *StmtPrepareResponse) Params() []*ColumnDef {
+func (pkt *StmtPrepareResponse) Params() []ColumnDef {
 	return pkt.params
 }
 

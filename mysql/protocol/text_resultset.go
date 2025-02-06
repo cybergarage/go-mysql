@@ -30,7 +30,7 @@ import (
 type TextResultSet struct {
 	capFlags   Capability
 	columnCnt  *ColumnCount
-	columnDefs []*ColumnDef
+	columnDefs []ColumnDef
 	rows       []ResultSetRow
 }
 
@@ -38,7 +38,7 @@ func newTextResultSetWithPacket(opts ...TextResultSetOption) *TextResultSet {
 	q := &TextResultSet{
 		capFlags:   0,
 		columnCnt:  NewColumnCount(),
-		columnDefs: []*ColumnDef{},
+		columnDefs: []ColumnDef{},
 		rows:       []ResultSetRow{},
 	}
 	q.SetOptions(opts...)
@@ -63,7 +63,7 @@ func WithTextResultSetMetadataFollows(m ResultsetMetadata) TextResultSetOption {
 }
 
 // WithTextResultSetColumnDefs returns a text resultset option to set the column definitions.
-func WithTextResultSetColumnDefs(colDefs []*ColumnDef) TextResultSetOption {
+func WithTextResultSetColumnDefs(colDefs []ColumnDef) TextResultSetOption {
 	return func(pkt *TextResultSet) {
 		pkt.columnCnt.count = uint64(len(colDefs))
 		pkt.columnDefs = colDefs
