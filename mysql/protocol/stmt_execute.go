@@ -66,6 +66,7 @@ func newStmtExecuteWithCommand(cmd Command, opts ...StmtExecuteOption) *StmtExec
 		paramValues:  [][]byte{},
 		paramTypes:   []FieldType{},
 		stmtMgr:      nil,
+		params:       []stmt.Parameter{},
 	}
 	for _, opt := range opts {
 		opt(q)
@@ -75,6 +76,13 @@ func newStmtExecuteWithCommand(cmd Command, opts ...StmtExecuteOption) *StmtExec
 
 // StmtExecuteOption represents a MySQL StmtExecute option.
 type StmtExecuteOption func(*StmtExecute)
+
+// WithStmtExecuteStatementCapability sets the statement capability.
+func WithStmtExecuteStatementCapability(c Capability) StmtExecuteOption {
+	return func(q *StmtExecute) {
+		q.SetCapability(c)
+	}
+}
 
 // WithStmtExecuteStatementID sets the statement ID.
 func WithStmtExecuteStatementID(stmdID StatementID) StmtExecuteOption {
@@ -226,6 +234,11 @@ func (pkt *StmtExecute) StatementID() StatementID {
 // CursorType returns the cursor type.
 func (pkt *StmtExecute) CursorType() CursorType {
 	return pkt.cursorType
+}
+
+// Parameters returns the parameters.
+func (pkt *StmtExecute) Parameters() []stmt.Parameter {
+	return pkt.params
 }
 
 // Bytes returns the packet bytes.

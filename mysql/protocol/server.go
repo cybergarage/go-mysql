@@ -429,6 +429,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			if server.CommandHandler != nil {
 				var stmt *StmtExecute
 				stmt, err = NewStmtExecuteFromCommand(cmd,
+					WithStmtExecuteStatementCapability(connCaps),
 					WithStmtExecuteStatementManager(server),
 				)
 				if err == nil {
