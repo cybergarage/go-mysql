@@ -18,19 +18,6 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/stmt"
 )
 
-type preparedParameter struct {
-	name string
-	typ  stmt.FieldType
-}
-
-func (p *preparedParameter) Name() string {
-	return p.name
-}
-
-func (p *preparedParameter) Type() stmt.FieldType {
-	return p.typ
-}
-
 type preparedStmt struct {
 	*StmtPrepare
 	*StmtPrepareResponse
@@ -39,23 +26,21 @@ type preparedStmt struct {
 
 // NewPreparedStatmentWith creates a new prepared statement with the packet.
 func NewPreparedStatmentWith(prePkt *StmtPrepare, resPkt *StmtPrepareResponse) stmt.PreparedStatement {
-	preStmt := &preparedStmt{
+	resParams := resPkt.Params()
+	params := make([]stmt.Parameter, len(resParams))
+	for n, resParam := range resParams {
+		params[n] = stmt.NewParameter(
+			stmt.WithParameterName(resParam.Name()),
+			stmt.WithParameterType(stmt.FieldType(resParam.ColType())))
+	}
+	return &preparedStmt{
 		StmtPrepare:         prePkt,
 		StmtPrepareResponse: resPkt,
+		params:              params,
 	}
-
-	resParams := resPkt.Params()
-	preStmt.params = make([]stmt.Parameter, len(resParams))
-	for n, resParam := range resParams {
-		preStmt.params[n] = &preparedParameter{
-			name: resParam.Name(),
-			typ:  stmt.FieldType(resParam.ColType()),
-		}
-	}
-
-	return preStmt
 }
 
+// Parameters returns the parameters of the prepared statement.
 func (p *preparedStmt) Parameters() []stmt.Parameter {
 	return p.params
 }

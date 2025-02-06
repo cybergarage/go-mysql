@@ -27,4 +27,6 @@ type Parameter interface {
 	Name() string
 	// Type returns the column type.
 	Type() FieldType
+	// Value returns the column value.
+	Value() any
 }
