@@ -34,9 +34,6 @@ var ErrExist = errors.New("exist")
 // ErrTooManyConnections is returned when the connection is too many.
 var ErrTooManyConnections = errors.New("too many connections")
 
-// ErrOverflow is returned when the value is overflow.
-var ErrOverflow = errors.New("overflow")
-
 func newErrNotSupported(v any) error {
 	return fmt.Errorf("%v is %w", v, ErrNotSupported)
 }

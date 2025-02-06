@@ -1,4 +1,4 @@
-// Copyright (C) 2025 The go-mysql Authors. All rights reserved.
+// Copyright (C) 2024 The go-mysql Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,16 +15,20 @@
 package stmt
 
 import (
-	"errors"
 	"fmt"
+	"sync/atomic"
 )
 
-// ErrInvalid is the error for invalid statement ID.
-var ErrInvalid = errors.New("invalid")
+// MySQL: COM_STMT_PREPARE Response
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_stmt_prepare.html
 
-// ErrOverflow is returned when the value is overflow.
-var ErrOverflow = errors.New("overflow")
+// StatementID represents a statement ID.
+type StatementID uint32
 
-func newInvalidStatementID(stmdId StatementID) error {
-	return fmt.Errorf("%w statement ID: %d", ErrInvalid, stmdId)
+// NextStatementID returns the next statement ID.
+func (s StatementID) NextStatementID() (StatementID, error) {
+	if s == 0xFFFFFFFF {
+		return 0, fmt.Errorf("statement ID %w", ErrOverflow)
+	}
+	return StatementID(atomic.AddUint32((*uint32)(&s), 1)), nil
 }

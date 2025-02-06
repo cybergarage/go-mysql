@@ -15,20 +15,11 @@
 package protocol
 
 import (
-	"fmt"
-	"sync/atomic"
+	"github.com/cybergarage/go-mysql/mysql/stmt"
 )
 
 // MySQL: COM_STMT_PREPARE Response
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_stmt_prepare.html
 
-// StatementID represents a statement ID.
-type StatementID uint32
-
-// NextStatementID returns the next statement ID.
-func (s StatementID) NextStatementID() (StatementID, error) {
-	if s == 0xFFFFFFFF {
-		return 0, fmt.Errorf("statement ID %w", ErrOverflow)
-	}
-	return StatementID(atomic.AddUint32((*uint32)(&s), 1)), nil
-}
+// StatementID is the type of statement ID.
+type StatementID = stmt.StatementID
