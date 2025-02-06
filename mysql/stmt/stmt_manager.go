@@ -14,34 +14,34 @@
 
 package stmt
 
-// PreparedStatement represents a prepared statement.
-type PreparedManager struct {
+// StatementManager represents a prepared statement manager.
+type StatementManager struct {
 	lastStatementID StatementID
 	// stmts is the map of prepared statements.
 	stmts map[StatementID]PreparedStatement
 }
 
-// NewPreparedManager creates a new PreparedManager instance.
-func NewPreparedManager() *PreparedManager {
-	return &PreparedManager{
+// NewStatementManager creates a new PreparedManager instance.
+func NewStatementManager() *StatementManager {
+	return &StatementManager{
 		lastStatementID: 1,
 		stmts:           make(map[StatementID]PreparedStatement),
 	}
 }
 
 // NextPreparedStatementID returns the next prepared statement ID.
-func (manager *PreparedManager) NextPreparedStatementID() (StatementID, error) {
-	return manager.lastStatementID.NextStatementID()
+func (mgr *StatementManager) NextPreparedStatementID() (StatementID, error) {
+	return mgr.lastStatementID.NextStatementID()
 }
 
 // AddPreparedStatement adds a prepared statement to the manager.
-func (manager *PreparedManager) AddPreparedStatement(stmt PreparedStatement) {
-	manager.stmts[stmt.StatementID()] = stmt
+func (mgr *StatementManager) AddPreparedStatement(stmt PreparedStatement) {
+	mgr.stmts[stmt.StatementID()] = stmt
 }
 
 // PreparedStatement returns a prepared statement by the statement ID.
-func (manager *PreparedManager) PreparedStatement(stmtID StatementID) (PreparedStatement, error) {
-	stmt, ok := manager.stmts[stmtID]
+func (mgr *StatementManager) PreparedStatement(stmtID StatementID) (PreparedStatement, error) {
+	stmt, ok := mgr.stmts[stmtID]
 	if !ok {
 		return nil, newInvalidStatementID(stmtID)
 	}
@@ -49,6 +49,6 @@ func (manager *PreparedManager) PreparedStatement(stmtID StatementID) (PreparedS
 }
 
 // RemovePreparedStatement removes a prepared statement by the statement ID.
-func (manager *PreparedManager) RemovePreparedStatement(stmtID StatementID) {
-	delete(manager.stmts, stmtID)
+func (mgr *StatementManager) RemovePreparedStatement(stmtID StatementID) {
+	delete(mgr.stmts, stmtID)
 }

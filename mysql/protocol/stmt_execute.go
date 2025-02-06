@@ -17,6 +17,8 @@ package protocol
 import (
 	"bytes"
 	"io"
+
+	"github.com/cybergarage/go-postgresql/postgresql/stmt"
 )
 
 // MySQL: COM_STMT_EXECUTE
@@ -47,6 +49,7 @@ type StmtExecute struct {
 	bindSendType StatementBindSendType
 	paramValues  [][]byte
 	paramTypes   []FieldType
+	stmtMgr      *stmt.PreparedManager
 }
 
 func newStmtExecuteWithCommand(cmd Command, opts ...StmtExecuteOption) *StmtExecute {
@@ -59,6 +62,7 @@ func newStmtExecuteWithCommand(cmd Command, opts ...StmtExecuteOption) *StmtExec
 		bindSendType: 0,
 		paramValues:  [][]byte{},
 		paramTypes:   []FieldType{},
+		stmtMgr:      nil,
 	}
 	for _, opt := range opts {
 		opt(q)
@@ -94,6 +98,13 @@ func WithStmtExecuteIterationCount(iterCnt uint32) StmtExecuteOption {
 func WithStmtExecuteNumParams(numParams uint16) StmtExecuteOption {
 	return func(q *StmtExecute) {
 		q.numParams = numParams
+	}
+}
+
+// WithStmtExecuteBindSendType sets the bind send type.
+func WithStmtExecuteStatementManager(stmtMgr *stmt.PreparedManager) StmtExecuteOption {
+	return func(q *StmtExecute) {
+		q.stmtMgr = stmtMgr
 	}
 }
 

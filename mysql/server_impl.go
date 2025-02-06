@@ -26,7 +26,7 @@ import (
 // server represents a base executor server.
 type server struct {
 	*protocol.Server
-	*stmt.PreparedManager
+	*stmt.StatementManager
 	sqlExecutor     SQLExecutor
 	queryExecutor   QueryExecutor
 	exQueryExecutor ExQueryExecutor
@@ -36,12 +36,12 @@ type server struct {
 // NewServer returns a base executor server instance.
 func NewServer() Server {
 	server := &server{
-		Server:          protocol.NewServer(),
-		PreparedManager: stmt.NewPreparedManager(),
-		sqlExecutor:     nil,
-		queryExecutor:   NewDefaultQueryExecutor(),
-		exQueryExecutor: nil,
-		errorHandler:    nil,
+		Server:           protocol.NewServer(),
+		StatementManager: stmt.NewStatementManager(),
+		sqlExecutor:      nil,
+		queryExecutor:    NewDefaultQueryExecutor(),
+		exQueryExecutor:  nil,
+		errorHandler:     nil,
 	}
 
 	server.exQueryExecutor = NewDefaultExQueryExecutorWith(
