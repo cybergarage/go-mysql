@@ -18,7 +18,7 @@ import (
 	"bytes"
 	"io"
 
-	"github.com/cybergarage/go-postgresql/postgresql/stmt"
+	"github.com/cybergarage/go-mysql/mysql/stmt"
 )
 
 // MySQL: COM_STMT_EXECUTE
@@ -49,7 +49,7 @@ type StmtExecute struct {
 	bindSendType StatementBindSendType
 	paramValues  [][]byte
 	paramTypes   []FieldType
-	stmtMgr      *stmt.PreparedManager
+	stmtMgr      stmt.StatementManager
 }
 
 func newStmtExecuteWithCommand(cmd Command, opts ...StmtExecuteOption) *StmtExecute {
@@ -102,7 +102,7 @@ func WithStmtExecuteNumParams(numParams uint16) StmtExecuteOption {
 }
 
 // WithStmtExecuteBindSendType sets the bind send type.
-func WithStmtExecuteStatementManager(stmtMgr *stmt.PreparedManager) StmtExecuteOption {
+func WithStmtExecuteStatementManager(stmtMgr stmt.StatementManager) StmtExecuteOption {
 	return func(q *StmtExecute) {
 		q.stmtMgr = stmtMgr
 	}
@@ -148,6 +148,14 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 	pkt.iterCnt, err = pktReader.ReadInt4()
 	if err != nil {
 		return nil, err
+	}
+
+	if pkt.stmtMgr != nil {
+		stmt, err := pkt.stmtMgr.PreparedStatement(pkt.stmdID)
+		if err != nil {
+			return nil, err
+		}
+		pkt.numParams = uint16(len(stmt.Parameters()))
 	}
 
 	if pkt.numParams == 0 {
