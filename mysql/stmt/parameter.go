@@ -18,14 +18,13 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/query"
 )
 
-// Statement is the type of statement.
-type Statement = query.Statement
+// FieldType is the type of field.
+type FieldType = query.FieldType
 
-// PreparedStatement is the interface of prepared statement.
-type PreparedStatement interface {
-	StatementID() StatementID
-	DatabaseName() string
-	Statement() Statement
-	TableNames() []string
-	Parameters() []Parameter
+// Parameter is the interface of parameter.
+type Parameter interface {
+	// Name returns the column name.
+	Name() string
+	// Type returns the column type.
+	Type() FieldType
 }
