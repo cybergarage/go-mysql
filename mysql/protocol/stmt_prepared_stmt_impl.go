@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package stmt
+package protocol
 
 import (
-	"github.com/cybergarage/go-mysql/mysql/protocol"
+	"github.com/cybergarage/go-mysql/mysql/stmt"
 )
 
 type preparedStmt struct {
-	*protocol.StmtPrepare
-	*protocol.StmtPrepareResponse
+	*StmtPrepare
+	*StmtPrepareResponse
 }
 
 // NewPreparedStatmentWith creates a new prepared statement with the packet.
-func NewPreparedStatmentWith(prePkt *protocol.StmtPrepare, resPkt *protocol.StmtPrepareResponse) PreparedStatement {
+func NewPreparedStatmentWith(prePkt *StmtPrepare, resPkt *StmtPrepareResponse) stmt.PreparedStatement {
 	return &preparedStmt{
 		StmtPrepare:         prePkt,
 		StmtPrepareResponse: resPkt,
