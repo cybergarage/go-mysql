@@ -121,6 +121,7 @@ func NewStmtPrepareFromCommand(cmd Command, opts ...StmtPrepareOption) (*StmtPre
 	return pkt, nil
 }
 
+// nolint: forcetypeassert
 func (pkt *StmtPrepare) parseQuery() error {
 	parser := query.NewParser()
 	stmts, err := parser.ParseString(pkt.query)
