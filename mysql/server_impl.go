@@ -158,7 +158,15 @@ func (server *server) ExecuteStatement(conn protocol.Conn, stmtExec *protocol.St
 	if err != nil {
 		return nil, err
 	}
-	return server.HandleStatement(conn, stmt)
+	res, err := server.HandleStatement(conn, stmt)
+	if err != nil {
+		return nil, err
+	}
+	switch res := res.(type) {
+	case *protocol.TextResultSet:
+		return protocol.NewBinaryResultSetFrom(res)
+	}
+	return res, nil
 }
 
 // CloseStatement closes a statement.
