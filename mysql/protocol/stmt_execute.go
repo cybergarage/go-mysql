@@ -46,6 +46,7 @@ type StmtExecute struct {
 	cursorType   CursorType
 	iterCnt      uint32
 	numParams    uint16
+	nullBitmap   *NullBitmap
 	bindSendType StatementBindSendType
 	paramNames   []string
 	paramValues  [][]byte
@@ -61,6 +62,7 @@ func newStmtExecuteWithCommand(cmd Command, opts ...StmtExecuteOption) *StmtExec
 		cursorType:   CursorTypeNoCursor,
 		iterCnt:      1,
 		numParams:    0,
+		nullBitmap:   nil,
 		bindSendType: 0,
 		paramNames:   []string{},
 		paramValues:  [][]byte{},
@@ -116,6 +118,20 @@ func WithStmtExecuteNumParams(numParams uint16) StmtExecuteOption {
 func WithStmtExecuteStatementManager(stmtMgr stmt.StatementManager) StmtExecuteOption {
 	return func(q *StmtExecute) {
 		q.stmtMgr = stmtMgr
+	}
+}
+
+// WithStmtExecuteBindSendType sets the bind send type.
+func WithStmtExecuteBindSendType(bindSendType StatementBindSendType) StmtExecuteOption {
+	return func(q *StmtExecute) {
+		q.bindSendType = bindSendType
+	}
+}
+
+// WithStmtExecuteNullBitmap sets the null bitmap.
+func WithStmtExecuteNullBitmap(nullBitmap *NullBitmap) StmtExecuteOption {
+	return func(q *StmtExecute) {
+		q.nullBitmap = nullBitmap
 	}
 }
 
@@ -175,9 +191,14 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 
 	nullBitmapLen := int((pkt.numParams + 7) / 8)
 	if 0 < nullBitmapLen {
-		if err := pktReader.SkipBytes(nullBitmapLen); err != nil {
+		nullBitmapBytes := make([]byte, nullBitmapLen)
+		if _, err := pktReader.ReadBytes(nullBitmapBytes); err != nil {
 			return nil, err
 		}
+		pkt.nullBitmap = NewNullBitmap(
+			WithNullBitmapNumFields(int(pkt.numParams)),
+			WithNullBitmapBytes(nullBitmapBytes),
+		)
 	}
 
 	iv1, err = pktReader.ReadInt1()
@@ -262,26 +283,32 @@ func (pkt *StmtExecute) Bytes() ([]byte, error) {
 	}
 
 	if 0 < pkt.numParams {
-		if err := w.WriteFixedLengthNullBytes(int((pkt.numParams + 7) / 8)); err != nil {
-			return nil, err
-		}
-	}
-
-	if err := w.WriteInt1(byte(pkt.bindSendType)); err != nil {
-		return nil, err
-	}
-
-	if pkt.bindSendType.IsToServer() {
-		for _, paramType := range pkt.paramTypes {
-			if err := w.WriteInt2(uint16(paramType)); err != nil {
+		if pkt.nullBitmap != nil {
+			if _, err := w.WriteBytes(pkt.nullBitmap.Bytes()); err != nil {
+				return nil, err
+			}
+		} else {
+			if err := w.WriteFixedLengthNullBytes(int((pkt.numParams + 7) / 8)); err != nil {
 				return nil, err
 			}
 		}
-	}
 
-	for _, paramValue := range pkt.paramValues {
-		if err := w.WriteLengthEncodedBytes(paramValue); err != nil {
+		if err := w.WriteInt1(byte(pkt.bindSendType)); err != nil {
 			return nil, err
+		}
+
+		if pkt.bindSendType.IsToServer() {
+			for _, paramType := range pkt.paramTypes {
+				if err := w.WriteInt2(uint16(paramType)); err != nil {
+					return nil, err
+				}
+			}
+		}
+
+		for _, paramValue := range pkt.paramValues {
+			if err := w.WriteLengthEncodedBytes(paramValue); err != nil {
+				return nil, err
+			}
 		}
 	}
 
