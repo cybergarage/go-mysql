@@ -31,31 +31,34 @@ func TestNullBitmap(t *testing.T) {
 	}
 
 	for numFields := 0; numFields < 32; numFields++ {
-		bmap := protocol.NewNullBitmap(
-			protocol.WithNullBitmapNumFields(numFields),
-		)
-		if bmap == nil {
-			t.Fatalf("expected non-nil NullBitmap for %d fields", numFields)
-		}
-		expectedLength := (numFields + 7 + bmap.Offset()) / 8
-		if len(bmap.Bytes()) != expectedLength {
-			t.Fatalf("expected bytes length %d, got %d", expectedLength, len(bmap.Bytes()))
-		}
+		for offset := 0; offset <= 2; offset++ {
+			bmap := protocol.NewNullBitmap(
+				protocol.WithNullBitmapNumFields(numFields),
+				protocol.WithNullBitmapOffset(offset),
+			)
+			if bmap == nil {
+				t.Fatalf("expected non-nil NullBitmap for %d fields", numFields)
+			}
+			expectedLength := (bmap.NumFields() + 7 + bmap.Offset()) / 8
+			if len(bmap.Bytes()) != expectedLength {
+				t.Fatalf("expected bytes length %d, got %d", expectedLength, len(bmap.Bytes()))
+			}
 
-		// Test setting and getting null values
-		for i := 0; i < numFields; i++ {
-			if i < (numFields - 1) {
+			// Test setting and getting null values
+			for i := 0; i < numFields; i++ {
+				if i < (numFields - 1) {
+					if bmap.IsNull(i) {
+						t.Fatalf("expected field %d to be not null", i)
+					}
+				}
+				bmap.SetNull(i, true)
+				if !bmap.IsNull(i) {
+					t.Fatalf("expected field %d to be null", i)
+				}
+				bmap.SetNull(i, false)
 				if bmap.IsNull(i) {
 					t.Fatalf("expected field %d to be not null", i)
 				}
-			}
-			bmap.SetNull(i, true)
-			if !bmap.IsNull(i) {
-				t.Fatalf("expected field %d to be null", i)
-			}
-			bmap.SetNull(i, false)
-			if bmap.IsNull(i) {
-				t.Fatalf("expected field %d to be not null", i)
 			}
 		}
 	}
