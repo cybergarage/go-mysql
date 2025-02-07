@@ -1,0 +1,65 @@
+// Copyright (C) 2025 The go-mysql Authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package protocol
+
+// NULL-Bitmap - MySQL: Binary Protocol Resultset
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_binary_resultset.html
+// Resultset row - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/resultset-row/
+
+// NullBitmap represents a MySQL null bitmap.
+type NullBitmap struct {
+	offset int
+	bytes  []byte
+}
+
+// NewNullBitmapWithBytes creates a new NullBitmap with the given bytes.
+func NewNullBitmapWithBytes(bytes []byte) *NullBitmap {
+	return &NullBitmap{
+		offset: 0,
+		bytes:  bytes,
+	}
+}
+
+// NewNullBitmap creates a new NullBitmap with the given length.
+func NewNullBitmap(l int) *NullBitmap {
+	return NewNullBitmapWithBytes(make([]byte, l))
+}
+
+// SetOffset sets the offset of the NullBitmap.
+func (bmap *NullBitmap) SetOffset(offset int) {
+	bmap.offset = offset
+}
+
+// SetNull sets the null value of the NullBitmap.
+func (bmap *NullBitmap) SetNull(i int, v bool) {
+	idx := bmap.offset + i
+	if v {
+		bmap.bytes[idx/8] |= 1 << uint(idx%8)
+	} else {
+		bmap.bytes[idx/8] &^= 1 << uint(idx%8)
+	}
+}
+
+// IsNull returns true if the i-th bit is null.
+func (bmap *NullBitmap) IsNull(i int) bool {
+	idx := bmap.offset + i
+	return bmap.bytes[idx/8]&(1<<uint(idx%8)) != 0
+}
+
+// Bytes returns the bytes of the NullBitmap.
+func (bmap *NullBitmap) Bytes() []byte {
+	return bmap.bytes
+}
