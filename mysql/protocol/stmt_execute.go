@@ -230,6 +230,9 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 
 	pkt.paramValues = make([][]byte, pkt.numParams)
 	for n := 0; n < int(pkt.numParams); n++ {
+		if pkt.nullBitmap.IsNull(n) {
+			continue
+		}
 		paramValue, err := pktReader.ReadLengthEncodedBytes()
 		if err != nil {
 			return nil, err
@@ -293,14 +296,8 @@ func (pkt *StmtExecute) Bytes() ([]byte, error) {
 	}
 
 	if 0 < pkt.numParams {
-		if pkt.nullBitmap != nil {
-			if _, err := w.WriteBytes(pkt.nullBitmap.Bytes()); err != nil {
-				return nil, err
-			}
-		} else {
-			if err := w.WriteFixedLengthNullBytes(int((pkt.numParams + 7) / 8)); err != nil {
-				return nil, err
-			}
+		if _, err := w.WriteBytes(pkt.nullBitmap.Bytes()); err != nil {
+			return nil, err
 		}
 
 		if err := w.WriteInt1(byte(pkt.bindSendType)); err != nil {
@@ -320,8 +317,11 @@ func (pkt *StmtExecute) Bytes() ([]byte, error) {
 			}
 		}
 
-		for _, paramValue := range pkt.paramValues {
-			if err := w.WriteLengthEncodedBytes(paramValue); err != nil {
+		for n := 0; n < int(pkt.numParams); n++ {
+			if pkt.nullBitmap.IsNull(n) {
+				continue
+			}
+			if err := w.WriteLengthEncodedBytes(pkt.paramValues[n]); err != nil {
 				return nil, err
 			}
 		}
