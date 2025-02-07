@@ -55,7 +55,7 @@ func NewNullBitmap(opts ...NullBitmapOption) *NullBitmap {
 	bmap := &NullBitmap{
 		numFields: 0,
 		offset:    0,
-		bytes:     make([]byte, 0),
+		bytes:     nil,
 	}
 	for _, opt := range opts {
 		opt(bmap)
