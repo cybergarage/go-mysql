@@ -18,8 +18,13 @@ package protocol
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query.html
 // MySQL: Binary Protocol Resultset
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_binary_resultset.html
+// MySQL: Text Resultset
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset.html
+
 // Result Set Packets - MariaDB Knowledge Base
 // https://mariadb.com/kb/en/result-set-packets/
+// Resultset row - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/resultset-row/#tinyint-binary-encoding
 
 // NewBinaryResultSetFrom creates a new BinaryResultSet from a TextResultSet.
 func NewBinaryResultSetFrom(txtResultSet *TextResultSet) (*BinaryResultSet, error) {
