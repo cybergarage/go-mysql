@@ -21,21 +21,49 @@ package protocol
 
 // NullBitmap represents a MySQL null bitmap.
 type NullBitmap struct {
-	offset int
-	bytes  []byte
+	numFields int
+	offset    int
+	bytes     []byte
 }
 
-// NewNullBitmapWithBytes creates a new NullBitmap with the given bytes.
-func NewNullBitmapWithBytes(bytes []byte) *NullBitmap {
-	return &NullBitmap{
-		offset: 0,
-		bytes:  bytes,
+// NullBitmapOption represents a MySQL NullBitmap option.
+type NullBitmapOption func(*NullBitmap)
+
+// WithNullBitmapOffset sets the offset of the NullBitmap.
+func WithNullBitmapOffset(offset int) NullBitmapOption {
+	return func(bmap *NullBitmap) {
+		bmap.offset = offset
+	}
+}
+
+// WithNullBitmapBytes sets the bytes of the NullBitmap.
+func WithNullBitmapBytes(bytes []byte) NullBitmapOption {
+	return func(bmap *NullBitmap) {
+		bmap.bytes = bytes
+	}
+}
+
+// WithNullBitmapNumFields sets the number of fields of the NullBitmap.
+func WithNullBitmapNumFields(numFields int) NullBitmapOption {
+	return func(bmap *NullBitmap) {
+		bmap.numFields = numFields
 	}
 }
 
 // NewNullBitmap creates a new NullBitmap with the given length.
-func NewNullBitmap(l int) *NullBitmap {
-	return NewNullBitmapWithBytes(make([]byte, l))
+func NewNullBitmap(opts ...NullBitmapOption) *NullBitmap {
+	bmap := &NullBitmap{
+		numFields: 0,
+		offset:    0,
+		bytes:     make([]byte, 0),
+	}
+	for _, opt := range opts {
+		opt(bmap)
+	}
+	if bmap.bytes == nil {
+		bmap.bytes = make([]byte, (bmap.numFields+7+bmap.offset)/8)
+	}
+	return bmap
 }
 
 // SetOffset sets the offset of the NullBitmap.
