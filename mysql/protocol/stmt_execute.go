@@ -207,14 +207,24 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 	}
 	pkt.bindSendType = StatementBindSendType(iv1)
 
+	pkt.paramNames = make([]string, pkt.numParams)
+	pkt.paramTypes = make([]FieldType, pkt.numParams)
+
 	if pkt.bindSendType.IsToServer() {
-		pkt.paramTypes = make([]FieldType, pkt.numParams)
 		for n := 0; n < int(pkt.numParams); n++ {
 			iv2, err := pktReader.ReadInt2()
 			if err != nil {
 				return nil, err
 			}
 			pkt.paramTypes[n] = FieldType(iv2)
+
+			if pkt.Capability().IsEnabled(ClientQueryAttributes) {
+				paramName, err := pktReader.ReadLengthEncodedString()
+				if err != nil {
+					return nil, err
+				}
+				pkt.paramNames[n] = paramName
+			}
 		}
 	}
 
@@ -298,9 +308,14 @@ func (pkt *StmtExecute) Bytes() ([]byte, error) {
 		}
 
 		if pkt.bindSendType.IsToServer() {
-			for _, paramType := range pkt.paramTypes {
-				if err := w.WriteInt2(uint16(paramType)); err != nil {
+			for n := 0; n < int(pkt.numParams); n++ {
+				if err := w.WriteInt2(uint16(pkt.paramTypes[n])); err != nil {
 					return nil, err
+				}
+				if pkt.Capability().IsEnabled(ClientQueryAttributes) {
+					if err := w.WriteLengthEncodedString(pkt.paramNames[n]); err != nil {
+						return nil, err
+					}
 				}
 			}
 		}
