@@ -66,9 +66,24 @@ func NewNullBitmap(opts ...NullBitmapOption) *NullBitmap {
 	return bmap
 }
 
+// SetNumFields sets the number of fields of the NullBitmap.
+func (bmap *NullBitmap) SetNumFields(numFields int) {
+	bmap.numFields = numFields
+}
+
+// NumFields returns the number of fields of the NullBitmap.
+func (bmap *NullBitmap) NumFields() int {
+	return bmap.numFields
+}
+
 // SetOffset sets the offset of the NullBitmap.
 func (bmap *NullBitmap) SetOffset(offset int) {
 	bmap.offset = offset
+}
+
+// Offset returns the offset of the NullBitmap.
+func (bmap *NullBitmap) Offset() int {
+	return bmap.offset
 }
 
 // SetNull sets the null value of the NullBitmap.
