@@ -44,6 +44,11 @@ func TestNullBitmap(t *testing.T) {
 
 		// Test setting and getting null values
 		for i := 0; i < numFields; i++ {
+			if i < (numFields - 1) {
+				if bmap.IsNull(i) {
+					t.Fatalf("expected field %d to be not null", i)
+				}
+			}
 			bmap.SetNull(i, true)
 			if !bmap.IsNull(i) {
 				t.Fatalf("expected field %d to be null", i)
