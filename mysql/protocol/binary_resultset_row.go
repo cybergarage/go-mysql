@@ -97,7 +97,7 @@ func NewBinaryResultSetRowFromReader(reader *PacketReader, opts ...BinaryResultS
 	case query.MySQLTypeNewdate:
 		byteLen = 3
 	default:
-		return nil, fmt.Errorf("%w field type: %v", ErrNotSupported, row.t)
+		return nil, fmt.Errorf("%w field type: %s(%v)", ErrNotSupported, FieldType(row.t).String(), row.t)
 	}
 
 	if 0 < byteLen {
