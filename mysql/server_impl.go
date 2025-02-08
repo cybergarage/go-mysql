@@ -160,23 +160,51 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 		return nil, err
 	}
 
-	paramColumnDefs := []protocol.ColumnDef{}
-	for _, columnName := range stmtPrep.ParameterColumnNames() {
-		schemaColumn, err := schemaColumnRs.LookupColumn(columnName)
-		if err != nil {
-			return nil, err
+	// Create response columns.
+
+	lookupColumDefs := func(schemaColumnRs system.SchemaColumnsResultSet, columnNames []string) ([]protocol.ColumnDef, error) {
+		columnDefs := []protocol.ColumnDef{}
+		if len(columnNames) == 0 {
+			for _, schemaColumn := range schemaColumnRs.Columns() {
+				columnDef, err := protocol.NewColumnDefsFromSystemSchemaColumn(schemaColumn)
+				if err != nil {
+					return nil, err
+				}
+				columnDefs = append(columnDefs, columnDef)
+			}
+			return columnDefs, nil
 		}
-		paramColumnDef, err := protocol.NewColumnDefsFromSystemSchemaColumn(schemaColumn)
-		if err != nil {
-			return nil, err
+		for _, columnName := range columnNames {
+			schemaColumn, err := schemaColumnRs.LookupColumn(columnName)
+			if err != nil {
+				return nil, err
+			}
+			columnDef, err := protocol.NewColumnDefsFromSystemSchemaColumn(schemaColumn)
+			if err != nil {
+				return nil, err
+			}
+			columnDefs = append(columnDefs, columnDef)
 		}
-		paramColumnDefs = append(paramColumnDefs, paramColumnDef)
+		return columnDefs, nil
+	}
+
+	resultSetColumnDefs, err := lookupColumDefs(schemaColumnRs, stmtPrep.ResultSetColumnNames())
+	if err != nil {
+		return nil, err
+	}
+	opts = append(opts, protocol.WithStmtPrepareResponseColumns(resultSetColumnDefs))
+
+	// Create response params.
+
+	paramColumnDefs, err := lookupColumDefs(schemaColumnRs, stmtPrep.ParameterColumnNames())
+	if err != nil {
+		return nil, err
 	}
 	opts = append(opts, protocol.WithStmtPrepareResponseParams(paramColumnDefs))
 
-	stmtPrepRes := protocol.NewStmtPrepareResponse(opts...)
+	// Create and return prepare response.
 
-	return stmtPrepRes, errors.ErrNotImplemented
+	return protocol.NewStmtPrepareResponse(opts...), errors.ErrNotImplemented
 }
 
 // ExecuteStatement executes a statement.
