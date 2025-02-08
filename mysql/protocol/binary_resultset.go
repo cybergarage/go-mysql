@@ -15,7 +15,6 @@
 package protocol
 
 import (
-	"bytes"
 	"io"
 )
 
@@ -85,61 +84,7 @@ func NewBinaryResultSet(opts ...BinaryResultSetOption) (*BinaryResultSet, error)
 
 // NewBinaryResultSetFromReader returns a new binary resultset response packet from the specified reader.
 func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOption) (*BinaryResultSet, error) {
-	var err error
-
 	pkt := newBinaryResultSetWithPacket(opts...)
-
-	columnCountOpts := []ColumnCountOption{
-		WithColumnCountCapability(pkt.Capability()),
-	}
-	pkt.columnCnt, err = NewColumnCountFromReader(reader, columnCountOpts...)
-	if err != nil {
-		return nil, err
-	}
-
-	columnCount := pkt.columnCnt.ColumnCount()
-
-	if pkt.Capability().IsDisabled(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
-		for i := 0; i < int(columnCount); i++ {
-			colDef, err := NewColumnDefFromReader(reader)
-			if err != nil {
-				return nil, err
-			}
-			pkt.columnDefs = append(pkt.columnDefs, colDef)
-		}
-	}
-
-	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
-		_, err := NewEOFFromReader(reader, WithEOFCapability(pkt.Capability()))
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// One or more Binary Resultset Row
-
-	rowPkt, err := NewPacketWithReader(reader)
-	if err != nil {
-		return nil, err
-	}
-
-	for !rowPkt.IsEOF() {
-		rowPktBytes, err := rowPkt.Bytes()
-		if err != nil {
-			return nil, err
-		}
-		rowPktReader := NewPacketReaderWith(bytes.NewReader(rowPktBytes))
-		row, err := NewBinaryResultSetRowFromReader(rowPktReader, WithBinaryResultSetRowColmunCount(columnCount))
-		if err != nil {
-			return nil, err
-		}
-		pkt.rows = append(pkt.rows, row)
-
-		rowPkt, err = NewPacketWithReader(reader)
-		if err != nil {
-			return nil, err
-		}
-	}
 
 	return pkt, nil
 }
