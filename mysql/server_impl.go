@@ -144,7 +144,15 @@ func (server *server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protoc
 
 // PrepareStatement prepares a statement.
 func (server *server) PrepareStatement(conn protocol.Conn, stmt *protocol.StmtPrepare) (*protocol.StmtPrepareResponse, error) {
-	// nolint: forcetypeassert
+	query := qury.NewSchemaColumnsQueryWithTableNames(stmt.TableNames())
+	rs, err := server.SQLExecutor().SystemSelect(conn, query)
+	if err != nil {
+		return nil, err
+	}
+	schemaColumns, err := query.NewSchemaColumnsFromResultSet(rs)
+	if err != nil {
+		return nil, err
+	}
 	return nil, errors.ErrNotImplemented
 }
 
