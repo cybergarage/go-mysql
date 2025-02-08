@@ -7,7 +7,7 @@ require (
 	github.com/cybergarage/go-logger v1.3.8
 	github.com/cybergarage/go-safecast v1.2.5
 	github.com/cybergarage/go-sasl v1.2.5
-	github.com/cybergarage/go-sqlparser v1.4.2-0.20250208094114-3eea79a3c2a0
+	github.com/cybergarage/go-sqlparser v1.4.2-0.20250208114745-e1ef6fdc9d09
 	github.com/cybergarage/go-sqltest v1.4.3
 	github.com/cybergarage/go-tracing v1.1.4
 	github.com/go-sql-driver/mysql v1.8.1
