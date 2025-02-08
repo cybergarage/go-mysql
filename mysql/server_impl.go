@@ -20,6 +20,7 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/errors"
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 	"github.com/cybergarage/go-mysql/mysql/query"
+	"github.com/cybergarage/go-sqlparser/sql/system"
 )
 
 // server represents a base executor server.
@@ -143,17 +144,39 @@ func (server *server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protoc
 }
 
 // PrepareStatement prepares a statement.
-func (server *server) PrepareStatement(conn protocol.Conn, stmt *protocol.StmtPrepare) (*protocol.StmtPrepareResponse, error) {
-	query := qury.NewSchemaColumnsQueryWithTableNames(stmt.TableNames())
-	rs, err := server.SQLExecutor().SystemSelect(conn, query)
+func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.StmtPrepare) (*protocol.StmtPrepareResponse, error) {
+	stmt, err := system.NewSchemaColumnsQueryFromTableNames(stmtPrep.TableNames())
 	if err != nil {
 		return nil, err
 	}
-	schemaColumns, err := query.NewSchemaColumnsFromResultSet(rs)
+	rs, err := server.SQLExecutor().SystemSelect(conn, stmt)
 	if err != nil {
 		return nil, err
 	}
-	return nil, errors.ErrNotImplemented
+
+	opts := []protocol.StmtPrepareResponseOption{}
+	schemaColumnRs, err := system.NewSchemaColumnsResultSetFrom(rs)
+	if err != nil {
+		return nil, err
+	}
+
+	paramColumnDefs := []protocol.ColumnDef{}
+	for _, columnName := range stmtPrep.ParameterColumnNames() {
+		schemaColumn, err := schemaColumnRs.LookupColumn(columnName)
+		if err != nil {
+			return nil, err
+		}
+		paramColumnDef, err := protocol.NewColumnDefsFromSystemSchemaColumn(schemaColumn)
+		if err != nil {
+			return nil, err
+		}
+		paramColumnDefs = append(paramColumnDefs, paramColumnDef)
+	}
+	opts = append(opts, protocol.WithStmtPrepareResponseParams(paramColumnDefs))
+
+	stmtPrepRes := protocol.NewStmtPrepareResponse(opts...)
+
+	return stmtPrepRes, errors.ErrNotImplemented
 }
 
 // ExecuteStatement executes a statement.

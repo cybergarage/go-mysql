@@ -17,6 +17,7 @@ package protocol
 import (
 	"github.com/cybergarage/go-mysql/mysql/query"
 	"github.com/cybergarage/go-sqlparser/sql"
+	"github.com/cybergarage/go-sqlparser/sql/system"
 )
 
 // MySQL: Column Definition
@@ -46,4 +47,24 @@ func NewColumnDefsFromResultSet(rs sql.ResultSet) ([]ColumnDef, error) {
 		columnDefs[n] = columnDef
 	}
 	return columnDefs, nil
+}
+
+// NewColumnDefFromSystemSchemaColumn returns a new ColumnDef from the system schema column.
+func NewColumnDefsFromSystemSchemaColumn(column system.SchemaColumn) (ColumnDef, error) {
+	t, err := query.NewFieldTypeFrom(column.DataType())
+	if err != nil {
+		return nil, err
+	}
+	c, err := query.NewColumnDefFlagFrom(column.Constraint())
+	if err != nil {
+		return nil, err
+	}
+	columnDef := NewColumnDef(
+		WithColumnDefSchema(column.Schema()),
+		WithColumnDefTable(column.Table()),
+		WithColumnDefName(column.Name()),
+		WithColumnDefType(uint8(t)),
+		WithColumnDefFlags(uint16(c)),
+	)
+	return columnDef, nil
 }
