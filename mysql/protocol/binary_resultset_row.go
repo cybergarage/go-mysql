@@ -14,6 +14,12 @@
 
 package protocol
 
+import (
+	"fmt"
+
+	"github.com/cybergarage/go-mysql/mysql/query"
+)
+
 // MySQL: Binary Protocol Resultset
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_binary_resultset.html
 // Resultset row - MariaDB Knowledge Base
@@ -59,6 +65,48 @@ func NewBinaryResultSetRow(opts ...BinaryResultSetRowOption) *BinaryResultSetRow
 // NewBinaryResultSetRowFromReader returns a new BinaryResultSetRow from the reader.
 func NewBinaryResultSetRowFromReader(reader *PacketReader, opts ...BinaryResultSetRowOption) (*BinaryResultSetRow, error) {
 	row := newBinaryResultSetRowWithPacket(opts...)
+
+	byteLen := 0
+
+	switch row.t {
+	case query.MySQLTypeString:
+		v, err := reader.ReadLengthEncodedString()
+		if err != nil {
+			return nil, err
+		}
+		row.bytes = []byte(v)
+	case query.MySQLTypeNull:
+		byteLen = 0
+	case query.MySQLTypeTiny:
+		byteLen = 1
+	case query.MySQLTypeShort, query.MySQLTypeYear:
+		byteLen = 2
+	case query.MySQLTypeLong, query.MySQLTypeFloat, query.MySQLTypeInt24:
+		byteLen = 4
+	case query.MySQLTypeLonglong, query.MySQLTypeDouble:
+		byteLen = 8
+	case query.MySQLTypeDate, query.MySQLTypeTime, query.MySQLTypeDatetime, query.MySQLTypeTimestamp:
+		l, err := reader.ReadInt1()
+		if err != nil {
+			return nil, err
+		}
+		row.bytes, err = reader.ReadFixedLengthBytes(int(l))
+		if err != nil {
+			return nil, err
+		}
+	case query.MySQLTypeNewdate:
+		byteLen = 3
+	default:
+		return nil, fmt.Errorf("%w field type: %v", ErrNotSupported, row.t)
+	}
+
+	if 0 < byteLen {
+		row.bytes = make([]byte, byteLen)
+		if _, err := reader.Read(row.bytes); err != nil {
+			return nil, err
+		}
+	}
+
 	return row, nil
 }
 
@@ -75,6 +123,6 @@ func (row *BinaryResultSetRow) Type() FieldType {
 }
 
 // Bytes returns the bytes.
-func (row *BinaryResultSetRow) Bytes() []byte {
-	return row.bytes
+func (row *BinaryResultSetRow) Bytes() ([]byte, error) {
+	return row.bytes, nil
 }
