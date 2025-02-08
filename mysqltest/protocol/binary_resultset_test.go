@@ -27,18 +27,11 @@ func TestBinaryResultSetPacket(t *testing.T) {
 	type expected struct {
 	}
 	for _, test := range []struct {
-		name     string
-		capFlags protocol.Capability
+		name string
 		expected
 	}{
 		{
-			"data/text-resultset-001.hex",
-			(protocol.ClientProtocol41 | protocol.ClientQueryAttributes),
-			expected{},
-		},
-		{
-			"data/text-resultset-002.hex",
-			(protocol.ClientProtocol41 | protocol.ClientQueryAttributes),
+			"data/binary-resultset-001.hex",
 			expected{},
 		},
 	} {
@@ -55,10 +48,7 @@ func TestBinaryResultSetPacket(t *testing.T) {
 			}
 			reader := bytes.NewReader(testBytes)
 
-			opts := []protocol.TextResultSetOption{
-				protocol.WithTextResultSetCapability(test.capFlags),
-			}
-			pkt, err := protocol.NewTextResultSetFromReader(reader, opts...)
+			pkt, err := protocol.NewBinaryResultSetFromReader(reader)
 			if err != nil {
 				t.Error(err)
 				return
