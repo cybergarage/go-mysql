@@ -27,14 +27,14 @@ import (
 
 // BinaryResultSet represents a MySQL binary resultset response packet.
 type BinaryResultSet struct {
-	capability Capability
+	*packet
 	columnDefs []ColumnDef
 	rows       []BinaryResultSetRow
 }
 
-func newBinaryResultSetWithPacket(opts ...BinaryResultSetOption) *BinaryResultSet {
+func newBinaryResultSetWithPacket(pkt *packet, opts ...BinaryResultSetOption) *BinaryResultSet {
 	q := &BinaryResultSet{
-		capability: 0,
+		packet:     pkt,
 		columnDefs: []ColumnDef{},
 		rows:       []BinaryResultSetRow{},
 	}
@@ -48,7 +48,7 @@ type BinaryResultSetOption func(*BinaryResultSet)
 // WithBinaryResultSetCapabilities returns a binary resultset option to set the capabilities.
 func WithBinaryResultSetCapability(c Capability) BinaryResultSetOption {
 	return func(pkt *BinaryResultSet) {
-		pkt.capability = c
+		pkt.SetCapability(c)
 	}
 }
 
@@ -68,16 +68,22 @@ func WithBinaryResultSetRows(rows []BinaryResultSetRow) BinaryResultSetOption {
 
 // NewBinaryResultSet returns a new binary resultset response packet.
 func NewBinaryResultSet(opts ...BinaryResultSetOption) (*BinaryResultSet, error) {
-	pkt := newBinaryResultSetWithPacket(opts...)
+	pkt := newBinaryResultSetWithPacket(newPacket(), opts...)
 	return pkt, nil
 }
 
 // NewBinaryResultSetFromReader returns a new binary resultset response packet from the specified reader.
 func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOption) (*BinaryResultSet, error) {
-	pkt := newBinaryResultSetWithPacket(opts...)
-	pktReader := NewReaderWithReader(reader)
+	var err error
 
-	columnCount, err := pktReader.ReadLengthEncodedInt()
+	pktHeader, err := NewPacketHeaderWithReader(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	pkt := newBinaryResultSetWithPacket(pktHeader, opts...)
+
+	columnCount, err := pkt.ReadLengthEncodedInt()
 	if err != nil {
 		return nil, err
 	}
@@ -90,20 +96,20 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 		pkt.columnDefs = append(pkt.columnDefs, colDef)
 	}
 
-	nextByte, err := pktReader.PeekByte()
+	nextByte, err := pkt.PeekByte()
 	if err != nil {
 		return nil, err
 	}
 
 	pkt.rows = []BinaryResultSetRow{}
 	for nextByte != 0xFE {
-		row, err := NewBinaryResultSetRowFromReader(pktReader,
+		row, err := NewBinaryResultSetRowFromReader(pkt.Reader(),
 			WithBinaryResultSetRowColumnDefs(pkt.columnDefs))
 		if err != nil {
 			return nil, err
 		}
 		pkt.rows = append(pkt.rows, *row)
-		nextByte, err = pktReader.PeekByte()
+		nextByte, err = pkt.PeekByte()
 		if err != nil {
 			return nil, err
 		}
@@ -122,20 +128,6 @@ func (pkt *BinaryResultSet) SetOptions(opts ...BinaryResultSetOption) {
 	for _, opt := range opts {
 		opt(pkt)
 	}
-}
-
-// SetSequenceID sets the packet sequence ID.
-func (pkt *BinaryResultSet) SetSequenceID(n SequenceID) {
-}
-
-// SetCapability sets a capability flag.
-func (pkt *BinaryResultSet) SetCapability(c Capability) {
-	pkt.capability = c
-}
-
-// Capability returns the capabilities.
-func (pkt *BinaryResultSet) Capability() Capability {
-	return pkt.capability
 }
 
 // Rows returns the rows.

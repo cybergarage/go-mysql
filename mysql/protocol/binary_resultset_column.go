@@ -61,7 +61,7 @@ func NewBinaryResultSetColumn(opts ...BinaryResultSetColumnOption) *BinaryResult
 }
 
 // NewBinaryResultSetColumnFromReader returns a new BinaryResultSetColumn from the reader.
-func NewBinaryResultSetColumnFromReader(reader *Reader, opts ...BinaryResultSetColumnOption) (*BinaryResultSetColumn, error) {
+func NewBinaryResultSetColumnFromReader(reader *PacketReader, opts ...BinaryResultSetColumnOption) (*BinaryResultSetColumn, error) {
 	column := NewBinaryResultSetColumn(opts...)
 
 	byteLen := 0
