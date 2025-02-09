@@ -88,6 +88,8 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 		return nil, err
 	}
 
+	// Column Definitions
+
 	for i := 0; i < int(columnCount); i++ {
 		colDef, err := NewColumnDefFromReader(reader)
 		if err != nil {
@@ -95,6 +97,15 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 		}
 		pkt.columnDefs = append(pkt.columnDefs, colDef)
 	}
+
+	// EOF
+
+	_, err = NewEOFFromReader(reader, WithEOFCapability(pkt.Capability()))
+	if err != nil {
+		return nil, err
+	}
+
+	// Rows
 
 	numPeekBytes := 5
 	nextBytes, err := pkt.PeekBytes(numPeekBytes)
