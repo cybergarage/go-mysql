@@ -189,7 +189,7 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 		return pkt, nil
 	}
 
-	nullBitmapLen := CalculateNullBitmapLength(int(pkt.numParams))
+	nullBitmapLen := CalculateNullBitmapLength(int(pkt.numParams), 0)
 	if 0 < nullBitmapLen {
 		nullBitmapBytes := make([]byte, nullBitmapLen)
 		if _, err := pktReader.ReadBytes(nullBitmapBytes); err != nil {
