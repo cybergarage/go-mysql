@@ -27,18 +27,16 @@ import (
 
 // BinaryResultSet represents a MySQL binary resultset response packet.
 type BinaryResultSet struct {
-	capFlags   Capability
-	columnCnt  *ColumnCount
+	capability Capability
 	columnDefs []ColumnDef
-	rows       []ResultSetRow
+	rows       []BinaryResultSetRow
 }
 
 func newBinaryResultSetWithPacket(opts ...BinaryResultSetOption) *BinaryResultSet {
 	q := &BinaryResultSet{
-		capFlags:   0,
-		columnCnt:  NewColumnCount(),
+		capability: 0,
 		columnDefs: []ColumnDef{},
-		rows:       []ResultSetRow{},
+		rows:       []BinaryResultSetRow{},
 	}
 	q.SetOptions(opts...)
 	return q
@@ -50,27 +48,19 @@ type BinaryResultSetOption func(*BinaryResultSet)
 // WithBinaryResultSetCapabilities returns a binary resultset option to set the capabilities.
 func WithBinaryResultSetCapability(c Capability) BinaryResultSetOption {
 	return func(pkt *BinaryResultSet) {
-		pkt.capFlags = c
-	}
-}
-
-// WithBinaryResultSetMetadataFollows returns a binary resultset option to set the metadata follows.
-func WithBinaryResultSetMetadataFollows(m ResultsetMetadata) BinaryResultSetOption {
-	return func(pkt *BinaryResultSet) {
-		pkt.columnCnt.metadataFollows = m
+		pkt.capability = c
 	}
 }
 
 // WithBinaryResultSetColumnDefs returns a binary resultset option to set the column definitions.
 func WithBinaryResultSetColumnDefs(colDefs []ColumnDef) BinaryResultSetOption {
 	return func(pkt *BinaryResultSet) {
-		pkt.columnCnt.count = uint64(len(colDefs))
 		pkt.columnDefs = colDefs
 	}
 }
 
 // WithBinaryResultSetRows returns a binary resultset option to set the rows.
-func WithBinaryResultSetRows(rows []ResultSetRow) BinaryResultSetOption {
+func WithBinaryResultSetRows(rows []BinaryResultSetRow) BinaryResultSetOption {
 	return func(pkt *BinaryResultSet) {
 		pkt.rows = rows
 	}
@@ -85,6 +75,37 @@ func NewBinaryResultSet(opts ...BinaryResultSetOption) (*BinaryResultSet, error)
 // NewBinaryResultSetFromReader returns a new binary resultset response packet from the specified reader.
 func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOption) (*BinaryResultSet, error) {
 	pkt := newBinaryResultSetWithPacket(opts...)
+	pktReader := NewReaderWithReader(reader)
+
+	columnCount, err := pktReader.ReadLengthEncodedInt()
+	if err != nil {
+		return nil, err
+	}
+
+	for i := 0; i < int(columnCount); i++ {
+		colDef, err := NewColumnDefFromReader(reader)
+		if err != nil {
+			return nil, err
+		}
+		pkt.columnDefs = append(pkt.columnDefs, colDef)
+	}
+
+	nextByte, err := pktReader.PeekByte()
+	if err != nil {
+		return nil, err
+	}
+
+	for nextByte != 0xFE {
+		nextByte, err = pktReader.PeekByte()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	_, err = NewEOFFromReader(reader, WithEOFCapability(pkt.Capability()))
+	if err != nil {
+		return nil, err
+	}
 
 	return pkt, nil
 }
@@ -96,95 +117,28 @@ func (pkt *BinaryResultSet) SetOptions(opts ...BinaryResultSetOption) {
 	}
 }
 
-// SetCapability sets a capability flag.
-func (pkt *BinaryResultSet) SetCapability(c Capability) {
-	pkt.capFlags = c
-}
-
 // SetSequenceID sets the packet sequence ID.
 func (pkt *BinaryResultSet) SetSequenceID(n SequenceID) {
-	pkt.columnCnt.SetSequenceID(n)
-	for _, colDef := range pkt.columnDefs {
-		n = n.Next()
-		colDef.SetSequenceID(n)
-	}
-	for _, row := range pkt.rows {
-		n = n.Next()
-		row.SetSequenceID(n)
-	}
+}
+
+// SetCapability sets a capability flag.
+func (pkt *BinaryResultSet) SetCapability(c Capability) {
+	pkt.capability = c
 }
 
 // Capability returns the capabilities.
 func (pkt *BinaryResultSet) Capability() Capability {
-	return pkt.capFlags
+	return pkt.capability
 }
 
 // Rows returns the rows.
-func (pkt *BinaryResultSet) Rows() []ResultSetRow {
+func (pkt *BinaryResultSet) Rows() []BinaryResultSetRow {
 	return pkt.rows
 }
 
 // Bytes returns the packet bytes.
 func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
-
-	columCntBytes, err := pkt.columnCnt.Bytes()
-	if err != nil {
-		return nil, err
-	}
-	_, err = w.WriteBytes(columCntBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	secuenceID := pkt.columnCnt.SequenceID()
-	secuenceID = secuenceID.Next()
-
-	if pkt.Capability().IsDisabled(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
-		for _, colDef := range pkt.columnDefs {
-			colDef.SetSequenceID(secuenceID)
-			err := w.WritePacket(colDef)
-			if err != nil {
-				return nil, err
-			}
-			secuenceID = secuenceID.Next()
-		}
-	}
-
-	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
-		err := w.WriteEOF(secuenceID, pkt.Capability())
-		if err != nil {
-			return nil, err
-		}
-		secuenceID = secuenceID.Next()
-	}
-
-	// One or more Binary Resultset Row
-
-	for _, row := range pkt.rows {
-		row.SetSequenceID(secuenceID)
-		rowBytes, err := row.Bytes()
-		if err != nil {
-			return nil, err
-		}
-		_, err = w.WriteBytes(rowBytes)
-		if err != nil {
-			return nil, err
-		}
-		secuenceID = secuenceID.Next()
-	}
-
-	if pkt.Capability().IsEnabled(ClientDeprecateEOF) {
-		err := w.WriteOK(secuenceID, pkt.Capability())
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		err := w.WriteEOF(secuenceID, pkt.Capability())
-		if err != nil {
-			return nil, err
-		}
-	}
 
 	return w.Bytes(), nil
 }
