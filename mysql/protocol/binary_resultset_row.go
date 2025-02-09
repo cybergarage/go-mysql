@@ -68,10 +68,13 @@ func NewBinaryResultSetRowFromReader(reader *Reader, opts ...BinaryResultSetRowO
 	numColumns := len(row.fieldTypes)
 
 	// 0x00 header
+
 	_, err := reader.ReadByte()
 	if err != nil {
 		return nil, err
 	}
+
+	// NullBitmap
 
 	nullBitmapBytes := make([]byte, CalculateNullBitmapLength(numColumns, 0))
 	_, err = reader.ReadBytes(nullBitmapBytes)
@@ -83,6 +86,8 @@ func NewBinaryResultSetRowFromReader(reader *Reader, opts ...BinaryResultSetRowO
 		WithNullBitmapOffset(0),
 		WithNullBitmapBytes(nullBitmapBytes),
 	)
+
+	// for each column
 
 	row.colums = []*BinaryResultSetColumn{}
 
@@ -110,9 +115,33 @@ func (row *BinaryResultSetRow) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
 	// 0x00 header
+
 	err := w.WriteByte(0x00)
 	if err != nil {
 		return nil, err
+	}
+
+	// NullBitmap
+
+	_, err = w.WriteBytes(row.nullBitmap.Bytes())
+	if err != nil {
+		return nil, err
+	}
+
+	// for each column
+
+	for n, colum := range row.colums {
+		if row.nullBitmap.IsNull(n) {
+			continue
+		}
+		bytes, err := colum.Bytes()
+		if err != nil {
+			return nil, err
+		}
+		_, err = w.WriteBytes(bytes)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return w.Bytes(), nil
