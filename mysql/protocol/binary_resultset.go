@@ -97,7 +97,8 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 
 	pkt.rows = []BinaryResultSetRow{}
 	for nextByte != 0xFE {
-		row, err := NewBinaryResultSetRowFromReader(pktReader)
+		row, err := NewBinaryResultSetRowFromReader(pktReader,
+			WithBinaryResultSetRowColumnDefs(pkt.columnDefs))
 		if err != nil {
 			return nil, err
 		}

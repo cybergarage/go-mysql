@@ -24,26 +24,27 @@ type BinaryResultSetRowOption func(*BinaryResultSetRow)
 
 // BinaryResultSetRow represents a MySQL binary resultset row response packet.
 type BinaryResultSetRow struct {
-	fieldTypes []FieldType
+	columnDefs []ColumnDef
 	nullBitmap *NullBitmap
 	colums     []*BinaryResultSetColumn
 }
 
 // WithBinaryResultSetRowColumns returns a binary resultset row option to set the columns.
-func WithwBinaryResultSetRowColumns(columns []*BinaryResultSetColumn) BinaryResultSetRowOption {
+func WithBinaryResultSetRowColumns(columns []*BinaryResultSetColumn) BinaryResultSetRowOption {
 	return func(row *BinaryResultSetRow) {
 		row.colums = columns
 	}
 }
 
-// WithBinaryResultSetRowFieldTypes returns a binary resultset row option to set the field types.
-func WithwBinaryResultSetRowFieldTypes(fieldTypes []FieldType) BinaryResultSetRowOption {
+// WithBinaryResultSetRowColumnDefs returns a binary resultset row option to set the column definitions.
+func WithBinaryResultSetRowColumnDefs(columnDefs []ColumnDef) BinaryResultSetRowOption {
 	return func(row *BinaryResultSetRow) {
-		row.fieldTypes = fieldTypes
+		row.columnDefs = columnDefs
 	}
 }
 
-func WithwBinaryResultSetRowNullBitmap(nullBitmap *NullBitmap) BinaryResultSetRowOption {
+// WithBinaryResultSetRowNullBitmap returns a binary resultset row option to set the null bitmap.
+func WithBinaryResultSetRowNullBitmap(nullBitmap *NullBitmap) BinaryResultSetRowOption {
 	return func(row *BinaryResultSetRow) {
 		row.nullBitmap = nullBitmap
 	}
@@ -52,8 +53,9 @@ func WithwBinaryResultSetRowNullBitmap(nullBitmap *NullBitmap) BinaryResultSetRo
 // NewBinaryResultSetRow returns a new BinaryResultSetRow.
 func NewBinaryResultSetRow(opts ...BinaryResultSetRowOption) *BinaryResultSetRow {
 	row := &BinaryResultSetRow{
-		fieldTypes: []FieldType{},
-		colums:     []*BinaryResultSetColumn{},
+		columnDefs: nil,
+		nullBitmap: nil,
+		colums:     nil,
 	}
 	for _, opt := range opts {
 		opt(row)
@@ -65,7 +67,7 @@ func NewBinaryResultSetRow(opts ...BinaryResultSetRowOption) *BinaryResultSetRow
 func NewBinaryResultSetRowFromReader(reader *Reader, opts ...BinaryResultSetRowOption) (*BinaryResultSetRow, error) {
 	row := NewBinaryResultSetRow(opts...)
 
-	numColumns := len(row.fieldTypes)
+	numColumns := len(row.columnDefs)
 
 	// 0x00 header
 
@@ -93,7 +95,7 @@ func NewBinaryResultSetRowFromReader(reader *Reader, opts ...BinaryResultSetRowO
 
 	for n := 0; n < numColumns; n++ {
 		opts := []BinaryResultSetColumnOption{
-			WithwBinaryResultSetColumnType(row.fieldTypes[n]),
+			WithwBinaryResultSetColumnType(FieldType(row.columnDefs[n].ColType())),
 		}
 		var column *BinaryResultSetColumn
 		if !row.nullBitmap.IsNull(n) {
