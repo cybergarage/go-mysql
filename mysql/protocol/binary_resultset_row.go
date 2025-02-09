@@ -14,12 +14,6 @@
 
 package protocol
 
-import (
-	"fmt"
-
-	"github.com/cybergarage/go-mysql/mysql/query"
-)
-
 // MySQL: Binary Protocol Resultset
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_binary_resultset.html
 // Resultset row - MariaDB Knowledge Base
@@ -30,103 +24,96 @@ type BinaryResultSetRowOption func(*BinaryResultSetRow)
 
 // BinaryResultSetRow represents a MySQL binary resultset row response packet.
 type BinaryResultSetRow struct {
-	t     FieldType
-	bytes []byte
+	fieldTypes []FieldType
+	nullBitmap *NullBitmap
+	colums     []*BinaryResultSetColumn
 }
 
-func newBinaryResultSetRowWithPacket(opts ...BinaryResultSetRowOption) *BinaryResultSetRow {
-	row := &BinaryResultSetRow{
-		t:     0,
-		bytes: nil,
-	}
-	row.SetOptions(opts...)
-	return row
-}
-
-// WithBinaryResultSetRowType returns a binary resultset row option to set the type.
-func WithwBinaryResultSetRowType(t FieldType) BinaryResultSetRowOption {
+// WithBinaryResultSetRowColumns returns a binary resultset row option to set the columns.
+func WithwBinaryResultSetRowColumns(columns []*BinaryResultSetColumn) BinaryResultSetRowOption {
 	return func(row *BinaryResultSetRow) {
-		row.t = t
+		row.colums = columns
 	}
 }
 
-// WithBinaryResultSetRowBytes returns a binary resultset row option to set the bytes.
-func WithwBinaryResultSetRowBytes(b []byte) BinaryResultSetRowOption {
+// WithBinaryResultSetRowFieldTypes returns a binary resultset row option to set the field types.
+func WithwBinaryResultSetRowFieldTypes(fieldTypes []FieldType) BinaryResultSetRowOption {
 	return func(row *BinaryResultSetRow) {
-		row.bytes = b
+		row.fieldTypes = fieldTypes
+	}
+}
+
+func WithwBinaryResultSetRowNullBitmap(nullBitmap *NullBitmap) BinaryResultSetRowOption {
+	return func(row *BinaryResultSetRow) {
+		row.nullBitmap = nullBitmap
 	}
 }
 
 // NewBinaryResultSetRow returns a new BinaryResultSetRow.
 func NewBinaryResultSetRow(opts ...BinaryResultSetRowOption) *BinaryResultSetRow {
-	return newBinaryResultSetRowWithPacket(opts...)
+	row := &BinaryResultSetRow{
+		fieldTypes: []FieldType{},
+		colums:     []*BinaryResultSetColumn{},
+	}
+	for _, opt := range opts {
+		opt(row)
+	}
+	return row
 }
 
 // NewBinaryResultSetRowFromReader returns a new BinaryResultSetRow from the reader.
 func NewBinaryResultSetRowFromReader(reader *Reader, opts ...BinaryResultSetRowOption) (*BinaryResultSetRow, error) {
-	row := newBinaryResultSetRowWithPacket(opts...)
+	row := NewBinaryResultSetRow(opts...)
 
-	byteLen := 0
+	numColumns := len(row.fieldTypes)
 
-	switch row.t {
-	case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
-		v, err := reader.ReadLengthEncodedString()
-		if err != nil {
-			return nil, err
-		}
-		row.bytes = []byte(v)
-	case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
-		v, err := reader.ReadLengthEncodedBytes()
-		if err != nil {
-			return nil, err
-		}
-		row.bytes = v
-	case query.MySQLTypeNull:
-		byteLen = 0
-	case query.MySQLTypeTiny:
-		byteLen = 1
-	case query.MySQLTypeShort, query.MySQLTypeYear:
-		byteLen = 2
-	case query.MySQLTypeLong, query.MySQLTypeFloat, query.MySQLTypeInt24:
-		byteLen = 4
-	case query.MySQLTypeLonglong, query.MySQLTypeDouble:
-		byteLen = 8
-	case query.MySQLTypeDate, query.MySQLTypeTime, query.MySQLTypeDatetime, query.MySQLTypeTimestamp:
-		l, err := reader.ReadInt1()
-		if err != nil {
-			return nil, err
-		}
-		row.bytes, err = reader.ReadFixedLengthBytes(int(l))
-		if err != nil {
-			return nil, err
-		}
-	default:
-		return nil, fmt.Errorf("%w field type: %s(%v)", ErrNotSupported, FieldType(row.t).String(), row.t)
+	// 0x00 header
+	_, err := reader.ReadByte()
+	if err != nil {
+		return nil, err
 	}
 
-	if 0 < byteLen {
-		row.bytes = make([]byte, byteLen)
-		if _, err := reader.Read(row.bytes); err != nil {
-			return nil, err
+	nullBitmapBytes := make([]byte, CalculateNullBitmapLength(numColumns, 0))
+	_, err = reader.ReadBytes(nullBitmapBytes)
+	if err != nil {
+		return nil, err
+	}
+	row.nullBitmap = NewNullBitmap(
+		WithNullBitmapNumFields(numColumns),
+		WithNullBitmapOffset(0),
+		WithNullBitmapBytes(nullBitmapBytes),
+	)
+
+	row.colums = []*BinaryResultSetColumn{}
+
+	for n := 0; n < numColumns; n++ {
+		opts := []BinaryResultSetColumnOption{
+			WithwBinaryResultSetColumnType(row.fieldTypes[n]),
 		}
+		var column *BinaryResultSetColumn
+		if !row.nullBitmap.IsNull(n) {
+			column, err = NewBinaryResultSetColumnFromReader(reader, opts...)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			column = NewBinaryResultSetColumn(opts...)
+		}
+		row.colums = append(row.colums, column)
 	}
 
 	return row, nil
 }
 
-// SetOptions sets the options.
-func (row *BinaryResultSetRow) SetOptions(opts ...BinaryResultSetRowOption) {
-	for _, opt := range opts {
-		opt(row)
-	}
-}
-
-// Type returns the type.
-func (row *BinaryResultSetRow) Type() FieldType {
-	return row.t
-}
-
 // Bytes returns the bytes.
 func (row *BinaryResultSetRow) Bytes() ([]byte, error) {
-	return row.bytes, nil
+	w := NewPacketWriter()
+
+	// 0x00 header
+	err := w.WriteByte(0x00)
+	if err != nil {
+		return nil, err
+	}
+
+	return w.Bytes(), nil
 }
