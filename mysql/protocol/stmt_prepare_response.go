@@ -122,48 +122,48 @@ func NewStmtPrepareResponse(opts ...StmtPrepareResponseOption) *StmtPrepareRespo
 func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareResponseOption) (*StmtPrepareResponse, error) {
 	var err error
 
-	pktReader, err := NewPacketHeaderWithReader(reader)
+	pktHeader, err := NewPacketHeaderWithReader(reader)
 	if err != nil {
 		return nil, err
 	}
 
-	pkt := newStmtPrepareResponseWithPacket(pktReader, opts...)
+	pkt := newStmtPrepareResponseWithPacket(pktHeader, opts...)
 
-	i1, err := pktReader.ReadInt1()
+	i1, err := pktHeader.ReadInt1()
 	if err != nil {
 		return nil, err
 	}
 	pkt.status = Status(i1)
 
-	i4, err := pktReader.ReadInt4()
+	i4, err := pktHeader.ReadInt4()
 	if err != nil {
 		return nil, err
 	}
 	pkt.stmtID = StatementID(i4)
 
-	numColumns, err := pktReader.ReadInt2()
+	numColumns, err := pktHeader.ReadInt2()
 	if err != nil {
 		return nil, err
 	}
 
-	numParams, err := pktReader.ReadInt2()
+	numParams, err := pktHeader.ReadInt2()
 	if err != nil {
 		return nil, err
 	}
 
 	// 	reserved (1) -- 0x00
-	_, err = pktReader.ReadByte()
+	_, err = pktHeader.ReadByte()
 	if err != nil {
 		return nil, err
 	}
 
-	pkt.warningCount, err = pktReader.ReadInt2()
+	pkt.warningCount, err = pktHeader.ReadInt2()
 	if err != nil {
 		return nil, err
 	}
 
 	if pkt.capability.IsEnabled(ClientOptionalResultsetMetadata) {
-		v, err := pktReader.ReadByte()
+		v, err := pktHeader.ReadByte()
 		if err != nil {
 			return nil, err
 		}
@@ -176,7 +176,7 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 
 	pkt.params = make([]ColumnDef, numParams)
 	for n := 0; n < int(numParams); n++ {
-		param, err := NewColumnDefFromReader(pktReader)
+		param, err := NewColumnDefFromReader(pktHeader)
 		if err != nil {
 			return nil, err
 		}
@@ -191,7 +191,7 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 
 	pkt.columns = make([]ColumnDef, numColumns)
 	for n := 0; n < int(numColumns); n++ {
-		column, err := NewColumnDefFromReader(pktReader)
+		column, err := NewColumnDefFromReader(pktHeader)
 		if err != nil {
 			return nil, err
 		}
