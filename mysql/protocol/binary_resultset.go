@@ -95,7 +95,13 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 		return nil, err
 	}
 
+	pkt.rows = []BinaryResultSetRow{}
 	for nextByte != 0xFE {
+		row, err := NewBinaryResultSetRowFromReader(pktReader)
+		if err != nil {
+			return nil, err
+		}
+		pkt.rows = append(pkt.rows, *row)
 		nextByte, err = pktReader.PeekByte()
 		if err != nil {
 			return nil, err

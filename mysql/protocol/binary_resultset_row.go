@@ -63,7 +63,7 @@ func NewBinaryResultSetRow(opts ...BinaryResultSetRowOption) *BinaryResultSetRow
 }
 
 // NewBinaryResultSetRowFromReader returns a new BinaryResultSetRow from the reader.
-func NewBinaryResultSetRowFromReader(reader *PacketReader, opts ...BinaryResultSetRowOption) (*BinaryResultSetRow, error) {
+func NewBinaryResultSetRowFromReader(reader *Reader, opts ...BinaryResultSetRowOption) (*BinaryResultSetRow, error) {
 	row := newBinaryResultSetRowWithPacket(opts...)
 
 	byteLen := 0
