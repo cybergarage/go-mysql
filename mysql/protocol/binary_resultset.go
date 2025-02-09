@@ -139,5 +139,8 @@ func (pkt *BinaryResultSet) Rows() []BinaryResultSetRow {
 func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
+	seqID := pkt.SequenceID()
+	seqID = seqID.Next()
+
 	return w.Bytes(), nil
 }
