@@ -127,9 +127,14 @@ func NewBinaryResultSetRowFromReader(reader *PacketReader, opts ...BinaryResultS
 func (row *BinaryResultSetRow) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
+	_, err := w.WriteBytes(row.HeaderBytes())
+	if err != nil {
+		return nil, err
+	}
+
 	// 0x00 header
 
-	err := w.WriteByte(0x00)
+	err = w.WriteByte(0x00)
 	if err != nil {
 		return nil, err
 	}
