@@ -78,105 +78,105 @@ func NewHandshakeResponse(opts ...HandshakeResponseOption) *HandshakeResponse {
 func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error) {
 	var err error
 
-	pktReader, err := NewPacketHeaderWithReader(reader)
+	resPkt, err := NewPacketHeaderWithReader(reader)
 	if err != nil {
 		return nil, err
 	}
 
-	pkt := newHandshakeResponseWithPacket(pktReader)
+	res := newHandshakeResponseWithPacket(resPkt)
 
-	pkt.Capabilitys, err = pkt.ReadCapability()
+	res.Capabilitys, err = res.ReadCapability()
 	if err != nil {
 		return nil, err
 	}
 
-	if !pkt.Capability().IsEnabled(ClientProtocol41) {
+	if !res.Capability().IsEnabled(ClientProtocol41) {
 		return nil, newErrNotSupported("HandshakeResponse320")
 	}
 
-	pkt.maxPacketSize, err = pkt.ReadInt4()
+	res.maxPacketSize, err = res.ReadInt4()
 	if err != nil {
 		return nil, err
 	}
 
-	pkt.charSet, err = pkt.ReadByte()
+	res.charSet, err = res.ReadByte()
 	if err != nil {
 		return nil, err
 	}
 
-	err = pkt.SkipBytes(handshakeResponseFillerLen)
+	err = res.SkipBytes(handshakeResponseFillerLen)
 	if err != nil {
 		return nil, err
 	}
 
-	pkt.username, err = pkt.ReadNullTerminatedString()
+	res.username, err = res.ReadNullTerminatedString()
 	if err != nil {
 		return nil, err
 	}
 
-	if pkt.Capability().IsEnabled(ClientPluginAuthLenencClientData) {
-		pkt.authResponse, err = pkt.ReadLengthEncodedBytes()
+	if res.Capability().IsEnabled(ClientPluginAuthLenencClientData) {
+		res.authResponse, err = res.ReadLengthEncodedBytes()
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		pkt.authResponseLength, err = pkt.ReadByte()
+		res.authResponseLength, err = res.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		pkt.authResponse, err = pkt.ReadFixedLengthBytes(int(pkt.authResponseLength))
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if pkt.Capability().IsEnabled(ClientConnectWithDB) {
-		pkt.database, err = pkt.ReadNullTerminatedString()
+		res.authResponse, err = res.ReadFixedLengthBytes(int(res.authResponseLength))
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if pkt.Capability().IsEnabled(ClientPluginAuth) {
-		pkt.clientPluginName, err = pkt.ReadNullTerminatedString()
+	if res.Capability().IsEnabled(ClientConnectWithDB) {
+		res.database, err = res.ReadNullTerminatedString()
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if pkt.Capability().IsEnabled(ClientConnectAttrs) {
-		attrSize, err := pkt.ReadLengthEncodedInt()
+	if res.Capability().IsEnabled(ClientPluginAuth) {
+		res.clientPluginName, err = res.ReadNullTerminatedString()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if res.Capability().IsEnabled(ClientConnectAttrs) {
+		attrSize, err := res.ReadLengthEncodedInt()
 		if err != nil {
 			return nil, err
 		}
 		readAttrSize := 0
 		for readAttrSize < int(attrSize) {
-			key, err := pkt.ReadLengthEncodedString()
+			key, err := res.ReadLengthEncodedString()
 			if err != nil {
 				return nil, err
 			}
 			keyLen := len(key)
 			readAttrSize += LengthEncodeIntSize(uint64(keyLen)) + keyLen
 
-			value, err := pkt.ReadLengthEncodedString()
+			value, err := res.ReadLengthEncodedString()
 			if err != nil {
 				return nil, err
 			}
 			valueLen := len(value)
 			readAttrSize += LengthEncodeIntSize(uint64(valueLen)) + valueLen
 
-			pkt.AddAttribute(key, value)
+			res.AddAttribute(key, value)
 		}
 	}
 
-	if pkt.Capability().IsEnabled(ClientZstdCompressionAlgorithm) {
-		pkt.zstdCompressionLevel, err = pkt.ReadByte()
+	if res.Capability().IsEnabled(ClientZstdCompressionAlgorithm) {
+		res.zstdCompressionLevel, err = res.ReadByte()
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	return pkt, nil
+	return res, nil
 }
 
 // Capabilitys returns the capability flags.
