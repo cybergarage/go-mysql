@@ -39,7 +39,7 @@ func TestNullBitmap(t *testing.T) {
 			if bmap == nil {
 				t.Fatalf("expected non-nil NullBitmap for %d fields", numFields)
 			}
-			expectedLength := (bmap.NumFields() + 7 + bmap.Offset()) / 8
+			expectedLength := protocol.CalculateNullBitmapLength(bmap.NumFields(), bmap.Offset())
 			if len(bmap.Bytes()) != expectedLength {
 				t.Fatalf("expected bytes length %d, got %d", expectedLength, len(bmap.Bytes()))
 			}

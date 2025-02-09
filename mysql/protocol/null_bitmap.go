@@ -26,6 +26,11 @@ type NullBitmap struct {
 	bytes     []byte
 }
 
+// CalculateNullBitmapLength calculates the length of the NullBitmap.
+func CalculateNullBitmapLength(numFields int, offset int) int {
+	return (numFields + 7 + offset) / 8
+}
+
 // NullBitmapOption represents a MySQL NullBitmap option.
 type NullBitmapOption func(*NullBitmap)
 
@@ -61,7 +66,7 @@ func NewNullBitmap(opts ...NullBitmapOption) *NullBitmap {
 		opt(bmap)
 	}
 	if bmap.bytes == nil {
-		bmap.bytes = make([]byte, (bmap.numFields+7+bmap.offset)/8)
+		bmap.bytes = make([]byte, CalculateNullBitmapLength(bmap.numFields, bmap.offset))
 	}
 	return bmap
 }
@@ -88,7 +93,7 @@ func (bmap *NullBitmap) Offset() int {
 
 // SetNull sets the null value of the NullBitmap.
 func (bmap *NullBitmap) SetNull(i int, v bool) {
-	// 	NULL-bitmap-byte = ((field-pos + offset) / 8)
+	// NULL-bitmap-byte = ((field-pos + offset) / 8)
 	// NULL-bitmap-bit  = ((field-pos + offset) % 8)
 	idx := bmap.offset + i
 	if v {
@@ -100,7 +105,7 @@ func (bmap *NullBitmap) SetNull(i int, v bool) {
 
 // IsNull returns true if the i-th bit is null.
 func (bmap *NullBitmap) IsNull(i int) bool {
-	// 	NULL-bitmap-byte = ((field-pos + offset) / 8)
+	// NULL-bitmap-byte = ((field-pos + offset) / 8)
 	// NULL-bitmap-bit  = ((field-pos + offset) % 8)
 	idx := bmap.offset + i
 	return bmap.bytes[idx/8]&(1<<uint(idx%8)) != 0
