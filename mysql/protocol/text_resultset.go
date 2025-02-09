@@ -34,17 +34,6 @@ type TextResultSet struct {
 	rows       []ResultSetRow
 }
 
-func newTextResultSetWithPacket(opts ...TextResultSetOption) *TextResultSet {
-	q := &TextResultSet{
-		capFlags:   0,
-		columnCnt:  NewColumnCount(),
-		columnDefs: []ColumnDef{},
-		rows:       []ResultSetRow{},
-	}
-	q.SetOptions(opts...)
-	return q
-}
-
 // TextResultSetOption represents a COM_QUERY text resultset option.
 type TextResultSetOption func(*TextResultSet)
 
@@ -79,7 +68,13 @@ func WithTextResultSetRows(rows []ResultSetRow) TextResultSetOption {
 
 // NewTextResultSet returns a new text resultset response packet.
 func NewTextResultSet(opts ...TextResultSetOption) (*TextResultSet, error) {
-	pkt := newTextResultSetWithPacket(opts...)
+	pkt := &TextResultSet{
+		capFlags:   0,
+		columnCnt:  NewColumnCount(),
+		columnDefs: []ColumnDef{},
+		rows:       []ResultSetRow{},
+	}
+	pkt.SetOptions(opts...)
 	return pkt, nil
 }
 
@@ -87,7 +82,10 @@ func NewTextResultSet(opts ...TextResultSetOption) (*TextResultSet, error) {
 func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (*TextResultSet, error) {
 	var err error
 
-	pkt := newTextResultSetWithPacket(opts...)
+	pkt, err := NewTextResultSet(opts...)
+	if err != nil {
+		return nil, err
+	}
 
 	columnCountOpts := []ColumnCountOption{
 		WithColumnCountCapability(pkt.Capability()),
