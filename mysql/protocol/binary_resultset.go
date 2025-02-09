@@ -96,20 +96,20 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 		pkt.columnDefs = append(pkt.columnDefs, colDef)
 	}
 
-	nextByte, err := pkt.PeekByte()
+	numPeekBytes := 5
+	nextBytes, err := pkt.PeekBytes(numPeekBytes)
 	if err != nil {
 		return nil, err
 	}
-
 	pkt.rows = []BinaryResultSetRow{}
-	for nextByte != 0xFE {
+	for nextBytes[4] != 0xFE {
 		row, err := NewBinaryResultSetRowFromReader(pkt.Reader(),
 			WithBinaryResultSetRowColumnDefs(pkt.columnDefs))
 		if err != nil {
 			return nil, err
 		}
 		pkt.rows = append(pkt.rows, *row)
-		nextByte, err = pkt.PeekByte()
+		nextBytes, err = pkt.PeekBytes(numPeekBytes)
 		if err != nil {
 			return nil, err
 		}
@@ -139,8 +139,47 @@ func (pkt *BinaryResultSet) Rows() []BinaryResultSetRow {
 func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
+	_, err := w.WriteBytes(pkt.HeaderBytes())
+	if err != nil {
+		return nil, err
+	}
+
+	err = w.WriteLengthEncodedInt(uint64(len(pkt.columnDefs)))
+	if err != nil {
+		return nil, err
+	}
+
 	seqID := pkt.SequenceID()
+	for _, colDef := range pkt.columnDefs {
+		seqID = seqID.Next()
+		colDef.SetSequenceID(seqID)
+		bytes, err := colDef.Bytes()
+		if err != nil {
+			return nil, err
+		}
+		_, err = w.WriteBytes(bytes)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	for _, row := range pkt.rows {
+		seqID = seqID.Next()
+		row.SetSequenceID(seqID)
+		bytes, err := row.Bytes()
+		if err != nil {
+			return nil, err
+		}
+		_, err = w.WriteBytes(bytes)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	seqID = seqID.Next()
+	if err := w.WriteEOF(pkt.Capability(), seqID); err != nil {
+		return nil, err
+	}
 
 	return w.Bytes(), nil
 }
