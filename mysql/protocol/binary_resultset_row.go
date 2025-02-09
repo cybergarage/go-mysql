@@ -24,9 +24,23 @@ type BinaryResultSetRowOption func(*BinaryResultSetRow)
 
 // BinaryResultSetRow represents a MySQL binary resultset row response packet.
 type BinaryResultSetRow struct {
+	*packet
 	columnDefs []ColumnDef
 	nullBitmap *NullBitmap
 	colums     []*BinaryResultSetColumn
+}
+
+func newBinaryResultSetRowWithPacket(pkt *packet, opts ...BinaryResultSetRowOption) *BinaryResultSetRow {
+	row := &BinaryResultSetRow{
+		packet:     pkt,
+		columnDefs: nil,
+		nullBitmap: nil,
+		colums:     nil,
+	}
+	for _, opt := range opts {
+		opt(row)
+	}
+	return row
 }
 
 // WithBinaryResultSetRowColumns returns a binary resultset row option to set the columns.
@@ -52,26 +66,23 @@ func WithBinaryResultSetRowNullBitmap(nullBitmap *NullBitmap) BinaryResultSetRow
 
 // NewBinaryResultSetRow returns a new BinaryResultSetRow.
 func NewBinaryResultSetRow(opts ...BinaryResultSetRowOption) *BinaryResultSetRow {
-	row := &BinaryResultSetRow{
-		columnDefs: nil,
-		nullBitmap: nil,
-		colums:     nil,
-	}
-	for _, opt := range opts {
-		opt(row)
-	}
-	return row
+	return newBinaryResultSetRowWithPacket(newPacket(), opts...)
 }
 
 // NewBinaryResultSetRowFromReader returns a new BinaryResultSetRow from the reader.
 func NewBinaryResultSetRowFromReader(reader *PacketReader, opts ...BinaryResultSetRowOption) (*BinaryResultSetRow, error) {
-	row := NewBinaryResultSetRow(opts...)
+	rowPkt, err := NewPacketHeaderWithReader(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	row := newBinaryResultSetRowWithPacket(rowPkt, opts...)
 
 	numColumns := len(row.columnDefs)
 
 	// 0x00 header
 
-	_, err := reader.ReadByte()
+	_, err = reader.ReadByte()
 	if err != nil {
 		return nil, err
 	}
