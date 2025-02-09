@@ -281,32 +281,32 @@ func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
 		return w.Bytes(), nil
 	}
 
-	secuenceID := pkt.SequenceID()
-	secuenceID = secuenceID.Next()
+	seqID := pkt.SequenceID()
+	seqID = seqID.Next()
 
 	for _, param := range pkt.params {
-		param.SetSequenceID(secuenceID)
+		param.SetSequenceID(seqID)
 		if err := w.WritePacket(param); err != nil {
 			return nil, err
 		}
-		secuenceID = secuenceID.Next()
+		seqID = seqID.Next()
 	}
 	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
-		if err := w.WriteEOF(secuenceID, pkt.Capability(), pkt.ServerStatus()); err != nil {
+		if err := w.WriteEOF(seqID, pkt.Capability(), pkt.ServerStatus()); err != nil {
 			return nil, err
 		}
-		secuenceID = secuenceID.Next()
+		seqID = seqID.Next()
 	}
 
 	for _, column := range pkt.columns {
-		column.SetSequenceID(secuenceID)
+		column.SetSequenceID(seqID)
 		if err := w.WritePacket(column); err != nil {
 			return nil, err
 		}
-		secuenceID = secuenceID.Next()
+		seqID = seqID.Next()
 	}
 	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
-		if err := w.WriteEOF(secuenceID, pkt.Capability(), pkt.ServerStatus()); err != nil {
+		if err := w.WriteEOF(seqID, pkt.Capability(), pkt.ServerStatus()); err != nil {
 			return nil, err
 		}
 	}
