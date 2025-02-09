@@ -69,12 +69,18 @@ func NewBinaryResultSetRowFromReader(reader *Reader, opts ...BinaryResultSetRowO
 	byteLen := 0
 
 	switch row.t {
-	case query.MySQLTypeString:
+	case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
 		v, err := reader.ReadLengthEncodedString()
 		if err != nil {
 			return nil, err
 		}
 		row.bytes = []byte(v)
+	case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
+		v, err := reader.ReadLengthEncodedBytes()
+		if err != nil {
+			return nil, err
+		}
+		row.bytes = v
 	case query.MySQLTypeNull:
 		byteLen = 0
 	case query.MySQLTypeTiny:
@@ -94,8 +100,6 @@ func NewBinaryResultSetRowFromReader(reader *Reader, opts ...BinaryResultSetRowO
 		if err != nil {
 			return nil, err
 		}
-	case query.MySQLTypeNewdate:
-		byteLen = 3
 	default:
 		return nil, fmt.Errorf("%w field type: %s(%v)", ErrNotSupported, FieldType(row.t).String(), row.t)
 	}
