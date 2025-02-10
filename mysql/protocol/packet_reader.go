@@ -30,6 +30,13 @@ func NewPacketReaderWith(reader io.Reader) *PacketReader {
 	}
 }
 
+// NewPacketReaderWithBytes returns a new packet reader with the specified bytes.
+func NewPacketReaderWithBytes(data []byte) *PacketReader {
+	return &PacketReader{
+		Reader: NewReaderWithBytes(data),
+	}
+}
+
 // ReadCapabilitys reads the capability flags.
 func (reader *PacketReader) ReadCapability() (Capability, error) {
 	var Capabilitys Capability
