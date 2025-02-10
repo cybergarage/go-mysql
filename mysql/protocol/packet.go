@@ -269,6 +269,14 @@ func (pkt *packet) HeaderBytes() []byte {
 	return slices.Concat(payloadLengthBuf, []byte{seqIDByte})
 }
 
+// PayloadHeaderByte returns the payload header byte.
+func (pkt *packet) PayloadHeaderByte() (byte, error) {
+	if len(pkt.payload) < 1 {
+		return 0, newErrInvalidPacketLength(uint32(len(pkt.payload)))
+	}
+	return pkt.payload[0], nil
+}
+
 // Bytes returns the packet bytes.
 func (pkt *packet) Bytes() ([]byte, error) {
 	return slices.Concat(pkt.HeaderBytes(), pkt.payload), nil

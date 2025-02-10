@@ -81,9 +81,9 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 		return nil, err
 	}
 
-	pkt := newBinaryResultSetWithPacket(pktHeader, opts...)
+	rsPkt := newBinaryResultSetWithPacket(pktHeader, opts...)
 
-	columnCount, err := pkt.ReadLengthEncodedInt()
+	columnCount, err := rsPkt.ReadLengthEncodedInt()
 	if err != nil {
 		return nil, err
 	}
@@ -95,43 +95,45 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 		if err != nil {
 			return nil, err
 		}
-		pkt.columnDefs = append(pkt.columnDefs, colDef)
+		rsPkt.columnDefs = append(rsPkt.columnDefs, colDef)
 	}
 
 	// EOF
 
-	_, err = NewEOFFromReader(reader, WithEOFCapability(pkt.Capability()))
+	_, err = NewEOFFromReader(reader, WithEOFCapability(rsPkt.Capability()))
 	if err != nil {
 		return nil, err
 	}
 
-	// Rows
+	// Rows or EOF
 
 	numPeekBytes := 5
-	nextBytes, err := pkt.PeekBytes(numPeekBytes)
+	nextBytes, err := rsPkt.PeekBytes(numPeekBytes)
 	if err != nil {
 		return nil, err
 	}
-	pkt.rows = []BinaryResultSetRow{}
+	rsPkt.rows = []BinaryResultSetRow{}
 	for nextBytes[4] != 0xFE {
-		row, err := NewBinaryResultSetRowFromReader(pkt.Reader(),
-			WithBinaryResultSetRowColumnDefs(pkt.columnDefs))
+		row, err := NewBinaryResultSetRowFromReader(rsPkt.Reader(),
+			WithBinaryResultSetRowColumnDefs(rsPkt.columnDefs))
 		if err != nil {
 			return nil, err
 		}
-		pkt.rows = append(pkt.rows, *row)
-		nextBytes, err = pkt.PeekBytes(numPeekBytes)
+		rsPkt.rows = append(rsPkt.rows, *row)
+		nextBytes, err = rsPkt.PeekBytes(numPeekBytes)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	_, err = NewEOFFromReader(reader, WithEOFCapability(pkt.Capability()))
+	// EOF
+
+	_, err = NewEOFFromReader(reader, WithEOFCapability(rsPkt.Capability()))
 	if err != nil {
 		return nil, err
 	}
 
-	return pkt, nil
+	return rsPkt, nil
 }
 
 // SetOptions sets the options.
