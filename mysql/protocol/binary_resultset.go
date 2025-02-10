@@ -119,8 +119,12 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 		if pktHeader == 0xFE {
 			break
 		}
-		pktReader := NewPacketReaderWithBytes(pkt.Payload())
-		row, err := NewBinaryResultSetRowFromReader(pktReader,
+		pktBytes, err := pkt.Bytes()
+		if err != nil {
+			return nil, err
+		}
+		row, err := NewBinaryResultSetRowFromReader(
+			NewPacketReaderWithBytes(pktBytes),
 			WithBinaryResultSetRowColumnDefs(rsPkt.columnDefs))
 		if err != nil {
 			return nil, err
