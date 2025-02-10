@@ -89,14 +89,17 @@ func NewBinaryResultSetRowFromReader(reader *PacketReader, opts ...BinaryResultS
 
 	// NullBitmap
 
-	nullBitmapBytes := make([]byte, CalculateNullBitmapLength(numColumns, 0))
-	_, err = reader.ReadBytes(nullBitmapBytes)
+	// NULL bitmap, length= (column_count + 7 + 2) / 8
+	nullBitmapOffset := 2
+	nullBitmapBytes := make([]byte, CalculateNullBitmapLength(numColumns, nullBitmapOffset))
+	_, err = reader.
+		ReadBytes(nullBitmapBytes)
 	if err != nil {
 		return nil, err
 	}
 	row.nullBitmap = NewNullBitmap(
 		WithNullBitmapNumFields(numColumns),
-		WithNullBitmapOffset(0),
+		WithNullBitmapOffset(nullBitmapOffset),
 		WithNullBitmapBytes(nullBitmapBytes),
 	)
 
