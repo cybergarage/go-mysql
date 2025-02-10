@@ -112,8 +112,8 @@ func WithPacketServerStatus(status ServerStatus) PacketOption {
 // NewPacket returns a new MySQL packet.
 func NewPacket(opts ...PacketOption) *packet {
 	pkt := newPacket()
-	pkt.SetCapabilityEnabled(ClientProtocol41)
 	pkt.SetOptions(opts...)
+	pkt.SetCapabilityEnabled(ClientProtocol41)
 	return pkt
 }
 
