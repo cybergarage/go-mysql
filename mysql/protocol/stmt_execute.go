@@ -158,7 +158,7 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 	pkt := newStmtExecuteWithCommand(cmd, opts...)
 
 	payload := cmd.Payload()
-	pktReader := NewPacketReaderWith(bytes.NewBuffer(payload[1:]))
+	pktReader := NewPacketReaderWithReader(bytes.NewBuffer(payload[1:]))
 
 	iv4, err := pktReader.ReadInt4()
 	if err != nil {

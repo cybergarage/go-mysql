@@ -41,7 +41,7 @@ type genericResponse struct {
 
 // NewOKFromReader returns a new OK packet from the reader.
 func NewGenericResponseFromReader(r io.Reader, opts ...GenericResponseOption) (GenericResponse, error) {
-	reader := NewPacketReaderWith(r)
+	reader := NewPacketReaderWithReader(r)
 	header, err := reader.PeekByte()
 	if err != nil {
 		return nil, err

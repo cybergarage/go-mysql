@@ -23,8 +23,8 @@ type PacketReader struct {
 	*Reader
 }
 
-// NewPacketReader returns a new packet reader.
-func NewPacketReaderWith(reader io.Reader) *PacketReader {
+// NewPacketReaderWithReader returns a new packet reader with the specified reader.
+func NewPacketReaderWithReader(reader io.Reader) *PacketReader {
 	return &PacketReader{
 		Reader: NewReaderWithReader(reader),
 	}

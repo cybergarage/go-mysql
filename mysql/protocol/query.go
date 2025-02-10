@@ -101,7 +101,7 @@ func NewQueryFromCommand(cmd Command, opts ...QueryOption) (*Query, error) {
 	pkt := newQueryWithCommand(cmd, opts...)
 
 	payload := cmd.Payload()
-	reader := NewPacketReaderWith(bytes.NewBuffer(payload[1:]))
+	reader := NewPacketReaderWithReader(bytes.NewBuffer(payload[1:]))
 
 	if pkt.Capability().IsEnabled(ClientQueryAttributes) {
 		// parameter_count

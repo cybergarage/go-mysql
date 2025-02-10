@@ -107,30 +107,25 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 
 	// Rows or EOF
 
-	numPeekBytes := 5
-	nextBytes, err := rsPkt.PeekBytes(numPeekBytes)
-	if err != nil {
-		return nil, err
-	}
-	rsPkt.rows = []BinaryResultSetRow{}
-	for nextBytes[4] != 0xFE {
-		row, err := NewBinaryResultSetRowFromReader(rsPkt.Reader(),
+	for {
+		pkt, err := NewPacketWithReader(reader)
+		if err != nil {
+			return nil, err
+		}
+		pktHeader, err := pkt.PayloadHeaderByte()
+		if err != nil {
+			return nil, err
+		}
+		if pktHeader == 0xFE {
+			break
+		}
+		pktReader := NewPacketReaderWithBytes(pkt.Payload())
+		row, err := NewBinaryResultSetRowFromReader(pktReader,
 			WithBinaryResultSetRowColumnDefs(rsPkt.columnDefs))
 		if err != nil {
 			return nil, err
 		}
 		rsPkt.rows = append(rsPkt.rows, *row)
-		nextBytes, err = rsPkt.PeekBytes(numPeekBytes)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// EOF
-
-	_, err = NewEOFFromReader(reader, WithEOFCapability(rsPkt.Capability()))
-	if err != nil {
-		return nil, err
 	}
 
 	return rsPkt, nil

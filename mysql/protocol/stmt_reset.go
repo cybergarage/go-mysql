@@ -69,7 +69,7 @@ func NewStmtResetFromCommand(cmd Command, opts ...StmtResetOption) (*StmtReset, 
 	pkt := newStmtResetWithCommand(cmd, opts...)
 
 	payload := cmd.Payload()
-	reader := NewPacketReaderWith(bytes.NewBuffer(payload[1:]))
+	reader := NewPacketReaderWithReader(bytes.NewBuffer(payload[1:]))
 
 	v, err := reader.ReadInt4()
 	if err != nil {

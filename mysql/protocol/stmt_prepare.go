@@ -107,7 +107,7 @@ func NewStmtPrepareFromCommand(cmd Command, opts ...StmtPrepareOption) (*StmtPre
 	pkt := newStmtPrepareWithCommand(cmd, opts...)
 
 	payload := cmd.Payload()
-	reader := NewPacketReaderWith(bytes.NewBuffer(payload[1:]))
+	reader := NewPacketReaderWithReader(bytes.NewBuffer(payload[1:]))
 
 	pkt.query, err = reader.ReadEOFTerminatedString()
 	if err != nil {

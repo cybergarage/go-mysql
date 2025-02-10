@@ -119,7 +119,7 @@ func NewPacket(opts ...PacketOption) *packet {
 
 // NewPacketWithReader returns a new MySQL packet from the reader.
 func NewPacketWithReader(reader io.Reader) (*packet, error) {
-	return NewPacketWithPacketReader(NewPacketReaderWith(reader))
+	return NewPacketWithPacketReader(NewPacketReaderWithReader(reader))
 }
 
 // NewPacketWithPacketReader returns a new MySQL packet from the packet reader.
@@ -140,7 +140,7 @@ func NewPacketWithPacketReader(reader *PacketReader) (*packet, error) {
 // NewPacketHeaderWithReader returns a new MySQL packet from the reader.
 func NewPacketHeaderWithReader(reader io.Reader) (*packet, error) {
 	pkt := newPacket()
-	pkt.PacketReader = NewPacketReaderWith(reader)
+	pkt.PacketReader = NewPacketReaderWithReader(reader)
 	err := pkt.ReadHeader()
 	if err != nil {
 		return nil, err

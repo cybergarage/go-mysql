@@ -74,7 +74,7 @@ func NewStmtCloseFromCommand(cmd Command, opts ...StmtCloseOption) (*StmtClose, 
 	pkt := newStmtCloseWithCommand(cmd, opts...)
 
 	payload := cmd.Payload()
-	reader := NewPacketReaderWith(bytes.NewBuffer(payload[1:]))
+	reader := NewPacketReaderWithReader(bytes.NewBuffer(payload[1:]))
 
 	v, err := reader.ReadInt4()
 	if err != nil {

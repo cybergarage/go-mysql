@@ -126,7 +126,7 @@ func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (
 		if err != nil {
 			return nil, err
 		}
-		rowPktReader := NewPacketReaderWith(bytes.NewReader(rowPktBytes))
+		rowPktReader := NewPacketReaderWithReader(bytes.NewReader(rowPktBytes))
 		row, err := NewTextResultSetRowFromReader(rowPktReader, WithTextResultSetRowColmunCount(columnCount))
 		if err != nil {
 			return nil, err

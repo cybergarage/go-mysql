@@ -47,7 +47,7 @@ func NewConnWith(netConn net.Conn, opts ...ConnOption) Conn {
 	conn := &conn{
 		Conn:          netConn,
 		isClosed:      false,
-		msgReader:     NewPacketReaderWith(netConn),
+		msgReader:     NewPacketReaderWithReader(netConn),
 		db:            "",
 		ts:            time.Now(),
 		uuid:          uuid.New(),
