@@ -119,5 +119,31 @@ func (column *BinaryResultSetColumn) Type() FieldType {
 
 // Bytes returns the bytes.
 func (column *BinaryResultSetColumn) Bytes() ([]byte, error) {
+	switch column.t {
+	case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
+		w := NewPacketWriter()
+		if err := w.WriteLengthEncodedString(string(column.bytes)); err != nil {
+			return nil, err
+		}
+		return w.Bytes(), nil
+	case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
+		w := NewPacketWriter()
+		if err := w.WriteLengthEncodedBytes(column.bytes); err != nil {
+			return nil, err
+		}
+		return w.Bytes(), nil
+	case query.MySQLTypeDate, query.MySQLTypeTime, query.MySQLTypeDatetime, query.MySQLTypeTimestamp:
+		w := NewPacketWriter()
+		if err := w.WriteInt1(byte(len(column.bytes))); err != nil {
+			return nil, err
+		}
+		if err := w.WriteFixedLengthBytes(column.bytes, len(column.bytes)); err != nil {
+			return nil, err
+		}
+		return w.Bytes(), nil
+	case query.MySQLTypeNull:
+		return nil, nil
+	}
+
 	return column.bytes, nil
 }
