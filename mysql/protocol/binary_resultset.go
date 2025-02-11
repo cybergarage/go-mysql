@@ -151,17 +151,27 @@ func (pkt *BinaryResultSet) Rows() []BinaryResultSetRow {
 func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
-	_, err := w.WriteBytes(pkt.HeaderBytes())
+	// First Packet
+
+	seqID := (SequenceID)(1)
+	pkt.SetSequenceID(seqID)
+
+	firstPktWriter := NewPacketWriter()
+	err := firstPktWriter.WriteLengthEncodedInt(uint64(len(pkt.columnDefs)))
+	if err != nil {
+		return nil, err
+	}
+	pkt.SetPayload(firstPktWriter.Bytes())
+
+	firstPktBytes, err := pkt.packet.Bytes()
+	if err != nil {
+		return nil, err
+	}
+	_, err = w.WriteBytes(firstPktBytes)
 	if err != nil {
 		return nil, err
 	}
 
-	err = w.WriteLengthEncodedInt(uint64(len(pkt.columnDefs)))
-	if err != nil {
-		return nil, err
-	}
-
-	seqID := pkt.SequenceID()
 	for _, colDef := range pkt.columnDefs {
 		seqID = seqID.Next()
 		colDef.SetSequenceID(seqID)
