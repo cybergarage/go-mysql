@@ -28,10 +28,12 @@ func TestBinaryResultSetPacket(t *testing.T) {
 	}
 	for _, test := range []struct {
 		name string
+		protocol.Capability
 		expected
 	}{
 		{
 			"data/binary-resultset-001.hex",
+			protocol.DefaultServerCapability,
 			expected{},
 		},
 	} {
@@ -48,7 +50,10 @@ func TestBinaryResultSetPacket(t *testing.T) {
 			}
 			reader := bytes.NewReader(testBytes)
 
-			pkt, err := protocol.NewBinaryResultSetFromReader(reader)
+			pkt, err := protocol.NewBinaryResultSetFromReader(
+				reader,
+				protocol.WithBinaryResultSetCapability(test.Capability),
+			)
 			if err != nil {
 				t.Error(err)
 				return
