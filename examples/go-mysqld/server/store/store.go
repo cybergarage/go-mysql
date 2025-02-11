@@ -343,11 +343,11 @@ func (store *Store) SystemSelect(conn net.Conn, stmt query.Select) (sql.ResultSe
 			return nil, err
 		}
 		dbName := sysStmt.DatabaseName()
-		_, ok := store.LookupDatabase(dbName)
-		if !ok {
-			return nil, errors.NewErrDatabaseNotExist(dbName)
+		tblName := sysStmt.TableName()
+		_, _, err = store.LookupDatabaseTable(conn, dbName, tblName)
+		if err != nil {
+			return nil, err
 		}
-
 	}
 	return nil, errors.NewErrNotImplemented("SystemSelect")
 }
