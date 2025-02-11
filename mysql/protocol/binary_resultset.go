@@ -172,6 +172,8 @@ func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
+	// column_count * Column Definition
+
 	for _, colDef := range pkt.columnDefs {
 		seqID = seqID.Next()
 		colDef.SetSequenceID(seqID)
@@ -185,6 +187,15 @@ func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 		}
 	}
 
+	// EOF
+
+	seqID = seqID.Next()
+	if err := w.WriteEOF(pkt.Capability(), seqID); err != nil {
+		return nil, err
+	}
+
+	// None or many Binary Protocol Resultset Row
+
 	for _, row := range pkt.rows {
 		seqID = seqID.Next()
 		row.SetSequenceID(seqID)
@@ -197,6 +208,8 @@ func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 			return nil, err
 		}
 	}
+
+	// EOF
 
 	seqID = seqID.Next()
 	if err := w.WriteEOF(pkt.Capability(), seqID); err != nil {
