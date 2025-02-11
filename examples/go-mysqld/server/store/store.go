@@ -23,6 +23,7 @@ import (
 	"github.com/cybergarage/go-sqlparser/sql/net"
 	"github.com/cybergarage/go-sqlparser/sql/query"
 	"github.com/cybergarage/go-sqlparser/sql/query/response/resultset"
+	"github.com/cybergarage/go-sqlparser/sql/system"
 )
 
 // Store represents a data store.
@@ -334,5 +335,10 @@ func (store *Store) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, err
 // SystemSelect should handle a system SELECT statement.
 func (store *Store) SystemSelect(conn net.Conn, stmt query.Select) (sql.ResultSet, error) {
 	log.Debugf("%v", stmt)
+
+	switch {
+	case system.IsSchemaColumsQuery(stmt):
+
+	}
 	return nil, errors.NewErrNotImplemented("SystemSelect")
 }
