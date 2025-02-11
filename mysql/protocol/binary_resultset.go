@@ -52,6 +52,13 @@ func WithBinaryResultSetCapability(c Capability) BinaryResultSetOption {
 	}
 }
 
+// WithBinaryResultSetServerStatus returns a binary resultset option to set the server status.
+func WithBinaryResultSetServerStatus(s ServerStatus) BinaryResultSetOption {
+	return func(pkt *BinaryResultSet) {
+		pkt.SetServerStatus(s)
+	}
+}
+
 // WithBinaryResultSetColumnDefs returns a binary resultset option to set the column definitions.
 func WithBinaryResultSetColumnDefs(colDefs []ColumnDef) BinaryResultSetOption {
 	return func(pkt *BinaryResultSet) {
@@ -190,7 +197,7 @@ func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 	// EOF
 
 	seqID = seqID.Next()
-	if err := w.WriteEOF(pkt.Capability(), seqID); err != nil {
+	if err := w.WriteEOF(pkt.Capability(), pkt.ServerStatus(), seqID); err != nil {
 		return nil, err
 	}
 
@@ -212,7 +219,7 @@ func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 	// EOF
 
 	seqID = seqID.Next()
-	if err := w.WriteEOF(pkt.Capability(), seqID); err != nil {
+	if err := w.WriteEOF(pkt.Capability(), pkt.ServerStatus(), seqID); err != nil {
 		return nil, err
 	}
 
