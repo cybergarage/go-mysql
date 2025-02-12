@@ -146,6 +146,7 @@ func (server *server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protoc
 // PrepareStatement prepares a statement.
 func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.StmtPrepare) (*protocol.StmtPrepareResponse, error) {
 	stmt, err := system.NewSchemaColumnsStatement(
+		system.WithSchemaColumnsStatementDatabaseName(conn.Database()),
 		system.WithSchemaColumnsStatementTableNames(stmtPrep.TableNames()),
 	)
 	if err != nil {

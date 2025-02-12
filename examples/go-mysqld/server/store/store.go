@@ -334,7 +334,8 @@ func (store *Store) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, err
 
 // SystemSelect should handle a system SELECT statement.
 func (store *Store) SystemSelect(conn net.Conn, stmt query.Select) (sql.ResultSet, error) {
-	log.Debugf("%v", stmt)
+	q := stmt.String()
+	log.Debugf("%v", q)
 
 	switch {
 	case system.IsSchemaColumsQuery(stmt):
@@ -357,5 +358,5 @@ func (store *Store) SystemSelect(conn net.Conn, stmt query.Select) (sql.ResultSe
 		return system.NewSchemaColumnsResultSetFromSchemas(schemas)
 	}
 
-	return nil, errors.NewErrNotImplemented("SystemSelect")
+	return nil, errors.NewErrNotImplemented(fmt.Sprintf("SystemSelect: %s", stmt.String()))
 }
