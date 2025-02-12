@@ -356,5 +356,6 @@ func (store *Store) SystemSelect(conn net.Conn, stmt query.Select) (sql.ResultSe
 		}
 		return system.NewSchemaColumnsResultSetFromSchemas(schemas)
 	}
+
 	return nil, errors.NewErrNotImplemented("SystemSelect")
 }
