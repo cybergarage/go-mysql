@@ -338,15 +338,19 @@ func (store *Store) SystemSelect(conn net.Conn, stmt query.Select) (sql.ResultSe
 
 	switch {
 	case system.IsSchemaColumsQuery(stmt):
-		sysStmt, err := system.NewSchemaColumnsStatementFrom(stmt)
+		sysStmt, err := system.NewSchemaColumnsStatement(
+			system.WithSchemaColumnsStatementSelect(stmt),
+		)
 		if err != nil {
 			return nil, err
 		}
 		dbName := sysStmt.DatabaseName()
-		tblName := sysStmt.TableName()
-		_, _, err = store.LookupDatabaseTable(conn, dbName, tblName)
-		if err != nil {
-			return nil, err
+		tblName := sysStmt.TableNames()
+		for _, tblName := range tblName {
+			_, _, err = store.LookupDatabaseTable(conn, dbName, tblName)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 	return nil, errors.NewErrNotImplemented("SystemSelect")
