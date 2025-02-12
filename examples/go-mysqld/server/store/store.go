@@ -346,11 +346,13 @@ func (store *Store) SystemSelect(conn net.Conn, stmt query.Select) (sql.ResultSe
 		}
 		dbName := sysStmt.DatabaseName()
 		tblName := sysStmt.TableNames()
+		schemas := []query.Schema{}
 		for _, tblName := range tblName {
-			_, _, err = store.LookupDatabaseTable(conn, dbName, tblName)
+			_, tbl, err := store.LookupDatabaseTable(conn, dbName, tblName)
 			if err != nil {
 				return nil, err
 			}
+			schemas = append(schemas, tbl.Schema)
 		}
 	}
 	return nil, errors.NewErrNotImplemented("SystemSelect")

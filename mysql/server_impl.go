@@ -157,7 +157,7 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 	}
 
 	opts := []protocol.StmtPrepareResponseOption{}
-	schemaColumnRs, err := system.NewSchemaColumnsResultSetFrom(rs)
+	schemaColumnRs, err := system.NewSchemaColumnsResultSetFromResultSet(rs)
 	if err != nil {
 		return nil, err
 	}
