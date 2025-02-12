@@ -145,11 +145,13 @@ func (server *server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protoc
 
 // PrepareStatement prepares a statement.
 func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.StmtPrepare) (*protocol.StmtPrepareResponse, error) {
-	stmt, err := system.NewSchemaColumnsQueryFromTableNames(stmtPrep.TableNames())
+	stmt, err := system.NewSchemaColumnsStatement(
+		system.WithSchemaColumnsStatementTableNames(stmtPrep.TableNames()),
+	)
 	if err != nil {
 		return nil, err
 	}
-	rs, err := server.SQLExecutor().SystemSelect(conn, stmt)
+	rs, err := server.SQLExecutor().SystemSelect(conn, stmt.Statement())
 	if err != nil {
 		return nil, err
 	}
