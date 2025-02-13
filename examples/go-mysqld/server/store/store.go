@@ -346,9 +346,9 @@ func (store *Store) SystemSelect(conn net.Conn, stmt query.Select) (sql.ResultSe
 			return nil, err
 		}
 		dbName := sysStmt.DatabaseName()
-		tblName := sysStmt.TableNames()
+		tblNames := sysStmt.TableNames()
 		schemas := []query.Schema{}
-		for _, tblName := range tblName {
+		for _, tblName := range tblNames {
 			_, tbl, err := store.LookupDatabaseTable(conn, dbName, tblName)
 			if err != nil {
 				return nil, err
