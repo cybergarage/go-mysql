@@ -163,7 +163,7 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 		return nil, err
 	}
 
-	// Create response columns.
+	// Create response columns for the prepare response.
 
 	isAllColumnsLookup := func(columnNames []string) bool {
 		switch {
@@ -207,7 +207,7 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 	}
 	opts = append(opts, protocol.WithStmtPrepareResponseColumns(resultSetColumnDefs))
 
-	// Create response params.
+	// Create response params for the prepare response.
 
 	paramColumnDefs, err := lookupColumDefs(schemaColumnRs, stmtPrep.ParameterColumnNames())
 	if err != nil {
@@ -215,9 +215,27 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 	}
 	opts = append(opts, protocol.WithStmtPrepareResponseParams(paramColumnDefs))
 
-	// Create and return prepare response.
+	// Generate next statement ID and create prepare response.
 
-	return protocol.NewStmtPrepareResponse(opts...), nil
+	stmtID, err := server.NextPreparedStatementID()
+	if err != nil {
+		return nil, err
+	}
+	opts = append(opts, protocol.WithStmtPrepareResponseStatementID(stmtID))
+
+	stmPrepRes := protocol.NewStmtPrepareResponse(opts...)
+
+	// Register the prepared statement.
+
+	premStmt := protocol.NewPreparedStatmentWith(stmtPrep, stmPrepRes)
+	err = server.RegisterPreparedStatement(premStmt)
+	if err != nil {
+		return nil, err
+	}
+
+	// Return the prepared statement response.
+
+	return stmPrepRes, nil
 }
 
 // ExecuteStatement executes a statement.
