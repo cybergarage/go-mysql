@@ -165,9 +165,19 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 
 	// Create response columns.
 
+	isAllColumnsLookup := func(columnNames []string) bool {
+		switch {
+		case len(columnNames) == 0:
+			return true
+		case len(columnNames) == 1 && columnNames[0] == "*":
+			return true
+		}
+		return false
+	}
+
 	lookupColumDefs := func(schemaColumnRs system.SchemaColumnsResultSet, columnNames []string) ([]protocol.ColumnDef, error) {
 		columnDefs := []protocol.ColumnDef{}
-		if len(columnNames) == 0 {
+		if isAllColumnsLookup(columnNames) {
 			for _, schemaColumn := range schemaColumnRs.Columns() {
 				columnDef, err := protocol.NewColumnDefsFromSystemSchemaColumn(schemaColumn)
 				if err != nil {
@@ -207,7 +217,7 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 
 	// Create and return prepare response.
 
-	return protocol.NewStmtPrepareResponse(opts...), errors.ErrNotImplemented
+	return protocol.NewStmtPrepareResponse(opts...), nil
 }
 
 // ExecuteStatement executes a statement.
