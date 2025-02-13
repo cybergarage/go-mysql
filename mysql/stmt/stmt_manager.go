@@ -18,8 +18,8 @@ package stmt
 type StatementManager interface {
 	// NextPreparedStatementID returns the next prepared statement ID.
 	NextPreparedStatementID() (StatementID, error)
-	// AddPreparedStatement adds a prepared statement to the manager.
-	AddPreparedStatement(stmt PreparedStatement)
+	// RegisterPreparedStatement adds a prepared statement to the manager.
+	RegisterPreparedStatement(stmt PreparedStatement) error
 	// PreparedStatement returns a prepared statement by the statement ID.
 	PreparedStatement(stmtID StatementID) (PreparedStatement, error)
 	// RemovePreparedStatement removes a prepared statement by the statement ID.

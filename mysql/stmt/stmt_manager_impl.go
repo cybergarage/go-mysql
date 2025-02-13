@@ -34,9 +34,10 @@ func (mgr *stmtManager) NextPreparedStatementID() (StatementID, error) {
 	return mgr.lastStatementID.NextStatementID()
 }
 
-// AddPreparedStatement adds a prepared statement to the manager.
-func (mgr *stmtManager) AddPreparedStatement(stmt PreparedStatement) {
+// RegisterPreparedStatement adds a prepared statement to the manager.
+func (mgr *stmtManager) RegisterPreparedStatement(stmt PreparedStatement) error {
 	mgr.stmts[stmt.StatementID()] = stmt
+	return nil
 }
 
 // PreparedStatement returns a prepared statement by the statement ID.
