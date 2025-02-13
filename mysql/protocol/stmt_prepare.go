@@ -145,11 +145,11 @@ func (pkt *StmtPrepare) parseQuery() error {
 				columns = append(columns, expr.Left().Name())
 			}
 		case *query.AndExpr:
-			columns = append(columns, parameterColumnsFromExpr(expr.Left)...)
-			columns = append(columns, parameterColumnsFromExpr(expr.Right)...)
+			columns = append(columns, parameterColumnsFromExpr(expr.Left())...)
+			columns = append(columns, parameterColumnsFromExpr(expr.Right())...)
 		case *query.OrExpr:
-			columns = append(columns, parameterColumnsFromExpr(expr.Left)...)
-			columns = append(columns, parameterColumnsFromExpr(expr.Right)...)
+			columns = append(columns, parameterColumnsFromExpr(expr.Left())...)
+			columns = append(columns, parameterColumnsFromExpr(expr.Right())...)
 		}
 		return columns
 	}
