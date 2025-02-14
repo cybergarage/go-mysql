@@ -152,6 +152,18 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 	if err != nil {
 		return nil, err
 	}
+
+	// Check if the prepared statement is already registered.
+
+	if regStmtPrepRes, err := conn.LookupPreparedStatementByQuery(stmtPrep.Query()); err == nil {
+		stmPrepRes, err := protocol.NewStmtPrepareResponseFromBytes(regStmtPrepRes.PrepareResponseBytes())
+		if err == nil {
+			return stmPrepRes, nil
+		}
+	}
+
+	// Execute the statement and get the result set.
+
 	rs, err := server.SQLExecutor().SystemSelect(conn, stmt.Statement())
 	if err != nil {
 		return nil, err
@@ -228,8 +240,8 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 	// Register the prepared statement.
 
 	prepStmt := protocol.NewPreparedStatmentWith(stmtPrep, stmPrepRes)
-	if regPrepStmt, err := conn.LookupPreparedStatementByQuery(stmtPrep.Query()); err == nil {
-		stmPrepRes.SetStatementID(regPrepStmt.StatementID())
+	if regStmtPrepRes, err := conn.LookupPreparedStatementByQuery(stmtPrep.Query()); err == nil {
+		stmPrepRes.SetStatementID(regStmtPrepRes.StatementID())
 	} else {
 		err = conn.RegisterPreparedStatement(prepStmt)
 		if err != nil {
