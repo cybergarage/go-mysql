@@ -15,17 +15,31 @@
 package net
 
 import (
-	"github.com/cybergarage/go-sqlparser/sql/net"
+	"github.com/google/uuid"
 )
 
 // ConnManager represents a connection map.
-type ConnManager struct {
-	*net.ConnManager
-}
-
-// NewConnManager returns a connection map.
-func NewConnManager() *ConnManager {
-	return &ConnManager{
-		ConnManager: net.NewConnManager(),
-	}
+type ConnManager interface {
+	// AddConn adds the specified connection.
+	AddConn(c Conn) error
+	// UpdateConn updates the specified connection.
+	UpdateConn(from Conn, to Conn) error
+	// Conns returns the included connections.
+	Conns() []Conn
+	// LookupConnByUID returns a connection and true when the specified connection exists by the connection ID, otherwise nil and false.
+	LookupConnByUID(cid uint64) (Conn, bool)
+	// LookupConnByUUID returns the connection with the specified UUID.
+	LookupConnByUUID(uuid uuid.UUID) (Conn, bool)
+	// RemoveConn deletes the specified connection from the map.
+	RemoveConn(conn Conn) error
+	// RemoveConnByUID deletes the specified connection by the connection ID.
+	RemoveConnByUID(cid uint64)
+	// RemoveConnByUID deletes the specified connection by the connection ID.
+	RemoveConnByUUID(uuid uuid.UUID)
+	// Start starts the connection manager.
+	Start() error
+	// Close closes the connection manager.
+	Close() error
+	// Stop closes all connections.
+	Stop() error
 }

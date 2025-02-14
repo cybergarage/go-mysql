@@ -32,7 +32,7 @@ import (
 type Server struct {
 	Config
 	auth.Manager
-	*mysqlnet.ConnManager
+	mysqlnet.ConnManager
 	stmt.StatementManager
 	tracer.Tracer
 	lastConnID *Counter
