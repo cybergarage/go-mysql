@@ -29,6 +29,10 @@ func newErrInvalidStatementID(stmdID StatementID) error {
 	return fmt.Errorf("%w statement ID: %d", ErrInvalid, stmdID)
 }
 
+func newErrInvalidQuery(query string) error {
+	return fmt.Errorf("%w query: %s", ErrInvalid, query)
+}
+
 func newErrInvalidParameters() error {
 	return fmt.Errorf("%w parameters", ErrInvalid)
 }

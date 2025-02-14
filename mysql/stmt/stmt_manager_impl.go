@@ -17,15 +17,18 @@ package stmt
 // stmtManager represents a statement manager.
 type stmtManager struct {
 	lastStatementID StatementID
-	// stmts is the map of prepared statements.
-	stmts map[StatementID]PreparedStatement
+	// stmtQueryMap is the map of prepared statements by query.
+	stmtQueryMap map[string]PreparedStatement
+	// stmtIDMap is the map of prepared statements by statement ID.
+	stmtIDMap map[StatementID]PreparedStatement
 }
 
 // NewStatementManager creates a new statement instance.
 func NewStatementManager() StatementManager {
 	return &stmtManager{
 		lastStatementID: 1,
-		stmts:           make(map[StatementID]PreparedStatement),
+		stmtQueryMap:    make(map[string]PreparedStatement),
+		stmtIDMap:       make(map[StatementID]PreparedStatement),
 	}
 }
 
@@ -36,20 +39,29 @@ func (mgr *stmtManager) NextPreparedStatementID() (StatementID, error) {
 
 // RegisterPreparedStatement adds a prepared statement to the manager.
 func (mgr *stmtManager) RegisterPreparedStatement(stmt PreparedStatement) error {
-	mgr.stmts[stmt.StatementID()] = stmt
+	mgr.stmtIDMap[stmt.StatementID()] = stmt
 	return nil
 }
 
 // LookupPreparedStatementByID returns a prepared statement by the statement ID.
 func (mgr *stmtManager) LookupPreparedStatementByID(stmtID StatementID) (PreparedStatement, error) {
-	stmt, ok := mgr.stmts[stmtID]
+	stmt, ok := mgr.stmtIDMap[stmtID]
 	if !ok {
 		return nil, newErrInvalidStatementID(stmtID)
 	}
 	return stmt, nil
 }
 
+// LookupPreparedStatementByQuery returns a prepared statement by the query.
+func (mgr *stmtManager) LookupPreparedStatementByQuery(query string) (PreparedStatement, error) {
+	stmt, ok := mgr.stmtQueryMap[query]
+	if !ok {
+		return nil, newErrInvalidQuery(query)
+	}
+	return stmt, nil
+}
+
 // RemovePreparedStatement removes a prepared statement by the statement ID.
 func (mgr *stmtManager) RemovePreparedStatement(stmtID StatementID) {
-	delete(mgr.stmts, stmtID)
+	delete(mgr.stmtIDMap, stmtID)
 }
