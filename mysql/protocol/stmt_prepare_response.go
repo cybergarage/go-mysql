@@ -15,6 +15,7 @@
 package protocol
 
 import (
+	"bytes"
 	"io"
 )
 
@@ -205,6 +206,11 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 	}
 
 	return pkt, nil
+}
+
+// NewStmtPrepareResponseFromBytes returns a new StmtPrepareResponse from the bytes.
+func NewStmtPrepareResponseFromBytes(data []byte, opts ...StmtPrepareResponseOption) (*StmtPrepareResponse, error) {
+	return NewStmtPrepareResponseFromReader(bytes.NewReader(data), opts...)
 }
 
 // SetStatementID sets the statement ID.
