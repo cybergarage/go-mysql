@@ -31,6 +31,8 @@ type PreparedStatement interface {
 	Statement() Statement
 	// TableNames returns the table names of the statement.
 	TableNames() []string
+	// Query returns the query of the statement.
+	Query() string
 	// Parameters returns the parameters of the statement.
 	Parameters() []Parameter
 	// Bind binds the parameters to the statement.
