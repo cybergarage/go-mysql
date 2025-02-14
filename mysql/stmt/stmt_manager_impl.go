@@ -40,6 +40,7 @@ func (mgr *stmtManager) NextPreparedStatementID() (StatementID, error) {
 // RegisterPreparedStatement adds a prepared statement to the manager.
 func (mgr *stmtManager) RegisterPreparedStatement(stmt PreparedStatement) error {
 	mgr.stmtIDMap[stmt.StatementID()] = stmt
+	mgr.stmtQueryMap[stmt.Query()] = stmt
 	return nil
 }
 
@@ -61,7 +62,26 @@ func (mgr *stmtManager) LookupPreparedStatementByQuery(query string) (PreparedSt
 	return stmt, nil
 }
 
-// RemovePreparedStatement removes a prepared statement by the statement ID.
-func (mgr *stmtManager) RemovePreparedStatement(stmtID StatementID) {
-	delete(mgr.stmtIDMap, stmtID)
+// RemovePreparedStatement removes a prepared statement.
+func (mgr *stmtManager) RemovePreparedStatement(stmt PreparedStatement) {
+	delete(mgr.stmtQueryMap, stmt.Query())
+	delete(mgr.stmtIDMap, stmt.StatementID())
+}
+
+// RemovePreparedStatementByID removes a prepared statement by the statement ID.
+func (mgr *stmtManager) RemovePreparedStatementByID(stmtID StatementID) {
+	stmt, err := mgr.LookupPreparedStatementByID(stmtID)
+	if err != nil {
+		return
+	}
+	mgr.RemovePreparedStatement(stmt)
+}
+
+// RemovePreparedStatementByQuery removes a prepared statement by the query.
+func (mgr *stmtManager) RemovePreparedStatementByQuery(query string) {
+	stmt, err := mgr.LookupPreparedStatementByQuery(query)
+	if err != nil {
+		return
+	}
+	mgr.RemovePreparedStatement(stmt)
 }

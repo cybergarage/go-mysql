@@ -261,7 +261,7 @@ func (server *server) ExecuteStatement(conn protocol.Conn, stmtExec *protocol.St
 
 // CloseStatement closes a statement.
 func (server *server) CloseStatement(conn protocol.Conn, stmt *protocol.StmtClose) (protocol.Response, error) {
-	conn.RemovePreparedStatement(stmt.StatementID())
+	conn.RemovePreparedStatementByID(stmt.StatementID())
 	return nil, nil
 }
 

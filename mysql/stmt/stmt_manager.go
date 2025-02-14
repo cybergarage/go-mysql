@@ -24,6 +24,10 @@ type StatementManager interface {
 	LookupPreparedStatementByID(stmtID StatementID) (PreparedStatement, error)
 	// LookupPreparedStatementByQuery returns a prepared statement by the query.
 	LookupPreparedStatementByQuery(query string) (PreparedStatement, error)
-	// RemovePreparedStatement removes a prepared statement by the statement ID.
-	RemovePreparedStatement(stmtID StatementID)
+	// RemovePreparedStatement removes a prepared statement.
+	RemovePreparedStatement(stmt PreparedStatement)
+	// RemovePreparedStatementByID removes a prepared statement by the statement ID.
+	RemovePreparedStatementByID(stmtID StatementID)
+	// RemovePreparedStatementByQuery removes a prepared statement by the query.
+	RemovePreparedStatementByQuery(query string)
 }
