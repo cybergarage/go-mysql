@@ -207,6 +207,11 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 	return pkt, nil
 }
 
+// SetStatementID sets the statement ID.
+func (pkt *StmtPrepareResponse) SetStatementID(stmtID StatementID) {
+	pkt.stmtID = stmtID
+}
+
 // StatementID returns the statement ID.
 func (pkt *StmtPrepareResponse) StatementID() StatementID {
 	return pkt.stmtID
