@@ -49,3 +49,15 @@ func (p *preparedStmt) Parameters() []stmt.Parameter {
 func (p *preparedStmt) Bind(params []stmt.Parameter) (stmt.Statement, error) {
 	return stmt.NewStatementFrom(p, params)
 }
+
+// PrepareBytes returns the prepared packet bytes.
+func (p *preparedStmt) PrepareBytes() []byte {
+	bytes, _ := p.StmtPrepare.Bytes()
+	return bytes
+}
+
+// PrepareResponseBytes returns the prepared response packet bytes.
+func (p *preparedStmt) PrepareResponseBytes() []byte {
+	bytes, _ := p.StmtPrepareResponse.Bytes()
+	return bytes
+}

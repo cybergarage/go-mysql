@@ -37,4 +37,8 @@ type PreparedStatement interface {
 	Parameters() []Parameter
 	// Bind binds the parameters to the statement.
 	Bind([]Parameter) (Statement, error)
+	// PrepareBytes returns the prepared packet bytes.
+	PrepareBytes() []byte
+	// PrepareResponseBytes returns the prepared response packet bytes.
+	PrepareResponseBytes() []byte
 }
