@@ -20,6 +20,7 @@ import (
 	"net"
 	"time"
 
+	mysqlnet "github.com/cybergarage/go-mysql/mysql/net"
 	"github.com/cybergarage/go-tracing/tracer"
 	"github.com/google/uuid"
 )
@@ -29,7 +30,7 @@ type ConnOption = func(*conn)
 
 // conn represents a connection of MySQL binary.
 type conn struct {
-	net.Conn
+	mysqlnet.Conn
 	isClosed      bool
 	msgReader     *PacketReader
 	db            string
@@ -45,7 +46,7 @@ type conn struct {
 // NewConnWith returns a connection with a raw connection.
 func NewConnWith(netConn net.Conn, opts ...ConnOption) Conn {
 	conn := &conn{
-		Conn:          netConn,
+		Conn:          mysqlnet.NewConnWith(netConn),
 		isClosed:      false,
 		msgReader:     NewPacketReaderWithReader(netConn),
 		db:            "",

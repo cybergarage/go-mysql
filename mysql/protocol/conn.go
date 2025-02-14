@@ -16,13 +16,11 @@ package protocol
 
 import (
 	"crypto/tls"
-	"net"
 
 	mysqlnet "github.com/cybergarage/go-mysql/mysql/net"
 )
 
 type Conn interface {
-	net.Conn
 	mysqlnet.Conn
 	SetDatabase(db string)
 	SetCapability(c Capability)

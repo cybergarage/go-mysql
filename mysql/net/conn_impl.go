@@ -15,19 +15,21 @@
 package net
 
 import (
+	"net"
+
 	"github.com/cybergarage/go-mysql/mysql/stmt"
-	"github.com/cybergarage/go-sqlparser/sql/net"
+	mysqlnet "github.com/cybergarage/go-sqlparser/sql/net"
 )
 
 type conn struct {
-	net.Conn
+	mysqlnet.Conn
 	stmt.StatementManager
 }
 
 // NewConn returns a new connection instance.
 func NewConnWith(netConn net.Conn) Conn {
 	return &conn{
-		Conn:             netConn,
+		Conn:             mysqlnet.NewConnWith(netConn),
 		StatementManager: stmt.NewStatementManager(),
 	}
 }
