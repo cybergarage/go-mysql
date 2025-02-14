@@ -45,7 +45,7 @@ func (mgr *connManager) Conns() []Conn {
 	conns := mgr.ConnManager.Conns()
 	ret := make([]Conn, len(conns))
 	for i, c := range conns {
-		ret[i] = c.(Conn)
+		ret[i] = c.(Conn) // nolint: forcetypeassert
 	}
 	return ret
 }
@@ -56,7 +56,7 @@ func (mgr *connManager) LookupConnByUID(cid uint64) (Conn, bool) {
 	if c == nil {
 		return nil, ok
 	}
-	return c.(Conn), ok
+	return c.(Conn), ok // nolint: forcetypeassert
 }
 
 // LookupConnByUUID returns the connection with the specified UUID.
@@ -65,7 +65,7 @@ func (mgr *connManager) LookupConnByUUID(uuid uuid.UUID) (Conn, bool) {
 	if c == nil {
 		return nil, ok
 	}
-	return c.(Conn), ok
+	return c.(Conn), ok // nolint: forcetypeassert
 }
 
 // RemoveConn deletes the specified connection from the map.
