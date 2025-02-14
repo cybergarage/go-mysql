@@ -19,8 +19,15 @@ import (
 	"github.com/cybergarage/go-sqlparser/sql/net"
 )
 
-// Conn represents a connection interface.
-type Conn interface {
+type conn struct {
 	net.Conn
 	stmt.StatementManager
+}
+
+// NewConn returns a new connection instance.
+func NewConnWith(netConn net.Conn) Conn {
+	return &conn{
+		Conn:             netConn,
+		StatementManager: stmt.NewStatementManager(),
+	}
 }
