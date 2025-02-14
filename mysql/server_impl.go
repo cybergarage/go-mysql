@@ -227,10 +227,14 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 
 	// Register the prepared statement.
 
-	premStmt := protocol.NewPreparedStatmentWith(stmtPrep, stmPrepRes)
-	err = conn.RegisterPreparedStatement(premStmt)
-	if err != nil {
-		return nil, err
+	prepStmt := protocol.NewPreparedStatmentWith(stmtPrep, stmPrepRes)
+	if regPrepStmt, err := conn.LookupPreparedStatementByQuery(stmtPrep.Query()); err == nil {
+		stmPrepRes.SetStatementID(regPrepStmt.StatementID())
+	} else {
+		err = conn.RegisterPreparedStatement(prepStmt)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// Return the prepared statement response.
