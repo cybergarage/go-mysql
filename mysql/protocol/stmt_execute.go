@@ -178,7 +178,7 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 	}
 
 	if pkt.stmtMgr != nil {
-		stmt, err := pkt.stmtMgr.PreparedStatement(pkt.stmdID)
+		stmt, err := pkt.stmtMgr.LookupPreparedStatementByID(pkt.stmdID)
 		if err != nil {
 			return nil, err
 		}

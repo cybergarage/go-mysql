@@ -240,7 +240,7 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 
 // ExecuteStatement executes a statement.
 func (server *server) ExecuteStatement(conn protocol.Conn, stmtExec *protocol.StmtExecute) (protocol.Response, error) {
-	preStmt, err := conn.PreparedStatement(stmtExec.StatementID())
+	preStmt, err := conn.LookupPreparedStatementByID(stmtExec.StatementID())
 	if err != nil {
 		return nil, err
 	}

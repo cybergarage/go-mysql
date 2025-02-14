@@ -40,8 +40,8 @@ func (mgr *stmtManager) RegisterPreparedStatement(stmt PreparedStatement) error 
 	return nil
 }
 
-// PreparedStatement returns a prepared statement by the statement ID.
-func (mgr *stmtManager) PreparedStatement(stmtID StatementID) (PreparedStatement, error) {
+// LookupPreparedStatementByID returns a prepared statement by the statement ID.
+func (mgr *stmtManager) LookupPreparedStatementByID(stmtID StatementID) (PreparedStatement, error) {
 	stmt, ok := mgr.stmts[stmtID]
 	if !ok {
 		return nil, newErrInvalidStatementID(stmtID)

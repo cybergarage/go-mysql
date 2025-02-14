@@ -20,8 +20,8 @@ type StatementManager interface {
 	NextPreparedStatementID() (StatementID, error)
 	// RegisterPreparedStatement adds a prepared statement to the manager.
 	RegisterPreparedStatement(stmt PreparedStatement) error
-	// PreparedStatement returns a prepared statement by the statement ID.
-	PreparedStatement(stmtID StatementID) (PreparedStatement, error)
+	// LookupPreparedStatementByID returns a prepared statement by the statement ID.
+	LookupPreparedStatementByID(stmtID StatementID) (PreparedStatement, error)
 	// RemovePreparedStatement removes a prepared statement by the statement ID.
 	RemovePreparedStatement(stmtID StatementID)
 }
