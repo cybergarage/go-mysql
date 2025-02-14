@@ -217,7 +217,7 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 
 	// Generate next statement ID and create prepare response.
 
-	stmtID, err := server.NextPreparedStatementID()
+	stmtID, err := conn.NextPreparedStatementID()
 	if err != nil {
 		return nil, err
 	}
@@ -228,7 +228,7 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 	// Register the prepared statement.
 
 	premStmt := protocol.NewPreparedStatmentWith(stmtPrep, stmPrepRes)
-	err = server.RegisterPreparedStatement(premStmt)
+	err = conn.RegisterPreparedStatement(premStmt)
 	if err != nil {
 		return nil, err
 	}
@@ -240,7 +240,7 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 
 // ExecuteStatement executes a statement.
 func (server *server) ExecuteStatement(conn protocol.Conn, stmtExec *protocol.StmtExecute) (protocol.Response, error) {
-	preStmt, err := server.PreparedStatement(stmtExec.StatementID())
+	preStmt, err := conn.PreparedStatement(stmtExec.StatementID())
 	if err != nil {
 		return nil, err
 	}
@@ -261,7 +261,7 @@ func (server *server) ExecuteStatement(conn protocol.Conn, stmtExec *protocol.St
 
 // CloseStatement closes a statement.
 func (server *server) CloseStatement(conn protocol.Conn, stmt *protocol.StmtClose) (protocol.Response, error) {
-	server.RemovePreparedStatement(stmt.StatementID())
+	conn.RemovePreparedStatement(stmt.StatementID())
 	return nil, nil
 }
 

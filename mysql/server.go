@@ -17,7 +17,6 @@ package mysql
 import (
 	"github.com/cybergarage/go-mysql/mysql/auth"
 	"github.com/cybergarage/go-mysql/mysql/query"
-	"github.com/cybergarage/go-mysql/mysql/stmt"
 	"github.com/cybergarage/go-tracing/tracer"
 )
 
@@ -56,7 +55,6 @@ type SQLExecutorSetter interface {
 // Server represents a MySQL-compatible server interface.
 type Server interface {
 	auth.Manager
-	stmt.StatementManager
 	Config
 
 	// SetTracer sets a tracing tracer.

@@ -24,7 +24,6 @@ import (
 	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/mysql/auth"
 	mysqlnet "github.com/cybergarage/go-mysql/mysql/net"
-	"github.com/cybergarage/go-mysql/mysql/stmt"
 	"github.com/cybergarage/go-tracing/tracer"
 )
 
@@ -33,7 +32,6 @@ type Server struct {
 	Config
 	auth.Manager
 	mysqlnet.ConnManager
-	stmt.StatementManager
 	tracer.Tracer
 	lastConnID *Counter
 	CommandHandler
@@ -43,14 +41,13 @@ type Server struct {
 // NewServer returns a new server instance.
 func NewServer() *Server {
 	server := &Server{
-		Config:           NewDefaultConfig(),
-		Manager:          auth.NewManager(),
-		ConnManager:      mysqlnet.NewConnManager(),
-		StatementManager: stmt.NewStatementManager(),
-		Tracer:           tracer.NullTracer,
-		lastConnID:       NewCounter(),
-		CommandHandler:   nil,
-		tcpListener:      nil,
+		Config:         NewDefaultConfig(),
+		Manager:        auth.NewManager(),
+		ConnManager:    mysqlnet.NewConnManager(),
+		Tracer:         tracer.NullTracer,
+		lastConnID:     NewCounter(),
+		CommandHandler: nil,
+		tcpListener:    nil,
 	}
 	server.SetCapability(DefaultServerCapability)
 	return server
@@ -430,7 +427,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 				var stmt *StmtExecute
 				stmt, err = NewStmtExecuteFromCommand(cmd,
 					WithStmtExecuteStatementCapability(connCaps),
-					WithStmtExecuteStatementManager(server),
+					WithStmtExecuteStatementManager(conn),
 				)
 				if err == nil {
 					res, err = server.CommandHandler.ExecuteStatement(conn, stmt)
