@@ -14,15 +14,20 @@
 
 package stmt
 
+import (
+	"github.com/cybergarage/go-sqlparser/sql/stmt"
+)
+
 // NewStatementFrom creates a new statement from the prepared statement and parameters.
 func NewStatementFrom(prepStmt PreparedStatement, params []Parameter) (Statement, error) {
 	if len(params) != len(prepStmt.Parameters()) {
 		return nil, newErrInvalidParameters()
 	}
-	for n, param := range params {
-		if prepStmt.Parameters()[n].Type() != param.Type() {
-			return nil, newErrInvalidParameters()
-		}
-	}
-	return nil, newErrInvalidParameters()
+	bindStmt := stmt.NewBindStatement()
+	// for n, param := range params {
+	// 	if prepStmt.Parameters()[n].Type() != param.Type() {
+	// 		return nil, newErrInvalidParameters()
+	// 	}
+	// }
+	return bindStmt.Statement()
 }
