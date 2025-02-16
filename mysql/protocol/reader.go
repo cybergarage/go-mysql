@@ -119,7 +119,7 @@ func (reader *Reader) PeekInt2() (uint16, error) {
 	if err != nil {
 		return 0, err
 	}
-	return util.BytesToUint16(int16Bytes), nil
+	return util.BytesToUint16(int16Bytes)
 }
 
 // PeekInt4 peeks a 32-bit integer.
@@ -128,7 +128,7 @@ func (reader *Reader) PeekInt4() (uint32, error) {
 	if err != nil {
 		return 0, err
 	}
-	return util.BytesToUint32(int32Bytes), nil
+	return util.BytesToUint32(int32Bytes)
 }
 
 // ReadInt1 peeks a 8-bit integer.
@@ -150,7 +150,7 @@ func (reader *Reader) ReadInt2() (uint16, error) {
 	if nRead != 2 {
 		return 0, newErrShortPacket(2, nRead)
 	}
-	return util.BytesToUint16(int16Bytes), nil
+	return util.BytesToUint16(int16Bytes)
 }
 
 // ReadInt3 reads a 24-bit integer.
@@ -163,7 +163,7 @@ func (reader *Reader) ReadInt3() (uint32, error) {
 	if nRead != 3 {
 		return 0, newErrShortPacket(3, nRead)
 	}
-	return util.BytesToUint24(int24Bytes), nil
+	return util.BytesToUint24(int24Bytes)
 }
 
 // ReadInt4 reads a 32-bit integer.
@@ -176,7 +176,7 @@ func (reader *Reader) ReadInt4() (uint32, error) {
 	if nRead != 4 {
 		return 0, newErrShortPacket(4, nRead)
 	}
-	return util.BytesToUint32(int32Bytes), nil
+	return util.BytesToUint32(int32Bytes)
 }
 
 // ReadInt8 reads a 64-bit integer.
@@ -189,7 +189,7 @@ func (reader *Reader) ReadInt8() (uint64, error) {
 	if nRead != 8 {
 		return 0, newErrShortPacket(8, nRead)
 	}
-	return util.BytesToUint64(int64Bytes), nil
+	return util.BytesToUint64(int64Bytes)
 }
 
 // ReadLengthEncodedInt reads a length encoded integer.
