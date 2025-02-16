@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bytes
+package binary
 
 // BytesToUint64 converts the specified byte array to an integer.
 func BytesToUint64(b []byte) (uint64, error) {

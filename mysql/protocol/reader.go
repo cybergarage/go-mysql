@@ -19,7 +19,7 @@ import (
 	"errors"
 	"io"
 
-	util "github.com/cybergarage/go-mysql/mysql/encoding/bytes"
+	util "github.com/cybergarage/go-mysql/mysql/encoding/binary"
 )
 
 const (

@@ -18,7 +18,7 @@ import (
 	"encoding/binary"
 	"math"
 
-	"github.com/cybergarage/go-mysql/mysql/encoding/bytes"
+	bytes "github.com/cybergarage/go-mysql/mysql/encoding/binary"
 	"github.com/cybergarage/go-mysql/mysql/query"
 )
 

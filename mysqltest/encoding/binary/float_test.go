@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bytes
+package binary
 
 import (
 	"math"
 	"testing"
 
-	"github.com/cybergarage/go-mysql/mysql/encoding/bytes"
+	bytes "github.com/cybergarage/go-mysql/mysql/encoding/binary"
 )
 
 func TestFloat64Endode(t *testing.T) {
