@@ -197,15 +197,6 @@ func (w *Writer) WriteFixedLengthNullBytes(n int) error {
 	return w.writeFixedLengthBytes(nil, 0x00, n)
 }
 
-// WriteVariableLengthString writes a variable length string.
-func (w *Writer) WriteVariableLengthString(s string) error {
-	_, err := w.WriteString(s)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 // WriteLengthEncodedBytes writes a length encoded bytes.
 func (w *Writer) WriteLengthEncodedBytes(b []byte) error {
 	var n uint64
