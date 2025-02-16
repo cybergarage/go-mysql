@@ -25,6 +25,9 @@ var ErrInvalid = errors.New("invalid")
 // ErrOverflow is returned when the value is overflow.
 var ErrOverflow = errors.New("overflow")
 
+// ErrNotSupported is returned when the feature is not supported.
+var ErrNotSupported = errors.New("not supported")
+
 func newErrInvalidStatementID(stmdID StatementID) error {
 	return fmt.Errorf("%w statement ID: %d", ErrInvalid, stmdID)
 }
@@ -35,4 +38,8 @@ func newErrInvalidQuery(query string) error {
 
 func newErrInvalidParameters() error {
 	return fmt.Errorf("%w parameters", ErrInvalid)
+}
+
+func newErrNotSupportedFieldType(typ FieldType) error {
+	return fmt.Errorf("%w field type: %s", ErrNotSupported, typ.String())
 }
