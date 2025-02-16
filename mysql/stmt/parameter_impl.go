@@ -15,10 +15,7 @@
 package stmt
 
 import (
-	"encoding/binary"
-	"math"
-
-	bytes "github.com/cybergarage/go-mysql/mysql/encoding/binary"
+	"github.com/cybergarage/go-mysql/mysql/encoding/binary"
 	"github.com/cybergarage/go-mysql/mysql/query"
 )
 
@@ -88,17 +85,17 @@ func (param *parameter) Type() FieldType {
 func (param *parameter) Value() (any, error) {
 	switch param.typ {
 	case query.MySQLTypeTiny:
-		return bytes.BytesToInt8(param.v)
+		return binary.BytesToInt8(param.v)
 	case query.MySQLTypeShort:
-		return bytes.BytesToInt16(param.v)
+		return binary.BytesToInt16(param.v)
 	case query.MySQLTypeLong:
-		return bytes.BytesToInt32(param.v)
+		return binary.BytesToInt32(param.v)
 	case query.MySQLTypeLonglong:
-		return bytes.BytesToInt64(param.v)
+		return binary.BytesToInt64(param.v)
 	case query.MySQLTypeFloat:
-		return math.Float32frombits(binary.LittleEndian.Uint32(param.v)), nil
+		return binary.BytesToFloat32(param.v)
 	case query.MySQLTypeDouble:
-		return math.Float64frombits(binary.LittleEndian.Uint64(param.v)), nil
+		return binary.BytesToFloat64(param.v)
 	case query.MySQLTypeNull:
 		return nil, nil
 	}

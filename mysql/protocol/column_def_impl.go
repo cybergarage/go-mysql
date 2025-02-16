@@ -16,6 +16,8 @@ package protocol
 
 import (
 	"io"
+
+	"github.com/cybergarage/go-mysql/mysql/encoding/binary"
 )
 
 // MySQL: Column Definition
@@ -292,7 +294,7 @@ func (pkt *columnDef) Decimals() uint8 {
 
 // Bytes returns the packet bytes.
 func (pkt *columnDef) Bytes() ([]byte, error) {
-	w := NewWriter()
+	w := binary.NewWriter()
 
 	if err := w.WriteLengthEncodedString(pkt.catalog); err != nil {
 		return nil, err

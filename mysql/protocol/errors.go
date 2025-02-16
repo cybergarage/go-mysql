@@ -46,18 +46,6 @@ func newErrNotExist(v any) error {
 	return fmt.Errorf("%v is %w", v, ErrNotExist)
 }
 
-func newErrShortPacket(expected int, actual int) error {
-	return fmt.Errorf("%w short packet : %d < %d", ErrInvalid, actual, expected)
-}
-
-func newErrInvalidCode(name string, v uint) error {
-	return fmt.Errorf("%s is %w code (%X)", name, ErrInvalid, v)
-}
-
-func newErrInvalidLength(name string, v int) error {
-	return fmt.Errorf("%s is %w length (%d)", name, ErrInvalid, v)
-}
-
 func newErrInvalidHeader(name string, v byte) error {
 	return fmt.Errorf("%s is %w header (%X)", name, ErrInvalid, v)
 }

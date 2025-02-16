@@ -16,24 +16,26 @@ package protocol
 
 import (
 	"io"
+
+	"github.com/cybergarage/go-mysql/mysql/encoding/binary"
 )
 
 // PacketReader represents a packet reader of MySQL protocol.
 type PacketReader struct {
-	*Reader
+	*binary.Reader
 }
 
 // NewPacketReaderWithReader returns a new packet reader with the specified reader.
 func NewPacketReaderWithReader(reader io.Reader) *PacketReader {
 	return &PacketReader{
-		Reader: NewReaderWithReader(reader),
+		Reader: binary.NewReaderWithReader(reader),
 	}
 }
 
 // NewPacketReaderWithBytes returns a new packet reader with the specified bytes.
 func NewPacketReaderWithBytes(data []byte) *PacketReader {
 	return &PacketReader{
-		Reader: NewReaderWithBytes(data),
+		Reader: binary.NewReaderWithBytes(data),
 	}
 }
 

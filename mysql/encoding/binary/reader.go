@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package protocol
+package binary
 
 import (
 	"bytes"
 	"errors"
 	"io"
-
-	util "github.com/cybergarage/go-mysql/mysql/encoding/binary"
 )
 
 const (
@@ -83,7 +81,7 @@ func (reader *Reader) PeekBytes(n int) ([]byte, error) {
 		return nil, err
 	}
 	if nRead != n {
-		return nil, newErrShortPacket(n, nRead)
+		return nil, newErrInvalidLength(n, nRead)
 	}
 	reader.peekBuf = append(reader.peekBuf, buf...)
 	return buf, nil
@@ -119,7 +117,7 @@ func (reader *Reader) PeekInt2() (uint16, error) {
 	if err != nil {
 		return 0, err
 	}
-	return util.BytesToUint16(int16Bytes)
+	return BytesToUint16(int16Bytes)
 }
 
 // PeekInt4 peeks a 32-bit integer.
@@ -128,7 +126,7 @@ func (reader *Reader) PeekInt4() (uint32, error) {
 	if err != nil {
 		return 0, err
 	}
-	return util.BytesToUint32(int32Bytes)
+	return BytesToUint32(int32Bytes)
 }
 
 // ReadInt1 peeks a 8-bit integer.
@@ -148,9 +146,9 @@ func (reader *Reader) ReadInt2() (uint16, error) {
 		return 0, err
 	}
 	if nRead != 2 {
-		return 0, newErrShortPacket(2, nRead)
+		return 0, newErrInvalidLength(2, nRead)
 	}
-	return util.BytesToUint16(int16Bytes)
+	return BytesToUint16(int16Bytes)
 }
 
 // ReadInt3 reads a 24-bit integer.
@@ -161,9 +159,9 @@ func (reader *Reader) ReadInt3() (uint32, error) {
 		return 0, err
 	}
 	if nRead != 3 {
-		return 0, newErrShortPacket(3, nRead)
+		return 0, newErrInvalidLength(3, nRead)
 	}
-	return util.BytesToUint24(int24Bytes)
+	return BytesToUint24(int24Bytes)
 }
 
 // ReadInt4 reads a 32-bit integer.
@@ -174,9 +172,9 @@ func (reader *Reader) ReadInt4() (uint32, error) {
 		return 0, err
 	}
 	if nRead != 4 {
-		return 0, newErrShortPacket(4, nRead)
+		return 0, newErrInvalidLength(4, nRead)
 	}
-	return util.BytesToUint32(int32Bytes)
+	return BytesToUint32(int32Bytes)
 }
 
 // ReadInt8 reads a 64-bit integer.
@@ -187,9 +185,9 @@ func (reader *Reader) ReadInt8() (uint64, error) {
 		return 0, err
 	}
 	if nRead != 8 {
-		return 0, newErrShortPacket(8, nRead)
+		return 0, newErrInvalidLength(8, nRead)
 	}
-	return util.BytesToUint64(int64Bytes)
+	return BytesToUint64(int64Bytes)
 }
 
 // ReadLengthEncodedInt reads a length encoded integer.
@@ -274,7 +272,7 @@ func (reader *Reader) ReadFixedLengthBytes(n int) ([]byte, error) {
 		return nil, err
 	}
 	if nRead != n {
-		return nil, newErrShortPacket(n, nRead)
+		return nil, newErrInvalidLength(n, nRead)
 	}
 	return b, nil
 }

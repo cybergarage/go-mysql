@@ -18,6 +18,7 @@ import (
 	"io"
 
 	"github.com/cybergarage/go-mysql/mysql/auth"
+	"github.com/cybergarage/go-mysql/mysql/encoding/binary"
 )
 
 // MySQL: Connection Phase
@@ -156,14 +157,14 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 				return nil, err
 			}
 			keyLen := len(key)
-			readAttrSize += LengthEncodeIntSize(uint64(keyLen)) + keyLen
+			readAttrSize += binary.LengthEncodeIntSize(uint64(keyLen)) + keyLen
 
 			value, err := res.ReadLengthEncodedString()
 			if err != nil {
 				return nil, err
 			}
 			valueLen := len(value)
-			readAttrSize += LengthEncodeIntSize(uint64(valueLen)) + valueLen
+			readAttrSize += binary.LengthEncodeIntSize(uint64(valueLen)) + valueLen
 
 			res.AddAttribute(key, value)
 		}

@@ -1,4 +1,4 @@
-// Copyright (C) 2025 The go-mysql Authors. All rights reserved.
+// Copyright (C) 2019 The go-mysql Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,6 @@
 
 package binary
 
-import (
-	"errors"
-	"fmt"
-)
-
-var ErrInvalid = errors.New("invalid")
-
-func newErrInvalidLength(expected int, actual int) error {
-	return fmt.Errorf("%w byte length : %d < %d", ErrInvalid, actual, expected)
-}
-
-func newErrInvalidCode(name string, v uint) error {
-	return fmt.Errorf("%s is %w code (%X)", name, ErrInvalid, v)
+func LengthEncodedStringToString(s string) []byte {
+	return []byte(s)
 }

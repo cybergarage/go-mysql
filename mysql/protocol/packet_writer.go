@@ -14,15 +14,19 @@
 
 package protocol
 
+import (
+	"github.com/cybergarage/go-mysql/mysql/encoding/binary"
+)
+
 // PacketWriter represents a packet writer of MySQL protocol.
 type PacketWriter struct {
-	*Writer
+	*binary.Writer
 }
 
 // NewPacketWriter returns a new packet writer.
 func NewPacketWriter() *PacketWriter {
 	return &PacketWriter{
-		Writer: NewWriter(),
+		Writer: binary.NewWriter(),
 	}
 }
 

@@ -20,7 +20,7 @@ import (
 
 func BytesToFloat64(b []byte) (float64, error) {
 	if len(b) != 8 {
-		return 0, newErrInvalidLength()
+		return 0, newErrInvalidLength(8, len(b))
 	}
 	v := math.Float64frombits(
 		uint64(b[7])<<56 |
@@ -50,7 +50,7 @@ func Float64ToBytes(v float64) []byte {
 
 func BytesToFloat32(b []byte) (float32, error) {
 	if len(b) != 4 {
-		return 0, newErrInvalidLength()
+		return 0, newErrInvalidLength(4, len(b))
 	}
 	v := math.Float32frombits(
 		uint32(b[3])<<24 |

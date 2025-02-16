@@ -17,8 +17,6 @@ package binary
 import (
 	"math"
 	"testing"
-
-	bytes "github.com/cybergarage/go-mysql/mysql/encoding/binary"
 )
 
 func TestFloat64Endode(t *testing.T) {
@@ -33,8 +31,8 @@ func TestFloat64Endode(t *testing.T) {
 	}
 
 	for _, tv := range ts {
-		b := bytes.Float64ToBytes(tv)
-		v, err := bytes.BytesToFloat64(b)
+		b := Float64ToBytes(tv)
+		v, err := BytesToFloat64(b)
 		if err != nil {
 			t.Error(err)
 			continue
@@ -57,8 +55,8 @@ func TestFloat32Endode(t *testing.T) {
 	}
 
 	for _, tv := range ts {
-		b := bytes.Float32ToBytes(tv)
-		v, err := bytes.BytesToFloat32(b)
+		b := Float32ToBytes(tv)
+		v, err := BytesToFloat32(b)
 		if err != nil {
 			t.Error(err)
 			continue

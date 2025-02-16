@@ -16,6 +16,8 @@ package protocol
 
 import (
 	"io"
+
+	"github.com/cybergarage/go-mysql/mysql/encoding/binary"
 )
 
 // MySQL: Text Resultset
@@ -114,7 +116,7 @@ func (pkt *ColumnCount) ColumnCount() uint64 {
 
 // Bytes returns the packet bytes.
 func (pkt *ColumnCount) Bytes() ([]byte, error) {
-	w := NewWriter()
+	w := binary.NewWriter()
 
 	if pkt.Capability().IsEnabled(ClientOptionalResultsetMetadata) {
 		err := w.WriteByte(pkt.metadataFollows)

@@ -16,6 +16,8 @@ package protocol
 
 import (
 	"io"
+
+	"github.com/cybergarage/go-mysql/mysql/encoding/binary"
 )
 
 // MySQL: Connection Phase
@@ -284,7 +286,7 @@ func (pkt *Handshake) AuthPluginName() string {
 
 // Bytes returns the packet bytes.
 func (pkt *Handshake) Bytes() ([]byte, error) {
-	w := NewWriter()
+	w := binary.NewWriter()
 	if err := w.WriteByte(pkt.protocolVersion); err != nil {
 		return nil, err
 	}
