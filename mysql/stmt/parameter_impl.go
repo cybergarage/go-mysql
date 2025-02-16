@@ -14,6 +14,14 @@
 
 package stmt
 
+import (
+	"encoding/binary"
+	"math"
+
+	"github.com/cybergarage/go-mysql/mysql/encoding/bytes"
+	"github.com/cybergarage/go-mysql/mysql/query"
+)
+
 // MySQL: COM_STMT_EXECUTE
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_stmt_execute.html
 // MySQL: Binary Protocol Resultset
@@ -29,7 +37,7 @@ type ParameterOption func(*parameter)
 type parameter struct {
 	name string
 	typ  FieldType
-	v    any
+	v    []byte
 }
 
 // WithParameterName sets the name of the parameter.
@@ -46,8 +54,8 @@ func WithParameterType(typ FieldType) ParameterOption {
 	}
 }
 
-// WithParameterValue sets the value of the parameter.
-func WithParameterValue(v any) ParameterOption {
+// WithParameterBytes sets the value of the parameter.
+func WithParameterBytes(v []byte) ParameterOption {
 	return func(p *parameter) {
 		p.v = v
 	}
@@ -78,5 +86,22 @@ func (param *parameter) Type() FieldType {
 
 // Value returns the value of the parameter.
 func (param *parameter) Value() (any, error) {
-	return param.v, nil
+	switch param.typ {
+	case query.MySQLTypeTiny:
+		return bytes.BytesToInt8(param.v)
+	case query.MySQLTypeShort:
+		return bytes.BytesToInt16(param.v)
+	case query.MySQLTypeLong:
+		return bytes.BytesToInt32(param.v)
+	case query.MySQLTypeLonglong:
+		return bytes.BytesToInt64(param.v)
+	case query.MySQLTypeFloat:
+		return math.Float32frombits(binary.LittleEndian.Uint32(param.v)), nil
+	case query.MySQLTypeDouble:
+		return math.Float64frombits(binary.LittleEndian.Uint64(param.v)), nil
+	case query.MySQLTypeNull:
+		return nil, nil
+	}
+
+	return param.v, newErrNotSupportedFieldType(param.typ)
 }

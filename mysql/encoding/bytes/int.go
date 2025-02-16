@@ -15,7 +15,10 @@
 package bytes
 
 // BytesToInt64 converts the specified byte array to an integer.
-func BytesToInt64(b []byte) int64 {
+func BytesToInt64(b []byte) (int64, error) {
+	if len(b) != 8 {
+		return 0, newErrInvalidLength()
+	}
 	v := int64(b[7])<<56 |
 		int64(b[6])<<48 |
 		int64(b[5])<<40 |
@@ -24,7 +27,7 @@ func BytesToInt64(b []byte) int64 {
 		int64(b[2])<<16 |
 		int64(b[1])<<8 |
 		int64(b[0])
-	return v
+	return v, nil
 }
 
 // Int64ToBytes converts the specified integer to a byte array.
@@ -42,12 +45,15 @@ func Int64ToBytes(v int64) []byte {
 }
 
 // BytesToInt32 converts the specified byte array to an integer.
-func BytesToInt32(b []byte) int32 {
+func BytesToInt32(b []byte) (int32, error) {
+	if len(b) != 4 {
+		return 0, newErrInvalidLength()
+	}
 	v := int32(b[3])<<24 |
 		int32(b[2])<<16 |
 		int32(b[1])<<8 |
 		int32(b[0])
-	return v
+	return v, nil
 }
 
 // Int32ToBytes converts the specified integer to a byte array.
@@ -60,11 +66,34 @@ func Int32ToBytes(v int32) []byte {
 	return b
 }
 
+// BytesToInt24 converts the specified byte array to an integer.
+func BytesToInt24(b []byte) (int32, error) {
+	if len(b) != 3 {
+		return 0, newErrInvalidLength()
+	}
+	v := int32(b[2])<<16 |
+		int32(b[1])<<8 |
+		int32(b[0])
+	return v, nil
+}
+
+// Int24ToBytes converts the specified integer to a byte array.
+func Int24ToBytes(v int32) []byte {
+	b := make([]byte, 3)
+	b[0] = byte(v & 0xFF)
+	b[1] = byte((v >> 8) & 0xFF)
+	b[2] = byte((v >> 16) & 0xFF)
+	return b
+}
+
 // BytesToInt16 converts the specified byte array to an integer.
-func BytesToInt16(b []byte) int16 {
+func BytesToInt16(b []byte) (int16, error) {
+	if len(b) != 2 {
+		return 0, newErrInvalidLength()
+	}
 	v := int16(b[1])<<8 |
 		int16(b[0])
-	return v
+	return v, nil
 }
 
 // Int16ToBytes converts the specified integer to a byte array.
@@ -76,8 +105,11 @@ func Int16ToBytes(v int16) []byte {
 }
 
 // BytesToInt8 converts the specified byte array to an integer.
-func BytesToInt8(b []byte) int8 {
-	return int8(b[0])
+func BytesToInt8(b []byte) (int8, error) {
+	if len(b) != 1 {
+		return 0, newErrInvalidLength()
+	}
+	return int8(b[0]), nil
 }
 
 // Int8ToBytes converts the specified integer to a byte array.

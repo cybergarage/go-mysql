@@ -17,87 +17,100 @@ package bytes
 import (
 	"math"
 	"testing"
+
+	"github.com/cybergarage/go-mysql/mysql/encoding/bytes"
 )
 
-func TestUint64Endode(t *testing.T) {
-	ts := []uint64{
+func TestInt64Endode(t *testing.T) {
+	ts := []int64{
+		math.MinInt64,
+		math.MinInt64 / 2,
+		-1,
 		0,
 		1,
-		math.MaxUint64 / 2,
-		math.MaxUint64,
+		math.MaxInt64 / 2,
+		math.MaxInt64,
 	}
 
 	for _, tv := range ts {
-		b := Uint64ToBytes(tv)
-		v := BytesToUint64(b)
+		b := bytes.Int64ToBytes(tv)
+		v, err := bytes.BytesToInt64(b)
+		if err != nil {
+			t.Error(err)
+			continue
+		}
 		if tv != v {
 			t.Errorf("Failed to convert (%d != %d)", tv, v)
 		}
 	}
 }
 
-func TestUint32Endode(t *testing.T) {
-	ts := []uint32{
+func TestInt32Endode(t *testing.T) {
+	ts := []int32{
+		math.MinInt32,
+		math.MinInt32 / 2,
+		-1,
 		0,
 		1,
-		math.MaxUint32 / 2,
-		math.MaxUint32,
+		math.MaxInt32 / 2,
+		math.MaxInt32,
 	}
 
 	for _, tv := range ts {
-		b := Uint32ToBytes(tv)
-		v := BytesToUint32(b)
+		b := bytes.Int32ToBytes(tv)
+		v, err := bytes.BytesToInt32(b)
+		if err != nil {
+			t.Error(err)
+			continue
+		}
 		if tv != v {
 			t.Errorf("Failed to convert (%d != %d)", tv, v)
 		}
 	}
 }
 
-func TestUint24Endode(t *testing.T) {
-	ts := []uint32{
+func TestInt16Endode(t *testing.T) {
+	ts := []int16{
+		math.MinInt16,
+		math.MinInt16 / 2,
+		-1,
 		0,
 		1,
-		((1 << 24) - 1) / 2,
-		((1 << 24) - 1),
+		math.MaxInt16 / 2,
+		math.MaxInt16,
 	}
 
 	for _, tv := range ts {
-		b := Uint24ToBytes(tv)
-		v := BytesToUint24(b)
+		b := bytes.Int16ToBytes(tv)
+		v, err := bytes.BytesToInt16(b)
+		if err != nil {
+			t.Error(err)
+			continue
+		}
 		if tv != v {
 			t.Errorf("Failed to convert (%d != %d)", tv, v)
 		}
 	}
 }
 
-func TestUint16Endode(t *testing.T) {
-	ts := []uint16{
+func TestInt8Endode(t *testing.T) {
+	ts := []int8{
+		math.MinInt8,
+		math.MinInt8 / 2,
+		-1,
 		0,
 		1,
-		math.MaxUint16 / 2,
-		math.MaxUint16,
+		math.MaxInt8 / 2,
+		math.MaxInt8,
 	}
 
 	for _, tv := range ts {
-		b := Uint16ToBytes(tv)
-		v := BytesToUint16(b)
-		if tv != v {
-			t.Errorf("Failed to convert (%d != %d)", tv, v)
+		b := bytes.Int8ToBytes(tv)
+		v, err := bytes.BytesToInt8(b)
+		if err != nil {
+			t.Error(err)
+			continue
 		}
-	}
-}
-
-func TestUint8Endode(t *testing.T) {
-	ts := []uint8{
-		0,
-		1,
-		math.MaxUint8 / 2,
-		math.MaxUint8,
-	}
-
-	for _, tv := range ts {
-		b := Uint8ToBytes(tv)
-		v := BytesToUint8(b)
 		if tv != v {
 			t.Errorf("Failed to convert (%d != %d)", tv, v)
 		}

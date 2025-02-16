@@ -1,4 +1,4 @@
-// Copyright (C) 2019 The go-mysql Authors. All rights reserved.
+// Copyright (C) 2025 The go-mysql Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
 package bytes
 
 // BytesToUint64 converts the specified byte array to an integer.
-func BytesToUint64(b []byte) uint64 {
+func BytesToUint64(b []byte) (uint64, error) {
+	if len(b) != 8 {
+		return 0, newErrInvalidLength()
+	}
 	v := uint64(b[7])<<56 |
 		uint64(b[6])<<48 |
 		uint64(b[5])<<40 |
@@ -24,7 +27,7 @@ func BytesToUint64(b []byte) uint64 {
 		uint64(b[2])<<16 |
 		uint64(b[1])<<8 |
 		uint64(b[0])
-	return v
+	return v, nil
 }
 
 // Uint64ToBytes converts the specified integer to a byte array.
@@ -42,12 +45,15 @@ func Uint64ToBytes(v uint64) []byte {
 }
 
 // BytesToUint32 converts the specified byte array to an integer.
-func BytesToUint32(b []byte) uint32 {
+func BytesToUint32(b []byte) (uint32, error) {
+	if len(b) != 4 {
+		return 0, newErrInvalidLength()
+	}
 	v := uint32(b[3])<<24 |
 		uint32(b[2])<<16 |
 		uint32(b[1])<<8 |
 		uint32(b[0])
-	return v
+	return v, nil
 }
 
 // Uint32ToBytes converts the specified integer to a byte array.
@@ -61,11 +67,14 @@ func Uint32ToBytes(v uint32) []byte {
 }
 
 // BytesToUint24 converts the specified byte array to an integer.
-func BytesToUint24(b []byte) uint32 {
+func BytesToUint24(b []byte) (uint32, error) {
+	if len(b) != 3 {
+		return 0, newErrInvalidLength()
+	}
 	v := uint32(b[2])<<16 |
 		uint32(b[1])<<8 |
 		uint32(b[0])
-	return v
+	return v, nil
 }
 
 // Uint24ToBytes converts the specified integer to a byte array.
@@ -78,10 +87,13 @@ func Uint24ToBytes(v uint32) []byte {
 }
 
 // BytesToUint16 converts the specified byte array to an integer.
-func BytesToUint16(b []byte) uint16 {
+func BytesToUint16(b []byte) (uint16, error) {
+	if len(b) != 2 {
+		return 0, newErrInvalidLength()
+	}
 	v := uint16(b[1])<<8 |
 		uint16(b[0])
-	return v
+	return v, nil
 }
 
 // Uint16ToBytes converts the specified integer to a byte array.
@@ -93,8 +105,11 @@ func Uint16ToBytes(v uint16) []byte {
 }
 
 // BytesToUint8 converts the specified byte array to an integer.
-func BytesToUint8(b []byte) uint8 {
-	return b[0]
+func BytesToUint8(b []byte) (uint8, error) {
+	if len(b) != 1 {
+		return 0, newErrInvalidLength()
+	}
+	return b[0], nil
 }
 
 // Uint8ToBytes converts the specified integer to a byte array.
