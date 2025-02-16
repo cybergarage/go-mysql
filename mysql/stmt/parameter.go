@@ -28,5 +28,5 @@ type Parameter interface {
 	// Type returns the column type.
 	Type() FieldType
 	// Value returns the column value.
-	Value() any
+	Value() (any, error)
 }

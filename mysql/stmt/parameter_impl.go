@@ -14,6 +14,15 @@
 
 package stmt
 
+// MySQL: COM_STMT_EXECUTE
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_stmt_execute.html
+// MySQL: Binary Protocol Resultset
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_binary_resultset.html
+// COM_STMT_EXECUTE - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/com_stmt_execute/
+// Resultset row - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/resultset-row/
+
 // ParameterOption is the option of the parameter.
 type ParameterOption func(*parameter)
 
@@ -46,28 +55,28 @@ func WithParameterValue(v any) ParameterOption {
 
 // NewParameter creates a new parameter with the options.
 func NewParameter(opts ...ParameterOption) Parameter {
-	p := &parameter{
+	param := &parameter{
 		name: "",
 		typ:  0,
 		v:    nil,
 	}
 	for _, opt := range opts {
-		opt(p)
+		opt(param)
 	}
-	return p
+	return param
 }
 
 // Name returns the name of the parameter.
-func (p *parameter) Name() string {
-	return p.name
+func (param *parameter) Name() string {
+	return param.name
 }
 
 // Type returns the type of the parameter.
-func (p *parameter) Type() FieldType {
-	return p.typ
+func (param *parameter) Type() FieldType {
+	return param.typ
 }
 
 // Value returns the value of the parameter.
-func (p *parameter) Value() any {
-	return p.v
+func (param *parameter) Value() (any, error) {
+	return param.v, nil
 }
