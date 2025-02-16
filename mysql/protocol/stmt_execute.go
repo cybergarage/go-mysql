@@ -252,7 +252,7 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 			paramOpts = append(paramOpts, stmt.WithParameterType(pkt.paramTypes[n]))
 		}
 		if n < len(pkt.paramValues) {
-			paramOpts = append(paramOpts, stmt.WithParameterValue(pkt.paramValues[n]))
+			paramOpts = append(paramOpts, stmt.WithParameterBytes(pkt.paramValues[n]))
 		}
 		pkt.params[n] = stmt.NewParameter(paramOpts...)
 	}
