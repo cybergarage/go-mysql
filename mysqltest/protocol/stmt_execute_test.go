@@ -39,6 +39,13 @@ func TestStmtExecutePacket(t *testing.T) {
 				stmtID: 1,
 			},
 		},
+		{
+			"data/stmt-execute-002.hex",
+			1,
+			expected{
+				stmtID: 2,
+			},
+		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			testData, err := testPackettFiles.ReadFile(test.name)
