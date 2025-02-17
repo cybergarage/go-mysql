@@ -19,7 +19,7 @@ import (
 	"testing"
 )
 
-func TestInt64Endode(t *testing.T) {
+func TestInt8Endode(t *testing.T) {
 	ts := []int64{
 		math.MinInt64,
 		math.MinInt64 / 2,
@@ -31,8 +31,8 @@ func TestInt64Endode(t *testing.T) {
 	}
 
 	for _, tv := range ts {
-		b := Int64ToBytes(tv)
-		v, err := BytesToInt64(b)
+		b := Int8ToBytes(tv)
+		v, err := BytesToInt8(b)
 		if err != nil {
 			t.Error(err)
 			continue
@@ -43,7 +43,7 @@ func TestInt64Endode(t *testing.T) {
 	}
 }
 
-func TestInt32Endode(t *testing.T) {
+func TestInt4Endode(t *testing.T) {
 	ts := []int32{
 		math.MinInt32,
 		math.MinInt32 / 2,
@@ -55,8 +55,8 @@ func TestInt32Endode(t *testing.T) {
 	}
 
 	for _, tv := range ts {
-		b := Int32ToBytes(tv)
-		v, err := BytesToInt32(b)
+		b := Int4ToBytes(tv)
+		v, err := BytesToInt4(b)
 		if err != nil {
 			t.Error(err)
 			continue
@@ -67,7 +67,7 @@ func TestInt32Endode(t *testing.T) {
 	}
 }
 
-func TestInt16Endode(t *testing.T) {
+func TestInt2Endode(t *testing.T) {
 	ts := []int16{
 		math.MinInt16,
 		math.MinInt16 / 2,
@@ -79,8 +79,8 @@ func TestInt16Endode(t *testing.T) {
 	}
 
 	for _, tv := range ts {
-		b := Int16ToBytes(tv)
-		v, err := BytesToInt16(b)
+		b := Int2ToBytes(tv)
+		v, err := BytesToInt2(b)
 		if err != nil {
 			t.Error(err)
 			continue
@@ -91,7 +91,7 @@ func TestInt16Endode(t *testing.T) {
 	}
 }
 
-func TestInt8Endode(t *testing.T) {
+func TestInt1Endode(t *testing.T) {
 	ts := []int8{
 		math.MinInt8,
 		math.MinInt8 / 2,
@@ -103,8 +103,8 @@ func TestInt8Endode(t *testing.T) {
 	}
 
 	for _, tv := range ts {
-		b := Int8ToBytes(tv)
-		v, err := BytesToInt8(b)
+		b := Int1ToBytes(tv)
+		v, err := BytesToInt1(b)
 		if err != nil {
 			t.Error(err)
 			continue

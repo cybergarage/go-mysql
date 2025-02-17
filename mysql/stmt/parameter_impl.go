@@ -85,17 +85,17 @@ func (param *parameter) Type() FieldType {
 func (param *parameter) Value() (any, error) {
 	switch param.typ {
 	case query.MySQLTypeTiny:
-		return binary.BytesToInt8(param.v)
+		return binary.BytesToInt1(param.v)
 	case query.MySQLTypeShort:
-		return binary.BytesToInt16(param.v)
+		return binary.BytesToInt2(param.v)
 	case query.MySQLTypeLong:
-		return binary.BytesToInt32(param.v)
+		return binary.BytesToInt4(param.v)
 	case query.MySQLTypeLonglong:
-		return binary.BytesToInt64(param.v)
+		return binary.BytesToInt8(param.v)
 	case query.MySQLTypeFloat:
-		return binary.BytesToFloat32(param.v)
+		return binary.BytesToFloat4(param.v)
 	case query.MySQLTypeDouble:
-		return binary.BytesToFloat64(param.v)
+		return binary.BytesToFloat8(param.v)
 	case query.MySQLTypeNull:
 		return nil, nil
 	}

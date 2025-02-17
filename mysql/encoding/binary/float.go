@@ -18,7 +18,8 @@ import (
 	"math"
 )
 
-func BytesToFloat64(b []byte) (float64, error) {
+// BytesToFloat8 converts the specified byte array to a float64.
+func BytesToFloat8(b []byte) (float64, error) {
 	if len(b) != 8 {
 		return 0, newErrInvalidLength(8, len(b))
 	}
@@ -34,7 +35,8 @@ func BytesToFloat64(b []byte) (float64, error) {
 	return v, nil
 }
 
-func Float64ToBytes(v float64) []byte {
+// Float8ToBytes converts the specified float64 to a byte array.
+func Float8ToBytes(v float64) []byte {
 	b := make([]byte, 8)
 	u := math.Float64bits(v)
 	b[0] = byte(u & 0xFF)
@@ -48,7 +50,8 @@ func Float64ToBytes(v float64) []byte {
 	return b
 }
 
-func BytesToFloat32(b []byte) (float32, error) {
+// BytesToFloat4 converts the specified byte array to a float32.
+func BytesToFloat4(b []byte) (float32, error) {
 	if len(b) != 4 {
 		return 0, newErrInvalidLength(4, len(b))
 	}
@@ -60,7 +63,8 @@ func BytesToFloat32(b []byte) (float32, error) {
 	return v, nil
 }
 
-func Float32ToBytes(v float32) []byte {
+// Float4ToBytes converts the specified float32 to a byte array.
+func Float4ToBytes(v float32) []byte {
 	b := make([]byte, 4)
 	u := math.Float32bits(v)
 	b[0] = byte(u & 0xFF)

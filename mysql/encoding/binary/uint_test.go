@@ -19,7 +19,7 @@ import (
 	"testing"
 )
 
-func TestUint64Endode(t *testing.T) {
+func TestUint8Endode(t *testing.T) {
 	ts := []uint64{
 		0,
 		1,
@@ -28,8 +28,8 @@ func TestUint64Endode(t *testing.T) {
 	}
 
 	for _, tv := range ts {
-		b := Uint64ToBytes(tv)
-		v, err := BytesToUint64(b)
+		b := Uint8ToBytes(tv)
+		v, err := BytesToUint8(b)
 		if err != nil {
 			t.Error(err)
 			continue
@@ -40,7 +40,7 @@ func TestUint64Endode(t *testing.T) {
 	}
 }
 
-func TestUint32Endode(t *testing.T) {
+func TestUint4Endode(t *testing.T) {
 	ts := []uint32{
 		0,
 		1,
@@ -49,8 +49,8 @@ func TestUint32Endode(t *testing.T) {
 	}
 
 	for _, tv := range ts {
-		b := Uint32ToBytes(tv)
-		v, err := BytesToUint32(b)
+		b := Uint4ToBytes(tv)
+		v, err := BytesToUint4(b)
 		if err != nil {
 			t.Error(err)
 			continue
@@ -65,7 +65,7 @@ func TestUint32Endode(t *testing.T) {
 	}
 }
 
-func TestUint24Endode(t *testing.T) {
+func TestUint3Endode(t *testing.T) {
 	ts := []uint32{
 		0,
 		1,
@@ -74,8 +74,8 @@ func TestUint24Endode(t *testing.T) {
 	}
 
 	for _, tv := range ts {
-		b := Uint24ToBytes(tv)
-		v, err := BytesToUint24(b)
+		b := Uint3ToBytes(tv)
+		v, err := BytesToUint3(b)
 		if err != nil {
 			t.Error(err)
 			continue
@@ -86,7 +86,7 @@ func TestUint24Endode(t *testing.T) {
 	}
 }
 
-func TestUint16Endode(t *testing.T) {
+func TestUint2Endode(t *testing.T) {
 	ts := []uint16{
 		0,
 		1,
@@ -95,8 +95,8 @@ func TestUint16Endode(t *testing.T) {
 	}
 
 	for _, tv := range ts {
-		b := Uint16ToBytes(tv)
-		v, err := BytesToUint16(b)
+		b := Uint2ToBytes(tv)
+		v, err := BytesToUint2(b)
 		if err != nil {
 			t.Error(err)
 			continue
@@ -107,7 +107,7 @@ func TestUint16Endode(t *testing.T) {
 	}
 }
 
-func TestUint8Endode(t *testing.T) {
+func TestUint1Endode(t *testing.T) {
 	ts := []uint8{
 		0,
 		1,
@@ -116,8 +116,8 @@ func TestUint8Endode(t *testing.T) {
 	}
 
 	for _, tv := range ts {
-		b := Uint8ToBytes(tv)
-		v, err := BytesToUint8(b)
+		b := Uint1ToBytes(tv)
+		v, err := BytesToUint1(b)
 		if err != nil {
 			t.Error(err)
 			continue

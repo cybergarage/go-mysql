@@ -19,7 +19,7 @@ import (
 	"testing"
 )
 
-func TestFloat64Endode(t *testing.T) {
+func TestFloat8Endode(t *testing.T) {
 	ts := []float64{
 		math.MinInt64,
 		math.MinInt64 / 2,
@@ -31,8 +31,8 @@ func TestFloat64Endode(t *testing.T) {
 	}
 
 	for _, tv := range ts {
-		b := Float64ToBytes(tv)
-		v, err := BytesToFloat64(b)
+		b := Float8ToBytes(tv)
+		v, err := BytesToFloat8(b)
 		if err != nil {
 			t.Error(err)
 			continue
@@ -43,7 +43,7 @@ func TestFloat64Endode(t *testing.T) {
 	}
 }
 
-func TestFloat32Endode(t *testing.T) {
+func TestFloat4Endode(t *testing.T) {
 	ts := []float32{
 		math.MinInt32,
 		math.MinInt32 / 2,
@@ -55,8 +55,8 @@ func TestFloat32Endode(t *testing.T) {
 	}
 
 	for _, tv := range ts {
-		b := Float32ToBytes(tv)
-		v, err := BytesToFloat32(b)
+		b := Float4ToBytes(tv)
+		v, err := BytesToFloat4(b)
 		if err != nil {
 			t.Error(err)
 			continue

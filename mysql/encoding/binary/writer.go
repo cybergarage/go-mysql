@@ -44,51 +44,31 @@ func (w *Writer) WriteBytes(b []byte) (int, error) {
 
 // WriteInt1 writes a 1 byte integer.
 func (w *Writer) WriteInt1(v uint8) error {
-	return w.WriteByte(byte(v))
+	_, err := w.WriteBytes(Uint1ToBytes(v))
+	return err
 }
 
 // WriteInt2 writes a 2 byte integer.
 func (w *Writer) WriteInt2(v uint16) error {
-	b := make([]byte, 2)
-	b[0] = byte(v & 0xFF)
-	b[1] = byte((v >> 8) & 0xFF)
-	_, err := w.WriteBytes(b)
+	_, err := w.WriteBytes(Uint2ToBytes(v))
 	return err
 }
 
 // WriteInt3 writes a 3 byte integer.
 func (w *Writer) WriteInt3(v uint32) error {
-	b := make([]byte, 3)
-	b[0] = byte(v & 0xFF)
-	b[1] = byte((v >> 8) & 0xFF)
-	b[2] = byte((v >> 16) & 0xFF)
-	_, err := w.WriteBytes(b)
+	_, err := w.WriteBytes(Uint3ToBytes(v))
 	return err
 }
 
 // WriteInt4 writes a 4 byte integer.
 func (w *Writer) WriteInt4(v uint32) error {
-	b := make([]byte, 4)
-	b[0] = byte(v & 0xFF)
-	b[1] = byte((v >> 8) & 0xFF)
-	b[2] = byte((v >> 16) & 0xFF)
-	b[3] = byte((v >> 24) & 0xFF)
-	_, err := w.WriteBytes(b)
+	_, err := w.WriteBytes(Uint4ToBytes(v))
 	return err
 }
 
 // WriteInt8 writes a 64-bit integer.
 func (w *Writer) WriteInt8(v uint64) error {
-	b := make([]byte, 8)
-	b[0] = byte(v & 0xFF)
-	b[1] = byte((v >> 8) & 0xFF)
-	b[2] = byte((v >> 16) & 0xFF)
-	b[3] = byte((v >> 24) & 0xFF)
-	b[4] = byte((v >> 32) & 0xFF)
-	b[5] = byte((v >> 40) & 0xFF)
-	b[6] = byte((v >> 48) & 0xFF)
-	b[7] = byte((v >> 56) & 0xFF)
-	_, err := w.WriteBytes(b)
+	_, err := w.WriteBytes(Uint8ToBytes(v))
 	return err
 }
 
