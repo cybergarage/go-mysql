@@ -65,3 +65,7 @@ func newErrInvalidPacketLength(v uint32) error {
 func newInvalidStatement(q string) error {
 	return fmt.Errorf("%w statement : %s", ErrInvalid, q)
 }
+
+func newErrFieldTypeNotSupported(t FieldType) error {
+	return fmt.Errorf("%v is %w", t.String(), ErrNotSupported)
+}

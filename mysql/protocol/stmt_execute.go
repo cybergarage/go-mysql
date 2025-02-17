@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"io"
 
+	"github.com/cybergarage/go-mysql/mysql/query"
 	"github.com/cybergarage/go-mysql/mysql/stmt"
 )
 
@@ -233,7 +234,28 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 		if pkt.nullBitmap.IsNull(n) {
 			continue
 		}
-		paramValue, err := pktReader.ReadLengthEncodedBytes()
+		var paramValue []byte
+		var err error
+		switch pkt.paramTypes[n] {
+		case query.MySQLTypeTiny:
+			paramValue = make([]byte, 1)
+			_, err = pktReader.ReadBytes(paramValue)
+		case query.MySQLTypeShort:
+			paramValue = make([]byte, 2)
+			_, err = pktReader.ReadBytes(paramValue)
+		case query.MySQLTypeLong, query.MySQLTypeFloat:
+			paramValue = make([]byte, 4)
+			_, err = pktReader.ReadBytes(paramValue)
+		case query.MySQLTypeLonglong, query.MySQLTypeDouble:
+			paramValue = make([]byte, 8)
+			_, err = pktReader.ReadBytes(paramValue)
+		case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
+			paramValue, err = pktReader.ReadLengthEncodedBytes()
+		case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
+			paramValue, err = pktReader.ReadLengthEncodedBytes()
+		default:
+			return nil, newErrFieldTypeNotSupported(pkt.paramTypes[n])
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -321,8 +343,15 @@ func (pkt *StmtExecute) Bytes() ([]byte, error) {
 			if pkt.nullBitmap.IsNull(n) {
 				continue
 			}
-			if err := w.WriteLengthEncodedBytes(pkt.paramValues[n]); err != nil {
-				return nil, err
+			switch pkt.paramTypes[n] {
+			case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar, query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
+				if err := w.WriteLengthEncodedBytes(pkt.paramValues[n]); err != nil {
+					return nil, err
+				}
+			default:
+				if _, err := w.WriteBytes(pkt.paramValues[n]); err != nil {
+					return nil, err
+				}
 			}
 		}
 	}
