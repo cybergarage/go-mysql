@@ -16,18 +16,31 @@ package binary
 
 // BytesToUint8 converts the specified byte array to an integer.
 func BytesToUint8(b []byte) (uint64, error) {
-	if len(b) != 8 {
-		return 0, newErrInvalidLength(8, len(b))
+	switch len(b) {
+	case 1:
+		v, err := BytesToUint1(b)
+		return uint64(v), err
+	case 2:
+		v, err := BytesToUint2(b)
+		return uint64(v), err
+	case 3:
+		v, err := BytesToUint3(b)
+		return uint64(v), err
+	case 4:
+		v, err := BytesToUint4(b)
+		return uint64(v), err
+	case 8:
+		v := uint64(b[7])<<56 |
+			uint64(b[6])<<48 |
+			uint64(b[5])<<40 |
+			uint64(b[4])<<32 |
+			uint64(b[3])<<24 |
+			uint64(b[2])<<16 |
+			uint64(b[1])<<8 |
+			uint64(b[0])
+		return v, nil
 	}
-	v := uint64(b[7])<<56 |
-		uint64(b[6])<<48 |
-		uint64(b[5])<<40 |
-		uint64(b[4])<<32 |
-		uint64(b[3])<<24 |
-		uint64(b[2])<<16 |
-		uint64(b[1])<<8 |
-		uint64(b[0])
-	return v, nil
+	return 0, newErrInvalidLength(8, len(b))
 }
 
 // Uint8ToBytes converts the specified integer to a byte array.
@@ -46,14 +59,24 @@ func Uint8ToBytes(v uint64) []byte {
 
 // BytesToUint4 converts the specified byte array to an integer.
 func BytesToUint4(b []byte) (uint32, error) {
-	if len(b) != 4 {
-		return 0, newErrInvalidLength(4, len(b))
+	switch len(b) {
+	case 1:
+		v, err := BytesToUint1(b)
+		return uint32(v), err
+	case 2:
+		v, err := BytesToUint2(b)
+		return uint32(v), err
+	case 3:
+		v, err := BytesToUint3(b)
+		return uint32(v), err
+	case 4:
+		v := uint32(b[3])<<24 |
+			uint32(b[2])<<16 |
+			uint32(b[1])<<8 |
+			uint32(b[0])
+		return v, nil
 	}
-	v := uint32(b[3])<<24 |
-		uint32(b[2])<<16 |
-		uint32(b[1])<<8 |
-		uint32(b[0])
-	return v, nil
+	return 0, newErrInvalidLength(4, len(b))
 }
 
 // Uint4ToBytes converts the specified integer to a byte array.
@@ -68,13 +91,20 @@ func Uint4ToBytes(v uint32) []byte {
 
 // BytesToUint3 converts the specified byte array to an integer.
 func BytesToUint3(b []byte) (uint32, error) {
-	if len(b) != 3 {
-		return 0, newErrInvalidLength(3, len(b))
+	switch len(b) {
+	case 1:
+		v, err := BytesToUint1(b)
+		return uint32(v), err
+	case 2:
+		v, err := BytesToUint2(b)
+		return uint32(v), err
+	case 3:
+		v := uint32(b[2])<<16 |
+			uint32(b[1])<<8 |
+			uint32(b[0])
+		return v, nil
 	}
-	v := uint32(b[2])<<16 |
-		uint32(b[1])<<8 |
-		uint32(b[0])
-	return v, nil
+	return 0, newErrInvalidLength(3, len(b))
 }
 
 // Uint3ToBytes converts the specified integer to a byte array.
@@ -88,12 +118,16 @@ func Uint3ToBytes(v uint32) []byte {
 
 // BytesToUint2 converts the specified byte array to an integer.
 func BytesToUint2(b []byte) (uint16, error) {
-	if len(b) != 2 {
-		return 0, newErrInvalidLength(2, len(b))
+	switch len(b) {
+	case 1:
+		v, err := BytesToUint1(b)
+		return uint16(v), err
+	case 2:
+		v := uint16(b[1])<<8 |
+			uint16(b[0])
+		return v, nil
 	}
-	v := uint16(b[1])<<8 |
-		uint16(b[0])
-	return v, nil
+	return 0, newErrInvalidLength(2, len(b))
 }
 
 // Uint2ToBytes converts the specified integer to a byte array.
