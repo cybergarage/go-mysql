@@ -81,6 +81,11 @@ func (param *parameter) Type() FieldType {
 	return param.typ
 }
 
+// Bytes returns the value of the parameter.
+func (param *parameter) Bytes() []byte {
+	return param.v
+}
+
 // Value returns the value of the parameter.
 func (param *parameter) Value() (any, error) {
 	switch param.typ {
@@ -98,6 +103,10 @@ func (param *parameter) Value() (any, error) {
 		return binary.BytesToFloat8(param.v)
 	case query.MySQLTypeNull:
 		return nil, nil
+	case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
+		return string(param.v), nil
+	case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
+		return param.v, nil
 	}
 
 	return param.v, newErrNotSupportedFieldType(param.typ)
