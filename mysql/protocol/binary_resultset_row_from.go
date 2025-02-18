@@ -22,6 +22,32 @@ package protocol
 // https://mariadb.com/kb/en/result-set-packets/
 
 // NewBinaryResultSetRowFromTextResultSetRow creates a new BinaryResultSetRow from a TextResultSetRow.
-func NewBinaryResultSetRowFromTextResultSetRow(txtRow *TextResultSetRow) (*BinaryResultSetRow, error) {
-	return nil, ErrNotSupported
+func NewBinaryResultSetRowFromTextResultSetRow(columDefs []ColumnDef, txtRow ResultSetRow) (*BinaryResultSetRow, error) {
+	txtColumns := txtRow.Columns()
+	columnCnt := len(txtColumns)
+	if columnCnt != len(columDefs) {
+		return nil, newErrInvalidColumnCount(columnCnt, len(columDefs))
+	}
+
+	nullBitmap := NewNullBitmap(
+		WithNullBitmapNumFields(columnCnt),
+		WithNullBitmapOffset(0),
+	)
+	binColums := []*BinaryResultSetColumn{}
+	for n, txtColum := range txtColumns {
+		if txtColum == nil {
+			nullBitmap.SetNull(n, true)
+			continue
+		}
+		binColum := NewBinaryResultSetColumn(
+			WithBinaryResultSetColumnType(FieldType(columDefs[n].ColType())),
+			// WithBinaryResultSetColumnBytes(txtColum),
+		)
+		binColums = append(binColums, binColum)
+	}
+	return NewBinaryResultSetRow(
+		WithBinaryResultSetRowColumnDefs(columDefs),
+		WithBinaryResultSetRowNullBitmap(nullBitmap),
+		WithBinaryResultSetRowColumns(binColums),
+	), nil
 }

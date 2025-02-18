@@ -109,7 +109,7 @@ func NewBinaryResultSetRowFromReader(reader *PacketReader, opts ...BinaryResultS
 
 	for n := 0; n < numColumns; n++ {
 		opts := []BinaryResultSetColumnOption{
-			WithwBinaryResultSetColumnType(FieldType(row.columnDefs[n].ColType())),
+			WithBinaryResultSetColumnType(FieldType(row.columnDefs[n].ColType())),
 		}
 		var column *BinaryResultSetColumn
 		if !row.nullBitmap.IsNull(n) {

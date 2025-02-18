@@ -69,3 +69,7 @@ func newInvalidStatement(q string) error {
 func newErrFieldTypeNotSupported(t FieldType) error {
 	return fmt.Errorf("%v is %w", t.String(), ErrNotSupported)
 }
+
+func newErrInvalidColumnCount(actual int, expected int) error {
+	return fmt.Errorf("%w column count (%d, %d)", ErrInvalid, actual, expected)
+}

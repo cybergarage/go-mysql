@@ -27,11 +27,12 @@ package protocol
 
 // NewBinaryResultSetFromTextResultSet creates a new BinaryResultSet from a TextResultSet.
 func NewBinaryResultSetFromTextResultSet(txtRs *TextResultSet, opts ...BinaryResultSetOption) (*BinaryResultSet, error) {
-	opts = append(opts, WithBinaryResultSetColumnDefs(txtRs.ColumnDefs()))
+	columnDefs := txtRs.ColumnDefs()
+	opts = append(opts, WithBinaryResultSetColumnDefs(columnDefs))
 
 	binRows := make([]BinaryResultSetRow, 0, len(txtRs.Rows()))
 	for _, txtRow := range txtRs.Rows() {
-		binRow, err := NewBinaryResultSetRowFromTextResultSetRow(txtRow)
+		binRow, err := NewBinaryResultSetRowFromTextResultSetRow(columnDefs, txtRow)
 		if err != nil {
 			return nil, err
 		}
