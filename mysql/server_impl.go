@@ -270,7 +270,11 @@ func (server *server) ExecuteStatement(conn protocol.Conn, stmtExec *protocol.St
 	}
 	switch res := res.(type) {
 	case *protocol.TextResultSet:
-		return protocol.NewBinaryResultSetFrom(res)
+		return protocol.NewBinaryResultSetFromTextResultSet(
+			res,
+			protocol.WithBinaryResultSetCapability(conn.Capability()),
+			protocol.WithBinaryResultSetServerStatus(conn.ServerStatus()),
+		)
 	}
 	return res, nil
 }
