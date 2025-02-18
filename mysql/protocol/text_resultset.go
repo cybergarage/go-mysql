@@ -172,6 +172,16 @@ func (pkt *TextResultSet) Capability() Capability {
 	return pkt.capFlags
 }
 
+// ColumnCount returns the column count.
+func (pkt *TextResultSet) ColumnCount() uint64 {
+	return pkt.columnCnt.ColumnCount()
+}
+
+// ColumnDefs returns the column definitions.
+func (pkt *TextResultSet) ColumnDefs() []ColumnDef {
+	return pkt.columnDefs
+}
+
 // Rows returns the rows.
 func (pkt *TextResultSet) Rows() []ResultSetRow {
 	return pkt.rows
