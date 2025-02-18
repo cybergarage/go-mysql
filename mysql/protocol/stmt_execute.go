@@ -238,17 +238,13 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 		var err error
 		switch pkt.paramTypes[n] {
 		case query.MySQLTypeTiny:
-			paramValue = make([]byte, 1)
-			_, err = pktReader.ReadBytes(paramValue)
+			paramValue, err = pktReader.ReadNBytes(1)
 		case query.MySQLTypeShort:
-			paramValue = make([]byte, 2)
-			_, err = pktReader.ReadBytes(paramValue)
+			paramValue, err = pktReader.ReadNBytes(2)
 		case query.MySQLTypeLong, query.MySQLTypeFloat:
-			paramValue = make([]byte, 4)
-			_, err = pktReader.ReadBytes(paramValue)
+			paramValue, err = pktReader.ReadNBytes(4)
 		case query.MySQLTypeLonglong, query.MySQLTypeDouble:
-			paramValue = make([]byte, 8)
-			_, err = pktReader.ReadBytes(paramValue)
+			paramValue, err = pktReader.ReadNBytes(8)
 		case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
 			paramValue, err = pktReader.ReadLengthEncodedBytes()
 		case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:

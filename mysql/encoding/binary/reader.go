@@ -73,6 +73,19 @@ func (reader *Reader) ReadBytes(buf []byte) (int, error) {
 	return nReadBuf, err
 }
 
+// ReadNBytes reads the specified number of bytes.
+func (reader *Reader) ReadNBytes(n int) ([]byte, error) {
+	buf := make([]byte, n)
+	nRead, err := reader.ReadBytes(buf)
+	if err != nil {
+		return nil, err
+	}
+	if nRead != n {
+		return nil, newErrInvalidLength(n, nRead)
+	}
+	return buf, nil
+}
+
 // PeekBytes peeks a byte array.
 func (reader *Reader) PeekBytes(n int) ([]byte, error) {
 	buf := make([]byte, n)
