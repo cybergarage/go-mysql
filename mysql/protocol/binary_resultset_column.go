@@ -17,7 +17,9 @@ package protocol
 import (
 	"fmt"
 
+	"github.com/cybergarage/go-mysql/mysql/encoding/binary"
 	"github.com/cybergarage/go-mysql/mysql/query"
+	"github.com/cybergarage/go-safecast/safecast"
 )
 
 // MySQL: Binary Protocol Resultset
@@ -53,8 +55,66 @@ func WithBinaryResultSetColumnBytes(b []byte) BinaryResultSetColumnOption {
 // WithBinaryResultSetRowValue returns a binary resultset row option to set the value.
 func WithBinaryResultSetColumnValue(v any) BinaryResultSetColumnOption {
 	return func(row *BinaryResultSetColumn) error {
-		// row.bytes = v.([]byte)
-		return nil
+		switch row.t {
+		case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
+			if s, ok := v.(string); ok {
+				w := NewPacketWriter()
+				if err := w.WriteLengthEncodedString(s); err != nil {
+					return err
+				}
+				row.bytes = w.Bytes()
+				return nil
+			}
+		case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
+			if b, ok := v.([]byte); ok {
+				w := NewPacketWriter()
+				if err := w.WriteLengthEncodedBytes(b); err != nil {
+					return err
+				}
+				row.bytes = w.Bytes()
+				return nil
+			}
+		case query.MySQLTypeNull:
+			return nil
+		case query.MySQLTypeTiny:
+			var cv int8
+			if err := safecast.ToInt8(v, &cv); err != nil {
+				row.bytes = binary.Int1ToBytes(cv)
+				return nil
+			}
+		case query.MySQLTypeShort, query.MySQLTypeYear:
+			var cv int16
+			if err := safecast.ToInt16(v, &cv); err != nil {
+				row.bytes = binary.Int2ToBytes(cv)
+				return nil
+			}
+		case query.MySQLTypeLong, query.MySQLTypeInt24:
+			var cv int32
+			if err := safecast.ToInt32(v, &cv); err != nil {
+				row.bytes = binary.Int4ToBytes(cv)
+				return nil
+			}
+		case query.MySQLTypeLonglong:
+			var cv int64
+			if err := safecast.ToInt64(v, &cv); err != nil {
+				row.bytes = binary.Int8ToBytes(cv)
+				return nil
+			}
+		case query.MySQLTypeFloat:
+			var cv float32
+			if err := safecast.ToFloat32(v, &cv); err != nil {
+				row.bytes = binary.Float4ToBytes(cv)
+				return nil
+			}
+		case query.MySQLTypeDouble:
+			var cv float64
+			if err := safecast.ToFloat64(v, &cv); err != nil {
+				row.bytes = binary.Float8ToBytes(cv)
+				return nil
+			}
+		}
+
+		return newInvalidFieldValue(row.t, v)
 	}
 }
 
