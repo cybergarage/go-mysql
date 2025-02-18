@@ -26,7 +26,7 @@ import (
 // https://mariadb.com/kb/en/resultset-row/
 
 // BinaryResultSetColumnOption represents a MySQL binary resultset row option.
-type BinaryResultSetColumnOption func(*BinaryResultSetColumn)
+type BinaryResultSetColumnOption func(*BinaryResultSetColumn) error
 
 // BinaryResultSetColumn represents a MySQL binary resultset row response packet.
 type BinaryResultSetColumn struct {
@@ -36,33 +36,48 @@ type BinaryResultSetColumn struct {
 
 // WithBinaryResultSetRowType returns a binary resultset row option to set the type.
 func WithBinaryResultSetColumnType(t FieldType) BinaryResultSetColumnOption {
-	return func(row *BinaryResultSetColumn) {
+	return func(row *BinaryResultSetColumn) error {
 		row.t = t
+		return nil
 	}
 }
 
 // WithBinaryResultSetRowBytes returns a binary resultset row option to set the bytes.
 func WithBinaryResultSetColumnBytes(b []byte) BinaryResultSetColumnOption {
-	return func(row *BinaryResultSetColumn) {
+	return func(row *BinaryResultSetColumn) error {
 		row.bytes = b
+		return nil
+	}
+}
+
+// WithBinaryResultSetRowValue returns a binary resultset row option to set the value.
+func WithBinaryResultSetColumnValue(v any) BinaryResultSetColumnOption {
+	return func(row *BinaryResultSetColumn) error {
+		// row.bytes = v.([]byte)
+		return nil
 	}
 }
 
 // NewBinaryResultSetColumn returns a new BinaryResultSetColumn.
-func NewBinaryResultSetColumn(opts ...BinaryResultSetColumnOption) *BinaryResultSetColumn {
+func NewBinaryResultSetColumn(opts ...BinaryResultSetColumnOption) (*BinaryResultSetColumn, error) {
 	column := &BinaryResultSetColumn{
 		t:     0,
 		bytes: nil,
 	}
 	for _, opt := range opts {
-		opt(column)
+		if err := opt(column); err != nil {
+			return nil, err
+		}
 	}
-	return column
+	return column, nil
 }
 
 // NewBinaryResultSetColumnFromReader returns a new BinaryResultSetColumn from the reader.
 func NewBinaryResultSetColumnFromReader(reader *PacketReader, opts ...BinaryResultSetColumnOption) (*BinaryResultSetColumn, error) {
-	column := NewBinaryResultSetColumn(opts...)
+	column, err := NewBinaryResultSetColumn(opts...)
+	if err != nil {
+		return nil, err
+	}
 
 	byteLen := 0
 

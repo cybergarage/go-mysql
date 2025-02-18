@@ -118,7 +118,10 @@ func NewBinaryResultSetRowFromReader(reader *PacketReader, opts ...BinaryResultS
 				return nil, err
 			}
 		} else {
-			column = NewBinaryResultSetColumn(opts...)
+			column, err = NewBinaryResultSetColumn(opts...)
+			if err != nil {
+				return nil, err
+			}
 		}
 		row.colums = append(row.colums, column)
 	}

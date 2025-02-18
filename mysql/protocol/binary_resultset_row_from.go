@@ -39,10 +39,13 @@ func NewBinaryResultSetRowFromTextResultSetRow(columDefs []ColumnDef, txtRow Res
 			nullBitmap.SetNull(n, true)
 			continue
 		}
-		binColum := NewBinaryResultSetColumn(
+		binColum, err := NewBinaryResultSetColumn(
 			WithBinaryResultSetColumnType(FieldType(columDefs[n].ColType())),
-			// WithBinaryResultSetColumnBytes(txtColum),
+			WithBinaryResultSetColumnValue(txtColum),
 		)
+		if err != nil {
+			return nil, err
+		}
 		binColums = append(binColums, binColum)
 	}
 	return NewBinaryResultSetRow(
