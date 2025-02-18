@@ -21,7 +21,7 @@ package protocol
 // Result Set Packets - MariaDB Knowledge Base
 // https://mariadb.com/kb/en/result-set-packets/
 
-// NewBinaryResultSetRowFrom creates a new BinaryResultSetRow from a TextResultSetRow.
-func NewBinaryResultSetRowFrom(txtRow *TextResultSetRow) (*BinaryResultSetRow, error) {
+// NewBinaryResultSetRowFromTextResultSetRow creates a new BinaryResultSetRow from a TextResultSetRow.
+func NewBinaryResultSetRowFromTextResultSetRow(txtRow *TextResultSetRow) (*BinaryResultSetRow, error) {
 	return nil, ErrNotSupported
 }
