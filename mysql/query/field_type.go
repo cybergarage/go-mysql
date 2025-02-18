@@ -14,11 +14,13 @@
 
 package query
 
-// MySQL: include/field_types.h File Reference
-// https://dev.mysql.com/doc/dev/mysql-server/latest/field__types_8h.html
-
 // FieldType represents a field type.
 type FieldType uint8
+
+// MySQL: include/field_types.h File Reference
+// https://dev.mysql.com/doc/dev/mysql-server/latest/field__types_8h.html
+// Type of the parameter value. See enum_field_type
+// https://github.com/mysql/mysql-server/blob/trunk/include/field_types.h
 
 const (
 	// MySQLTypeDecimal represents a MYSQL_TYPE_DECIMAL type.
