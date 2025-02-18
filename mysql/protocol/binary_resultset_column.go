@@ -35,14 +35,14 @@ type BinaryResultSetColumn struct {
 }
 
 // WithBinaryResultSetRowType returns a binary resultset row option to set the type.
-func WithwBinaryResultSetColumnType(t FieldType) BinaryResultSetColumnOption {
+func WithBinaryResultSetColumnType(t FieldType) BinaryResultSetColumnOption {
 	return func(row *BinaryResultSetColumn) {
 		row.t = t
 	}
 }
 
 // WithBinaryResultSetRowBytes returns a binary resultset row option to set the bytes.
-func WithwBinaryResultSetColumnBytes(b []byte) BinaryResultSetColumnOption {
+func WithBinaryResultSetColumnBytes(b []byte) BinaryResultSetColumnOption {
 	return func(row *BinaryResultSetColumn) {
 		row.bytes = b
 	}
