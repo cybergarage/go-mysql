@@ -18,6 +18,8 @@ import (
 	"io"
 
 	"github.com/cybergarage/go-mysql/mysql/encoding/binary"
+	"github.com/cybergarage/go-mysql/mysql/query"
+	"github.com/cybergarage/go-mysql/mysql/stmt"
 )
 
 // PacketReader represents a packet reader of MySQL protocol.
@@ -93,4 +95,60 @@ func (reader *PacketReader) PeekCapability() (Capability, error) {
 	Capabilitys |= (Capability)(Capabilitys4) << 24
 
 	return Capabilitys, nil
+}
+
+// ReadFieldBytes reads the field bytes.
+func (reader *PacketReader) ReadDatetimeBytes() ([]byte, error) {
+	v1, err := reader.ReadByte()
+	if err != nil {
+		return nil, err
+	}
+	v2, err := reader.ReadFixedLengthBytes(int(v1))
+	if err != nil {
+		return nil, err
+	}
+	return append([]byte{v1}, v2...), nil
+}
+
+// ReadFieldBytes reads the field bytes.
+func (reader *PacketReader) ReadFieldBytes(t FieldType) ([]byte, error) {
+	switch t {
+	case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
+		v, err := reader.ReadLengthEncodedString()
+		if err != nil {
+			return nil, err
+		}
+		return []byte(v), nil
+	case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
+		return reader.ReadLengthEncodedBytes()
+	case query.MySQLTypeNull:
+		return nil, nil
+	case query.MySQLTypeTiny:
+		return reader.ReadNBytes(1)
+	case query.MySQLTypeShort, query.MySQLTypeYear:
+		return reader.ReadNBytes(2)
+	case query.MySQLTypeLong, query.MySQLTypeFloat, query.MySQLTypeInt24:
+		return reader.ReadNBytes(4)
+	case query.MySQLTypeLonglong, query.MySQLTypeDouble:
+		return reader.ReadNBytes(8)
+	case query.MySQLTypeDate, query.MySQLTypeTime, query.MySQLTypeDatetime, query.MySQLTypeTimestamp:
+		return reader.ReadDatetimeBytes()
+	}
+
+	return nil, newErrFieldTypeNotSupported(t)
+}
+
+// ReadFieldValue reads the field value.
+func (reader *PacketReader) ReadFieldValue(t FieldType) (any, error) {
+	b, err := reader.ReadFieldBytes(t)
+	if err != nil {
+		return nil, err
+	}
+
+	field := stmt.NewField(
+		stmt.WithFieldType(t),
+		stmt.WithFieldBytes(b),
+	)
+
+	return field.Value()
 }
