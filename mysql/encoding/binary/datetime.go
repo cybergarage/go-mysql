@@ -33,6 +33,9 @@ func BytesToTime(b []byte) (time.Time, error) {
 		return time.Time{}, newErrInvalidDatetimeBytes(b)
 	}
 	l := int(b[0])
+	if len(b) < (l + 1) {
+		return time.Time{}, newErrInvalidDatetimeBytes(b)
+	}
 	var year, month, day, hour, minute, second, microsecond int
 	switch l {
 	case 0:
