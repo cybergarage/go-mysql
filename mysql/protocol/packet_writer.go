@@ -15,6 +15,8 @@
 package protocol
 
 import (
+	"time"
+
 	"github.com/cybergarage/go-mysql/mysql/encoding/binary"
 	"github.com/cybergarage/go-mysql/mysql/query"
 	"github.com/cybergarage/go-safecast/safecast"
@@ -152,6 +154,9 @@ func (w *PacketWriter) WriteEOF(opts ...any) error {
 func (w *PacketWriter) WriteFieldBytes(t FieldType, v any) error {
 	// MySQL: Binary Protocol Resultset
 	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_binary_resultset.html
+	// Result Set Packets - MariaDB Knowledge Base
+	// https://mariadb.com/kb/en/result-set-packets/
+
 	switch t {
 	case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
 		if s, ok := v.(string); ok {
@@ -199,6 +204,13 @@ func (w *PacketWriter) WriteFieldBytes(t FieldType, v any) error {
 			_, err := w.WriteBytes(binary.Float8ToBytes(cv))
 			return err
 		}
+	case query.MySQLTypeDatetime, query.MySQLTypeTimestamp:
+		var cv time.Time
+		if err := safecast.ToTime(v, &cv); err != nil {
+			_, err := w.WriteBytes(binary.TimeToBytes(cv))
+			return err
+		}
+
 	}
 
 	return newInvalidFieldValue(t, v)

@@ -15,6 +15,7 @@
 package binary
 
 import (
+	"encoding/hex"
 	"errors"
 	"fmt"
 )
@@ -27,4 +28,8 @@ func newErrInvalidLength(expected int, actual int) error {
 
 func newErrInvalidCode(name string, v uint) error {
 	return fmt.Errorf("%s is %w code (%X)", name, ErrInvalid, v)
+}
+
+func newErrInvalidDatetimeBytes(b []byte) error {
+	return fmt.Errorf("%w datetime bytes: %s", ErrInvalid, hex.EncodeToString(b))
 }
