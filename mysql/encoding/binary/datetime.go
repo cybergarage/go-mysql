@@ -24,11 +24,11 @@ import (
 // https://mariadb.com/kb/en/resultset-row/#timestamp-binary-encoding
 
 const (
-	defaultDatetimeBytesLen = 11
+	datetimeBytesLen = 11
 )
 
-// BytesToDatetime converts a byte slice to a time.Time.
-func BytesToDatetime(b []byte) (time.Time, error) {
+// BytesToTime converts a byte slice to a time.Time.
+func BytesToTime(b []byte) (time.Time, error) {
 	if len(b) < 1 {
 		return time.Time{}, newErrInvalidDatetimeBytes(b)
 	}
@@ -68,12 +68,17 @@ func BytesToDatetime(b []byte) (time.Time, error) {
 	return time.Date(year, time.Month(month), day, hour, minute, second, microsecond*1000, time.UTC), nil
 }
 
-// TimeToDatetimeBytes converts a time.Time to a byte slice.
+// BytesToDatetime converts a datetime byte slice to a time.Time.
+func BytesToDatetime(b []byte) (time.Time, error) {
+	return BytesToTime(b)
+}
+
+// TimeToDatetimeBytes converts a time.Time to a datetime byte slice.
 func TimeToDatetimeBytes(t time.Time) []byte {
 	year := t.Year()
 	microsecond := t.Nanosecond() / 1000
-	b := make([]byte, defaultDatetimeBytesLen+1)
-	b[0] = byte(defaultDatetimeBytesLen)
+	b := make([]byte, datetimeBytesLen+1)
+	b[0] = byte(datetimeBytesLen)
 	b[1] = byte(year & 0xFF)
 	b[2] = byte((year >> 8) & 0xFF)
 	b[3] = byte(t.Month())
