@@ -46,6 +46,12 @@ func TestMySQLBinaryProtocolExamples(t *testing.T) {
 		{query.MySQLTypeDate, "04da070a11", time.Date(2010, 10, 17, 0, 0, 0, 0, time.UTC)},
 		// timestamp 2010-10-17 19:27:30.000 001
 		{query.MySQLTypeTimestamp, "0bda070a11131b1e01000000", time.Date(2010, 10, 17, 19, 27, 30, 1*1000, time.UTC)},
+		// time  -120d 19:27:30.000 001
+		// {query.MySQLTypeTime, "0c0178000000131b1e01000000", time.Duration(-(120*24*time.Hour + 19*time.Hour + 27*time.Minute + 30*time.Second + 100*time.Millisecond))},
+		// time  -120d 19:27:30
+		{query.MySQLTypeTime, "080178000000131b1e", time.Duration(-(120*24*time.Hour + 19*time.Hour + 27*time.Minute + 30*time.Second))},
+		// time     0d 00:00:00
+		{query.MySQLTypeTime, "00", time.Duration(0)},
 	}
 
 	for _, test := range tests {
