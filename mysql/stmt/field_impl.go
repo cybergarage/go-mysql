@@ -145,6 +145,13 @@ func (f *field) Bytes() ([]byte, error) {
 			return nil, err
 		}
 		f.b = binary.TimeToDatetimeBytes(cv)
+	case query.MySQLTypeDate:
+		var cv time.Time
+		err := safecast.ToTime(f.v, &cv)
+		if err != nil {
+			return nil, err
+		}
+		f.b = binary.TimeToDateBytes(cv)
 	default:
 		return nil, newErrNotSupportedFieldType(f.t)
 	}
@@ -178,6 +185,8 @@ func (f *field) Value() (any, error) {
 			f.v = f.b
 		case query.MySQLTypeDatetime, query.MySQLTypeTimestamp:
 			f.v, err = binary.BytesToDatetime(f.b)
+		case query.MySQLTypeDate:
+			f.v, err = binary.BytesToDate(f.b)
 		default:
 			return nil, newErrNotSupportedFieldType(f.t)
 		}
