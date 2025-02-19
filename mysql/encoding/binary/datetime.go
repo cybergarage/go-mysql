@@ -36,7 +36,8 @@ func BytesToTime(b []byte) (time.Time, error) {
 	var year, month, day, hour, minute, second, microsecond int
 	switch l {
 	case 0:
-		return time.Time{}, nil
+		// 0 for special '0000-00-00 00:00:00' value.
+		return time.Date(0, 0, 0, 0, 0, 0, 0, time.UTC), nil
 	case 4:
 		year = int(b[1]) | int(b[2])<<8
 		month = int(b[3])
