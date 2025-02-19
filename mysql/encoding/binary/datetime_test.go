@@ -36,8 +36,8 @@ func TestTimeEncode(t *testing.T) {
 	}
 
 	for _, tv := range ts {
-		b := TimeToBytes(tv)
-		v, err := BytesToTime(b)
+		b := TimeToDatetimeBytes(tv)
+		v, err := BytesToDatetime(b)
 		if err != nil {
 			t.Error(err)
 			continue

@@ -69,5 +69,4 @@ func TestMySQLBinaryProtocolExamples(t *testing.T) {
 			}
 		})
 	}
-
 }
