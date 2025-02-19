@@ -18,14 +18,10 @@ import (
 	"encoding/hex"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/cybergarage/go-mysql/mysql/query"
 	"github.com/cybergarage/go-mysql/mysql/stmt"
-)
-
-const (
-	errorFileListNotFound     = "File (%s) not found"
-	errorFileListBadExtension = "Invalid Extension (%s) != *.%s"
 )
 
 func TestMySQLBinaryProtocolExamples(t *testing.T) {
@@ -39,6 +35,17 @@ func TestMySQLBinaryProtocolExamples(t *testing.T) {
 	}{
 		{query.MySQLTypeString, "666f6f", "foo"},
 		{query.MySQLTypeLongLong, "0100000000000000", int64(1)},
+		{query.MySQLTypeLong, "01000000", int32(1)},
+		{query.MySQLTypeShort, "0100", int16(1)},
+		{query.MySQLTypeTiny, "01", int8(1)},
+		{query.MySQLTypeDouble, "6666666666662440", float64(10.2)},
+		{query.MySQLTypeFloat, "33332341", float32(10.2)},
+		// datetime 2010-10-17 19:27:30.000 001
+		{query.MySQLTypeDatetime, "0bda070a11131b1e01000000", time.Date(2010, 10, 17, 19, 27, 30, 1*1000, time.UTC)},
+		// date 2010-10-17
+		{query.MySQLTypeDate, "04da070a11", time.Date(2010, 10, 17, 0, 0, 0, 0, time.UTC)},
+		// timestamp 2010-10-17 19:27:30.000 001
+		{query.MySQLTypeTimestamp, "0bda070a11131b1e01000000", time.Date(2010, 10, 17, 19, 27, 30, 1*1000, time.UTC)},
 	}
 
 	for _, test := range tests {
