@@ -33,3 +33,7 @@ func newErrInvalidCode(name string, v uint) error {
 func newErrInvalidDatetimeBytes(b []byte) error {
 	return fmt.Errorf("%w datetime bytes: %s", ErrInvalid, hex.EncodeToString(b))
 }
+
+func newErrInvalidTimeBytes(b []byte) error {
+	return fmt.Errorf("%w time bytes: %s", ErrInvalid, hex.EncodeToString(b))
+}
