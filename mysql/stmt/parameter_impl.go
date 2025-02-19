@@ -84,6 +84,7 @@ func (param *parameter) Bytes() []byte {
 // Value returns the value of the parameter.
 func (param *parameter) Value() (any, error) {
 	field := NewField(
+		WithFieldType(param.typ),
 		WithFieldBytes(param.v),
 	)
 	return field.Value()
