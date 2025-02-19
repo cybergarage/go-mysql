@@ -234,28 +234,11 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 		if pkt.nullBitmap.IsNull(n) {
 			continue
 		}
-		var paramValue []byte
-		var err error
-		switch pkt.paramTypes[n] {
-		case query.MySQLTypeTiny:
-			paramValue, err = pktReader.ReadNBytes(1)
-		case query.MySQLTypeShort:
-			paramValue, err = pktReader.ReadNBytes(2)
-		case query.MySQLTypeLong, query.MySQLTypeFloat:
-			paramValue, err = pktReader.ReadNBytes(4)
-		case query.MySQLTypeLonglong, query.MySQLTypeDouble:
-			paramValue, err = pktReader.ReadNBytes(8)
-		case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
-			paramValue, err = pktReader.ReadLengthEncodedBytes()
-		case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
-			paramValue, err = pktReader.ReadLengthEncodedBytes()
-		default:
-			return nil, newErrFieldTypeNotSupported(pkt.paramTypes[n])
-		}
+		v, err := pktReader.ReadFieldBytes(pkt.paramTypes[n])
 		if err != nil {
 			return nil, err
 		}
-		pkt.paramValues[n] = paramValue
+		pkt.paramValues[n] = v
 	}
 
 	// Create parameters

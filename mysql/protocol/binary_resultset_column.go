@@ -14,12 +14,6 @@
 
 package protocol
 
-import (
-	"fmt"
-
-	"github.com/cybergarage/go-mysql/mysql/query"
-)
-
 // MySQL: Binary Protocol Resultset
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_binary_resultset.html
 // Resultset row - MariaDB Knowledge Base
@@ -54,7 +48,7 @@ func WithBinaryResultSetColumnBytes(b []byte) BinaryResultSetColumnOption {
 func WithBinaryResultSetColumnValue(v any) BinaryResultSetColumnOption {
 	return func(row *BinaryResultSetColumn) error {
 		w := NewPacketWriter()
-		err := w.WriteFieldBytes(row.t, v)
+		err := w.WriteFieldValue(row.t, v)
 		if err != nil {
 			return err
 		}
@@ -84,50 +78,11 @@ func NewBinaryResultSetColumnFromReader(reader *PacketReader, opts ...BinaryResu
 		return nil, err
 	}
 
-	byteLen := 0
-
-	switch column.t {
-	case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
-		v, err := reader.ReadLengthEncodedString()
-		if err != nil {
-			return nil, err
-		}
-		column.bytes = []byte(v)
-	case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
-		v, err := reader.ReadLengthEncodedBytes()
-		if err != nil {
-			return nil, err
-		}
-		column.bytes = v
-	case query.MySQLTypeNull:
-		byteLen = 0
-	case query.MySQLTypeTiny:
-		byteLen = 1
-	case query.MySQLTypeShort, query.MySQLTypeYear:
-		byteLen = 2
-	case query.MySQLTypeLong, query.MySQLTypeFloat, query.MySQLTypeInt24:
-		byteLen = 4
-	case query.MySQLTypeLonglong, query.MySQLTypeDouble:
-		byteLen = 8
-	case query.MySQLTypeDate, query.MySQLTypeTime, query.MySQLTypeDatetime, query.MySQLTypeTimestamp:
-		l, err := reader.ReadInt1()
-		if err != nil {
-			return nil, err
-		}
-		column.bytes, err = reader.ReadFixedLengthBytes(int(l))
-		if err != nil {
-			return nil, err
-		}
-	default:
-		return nil, fmt.Errorf("%w field type: %s(%v)", ErrNotSupported, FieldType(column.t).String(), column.t)
+	v, err := reader.ReadFieldBytes(column.t)
+	if err != nil {
+		return nil, err
 	}
-
-	if 0 < byteLen {
-		column.bytes = make([]byte, byteLen)
-		if _, err := reader.Read(column.bytes); err != nil {
-			return nil, err
-		}
-	}
+	column.bytes = v
 
 	return column, nil
 }
@@ -139,31 +94,9 @@ func (column *BinaryResultSetColumn) Type() FieldType {
 
 // Bytes returns the bytes.
 func (column *BinaryResultSetColumn) Bytes() ([]byte, error) {
-	switch column.t {
-	case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
-		w := NewPacketWriter()
-		if err := w.WriteLengthEncodedString(string(column.bytes)); err != nil {
-			return nil, err
-		}
-		return w.Bytes(), nil
-	case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
-		w := NewPacketWriter()
-		if err := w.WriteLengthEncodedBytes(column.bytes); err != nil {
-			return nil, err
-		}
-		return w.Bytes(), nil
-	case query.MySQLTypeDate, query.MySQLTypeTime, query.MySQLTypeDatetime, query.MySQLTypeTimestamp:
-		w := NewPacketWriter()
-		if err := w.WriteInt1(byte(len(column.bytes))); err != nil {
-			return nil, err
-		}
-		if err := w.WriteFixedLengthBytes(column.bytes, len(column.bytes)); err != nil {
-			return nil, err
-		}
-		return w.Bytes(), nil
-	case query.MySQLTypeNull:
-		return nil, nil
+	w := NewPacketWriter()
+	if err := w.WriteFieldBytes(column.t, column.bytes); err != nil {
+		return nil, err
 	}
-
-	return column.bytes, nil
+	return w.Bytes(), nil
 }

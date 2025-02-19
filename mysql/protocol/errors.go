@@ -74,6 +74,10 @@ func newErrInvalidColumnCount(actual int, expected int) error {
 	return fmt.Errorf("%w column count (%d, %d)", ErrInvalid, actual, expected)
 }
 
-func newInvalidFieldValue(t FieldType, v any) error {
-	return fmt.Errorf("%v is %w value (%v)", t.String(), ErrInvalid, v)
+func newErrInvalidFieldValue(t FieldType, v any) error {
+	return fmt.Errorf("%w field (%s, %v)", ErrInvalid, t.String(), v)
+}
+
+func newErrFieldNotSupported(t FieldType) error {
+	return fmt.Errorf("%w field (%s)", ErrNotSupported, t.String())
 }

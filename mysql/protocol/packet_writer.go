@@ -15,11 +15,9 @@
 package protocol
 
 import (
-	"time"
-
 	"github.com/cybergarage/go-mysql/mysql/encoding/binary"
 	"github.com/cybergarage/go-mysql/mysql/query"
-	"github.com/cybergarage/go-safecast/safecast"
+	"github.com/cybergarage/go-mysql/mysql/stmt"
 )
 
 // PacketWriter represents a packet writer of MySQL protocol.
@@ -150,68 +148,33 @@ func (w *PacketWriter) WriteEOF(opts ...any) error {
 	return nil
 }
 
-// WriteFieldBytes writes a field bytes.
-func (w *PacketWriter) WriteFieldBytes(t FieldType, v any) error {
-	// MySQL: Binary Protocol Resultset
-	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_binary_resultset.html
-	// Result Set Packets - MariaDB Knowledge Base
-	// https://mariadb.com/kb/en/result-set-packets/
+// WriteFieldValue writes a field value.
+func (w *PacketWriter) WriteFieldValue(t FieldType, v any) error {
+	field := stmt.NewField(
+		stmt.WithFieldType(t),
+		stmt.WithFieldValue(v),
+	)
 
-	switch t {
-	case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
-		if s, ok := v.(string); ok {
-			return w.WriteLengthEncodedString(s)
-		}
-	case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
-		if b, ok := v.([]byte); ok {
-			return w.WriteLengthEncodedBytes(b)
-		}
-	case query.MySQLTypeNull:
-		return nil
-	case query.MySQLTypeTiny:
-		var cv int8
-		if err := safecast.ToInt8(v, &cv); err != nil {
-			_, err := w.WriteBytes(binary.Int1ToBytes(cv))
-			return err
-		}
-	case query.MySQLTypeShort, query.MySQLTypeYear:
-		var cv int16
-		if err := safecast.ToInt16(v, &cv); err != nil {
-			_, err := w.WriteBytes(binary.Int2ToBytes(cv))
-			return err
-		}
-	case query.MySQLTypeLong, query.MySQLTypeInt24:
-		var cv int32
-		if err := safecast.ToInt32(v, &cv); err != nil {
-			_, err := w.WriteBytes(binary.Int4ToBytes(cv))
-			return err
-		}
-	case query.MySQLTypeLonglong:
-		var cv int64
-		if err := safecast.ToInt64(v, &cv); err != nil {
-			_, err := w.WriteBytes(binary.Int8ToBytes(cv))
-			return err
-		}
-	case query.MySQLTypeFloat:
-		var cv float32
-		if err := safecast.ToFloat32(v, &cv); err != nil {
-			_, err := w.WriteBytes(binary.Float4ToBytes(cv))
-			return err
-		}
-	case query.MySQLTypeDouble:
-		var cv float64
-		if err := safecast.ToFloat64(v, &cv); err != nil {
-			_, err := w.WriteBytes(binary.Float8ToBytes(cv))
-			return err
-		}
-	case query.MySQLTypeDatetime, query.MySQLTypeTimestamp:
-		var cv time.Time
-		if err := safecast.ToTime(v, &cv); err != nil {
-			_, err := w.WriteBytes(binary.TimeToBytes(cv))
-			return err
-		}
-
+	fieldBytes, err := field.Bytes()
+	if err != nil {
+		return err
 	}
 
-	return newInvalidFieldValue(t, v)
+	return w.WriteFieldBytes(t, fieldBytes)
+}
+
+// WriteFieldBytes writes a field bytes.
+func (w *PacketWriter) WriteFieldBytes(t FieldType, v []byte) error {
+	switch t {
+	case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
+		return w.WriteLengthEncodedString(string(v))
+	case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
+		return w.WriteLengthEncodedBytes(v)
+	case query.MySQLTypeNull:
+		return nil
+	case query.MySQLTypeTiny, query.MySQLTypeShort, query.MySQLTypeYear, query.MySQLTypeLong, query.MySQLTypeInt24, query.MySQLTypeLonglong, query.MySQLTypeFloat, query.MySQLTypeDouble, query.MySQLTypeDatetime, query.MySQLTypeTimestamp:
+		_, err := w.WriteBytes(v)
+		return err
+	}
+	return newErrFieldNotSupported(t)
 }
