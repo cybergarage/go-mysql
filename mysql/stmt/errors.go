@@ -40,6 +40,10 @@ func newErrInvalidParameters() error {
 	return fmt.Errorf("%w parameters", ErrInvalid)
 }
 
+func newErrInvalidField(typ FieldType, v any) error {
+	return fmt.Errorf("%w field : (%s, %v)", ErrInvalid, typ.String(), v)
+}
+
 func newErrNotSupportedFieldType(typ FieldType) error {
 	return fmt.Errorf("%w field type: %s", ErrNotSupported, typ.String())
 }

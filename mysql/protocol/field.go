@@ -1,4 +1,4 @@
-// Copyright (C) 2025 The go-mysql Authors. All rights reserved.
+// Copyright (C) 2024 The go-mysql Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,14 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package stmt
+package protocol
 
-// Parameter is the interface of parameter.
-type Parameter interface {
-	// Name returns the column name.
-	Name() string
-	// Type returns the column type.
-	Type() FieldType
-	// Value returns the column value.
-	Value() (any, error)
-}
+import (
+	"github.com/cybergarage/go-mysql/mysql/stmt"
+)
+
+// MySQL: include/field_types.h File Reference
+// https://dev.mysql.com/doc/dev/mysql-server/latest/field__types_8h.html
+
+// FieldType represents a field type.
+type FieldType = stmt.FieldType
+
+// Field represents a field.
+type Field = stmt.Field

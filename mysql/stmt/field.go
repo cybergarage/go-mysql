@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package protocol
+package stmt
 
 import (
 	"github.com/cybergarage/go-mysql/mysql/query"
@@ -23,3 +23,13 @@ import (
 
 // FieldType represents a field type.
 type FieldType = query.FieldType
+
+// Field represents a field.
+type Field interface {
+	// Type returns the field type.
+	Type() FieldType
+	// Bytes returns the field bytes.
+	Bytes() ([]byte, error)
+	// Value returns the field value.
+	Value() (any, error)
+}

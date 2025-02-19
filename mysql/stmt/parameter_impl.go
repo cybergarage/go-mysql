@@ -14,11 +14,6 @@
 
 package stmt
 
-import (
-	"github.com/cybergarage/go-mysql/mysql/encoding/binary"
-	"github.com/cybergarage/go-mysql/mysql/query"
-)
-
 // MySQL: COM_STMT_EXECUTE
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_stmt_execute.html
 // MySQL: Binary Protocol Resultset
@@ -88,26 +83,8 @@ func (param *parameter) Bytes() []byte {
 
 // Value returns the value of the parameter.
 func (param *parameter) Value() (any, error) {
-	switch param.typ {
-	case query.MySQLTypeTiny:
-		return binary.BytesToInt1(param.v)
-	case query.MySQLTypeShort:
-		return binary.BytesToInt2(param.v)
-	case query.MySQLTypeLong:
-		return binary.BytesToInt4(param.v)
-	case query.MySQLTypeLonglong:
-		return binary.BytesToInt8(param.v)
-	case query.MySQLTypeFloat:
-		return binary.BytesToFloat4(param.v)
-	case query.MySQLTypeDouble:
-		return binary.BytesToFloat8(param.v)
-	case query.MySQLTypeNull:
-		return nil, nil
-	case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
-		return string(param.v), nil
-	case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
-		return param.v, nil
-	}
-
-	return param.v, newErrNotSupportedFieldType(param.typ)
+	field := NewField(
+		WithFieldBytes(param.v),
+	)
+	return field.Value()
 }
