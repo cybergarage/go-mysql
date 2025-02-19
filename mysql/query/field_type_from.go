@@ -26,7 +26,7 @@ import (
 func NewFieldTypeFrom(t query.DataType) (FieldType, error) {
 	switch t {
 	case query.BigIntData:
-		return MySQLTypeLonglong, nil
+		return MySQLTypeLongLong, nil
 	case query.BinaryData:
 		return MySQLTypeBlob, nil
 	case query.BitData:

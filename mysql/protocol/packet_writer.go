@@ -172,7 +172,7 @@ func (w *PacketWriter) WriteFieldBytes(t FieldType, v []byte) error {
 		return w.WriteLengthEncodedBytes(v)
 	case query.MySQLTypeNull:
 		return nil
-	case query.MySQLTypeTiny, query.MySQLTypeShort, query.MySQLTypeYear, query.MySQLTypeLong, query.MySQLTypeInt24, query.MySQLTypeLonglong, query.MySQLTypeFloat, query.MySQLTypeDouble, query.MySQLTypeDatetime, query.MySQLTypeTimestamp:
+	case query.MySQLTypeTiny, query.MySQLTypeShort, query.MySQLTypeYear, query.MySQLTypeLong, query.MySQLTypeInt24, query.MySQLTypeLongLong, query.MySQLTypeFloat, query.MySQLTypeDouble, query.MySQLTypeDatetime, query.MySQLTypeTimestamp:
 		_, err := w.WriteBytes(v)
 		return err
 	}

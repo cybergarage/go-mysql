@@ -39,8 +39,8 @@ const (
 	MySQLTypeNull
 	// MySQLTypeTimestamp represents a MYSQL_TYPE_TIMESTAMP type.
 	MySQLTypeTimestamp
-	// MySQLTypeLonglong represents a MYSQL_TYPE_BIGINT type.
-	MySQLTypeLonglong
+	// MySQLTypeLongLong represents a MYSQL_TYPE_BIGINT type.
+	MySQLTypeLongLong
 	// MySQLTypeInt24 represents a MYSQL_TYPE_MEDIUMINT type.
 	MySQLTypeInt24
 	// MySQLTypeDate represents a MYSQL_TYPE_DATE type.
@@ -114,7 +114,7 @@ func (ft FieldType) String() string {
 		return "MYSQL_TYPE_NULL"
 	case MySQLTypeTimestamp:
 		return "MYSQL_TYPE_TIMESTAMP"
-	case MySQLTypeLonglong:
+	case MySQLTypeLongLong:
 		return "MYSQL_TYPE_BIGINT"
 	case MySQLTypeInt24:
 		return "MYSQL_TYPE_MEDIUMINT"

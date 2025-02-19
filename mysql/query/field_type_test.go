@@ -36,7 +36,7 @@ func TestFieldTypes(t *testing.T) {
 		{MySQLTypeDouble, 5, "MYSQL_TYPE_DOUBLE"},
 		{MySQLTypeNull, 6, "MYSQL_TYPE_NULL"},
 		{MySQLTypeTimestamp, 7, "MYSQL_TYPE_TIMESTAMP"},
-		{MySQLTypeLonglong, 8, "MYSQL_TYPE_BIGINT"},
+		{MySQLTypeLongLong, 8, "MYSQL_TYPE_BIGINT"},
 		{MySQLTypeInt24, 9, "MYSQL_TYPE_MEDIUMINT"},
 		{MySQLTypeDate, 10, "MYSQL_TYPE_DATE"},
 		{MySQLTypeTime, 11, "MYSQL_TYPE_TIME"},

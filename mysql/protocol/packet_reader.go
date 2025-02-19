@@ -129,7 +129,7 @@ func (reader *PacketReader) ReadFieldBytes(t FieldType) ([]byte, error) {
 		return reader.ReadNBytes(2)
 	case query.MySQLTypeLong, query.MySQLTypeFloat, query.MySQLTypeInt24:
 		return reader.ReadNBytes(4)
-	case query.MySQLTypeLonglong, query.MySQLTypeDouble:
+	case query.MySQLTypeLongLong, query.MySQLTypeDouble:
 		return reader.ReadNBytes(8)
 	case query.MySQLTypeDate, query.MySQLTypeTime, query.MySQLTypeDatetime, query.MySQLTypeTimestamp:
 		return reader.ReadDatetimeBytes()

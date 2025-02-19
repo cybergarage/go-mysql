@@ -117,7 +117,7 @@ func (f *field) Bytes() ([]byte, error) {
 			return nil, err
 		}
 		f.b = binary.Int4ToBytes(cv)
-	case query.MySQLTypeLonglong:
+	case query.MySQLTypeLongLong:
 		var cv int64
 		err := safecast.ToInt64(f.v, &cv)
 		if err != nil {
@@ -166,7 +166,7 @@ func (f *field) Value() (any, error) {
 			f.v, err = binary.BytesToInt2(f.b)
 		case query.MySQLTypeLong:
 			f.v, err = binary.BytesToInt4(f.b)
-		case query.MySQLTypeLonglong:
+		case query.MySQLTypeLongLong:
 			f.v, err = binary.BytesToInt8(f.b)
 		case query.MySQLTypeFloat:
 			f.v, err = binary.BytesToFloat4(f.b)
