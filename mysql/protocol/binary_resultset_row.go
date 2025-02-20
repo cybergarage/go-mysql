@@ -133,14 +133,9 @@ func NewBinaryResultSetRowFromReader(reader *PacketReader, opts ...BinaryResultS
 func (row *BinaryResultSetRow) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 
-	_, err := w.WriteBytes(row.HeaderBytes())
-	if err != nil {
-		return nil, err
-	}
-
 	// 0x00 header
 
-	err = w.WriteByte(0x00)
+	err := w.WriteByte(0x00)
 	if err != nil {
 		return nil, err
 	}
@@ -158,11 +153,11 @@ func (row *BinaryResultSetRow) Bytes() ([]byte, error) {
 		if row.nullBitmap.IsNull(n) {
 			continue
 		}
-		bytes, err := colum.Bytes()
+		columnBytes, err := colum.Bytes()
 		if err != nil {
 			return nil, err
 		}
-		_, err = w.WriteBytes(bytes)
+		_, err = w.WriteBytes(columnBytes)
 		if err != nil {
 			return nil, err
 		}
