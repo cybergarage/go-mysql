@@ -168,5 +168,7 @@ func (row *BinaryResultSetRow) Bytes() ([]byte, error) {
 		}
 	}
 
-	return w.Bytes(), nil
+	row.SetPayload(w.Bytes())
+
+	return row.packet.Bytes()
 }
