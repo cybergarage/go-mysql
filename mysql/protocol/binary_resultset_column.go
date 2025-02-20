@@ -14,6 +14,8 @@
 
 package protocol
 
+import "github.com/cybergarage/go-mysql/mysql/stmt"
+
 // MySQL: Binary Protocol Resultset
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_binary_resultset.html
 // Resultset row - MariaDB Knowledge Base
@@ -30,29 +32,36 @@ type BinaryResultSetColumn struct {
 
 // WithBinaryResultSetRowType returns a binary resultset row option to set the type.
 func WithBinaryResultSetColumnType(t FieldType) BinaryResultSetColumnOption {
-	return func(row *BinaryResultSetColumn) error {
-		row.t = t
+	return func(column *BinaryResultSetColumn) error {
+		column.t = t
 		return nil
 	}
 }
 
 // WithBinaryResultSetRowBytes returns a binary resultset row option to set the bytes.
 func WithBinaryResultSetColumnBytes(b []byte) BinaryResultSetColumnOption {
-	return func(row *BinaryResultSetColumn) error {
-		row.bytes = b
+	return func(column *BinaryResultSetColumn) error {
+		column.bytes = b
 		return nil
 	}
 }
 
 // WithBinaryResultSetRowValue returns a binary resultset row option to set the value.
 func WithBinaryResultSetColumnValue(v any) BinaryResultSetColumnOption {
-	return func(row *BinaryResultSetColumn) error {
+	return func(column *BinaryResultSetColumn) error {
 		w := NewPacketWriter()
-		err := w.WriteFieldValue(row.t, v)
+		err := w.WriteFieldValue(column.t, v)
 		if err != nil {
 			return err
 		}
-		row.bytes = w.Bytes()
+
+		reader := NewPacketReaderWithBytes(w.Bytes())
+		v, err := reader.ReadFieldBytes(column.t)
+		if err != nil {
+			return err
+		}
+		column.bytes = v
+
 		return nil
 	}
 }
@@ -90,6 +99,15 @@ func NewBinaryResultSetColumnFromReader(reader *PacketReader, opts ...BinaryResu
 // Type returns the type.
 func (column *BinaryResultSetColumn) Type() FieldType {
 	return column.t
+}
+
+// Value returns the value.
+func (column *BinaryResultSetColumn) Value() (any, error) {
+	field := stmt.NewField(
+		stmt.WithFieldType(column.t),
+		stmt.WithFieldBytes(column.bytes),
+	)
+	return field.Value()
 }
 
 // Bytes returns the bytes.
