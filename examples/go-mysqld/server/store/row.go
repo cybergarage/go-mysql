@@ -54,7 +54,8 @@ func (row Row) IsMatched(cond query.Condition) bool {
 		return true
 	}
 
-	deepEqual := func(r1 any, r2 any) bool {
+	var deepEqual func(r1 any, r2 any) bool
+	deepEqual = func(r1 any, r2 any) bool {
 		switch v1 := r1.(type) {
 		case string:
 			var v2 string
@@ -64,6 +65,12 @@ func (row Row) IsMatched(cond query.Condition) bool {
 					return true
 				}
 			}
+			var vf1 float64
+			err = safecast.ToFloat64(r1, &vf1)
+			if err == nil {
+				return deepEqual(vf1, r2)
+			}
+			return false
 		case int:
 			var v2 int
 			err := safecast.ToInt(r2, &v2)
