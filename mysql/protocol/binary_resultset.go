@@ -206,11 +206,11 @@ func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 	for _, row := range pkt.rows {
 		seqID = seqID.Next()
 		row.SetSequenceID(seqID)
-		bytes, err := row.Bytes()
+		rowBytes, err := row.Bytes()
 		if err != nil {
 			return nil, err
 		}
-		_, err = w.WriteBytes(bytes)
+		_, err = w.WriteBytes(rowBytes)
 		if err != nil {
 			return nil, err
 		}
