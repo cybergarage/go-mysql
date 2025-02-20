@@ -36,7 +36,8 @@ func TestSQLTest(t *testing.T) {
 
 	// NOTE: Add your test files in 'untests' directory into the filename array
 	testNames := []string{
-		"SmplCrudInt",
+		// "SmplCrudText",
+		"SmplCrudDatetime",
 	}
 
 	sqltest.RunEmbedSuites(t, sqltest.NewMySQLClient(), testNames...)
