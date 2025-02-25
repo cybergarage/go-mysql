@@ -1,12 +1,18 @@
 @startuml sequence
+' MySQL: Connection Phase
+' https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase.html
+== Connection Phase ==
 Client -> protocol.Server : Connection
 protocol.Server --> Client: Handshake
 Client --> protocol.Server: Handshake Response
 protocol.Server --> auth.Manager: Authentication Request
 auth.Manager --> protocol.Server: Authentication Response
 protocol.Server --> Client: Authentication Response
-Client -> protocol.Server: Prepared Statement Request
-protocol.Server -> Server: Prepared Statement Request
-Server --> protocol.Server: Prepared Statement Response
-protocol.Server --> Client: Prepared Statement Response
+== Command Phase == 
+group Prepared Statements
+    Client -> protocol.Server: Prepared Statement Request
+    protocol.Server -> Server: Prepared Statement Request
+    Server --> protocol.Server: Prepared Statement Response
+    protocol.Server --> Client: Prepared Statement Response
+end
 @enduml
