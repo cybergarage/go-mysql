@@ -1,0 +1,12 @@
+@startuml sequence
+Client -> protocol.Server : Connection
+protocol.Server --> Client: Handshake
+Client --> protocol.Server: Handshake Response
+protocol.Server --> auth.Manager: Authentication Request
+auth.Manager --> protocol.Server: Authentication Response
+protocol.Server --> Client: Authentication Response
+Client -> protocol.Server: Prepared Statement Request
+protocol.Server -> Server: Prepared Statement Request
+Server --> protocol.Server: Prepared Statement Response
+protocol.Server --> Client: Prepared Statement Response
+@enduml
