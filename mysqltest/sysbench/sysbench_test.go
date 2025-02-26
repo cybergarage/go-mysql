@@ -33,5 +33,5 @@ func TestSysbench(t *testing.T) {
 	}
 	defer server.Stop()
 
-	sysbench.RunSysbench(t)
+	sysbench.Run(t)
 }
