@@ -19,6 +19,7 @@ import (
 
 	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/mysqltest/server"
+	"github.com/cybergarage/go-sqltest/sqltest/sysbench"
 )
 
 func TestSysbench(t *testing.T) {
@@ -31,4 +32,6 @@ func TestSysbench(t *testing.T) {
 		return
 	}
 	defer server.Stop()
+
+	sysbench.RunSysbench(t)
 }
