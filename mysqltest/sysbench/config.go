@@ -15,15 +15,55 @@
 package sysbench
 
 import (
+	"strconv"
+
 	"github.com/cybergarage/go-sqltest/sqltest/sysbench"
 )
 
 const (
-// https://github.com/akopytov/sysbench
+	// https://github.com/akopytov/sysbench
+	MySQLHost     = "mysql-host"
+	MySQLPort     = "mysql-port"
+	MySQLUser     = "mysql-user"
+	MySQLPassword = "mysql-password"
+	MySQLDB       = "mysql-db"
 )
 
+// Config represents a sysbench config.
+type Config struct {
+	sysbench.Config
+}
+
 // NewDefaultConfig returns a new default config.
-func NewDefaultConfig() sysbench.Config {
-	cfg := sysbench.NewConfig()
+func NewDefaultConfig() *Config {
+	cfg := &Config{
+		Config: sysbench.NewDefaultConfig(),
+	}
+	cfg.SetHost("127.0.0.1")
 	return cfg
+}
+
+// SetHost sets the host.
+func (cfg *Config) SetHost(host string) {
+	cfg.Config.Set(MySQLHost, host)
+}
+
+// SetPort sets the port.
+func (cfg *Config) SetPort(port int) {
+	cfg.Config.Set(MySQLPort, strconv.Itoa(port))
+}
+
+// SetUser sets the user.
+func (cfg *Config) SetUser(user string) {
+	cfg.Config.Set(MySQLUser, user)
+}
+
+// SetPassword sets the password.
+func (cfg *Config) SetPassword(password string) {
+	cfg.Config.Set(MySQLPassword, password)
+}
+
+// SetDB sets the db.
+func (cfg *Config) SetDB(db string) {
+	cfg.Config.Set(MySQLDB, db)
 }
