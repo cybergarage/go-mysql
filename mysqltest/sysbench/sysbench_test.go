@@ -36,7 +36,7 @@ func TestSysbench(t *testing.T) {
 	defer server.Stop()
 
 	cmds := []string{
-		sysbench.OLTP_READ_WRITE,
+		sysbench.OltpReadWrite,
 	}
 
 	for _, cmd := range cmds {
