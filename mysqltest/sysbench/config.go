@@ -15,33 +15,15 @@
 package sysbench
 
 import (
-	"testing"
-
-	"github.com/cybergarage/go-logger/log"
-	"github.com/cybergarage/go-mysql/mysqltest/server"
 	"github.com/cybergarage/go-sqltest/sqltest/sysbench"
 )
 
-func TestSysbench(t *testing.T) {
-	log.SetStdoutDebugEnbled(true)
+const (
+// https://github.com/akopytov/sysbench
+)
 
-	cfg := NewDefaultConfig()
-
-	server := server.NewServer()
-	err := server.Start()
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	defer server.Stop()
-
-	cmds := []string{
-		sysbench.OLTP_READ_WRITE,
-	}
-
-	for _, cmd := range cmds {
-		t.Run(cmd, func(t *testing.T) {
-			sysbench.RunCommand(t, cmd, cfg)
-		})
-	}
+// NewDefaultConfig returns a new default config.
+func NewDefaultConfig() sysbench.Config {
+	cfg := sysbench.NewConfig()
+	return cfg
 }
