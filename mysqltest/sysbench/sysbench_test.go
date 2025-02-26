@@ -1,4 +1,4 @@
-// Copyright (C) 2019 The go-mysql Authors. All rights reserved.
+// Copyright (C) 2025 The go-mysql Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package ycsb
+package sysbench
 
 import (
 	"testing"
 
 	"github.com/cybergarage/go-logger/log"
-	"github.com/cybergarage/go-mysql/mysql"
 	"github.com/cybergarage/go-mysql/mysqltest/server"
-	"github.com/cybergarage/go-sqltest/sqltest/ycsb"
 )
 
-func TestYCSB(t *testing.T) {
+func TestSysbench(t *testing.T) {
 	log.SetStdoutDebugEnbled(true)
 
 	server := server.NewServer()
@@ -33,44 +31,4 @@ func TestYCSB(t *testing.T) {
 		return
 	}
 	defer server.Stop()
-
-	// Setup client
-
-	client := mysql.NewClient()
-	client.SetDatabase(ycsb.DatabaseName)
-
-	// Setup for YCSB benchmark
-
-	err = client.Open()
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	for _, setupQuery := range ycsb.SetUpQueries() {
-		rs, err := client.Query(setupQuery)
-		if err != nil {
-			t.Skipf("%s", err.Error())
-			return
-		}
-		defer rs.Close()
-	}
-
-	err = client.Close()
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	// Tries to execute ycsb command
-
-	workloads := []string{
-		"workloada",
-	}
-
-	for _, workload := range workloads {
-		t.Run(workload, func(t *testing.T) {
-			ycsb.RunWorkload(t, workload)
-		})
-	}
 }
