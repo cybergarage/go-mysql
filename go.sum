@@ -4,8 +4,6 @@ github.com/antlr4-go/antlr/v4 v4.13.1 h1:SqQKkuVZ+zWkMMNkjy5FZe5mr5WURWnlpmOuzYW
 github.com/antlr4-go/antlr/v4 v4.13.1/go.mod h1:GKmUxMtwp6ZgGwZSva4eWPC5mS6vUAmOABFgjdkM7Nw=
 github.com/cybergarage/go-authenticator v1.0.4 h1:sxv18cyh9geewmmbFytFjqDQIZxqZb90P3rDAr1W3wU=
 github.com/cybergarage/go-authenticator v1.0.4/go.mod h1:mcJk22zUiOtQ7oJFMrVaDiYc/gIhelLem7wsSQ9CQMo=
-github.com/cybergarage/go-logger v1.3.8 h1:Law2nkLjH5tJDNISMVUjT7F46x4DaZuBUyWULMs30zY=
-github.com/cybergarage/go-logger v1.3.8/go.mod h1:a7B/AZjPoA1W8EU/458vdCv6YWtRJI7Q9rofUcZjiho=
 github.com/cybergarage/go-logger v1.3.9 h1:X6P9HJYJc5TSn+CrOwcub3VspvVrlt/WMT++f8G+XjA=
 github.com/cybergarage/go-logger v1.3.9/go.mod h1:SU5vzAFJOTs89JXk+Jn89RaNmcR07parcJgnW4e8aDw=
 github.com/cybergarage/go-safecast v1.2.5 h1:ZDiKmdsE15RTKETRXKAKbYTDIhAzNONwJEfCaxmhkvU=
@@ -14,8 +12,8 @@ github.com/cybergarage/go-sasl v1.2.5 h1:p/n77BpKwRSSZr0+4ANytDcQxAfZmI/izIxJ2+k
 github.com/cybergarage/go-sasl v1.2.5/go.mod h1:tgAGdhINFMElVjU/C2Ly6LkPDblUFpfQ8l8/0QoANVI=
 github.com/cybergarage/go-sqlparser v1.5.0 h1:MyvzyxKMPL1kxnnbvzNLYsCKacvXlzo2hghq2CerP1A=
 github.com/cybergarage/go-sqlparser v1.5.0/go.mod h1:HfADgd/Q7wZXK5fRhRpBEyG1wG8LOx9QeIG415bN3YY=
-github.com/cybergarage/go-sqltest v1.5.0 h1:/b+PBKfXlgMCc93ur/XjlKX/DLEynC89PejX0uJZnNU=
-github.com/cybergarage/go-sqltest v1.5.0/go.mod h1:uzUVo+lbTnPq4TroxqjOmcxg/lV1Ak9SZKAtM5YkmVo=
+github.com/cybergarage/go-sqltest v1.5.1-0.20250226101818-55c25e1e1c5c h1:KbVsA6LIhAGi0HlV9sT9B+7jcGolpJNpP8U5MG2KZT8=
+github.com/cybergarage/go-sqltest v1.5.1-0.20250226101818-55c25e1e1c5c/go.mod h1:uzUVo+lbTnPq4TroxqjOmcxg/lV1Ak9SZKAtM5YkmVo=
 github.com/cybergarage/go-tracing v1.1.4 h1:J/9U1fDB0uGfRx1O4MQl8qgBDCZzNIFoPKYbhRPRoIo=
 github.com/cybergarage/go-tracing v1.1.4/go.mod h1:nG0apSs80pTvlBgYHvGIKpGyoM6mHHxfzkqcb9/vHZ8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
