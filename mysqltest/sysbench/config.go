@@ -27,6 +27,7 @@ const (
 	MySQLUser     = "mysql-user"
 	MySQLPassword = "mysql-password"
 	MySQLDB       = "mysql-db"
+	MySQLSSL      = "mysql-ssl"
 )
 
 // Config represents a sysbench config.
@@ -40,6 +41,8 @@ func NewDefaultConfig() *Config {
 		Config: sysbench.NewDefaultConfig(),
 	}
 	cfg.SetHost("127.0.0.1")
+	cfg.SetPort(3306)
+	cfg.SetSSL(false)
 	return cfg
 }
 
@@ -66,4 +69,13 @@ func (cfg *Config) SetPassword(password string) {
 // SetDB sets the db.
 func (cfg *Config) SetDB(db string) {
 	cfg.Config.Set(MySQLDB, db)
+}
+
+// SetSSL sets the ssl.
+func (cfg *Config) SetSSL(ssl bool) {
+	if ssl {
+		cfg.Config.Set(MySQLSSL, "on")
+		return
+	}
+	cfg.Config.Set(MySQLSSL, "off")
 }
