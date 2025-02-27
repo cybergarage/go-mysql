@@ -18,6 +18,7 @@ import (
 	"testing"
 
 	"github.com/cybergarage/go-logger/log"
+	"github.com/cybergarage/go-mysql/mysql"
 	"github.com/cybergarage/go-mysql/mysqltest/server"
 	"github.com/cybergarage/go-sqltest/sqltest/sysbench"
 )
@@ -25,7 +26,7 @@ import (
 func TestSysbench(t *testing.T) {
 	log.SetStdoutDebugEnbled(true)
 
-	cfg := NewDefaultConfig()
+	// Setup server
 
 	server := server.NewServer()
 	err := server.Start()
@@ -34,6 +35,44 @@ func TestSysbench(t *testing.T) {
 		return
 	}
 	defer server.Stop()
+
+	// Setup client
+
+	client := mysql.NewClient()
+
+	err = client.Open()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	defer func() {
+		err := client.Close()
+		if err != nil {
+			t.Error(err)
+		}
+	}()
+
+	testDBName := sysbench.GenerateTempDBName()
+
+	err = client.CreateDatabase(testDBName)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	defer func() {
+		err := client.DropDatabase(testDBName)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+	}()
+
+	// Setup sysbench configuation
+
+	cfg := NewDefaultConfig()
+	cfg.SetDB(testDBName)
 
 	cmds := []string{
 		sysbench.OltpReadWrite,
