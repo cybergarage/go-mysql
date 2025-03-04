@@ -68,6 +68,8 @@ func (server *Server) Capability() Capability {
 	capability := server.Config.Capability()
 	if server.IsTLSEnabled() {
 		capability |= ClientSSL
+	} else {
+		capability &= ^ClientSSL
 	}
 	return capability
 }
