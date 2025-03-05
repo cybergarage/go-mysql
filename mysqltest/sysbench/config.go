@@ -43,7 +43,7 @@ func NewDefaultConfig() *Config {
 	}
 	cfg.SetHost("127.0.0.1")
 	cfg.SetPort(3306)
-	cfg.SetSSL(false)
+	cfg.SetSSL(true)
 	cfg.SetDebug(true)
 	return cfg
 }
