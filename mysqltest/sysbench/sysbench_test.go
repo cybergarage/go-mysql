@@ -23,6 +23,9 @@ import (
 	"github.com/cybergarage/go-sqltest/sqltest/sysbench"
 )
 
+// Run sysbench on RDS MySQL, RDS MariaDB, and Amazon Aurora MySQL via SSL/TLS - Amazon Web Services Blog
+// https://aws.amazon.com/jp/blogs/news/running-sysbench-on-rds-mysql-rds-mariadb-and-amazon-aurora-mysql-via-ssl-tls-2/
+
 func TestSysbench(t *testing.T) {
 	log.SetStdoutDebugEnbled(true)
 
