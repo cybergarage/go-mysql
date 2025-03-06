@@ -22,9 +22,9 @@ import (
 )
 
 const (
-	serverKey  = "../certs/key.pem"
-	serverCert = "../certs/cert.pem"
-	rootCert   = "../certs/root_cert.pem"
+	serverKey  = "../certs/client-key.pem"
+	serverCert = "../certs/client-cert.pem"
+	rootCert   = "../certs/cacert.pem"
 )
 
 // Server represents a test server.

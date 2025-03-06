@@ -23,8 +23,8 @@ import (
 )
 
 const (
-	clientKey  = "../certs/key.pem"
-	clientCert = "../certs/cert.pem"
+	clientKey  = "../certs/client-key.pem"
+	clientCert = "../certs/client-cert.pem"
 )
 
 var testQueries []string = []string{

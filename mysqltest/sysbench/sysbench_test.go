@@ -15,6 +15,7 @@
 package sysbench
 
 import (
+	"os"
 	"testing"
 
 	"github.com/cybergarage/go-logger/log"
@@ -29,10 +30,19 @@ import (
 func TestSysbench(t *testing.T) {
 	log.SetStdoutDebugEnbled(true)
 
+	// Working directory
+
+	wkdir, err := os.Getwd()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	t.Logf("Working directory: %s", wkdir)
+
 	// Setup server
 
 	server := server.NewServer()
-	err := server.Start()
+	err = server.Start()
 	if err != nil {
 		t.Error(err)
 		return
