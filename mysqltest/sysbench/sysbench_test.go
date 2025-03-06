@@ -24,9 +24,6 @@ import (
 	"github.com/cybergarage/go-sqltest/sqltest/sysbench"
 )
 
-// Run sysbench on RDS MySQL, RDS MariaDB, and Amazon Aurora MySQL via SSL/TLS - Amazon Web Services Blog
-// https://aws.amazon.com/jp/blogs/news/running-sysbench-on-rds-mysql-rds-mariadb-and-amazon-aurora-mysql-via-ssl-tls-2/
-
 func TestSysbench(t *testing.T) {
 	log.SetStdoutDebugEnbled(true)
 
@@ -38,6 +35,23 @@ func TestSysbench(t *testing.T) {
 		return
 	}
 	t.Logf("Working directory: %s", wkdir)
+
+	// Check cert files if exists
+	// Run sysbench on RDS MySQL, RDS MariaDB, and Amazon Aurora MySQL via SSL/TLS - Amazon Web Services Blog
+	// https://aws.amazon.com/jp/blogs/news/running-sysbench-on-rds-mysql-rds-mariadb-and-amazon-aurora-mysql-via-ssl-tls-2/
+
+	certFiles := []string{
+		"client-key.pem",
+		"client-cert.pem",
+		"cacert.pem",
+	}
+
+	for _, certFile := range certFiles {
+		if _, err := os.Stat(certFile); os.IsNotExist(err) {
+			t.Errorf("Cert file not found: %s", certFile)
+			return
+		}
+	}
 
 	// Setup server
 
