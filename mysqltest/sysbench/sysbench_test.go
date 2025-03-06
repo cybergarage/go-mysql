@@ -37,8 +37,8 @@ func TestSysbench(t *testing.T) {
 	t.Logf("Working directory: %s", wkdir)
 
 	// Check cert files if exists
-	// Run sysbench on RDS MySQL, RDS MariaDB, and Amazon Aurora MySQL via SSL/TLS - Amazon Web Services Blog
-	// https://aws.amazon.com/jp/blogs/news/running-sysbench-on-rds-mysql-rds-mariadb-and-amazon-aurora-mysql-via-ssl-tls-2/
+	// Running sysbench on RDS MySQL, RDS MariaDB, and Amazon Aurora MySQL via SSL/TLS
+	// https://aws.amazon.com/jp/blogs/database/running-sysbench-on-rds-mysql-rds-mariadb-and-amazon-aurora-mysql-via-ssl-tls/
 
 	certFiles := []string{
 		"client-key.pem",
