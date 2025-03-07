@@ -114,6 +114,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 	res.username, err = res.ReadNullTerminatedString()
 	if err != nil {
 		if errors.Is(err, io.EOF) {
+			res.username = ""
 			return res, nil
 		}
 		return nil, err
@@ -145,6 +146,10 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 	if res.Capability().IsEnabled(ClientPluginAuth) {
 		res.clientPluginName, err = res.ReadNullTerminatedString()
 		if err != nil {
+			if errors.Is(err, io.EOF) {
+				res.clientPluginName = ""
+				return res, nil
+			}
 			return nil, err
 		}
 	}
