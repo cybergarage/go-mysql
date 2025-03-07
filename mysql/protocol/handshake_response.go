@@ -15,6 +15,7 @@
 package protocol
 
 import (
+	"errors"
 	"io"
 
 	"github.com/cybergarage/go-mysql/mysql/auth"
@@ -112,6 +113,9 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 
 	res.username, err = res.ReadNullTerminatedString()
 	if err != nil {
+		if errors.Is(err, io.EOF) {
+			return res, nil
+		}
 		return nil, err
 	}
 
