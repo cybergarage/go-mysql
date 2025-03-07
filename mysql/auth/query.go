@@ -42,6 +42,9 @@ func WithQueryAuthResponse(password any) QueryOptionFn {
 // WithQueryClientPluginName returns an option to set the client plugin name.
 func WithQueryClientPluginName(clientPluginName string) QueryOptionFn {
 	return func(q Query) error {
+		if len(clientPluginName) == 0 {
+			return nil
+		}
 		method, err := NewAuthMethodFromID(clientPluginName)
 		if err != nil {
 			return err
