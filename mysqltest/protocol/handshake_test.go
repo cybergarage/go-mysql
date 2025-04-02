@@ -102,17 +102,30 @@ func TestHandshakePacket(t *testing.T) {
 		name string
 		expected
 	}{
+		// {
+		// 	"data/handshake-001.hex",
+		// 	expected{
+		// 		seqID:          protocol.SequenceID(0),
+		// 		protocolVer:    protocol.ProtocolVersion10,
+		// 		serverVer:      "5.7.9-vitess-12.0.6",
+		// 		conID:          1,
+		// 		capFlags:       protocol.Capability(0),
+		// 		charSet:        protocol.CharSet(protocol.CharSetUTF8),
+		// 		serverStatus:   protocol.ServerStatus(0),
+		// 		authPluginName: "mysql_native_password",
+		// 	},
+		// },
 		{
-			"data/handshake-001.hex",
+			"data/handshake-mysql-8.0.41.hex",
 			expected{
 				seqID:          protocol.SequenceID(0),
 				protocolVer:    protocol.ProtocolVersion10,
-				serverVer:      "5.7.9-vitess-12.0.6",
-				conID:          1,
+				serverVer:      "8.0.41",
+				conID:          11,
 				capFlags:       protocol.Capability(0),
-				charSet:        protocol.CharSet(protocol.CharSetUTF8),
-				serverStatus:   protocol.ServerStatus(0),
-				authPluginName: "mysql_native_password",
+				charSet:        protocol.CharSet(255),
+				serverStatus:   protocol.ServerStatus(protocol.ServerStatusAutocommit),
+				authPluginName: "caching_sha2_password",
 			},
 		},
 	} {
