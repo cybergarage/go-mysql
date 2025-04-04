@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"errors"
+	"io"
 	"net"
 	"strconv"
 
@@ -376,6 +377,10 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		}
 		cmd, err = NewCommandFromReader(conn, opts...)
 		if err != nil {
+			if errors.Is(err, io.EOF) {
+				// Connection closed
+				break
+			}
 			return err
 		}
 
@@ -487,4 +492,6 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			return err
 		}
 	}
+
+	return nil
 }
