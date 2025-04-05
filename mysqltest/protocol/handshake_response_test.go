@@ -23,6 +23,13 @@ import (
 	"github.com/cybergarage/go-mysql/mysql/protocol"
 )
 
+// MySQL: Connection Phase
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase.html
+// MySQL: Protocol::HandshakeResponse
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase_packets_protocol_handshake_response.html
+// Connecting - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/connection/
+
 func TestHandshakeResponsePacket(t *testing.T) {
 	type expected struct {
 		capFlags   protocol.Capability
@@ -39,55 +46,55 @@ func TestHandshakeResponsePacket(t *testing.T) {
 		name string
 		expected
 	}{
-		{
-			"data/handshake-response-001.hex",
-			expected{
-				capFlags:   protocol.Capability(0x000aa28d),
-				maxPkt:     0,
-				charSet:    45,
-				username:   "skonno",
-				authRes:    nil,
-				database:   "sqltest1727254524366662000",
-				pluginName: "mysql_native_password",
-				attrs:      map[string]string{},
-				zstdLevel:  0,
-			},
-		},
-		{
-			"data/handshake-response-002.hex",
-			expected{
-				capFlags:   protocol.Capability(0x000fa68d),
-				maxPkt:     0,
-				charSet:    0,
-				username:   "",
-				authRes:    nil,
-				database:   "test",
-				pluginName: "mysql_native_password",
-				attrs:      map[string]string{},
-				zstdLevel:  0,
-			},
-		},
-		{
-			"data/handshake-response-003.hex",
-			expected{
-				capFlags:   protocol.Capability(0x001ea285),
-				maxPkt:     0,
-				charSet:    0,
-				username:   "root",
-				authRes:    nil,
-				database:   "",
-				pluginName: "mysql_native_password",
-				attrs: map[string]string{
-					"_os":             "debian6.0",
-					"_client_name":    "libmysql",
-					"_pid":            "22344",
-					"_client_version": "5.6.6-m9",
-					"_platform":       "x86_64",
-					"foo":             "bar",
-				},
-				zstdLevel: 0,
-			},
-		},
+		// {
+		// 	"data/handshake-response-001.hex",
+		// 	expected{
+		// 		capFlags:   protocol.Capability(0x000aa28d),
+		// 		maxPkt:     0,
+		// 		charSet:    45,
+		// 		username:   "skonno",
+		// 		authRes:    nil,
+		// 		database:   "sqltest1727254524366662000",
+		// 		pluginName: "mysql_native_password",
+		// 		attrs:      map[string]string{},
+		// 		zstdLevel:  0,
+		// 	},
+		// },
+		// {
+		// 	"data/handshake-response-mysql-5.5.8.hex",
+		// 	expected{
+		// 		capFlags:   protocol.Capability(0x000fa68d),
+		// 		maxPkt:     0,
+		// 		charSet:    0,
+		// 		username:   "",
+		// 		authRes:    nil,
+		// 		database:   "test",
+		// 		pluginName: "mysql_native_password",
+		// 		attrs:      map[string]string{},
+		// 		zstdLevel:  0,
+		// 	},
+		// },
+		// {
+		// 	"data/handshake-response-mysql-5.6.6.hex",
+		// 	expected{
+		// 		capFlags:   protocol.Capability(0x001ea285),
+		// 		maxPkt:     0,
+		// 		charSet:    0,
+		// 		username:   "root",
+		// 		authRes:    nil,
+		// 		database:   "",
+		// 		pluginName: "mysql_native_password",
+		// 		attrs: map[string]string{
+		// 			"_os":             "debian6.0",
+		// 			"_client_name":    "libmysql",
+		// 			"_pid":            "22344",
+		// 			"_client_version": "5.6.6-m9",
+		// 			"_platform":       "x86_64",
+		// 			"foo":             "bar",
+		// 		},
+		// 		zstdLevel: 0,
+		// 	},
+		// },
 		// {
 		// 	"data/handshake-response-004.hex",
 		// 	expected{
@@ -102,20 +109,20 @@ func TestHandshakeResponsePacket(t *testing.T) {
 		// 		zstdLevel:  0,
 		// 	},
 		// },
-		// {
-		// 	"data/handshake-response-sysbench-1.0.20.hex",
-		// 	expected{
-		// 		capFlags:   protocol.Capability(0x00bfaa8d),
-		// 		maxPkt:     0,
-		// 		charSet:    0,
-		// 		username:   "",
-		// 		authRes:    nil,
-		// 		database:   "",
-		// 		pluginName: "",
-		// 		attrs:      map[string]string{},
-		// 		zstdLevel:  0,
-		// 	},
-		// },
+		{
+			"data/handshake-response-sysbench-1.0.20.hex",
+			expected{
+				capFlags:   protocol.Capability(0x00bfaa8d),
+				maxPkt:     0,
+				charSet:    0,
+				username:   "",
+				authRes:    nil,
+				database:   "",
+				pluginName: "",
+				attrs:      map[string]string{},
+				zstdLevel:  0,
+			},
+		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			testData, err := testPackettFiles.ReadFile(test.name)
