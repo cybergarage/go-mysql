@@ -280,30 +280,38 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 		}
 	}
 
+	hasNextSection := pkt.Capability().IsEnabled(ClientConnectAttrs) && (0 < len(pkt.AttributeKeys()))
+	
 	if pkt.Capability().IsEnabled(ClientPluginAuth) {
-		if err := w.WriteNullTerminatedString(pkt.clientPluginName); err != nil {
-			return nil, err
+		if 0 < len(pkt.clientPluginName) || hasNextSection {
+			if err := w.WriteNullTerminatedString(pkt.clientPluginName); err != nil {
+				return nil, err
+			}
 		}
 	}
 
+	hasNextSection = pkt.Capability().IsEnabled(ClientZstdCompressionAlgorithm)
+
 	if pkt.Capability().IsEnabled(ClientConnectAttrs) {
-		attrWriter := NewPacketWriter()
-		for _, key := range pkt.AttributeKeys() {
-			value, _ := pkt.LookupAttribute(key)
-			if err := attrWriter.WriteLengthEncodedString(key); err != nil {
+		if 0 < len(pkt.AttributeKeys()) || hasNextSection {
+			attrWriter := NewPacketWriter()
+			for _, key := range pkt.AttributeKeys() {
+				value, _ := pkt.LookupAttribute(key)
+				if err := attrWriter.WriteLengthEncodedString(key); err != nil {
+					return nil, err
+				}
+				if err := attrWriter.WriteLengthEncodedString(value); err != nil {
+					return nil, err
+				}
+			}
+			attrBytes := attrWriter.Bytes()
+			attrSize := len(attrBytes)
+			if err := w.WriteLengthEncodedInt(uint64(attrSize)); err != nil {
 				return nil, err
 			}
-			if err := attrWriter.WriteLengthEncodedString(value); err != nil {
+			if _, err := w.WriteBytes(attrBytes); err != nil {
 				return nil, err
 			}
-		}
-		attrBytes := attrWriter.Bytes()
-		attrSize := len(attrBytes)
-		if err := w.WriteLengthEncodedInt(uint64(attrSize)); err != nil {
-			return nil, err
-		}
-		if _, err := w.WriteBytes(attrBytes); err != nil {
-			return nil, err
 		}
 	}
 
