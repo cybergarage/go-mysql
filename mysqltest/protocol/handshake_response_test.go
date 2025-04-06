@@ -110,7 +110,7 @@ func TestHandshakeResponsePacket(t *testing.T) {
 		// 	},
 		// },
 		{
-			"data/handshake-response-sysbench-1.0.20.hex",
+			"data/handshake-response-sysbench-1.0.20-01.hex",
 			expected{
 				capFlags:   protocol.Capability(0x00bfaa8d),
 				maxPkt:     0,
