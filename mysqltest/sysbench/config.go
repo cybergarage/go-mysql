@@ -45,6 +45,8 @@ func NewDefaultConfig() *Config {
 	cfg.SetPort(3306)
 	cfg.SetSSL(true)
 	cfg.SetDebug(true)
+	cfg.SetUser(sysbench.User())
+	cfg.SetPassword(sysbench.Password())
 	return cfg
 }
 
