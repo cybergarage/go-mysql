@@ -316,6 +316,8 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			return err
 		}
 
+		log.HexDebug(firstPktBytes)
+
 		firstPktReader = bytes.NewBuffer(firstPktBytes)
 	}
 
