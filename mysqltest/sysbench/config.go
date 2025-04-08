@@ -50,14 +50,6 @@ func NewDefaultConfig() *Config {
 	return cfg
 }
 
-func (cfg *Config) setBool(key string, value bool) {
-	if value {
-		cfg.Config.Set(key, "on")
-		return
-	}
-	cfg.Config.Set(key, "off")
-}
-
 // SetHost sets the host.
 func (cfg *Config) SetHost(host string) {
 	cfg.Config.Set(MySQLHost, host)
@@ -85,10 +77,10 @@ func (cfg *Config) SetDB(db string) {
 
 // SetSSL sets the ssl.
 func (cfg *Config) SetSSL(ssl bool) {
-	cfg.setBool(MySQLSSL, ssl)
+	cfg.SetBool(MySQLSSL, ssl)
 }
 
 // SetDebug sets the debug.
 func (cfg *Config) SetDebug(debug bool) {
-	cfg.setBool(MySQLDebug, debug)
+	cfg.SetBool(MySQLDebug, debug)
 }
