@@ -8,7 +8,7 @@ require (
 	github.com/cybergarage/go-safecast v1.2.5
 	github.com/cybergarage/go-sasl v1.2.5
 	github.com/cybergarage/go-sqlparser v1.5.1-0.20250304121148-45b576a306b2
-	github.com/cybergarage/go-sqltest v1.5.1-0.20250406105051-83f24f97ad25
+	github.com/cybergarage/go-sqltest v1.5.1-0.20250408041932-7909bfd0b274
 	github.com/cybergarage/go-tracing v1.1.4
 	github.com/go-sql-driver/mysql v1.9.0
 	github.com/google/uuid v1.6.0
