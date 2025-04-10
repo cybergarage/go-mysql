@@ -25,67 +25,67 @@ import (
 // NewFieldTypeFrom returns a new FieldType from the data type.
 func NewFieldTypeFrom(t query.DataType) (FieldType, error) {
 	switch t {
-	case query.BigIntData:
+	case query.BigIntType:
 		return MySQLTypeLongLong, nil
-	case query.BinaryData:
+	case query.BinaryType:
 		return MySQLTypeBlob, nil
-	case query.BitData:
+	case query.BitType:
 		return MySQLTypeBit, nil
-	case query.BlobData:
+	case query.BlobType:
 		return MySQLTypeBlob, nil
-	case query.BooleanData:
+	case query.BooleanType:
 		return MySQLTypeBool, nil
 	// case query.CharData, query.CharacterData:
 	// 	return MySQLTypeChar, nil
-	case query.ClobData:
+	case query.ClobType:
 		return MySQLTypeString, nil
-	case query.DateData:
+	case query.DateType:
 		return MySQLTypeDate, nil
-	case query.DecimalData:
+	case query.DecimalType:
 		return MySQLTypeDecimal, nil
-	case query.DoubleData, query.DoublePrecision:
+	case query.DoubleType, query.DoublePrecisionType:
 		return MySQLTypeDouble, nil
-	case query.FloatData:
+	case query.FloatType:
 		return MySQLTypeFloat, nil
-	case query.IntData, query.IntegerData:
+	case query.IntType, query.IntegerType:
 		return MySQLTypeLong, nil
-	case query.LongBlobData:
+	case query.LongBlobType:
 		return MySQLTypeLongBlob, nil
-	case query.LongTextData:
+	case query.LongTextType:
 		return MySQLTypeString, nil
-	case query.MediumBlobData:
+	case query.MediumBlobType:
 		return MySQLTypeMediumBlob, nil
-	case query.MediumIntData:
+	case query.MediumIntType:
 		return MySQLTypeInt24, nil
-	case query.MediumTextData:
+	case query.MediumTextType:
 		return MySQLTypeString, nil
 	// case query.NumericData:
 	// 	return MySQLTypeNumeric
 	// case query.RealData:
 	// 	return MySQLTypeReal
-	case query.SetData:
+	case query.SetType:
 		return MySQLTypeSet, nil
-	case query.SmallIntData:
+	case query.SmallIntType:
 		return MySQLTypeTiny, nil
-	case query.TextData:
+	case query.TextType:
 		return MySQLTypeString, nil
-	case query.TimeData:
+	case query.TimeType:
 		return MySQLTypeTime, nil
-	case query.DateTimeData:
+	case query.DateTimeType:
 		return MySQLTypeDatetime, nil
-	case query.TimeStampData:
+	case query.TimeStampType:
 		return MySQLTypeTimestamp, nil
-	case query.TinyBlobData:
+	case query.TinyBlobType:
 		return MySQLTypeTinyBlob, nil
-	case query.TinyIntData:
+	case query.TinyIntType:
 		return MySQLTypeTiny, nil
-	case query.TinyTextData:
+	case query.TinyTextType:
 		return MySQLTypeString, nil
-	case query.VarBinaryData:
+	case query.VarBinaryType:
 		return MySQLTypeBlob, nil
-	case query.VarCharData, query.VarCharacterData:
+	case query.VarCharType, query.VarCharacterType:
 		return MySQLTypeVarchar, nil
-	case query.YearData:
+	case query.YearType:
 		return MySQLTypeYear, nil
 	}
 
