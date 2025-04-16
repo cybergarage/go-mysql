@@ -19,4 +19,4 @@ import (
 )
 
 //go:embed data/*.hex
-var testPackettFiles embed.FS
+var testEmbedPacketFiles embed.FS

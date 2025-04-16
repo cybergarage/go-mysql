@@ -46,7 +46,7 @@ func TestStmtPrepareResponsePacket(t *testing.T) {
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			testData, err := testPackettFiles.ReadFile(test.name)
+			testData, err := testEmbedPacketFiles.ReadFile(test.name)
 			if err != nil {
 				t.Error(err)
 				return
