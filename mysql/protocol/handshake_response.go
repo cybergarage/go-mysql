@@ -281,7 +281,7 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 	}
 
 	hasNextSection := pkt.Capability().IsEnabled(ClientConnectAttrs) && (0 < len(pkt.AttributeKeys()))
-	
+
 	if pkt.Capability().IsEnabled(ClientPluginAuth) {
 		if 0 < len(pkt.clientPluginName) || hasNextSection {
 			if err := w.WriteNullTerminatedString(pkt.clientPluginName); err != nil {
