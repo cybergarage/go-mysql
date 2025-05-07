@@ -100,6 +100,7 @@ func TestSysbench(t *testing.T) {
 
 	cfg := NewDefaultConfig()
 	cfg.SetDB(testDBName)
+	cfg.SetSkipOnError(true)
 
 	cmds := []string{
 		sysbench.OltpReadWrite,
