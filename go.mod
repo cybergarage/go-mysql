@@ -4,7 +4,7 @@ go 1.24
 
 require (
 	github.com/cybergarage/go-logger v1.3.10
-	github.com/cybergarage/go-safecast v1.2.6
+	github.com/cybergarage/go-safecast v1.2.7
 	github.com/cybergarage/go-sasl v1.1.1
 	github.com/cybergarage/go-sqlparser v1.5.1-0.20250501135422-b8abcf9e4fd9
 	github.com/cybergarage/go-sqltest v1.5.1-0.20250507063239-62b3aa6171e6
