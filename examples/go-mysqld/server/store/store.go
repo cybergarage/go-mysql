@@ -276,7 +276,7 @@ func (store *Store) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, err
 		if fn, ok := selector.(query.Function); ok {
 			for _, arg := range fn.Arguments() {
 				if arg.IsAsterisk() {
-					selectorNames = append(selectorNames, tbl.Selectors().SelectorNames()...)
+					selectorNames = append(selectorNames, tbl.Selectors().Names()...)
 				} else {
 					selectorNames = append(selectorNames, arg.Name())
 				}
