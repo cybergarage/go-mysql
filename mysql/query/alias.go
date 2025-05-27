@@ -112,8 +112,8 @@ type Function = query.Function
 // FunctionExecutor represents a function executor.
 type FunctionExecutor = query.FunctionExecutor
 
-// AggregateFunction represents an aggregate function.
-type AggregateFunction = query.AggregateFunction
+// AggregatorFunction represents an aggregate function.
+type AggregatorFunction = query.Aggregator
 
-// AggregateResultSet represents an aggregate result set.
-type AggregateResultSet = query.AggregateResultSet
+// AggregatorResultSet represents an aggregate result set.
+type AggregatorResultSet = query.AggregatorResultSet
