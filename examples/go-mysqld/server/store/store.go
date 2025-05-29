@@ -247,6 +247,8 @@ func (store *Store) Delete(conn net.Conn, stmt query.Delete) (sql.ResultSet, err
 func (store *Store) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, error) {
 	log.Debugf("%v", stmt)
 
+	// Select the target table
+
 	from := stmt.From()
 	if len(from) != 1 {
 		return nil, errors.NewErrMultipleTableNotSupported(from.String())
@@ -259,77 +261,58 @@ func (store *Store) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, err
 		return nil, err
 	}
 
-	rows, err := tbl.Select(stmt.Where())
-	if err != nil {
-		return nil, err
-	}
-
-	// Selector column names
+	// Selectors
 
 	selectors := stmt.Selectors()
 	if selectors.IsAsterisk() {
 		selectors = tbl.Selectors()
 	}
 
-	selectorNames := []string{}
-	for _, selector := range selectors {
-		if fn, ok := selector.(query.Function); ok {
-			for _, arg := range fn.Arguments() {
-				if arg.IsAsterisk() {
-					selectorNames = append(selectorNames, tbl.Selectors().Names()...)
-				} else {
-					selectorNames = append(selectorNames, arg.Name())
-				}
-			}
-		} else {
-			selectorNames = append(selectorNames, selector.Name())
-		}
+	// Select rows from a target table
+
+	rows, err := tbl.Select(stmt.Where())
+	if err != nil {
+		return nil, err
 	}
 
 	// Row description response
 
 	schema := tbl.Schema
-	rsSchemaColums := []sql.ResultSetColumn{}
-	for _, selectorName := range selectorNames {
-		shemaColumn, err := schema.LookupColumn(selectorName)
-		if err != nil {
-			return nil, err
-		}
-		rsCchemaColumn, err := resultset.NewColumnFrom(shemaColumn)
-		if err != nil {
-			return nil, err
-		}
-		rsSchemaColums = append(rsSchemaColums, rsCchemaColumn)
-	}
 
 	rsSchema := resultset.NewSchema(
 		resultset.WithSchemaDatabaseName(conn.Database()),
 		resultset.WithSchemaTableName(tblName),
-		resultset.WithSchemaColumns(rsSchemaColums),
+		resultset.WithSchemaQuerySchema(schema),
+		resultset.WithSchemaSelectors(selectors),
 	)
 
-	// Data row response
+	// Convert []Row to []map[string]any
 
-	rsRows := []sql.ResultSetRow{}
+	mapRows := resultset.NewMapRows()
 	for _, row := range rows {
-		rowValues := []any{}
-		for _, selectorName := range selectorNames {
-			value, err := row.ValueByName(selectorName)
-			if err != nil {
-				return nil, err
-			}
-			rowValues = append(rowValues, value)
-		}
-		rsRow := resultset.NewRow(
-			resultset.WithRowSchema(rsSchema),
-			resultset.WithRowValues(rowValues),
-		)
-		rsRows = append(rsRows, rsRow)
+		mapRows = append(mapRows, row)
+	}
+
+	// Map rows to result set rows
+
+	rsRows, err := resultset.NewRows(
+		resultset.WithRowsSchema(rsSchema),
+		resultset.WithRowsSelectors(selectors),
+		resultset.WithRowsGroupBy(stmt.GroupBy().ColumnName()),
+		resultset.WithRowsMapRows(mapRows),
+	)
+
+	if err != nil {
+		return nil, err
 	}
 
 	// Return a result set
 
+	offset := stmt.Limit().Offset()
+	limit := stmt.Limit().Limit()
 	rs := resultset.NewResultSet(
+		resultset.WithResultSetOffset(offset),
+		resultset.WithResultSetLimit(limit),
 		resultset.WithResultSetSchema(rsSchema),
 		resultset.WithResultSetRowsAffected(uint(len(rsRows))),
 		resultset.WithResultSetRows(rsRows),
