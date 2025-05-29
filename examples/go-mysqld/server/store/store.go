@@ -220,7 +220,7 @@ func (store *Store) Update(conn net.Conn, stmt query.Update) (sql.ResultSet, err
 	}
 
 	return resultset.NewResultSet(
-		resultset.WithResultSetRowsAffected(uint64(n)),
+		resultset.WithResultSetRowsAffected(uint(n)),
 	), nil
 }
 
@@ -239,7 +239,7 @@ func (store *Store) Delete(conn net.Conn, stmt query.Delete) (sql.ResultSet, err
 	}
 
 	return resultset.NewResultSet(
-		resultset.WithResultSetRowsAffected(uint64(n)),
+		resultset.WithResultSetRowsAffected(uint(n)),
 	), nil
 }
 
@@ -331,7 +331,7 @@ func (store *Store) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, err
 
 	rs := resultset.NewResultSet(
 		resultset.WithResultSetSchema(rsSchema),
-		resultset.WithResultSetRowsAffected(uint64(len(rsRows))),
+		resultset.WithResultSetRowsAffected(uint(len(rsRows))),
 		resultset.WithResultSetRows(rsRows),
 	)
 
