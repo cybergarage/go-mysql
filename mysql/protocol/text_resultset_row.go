@@ -29,13 +29,13 @@ type TextResultSetRowOption func(*TextResultSetRow)
 // TextResultSetRow represents a MySQL text resultset row response packet.
 type TextResultSetRow struct {
 	*packet
-	columns []string
+	columns []*string
 }
 
 func newTextResultSetRowWithPacket(pkt *packet, opts ...TextResultSetRowOption) *TextResultSetRow {
 	row := &TextResultSetRow{
 		packet:  pkt,
-		columns: []string{},
+		columns: []*string{},
 	}
 	row.SetOptions(opts...)
 	return row
@@ -44,12 +44,12 @@ func newTextResultSetRowWithPacket(pkt *packet, opts ...TextResultSetRowOption) 
 // WithTextResultSetRowColmunCount returns a text resultset row option to set the column count.
 func WithTextResultSetRowColmunCount(c uint64) TextResultSetRowOption {
 	return func(pkt *TextResultSetRow) {
-		pkt.columns = make([]string, c)
+		pkt.columns = make([]*string, c)
 	}
 }
 
 // WithTextResultSetRowColmuns returns a text resultset row option to set the columns.
-func WithTextResultSetRowColmuns(columns []string) TextResultSetRowOption {
+func WithTextResultSetRowColmuns(columns []*string) TextResultSetRowOption {
 	return func(pkt *TextResultSetRow) {
 		pkt.columns = columns
 	}
@@ -74,7 +74,7 @@ func NewTextResultSetRowFromReader(reader *PacketReader, opts ...TextResultSetRo
 		if err != nil {
 			return nil, err
 		}
-		row.columns[n] = column
+		row.columns[n] = &column
 	}
 
 	return row, nil
@@ -105,7 +105,7 @@ func (row *TextResultSetRow) Columns() []any {
 func (row *TextResultSetRow) Bytes() ([]byte, error) {
 	w := NewPacketWriter()
 	for _, column := range row.columns {
-		err := w.WriteLengthEncodedString(column)
+		err := w.WriteTextResultsetRowString(column)
 		if err != nil {
 			return nil, err
 		}

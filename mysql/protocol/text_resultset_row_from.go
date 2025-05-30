@@ -59,7 +59,7 @@ func NewTextResultSetRowsFromResultSet(rs sql.ResultSet) ([]ResultSetRow, error)
 func NewTextResultSetRowFrom(schema sql.ResultSetSchema, rsRow sql.ResultSetRow) (ResultSetRow, error) {
 	schemaColumns := schema.Columns()
 	schemaColumnCount := len(schemaColumns)
-	rowColumns := make([]string, len(rsRow.Values()))
+	rowColumns := make([]*string, len(rsRow.Values()))
 	for n, v := range rsRow.Values() {
 		if schemaColumnCount <= n {
 			return nil, fmt.Errorf("schema column count (%d) is less than row column count (%d)", schemaColumnCount, n)
@@ -67,7 +67,7 @@ func NewTextResultSetRowFrom(schema sql.ResultSetSchema, rsRow sql.ResultSetRow)
 		columnType := schemaColumns[n].DataType()
 		rowValue, err := NewTextResultSetRowValueFrom(columnType, v)
 		if err == nil {
-			rowColumns[n] = rowValue
+			rowColumns[n] = &rowValue
 		} else if errors.Is(err, ErrNull) {
 			rowColumns[n] = nil
 		} else {
@@ -83,8 +83,6 @@ func NewTextResultSetRowFrom(schema sql.ResultSetSchema, rsRow sql.ResultSetRow)
 // NewTextResultSetRowValueFrom returns a new ResultSetRowValue from the specified DataType and value.
 func NewTextResultSetRowValueFrom(t query.DataType, v any) (string, error) {
 	if v == nil {
-		// MySQL: NULL value
-		// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset_row.html#idm46958099203264
 		return "", ErrNull
 	}
 
