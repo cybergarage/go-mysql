@@ -15,6 +15,7 @@
 package protocol
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -65,10 +66,13 @@ func NewTextResultSetRowFrom(schema sql.ResultSetSchema, rsRow sql.ResultSetRow)
 		}
 		columnType := schemaColumns[n].DataType()
 		rowValue, err := NewTextResultSetRowValueFrom(columnType, v)
-		if err != nil {
+		if err == nil {
+			rowColumns[n] = rowValue
+		} else if errors.Is(err, ErrNull) {
+			rowColumns[n] = nil
+		} else {
 			return nil, err
 		}
-		rowColumns[n] = rowValue
 	}
 	row := NewTextResultSetRow(
 		WithTextResultSetRowColmuns(rowColumns),
@@ -78,33 +82,29 @@ func NewTextResultSetRowFrom(schema sql.ResultSetSchema, rsRow sql.ResultSetRow)
 
 // NewTextResultSetRowValueFrom returns a new ResultSetRowValue from the specified DataType and value.
 func NewTextResultSetRowValueFrom(t query.DataType, v any) (string, error) {
+	if v == nil {
+		// MySQL: NULL value
+		// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset_row.html#idm46958099203264
+		return "", ErrNull
+	}
+
 	switch t {
 	case query.CharData, query.CharacterData, query.VarCharData, query.VarCharacterData, query.TextData, query.TinyTextData, query.LongTextData:
 		return fmt.Sprintf("%s", v), nil
 	case query.IntData, query.IntegerData, query.SmallIntData, query.MediumIntData, query.TinyIntData:
-		switch v.(type) {
-		case nil:
-			return "", nil
-		default:
-			var rv int
-			err := safecast.ToInt(v, &rv)
-			if err != nil {
-				return "", err
-			}
-			return strconv.Itoa(rv), nil
+		var rv int
+		err := safecast.ToInt(v, &rv)
+		if err != nil {
+			return "", err
 		}
+		return strconv.Itoa(rv), nil
 	case query.FloatData, query.DoubleData, query.RealData:
-		switch v.(type) {
-		case nil:
-			return "", nil
-		default:
-			var rv float64
-			err := safecast.ToFloat64(v, &rv)
-			if err != nil {
-				return "", err
-			}
-			return strconv.FormatFloat(rv, 'f', -1, 64), nil
+		var rv float64
+		err := safecast.ToFloat64(v, &rv)
+		if err != nil {
+			return "", err
 		}
+		return strconv.FormatFloat(rv, 'f', -1, 64), nil
 	case query.TimeStampData, query.DateTimeData:
 		var rv time.Time
 		err := safecast.ToTime(v, &rv)
