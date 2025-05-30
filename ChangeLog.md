@@ -11,6 +11,10 @@
     - `COM_STMT_RESET`
     - `COM_STMT_SEND_LONG_DATA`
     - `COM_STMT_FETCH`
+_ Improved:
+  - Example (go-mysql)
+    - Support for statement commands
+      - Math and Aggregate functions:
 
 ## v1.3.0 (2025-02-21)
 - New Features:
