@@ -39,7 +39,7 @@ func TestSQLTestSuite(t *testing.T) {
 		"SmplIndex*",
 		"FuncMath.*",
 		"FuncAggr*",
-		// "UpdateArith*",
+		"UpdateArith*",
 		"YcsbWorkload",
 	}
 
