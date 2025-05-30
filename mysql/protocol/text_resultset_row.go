@@ -74,7 +74,7 @@ func NewTextResultSetRowFromReader(reader *PacketReader, opts ...TextResultSetRo
 		if err != nil {
 			return nil, err
 		}
-		row.columns[n] = &column
+		row.columns[n] = column
 	}
 
 	return row, nil
@@ -88,8 +88,8 @@ func (row *TextResultSetRow) SetOptions(opts ...TextResultSetRowOption) {
 }
 
 // ReadColumn reads a column.
-func (row *TextResultSetRow) ReadColumn() (string, error) {
-	return row.ReadLengthEncodedString()
+func (row *TextResultSetRow) ReadColumn() (*string, error) {
+	return row.ReadTextResultsetRowString()
 }
 
 // Columns returns the columns.

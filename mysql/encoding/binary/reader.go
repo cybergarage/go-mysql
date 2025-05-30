@@ -20,10 +20,6 @@ import (
 	"io"
 )
 
-const (
-	NullValue = 0xFB
-)
-
 // Reader represents a packet reader.
 type Reader struct {
 	io.Reader
@@ -221,8 +217,8 @@ func (reader *Reader) ReadLengthEncodedInt() (uint64, error) {
 	case firstByte == 0xFE:
 		v, err := reader.ReadInt8()
 		return uint64(v), err
-	case firstByte == NullValue:
-		return NullValue, nil
+	case firstByte == NullString:
+		return NullString, nil
 	default:
 		return 0, newErrInvalidCode("length encoded integer", uint(firstByte))
 	}
@@ -313,8 +309,8 @@ func (reader *Reader) ReadLengthEncodedString() (string, error) {
 	switch {
 	case n == 0:
 		return "", nil
-	case n == NullValue:
-		return "", nil
+	case n == NullString:
+		return "", ErrNull
 	}
 	return reader.ReadFixedLengthString(int(n))
 }

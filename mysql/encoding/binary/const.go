@@ -14,15 +14,7 @@
 
 package binary
 
-// WriteNullString writes a NULL string (0xFB) to the writer.
-func (w *Writer) WriteNullString() error {
-	return w.WriteByte(NullString)
-}
-
-// WriteTextResultsetRow writes a text resultset row.
-func (w *Writer) WriteTextResultsetRowString(s *string) error {
-	if s == nil {
-		return w.WriteNullString()
-	}
-	return w.WriteLengthEncodedString(*s)
-}
+// MySQL: Text Resultset Row
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset_row.html
+// NULL is sent as 0xFB
+const NullString = 0xFB

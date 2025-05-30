@@ -14,15 +14,19 @@
 
 package binary
 
-// WriteNullString writes a NULL string (0xFB) to the writer.
-func (w *Writer) WriteNullString() error {
-	return w.WriteByte(NullString)
-}
+import (
+	"errors"
+)
 
-// WriteTextResultsetRow writes a text resultset row.
-func (w *Writer) WriteTextResultsetRowString(s *string) error {
-	if s == nil {
-		return w.WriteNullString()
+// ReadTextResultsetRowString reads a string from the result set row.
+func (reader *Reader) ReadTextResultsetRowString() (*string, error) {
+	s, err := reader.ReadLengthEncodedString()
+	if err == nil {
+		return &s, nil
+
 	}
-	return w.WriteLengthEncodedString(*s)
+	if errors.Is(err, ErrNull) {
+		return nil, nil
+	}
+	return nil, err
 }
