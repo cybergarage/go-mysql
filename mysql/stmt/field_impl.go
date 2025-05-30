@@ -83,11 +83,16 @@ func (f *field) Bytes() ([]byte, error) {
 
 	switch f.t {
 	case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar:
-		s, ok := f.v.(string)
-		if !ok {
+		switch v := f.v.(type) {
+		case nil:
+			f.b = []byte{binary.NullString}
+		case *string:
+			f.b = []byte(*v)
+		case string:
+			f.b = []byte(v)
+		default:
 			return nil, newErrInvalidField(f.t, f.v)
 		}
-		f.b = []byte(s)
 	case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
 		b, ok := f.v.([]byte)
 		if !ok {
