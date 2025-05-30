@@ -82,19 +82,29 @@ func NewTextResultSetRowValueFrom(t query.DataType, v any) (string, error) {
 	case query.CharData, query.CharacterData, query.VarCharData, query.VarCharacterData, query.TextData, query.TinyTextData, query.LongTextData:
 		return fmt.Sprintf("%s", v), nil
 	case query.IntData, query.IntegerData, query.SmallIntData, query.MediumIntData, query.TinyIntData:
-		var rv int
-		err := safecast.ToInt(v, &rv)
-		if err != nil {
-			return "", err
+		switch v.(type) {
+		case nil:
+			return "", nil
+		default:
+			var rv int
+			err := safecast.ToInt(v, &rv)
+			if err != nil {
+				return "", err
+			}
+			return strconv.Itoa(rv), nil
 		}
-		return strconv.Itoa(rv), nil
 	case query.FloatData, query.DoubleData, query.RealData:
-		var rv float64
-		err := safecast.ToFloat64(v, &rv)
-		if err != nil {
-			return "", err
+		switch v.(type) {
+		case nil:
+			return "", nil
+		default:
+			var rv float64
+			err := safecast.ToFloat64(v, &rv)
+			if err != nil {
+				return "", err
+			}
+			return strconv.FormatFloat(rv, 'f', -1, 64), nil
 		}
-		return strconv.FormatFloat(rv, 'f', -1, 64), nil
 	case query.TimeStampData, query.DateTimeData:
 		var rv time.Time
 		err := safecast.ToTime(v, &rv)

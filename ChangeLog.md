@@ -15,7 +15,7 @@ _ Improved:
   - Example (go-mysql)
     - Support for statement commands
       - Math and Aggregate functions:
-
+ChangeLog.md
 ## v1.3.0 (2025-02-21)
 - New Features:
   - Support for statement commands
