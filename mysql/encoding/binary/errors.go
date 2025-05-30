@@ -20,7 +20,11 @@ import (
 	"fmt"
 )
 
+// ErrInvalid is returned when an invalid value is encountered.
 var ErrInvalid = errors.New("invalid")
+
+// ErrNull is returned when a null value is encountered.
+var ErrNull = errors.New("null")
 
 func newErrInvalidLength(expected int, actual int) error {
 	return fmt.Errorf("%w byte length : %d < %d", ErrInvalid, actual, expected)
