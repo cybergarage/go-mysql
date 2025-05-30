@@ -35,8 +35,11 @@ func TestSQLTestSuite(t *testing.T) {
 	defer server.Stop()
 
 	testNames := []string{
-		"SmplCrud*",
+		"SmplCrud.*",
 		"SmplIndex*",
+		"FuncMath.*",
+		// "FuncAggr*",
+		// "UpdateArith*",
 		"YcsbWorkload",
 	}
 
