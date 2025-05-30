@@ -34,6 +34,9 @@ var ErrExist = errors.New("exist")
 // ErrTooManyConnections is returned when the connection is too many.
 var ErrTooManyConnections = errors.New("too many connections")
 
+// ErrNull is returned when the value is null.
+var ErrNull = errors.New("null")
+
 func newErrNotSupported(v any) error {
 	return fmt.Errorf("%v is %w", v, ErrNotSupported)
 }
