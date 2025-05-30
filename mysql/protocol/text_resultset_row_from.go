@@ -88,7 +88,12 @@ func NewTextResultSetRowValueFrom(t query.DataType, v any) (string, error) {
 
 	switch t {
 	case query.CharData, query.CharacterData, query.VarCharData, query.VarCharacterData, query.TextData, query.TinyTextData, query.LongTextData:
-		return fmt.Sprintf("%s", v), nil
+		var rv string
+		err := safecast.ToString(v, &rv)
+		if err != nil {
+			return "", err
+		}
+		return rv, nil
 	case query.IntData, query.IntegerData, query.SmallIntData, query.MediumIntData, query.TinyIntData:
 		var rv int
 		err := safecast.ToInt(v, &rv)
