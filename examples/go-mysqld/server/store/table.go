@@ -80,7 +80,9 @@ func (tbl *Table) Update(cols []query.Column, cond query.Condition) (int, error)
 	defer tbl.Unlock()
 
 	for _, row := range rows {
-		row.Update(cols)
+		if err := row.Update(cols); err != nil {
+			return 0, err
+		}
 	}
 
 	return len(rows), nil

@@ -21,6 +21,7 @@ import (
 
 	"github.com/cybergarage/go-safecast/safecast"
 	"github.com/cybergarage/go-sqlparser/sql/errors"
+	"github.com/cybergarage/go-sqlparser/sql/fn"
 	"github.com/cybergarage/go-sqlparser/sql/query"
 )
 
@@ -109,7 +110,7 @@ func (row Row) IsMatched(cond query.Condition) bool {
 }
 
 // Update updates the row with the specified columns.
-func (row Row) Update(colums []query.Column) {
+func (row Row) Update(colums []query.Column) error {
 	for _, col := range colums {
 		colName := col.Name()
 		if col.HasValue() {
@@ -118,15 +119,18 @@ func (row Row) Update(colums []query.Column) {
 	}
 	for _, col := range colums {
 		colName := col.Name()
-		if fn, ok := col.Function(); ok {
-			if exe, err := fn.Executor(); err == nil {
-				if v, err := exe.Execute(row); err != nil {
-					row[colName] = v
+		if fx, ok := col.Function(); ok {
+			if exe, err := fx.Executor(); err == nil {
+				v, err := exe.Execute(fn.NewMapWithMap(row))
+				if err != nil {
+					return err
 				}
-				continue
+
+				row[colName] = v
 			}
 		}
 	}
+	return nil
 }
 
 // IsEqual returns true if the row is equal to the specified row.
