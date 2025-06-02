@@ -309,15 +309,14 @@ func (store *Store) Select(conn net.Conn, stmt query.Select) (sql.ResultSet, err
 
 	offset := stmt.Limit().Offset()
 	limit := stmt.Limit().Limit()
-	rs := resultset.NewResultSet(
+
+	return resultset.NewResultSetFrom(
 		resultset.WithResultSetOffset(offset),
 		resultset.WithResultSetLimit(limit),
 		resultset.WithResultSetSchema(rsSchema),
 		resultset.WithResultSetRowsAffected(uint(len(rsRows))),
 		resultset.WithResultSetRows(rsRows),
 	)
-
-	return rs, nil
 }
 
 // SystemSelect should handle a system SELECT statement.
