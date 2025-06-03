@@ -39,6 +39,7 @@ func TestSQLTest(t *testing.T) {
 		// "UpdateArithInt",
 		// "SmplCrudDatetime",
 		// "FuncAggrInt",
+		// "FuncMathInt",
 		// "SmplCrudInt",
 		// "SmplCrudText",
 		// "SmplCrudDatetime",
