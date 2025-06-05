@@ -47,7 +47,7 @@ BINARIES=${EXAMPLE_BINARIES}
 EXAMPLES_DOCKER_TAG=cybergarage/${EXAMPLES_DEAMON_BIN}:${PKG_VER}
 EXAMPLES_DOCKER_TAG_LATEST=cybergarage/${EXAMPLES_DEAMON_BIN}:latest
 
-.PHONY: version clean test
+.PHONY: version clean test sysbench
 .IGNORE: lint
 
 all: test
@@ -69,6 +69,9 @@ test: lint
 	chmod og-rwx  ${TEST_SRC_ROOT}/certs/client-key.pem
 	go test -v -p 1 -timeout 10m -ldflags=${LDFLAGS} -cover -coverpkg=${PKG}/... -coverprofile=${PKG_COVER}.out ${PKG}/... ${TEST_PKG}/...
 	go tool cover -html=${PKG_COVER}.out -o ${PKG_COVER}.html
+
+sysbench:
+	go test -v -p 1 -run ^TestSysbench ${TEST_PKG}/sysbench
 
 build: test
 	go build -v -gcflags=${GCFLAGS} -ldflags=${LDFLAGS} ${BINARIES}
