@@ -36,13 +36,13 @@ func NewRow() Row {
 // NewRowWith returns a new row with the specified columns.
 func NewRowWith(table *Table, cols query.Columns) (Row, error) {
 	row := NewRow()
-	for _, schemaCol := range table.Schema.Columns() {
-		var colValue any
-		colName := schemaCol.Name()
-		col, err := cols.LookupColumn(colName)
+	for _, col := range cols {
+		colName := col.Name()
+		schemaCol, err := table.Schema.LookupColumn(colName)
 		if err != nil {
 			return nil, err
 		}
+		var colValue any
 		switch schemaCol.DataType() {
 		case query.BooleanType:
 			var v bool
