@@ -16,6 +16,7 @@ package mysql
 
 import (
 	stderr "errors"
+	"fmt"
 
 	"github.com/cybergarage/go-mysql/mysql/errors"
 	"github.com/cybergarage/go-mysql/mysql/protocol"
@@ -260,10 +261,14 @@ func (server *server) ExecuteStatement(conn protocol.Conn, stmtExec *protocol.St
 	if err != nil {
 		return nil, err
 	}
-	stmt, err := preStmt.Bind(stmtExec.Parameters())
+	stmts, err := preStmt.Bind(stmtExec.Parameters())
 	if err != nil {
 		return nil, err
 	}
+	if len(stmts) != 1 {
+		return nil, fmt.Errorf("multiple prepared statements are not supported: %s", preStmt.Query())
+	}
+	stmt := stmts[0]
 	res, err := server.HandleStatement(conn, stmt)
 	if err != nil {
 		return nil, err

@@ -46,8 +46,8 @@ func (p *preparedStmt) Parameters() []stmt.Parameter {
 }
 
 // Bind binds the parameters to the prepared statement.
-func (p *preparedStmt) Bind(params []stmt.Parameter) (stmt.Statement, error) {
-	return stmt.NewStatementFromPreparedStatement(p, params)
+func (p *preparedStmt) Bind(params []stmt.Parameter) ([]stmt.Statement, error) {
+	return stmt.NewStatementsFromPreparedStatement(p, params)
 }
 
 // PrepareBytes returns the prepared packet bytes.

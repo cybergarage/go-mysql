@@ -18,8 +18,8 @@ import (
 	"github.com/cybergarage/go-sqlparser/sql/stmt"
 )
 
-// NewStatementFromPreparedStatement creates a new statement from the prepared statement and parameters.
-func NewStatementFromPreparedStatement(prepStmt PreparedStatement, params []Parameter) (Statement, error) {
+// NewStatementsFromPreparedStatement creates a new statement from the prepared statement and parameters.
+func NewStatementsFromPreparedStatement(prepStmt PreparedStatement, params []Parameter) ([]Statement, error) {
 	if len(params) != len(prepStmt.Parameters()) {
 		return nil, newErrInvalidParameters()
 	}
@@ -35,5 +35,5 @@ func NewStatementFromPreparedStatement(prepStmt PreparedStatement, params []Para
 		stmt.WithBindStatementQuery(prepStmt.Query()),
 		stmt.WithBindStatementParams(bindParams),
 	)
-	return bindStmt.Statement()
+	return bindStmt.Statements()
 }
