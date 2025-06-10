@@ -25,10 +25,12 @@ const (
 	MySQLOldPassword
 	MySQLNativePassword
 	MySQLCachingSHA2Password
+	MySQLClearPassword
 )
 
 const (
 	MySQLOldPasswordID         = "mysql_old_password"
+	MySQLClearPasswordID       = "mysql_clear_password"
 	MySQLNativePasswordID      = "mysql_native_password"
 	MySQLCachingSHA2PasswordID = "caching_sha2_password"
 )
@@ -42,6 +44,8 @@ func NewAuthMethodFromID(id string) (AuthMethod, error) {
 		return MySQLNativePassword, nil
 	case MySQLCachingSHA2PasswordID:
 		return MySQLCachingSHA2Password, nil
+	case MySQLClearPasswordID:
+		return MySQLClearPassword, nil
 	default:
 		return 0, newErrUnknownAuthenticationMethod(id)
 	}
