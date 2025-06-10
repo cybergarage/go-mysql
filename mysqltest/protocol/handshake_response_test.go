@@ -109,20 +109,20 @@ func TestHandshakeResponsePacket(t *testing.T) {
 		// 		zstdLevel:  0,
 		// 	},
 		// },
-		// {
-		// 	"data/handshake-response-sysbench-1.0.20-01.hex",
-		// 	expected{
-		// 		capFlags:   protocol.Capability(0x00bfaa8d),
-		// 		maxPkt:     0,
-		// 		charSet:    0,
-		// 		username:   "",
-		// 		authRes:    nil,
-		// 		database:   "",
-		// 		pluginName: "",
-		// 		attrs:      map[string]string{},
-		// 		zstdLevel:  0,
-		// 	},
-		// },
+		{
+			"data/handshake-response-sysbench-1.0.20-01.hex",
+			expected{
+				capFlags:   protocol.Capability(0x00bfaa8d),
+				maxPkt:     0,
+				charSet:    0,
+				username:   "",
+				authRes:    nil,
+				database:   "",
+				pluginName: "",
+				attrs:      map[string]string{},
+				zstdLevel:  0,
+			},
+		},
 		// {
 		// 	"data/handshake-response-sysbench-1.0.20-02.hex",
 		// 	expected{
