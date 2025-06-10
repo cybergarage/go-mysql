@@ -103,7 +103,7 @@ func TestHandshakePacket(t *testing.T) {
 		expected
 	}{
 		// {
-		// 	"data/handshake-001.hex",
+		// 	"data/handshake-5.7.9-vitess-12.0.6.hex",
 		// 	expected{
 		// 		seqID:          protocol.SequenceID(0),
 		// 		protocolVer:    protocol.ProtocolVersion10,
