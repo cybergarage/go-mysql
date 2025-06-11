@@ -20,6 +20,8 @@ import (
 
 // MySQL: Native Authentication
 // https://dev.mysql.com/doc/dev/mysql-server/8.4.2/page_protocol_connection_phase_authentication_methods_native_password_authentication.html
+// Authentication Plugin - mysql_native_password - MariaDB Knowledge Base
+// https://mariadb.com/kb/en/authentication-plugin-mysql_native_password/
 // NativeEncrypt encrypts the password using the native MySQL password encryption algorithm.
 func NativeEncrypt(passwd any, args ...any) (any, error) {
 	nativeEncrypt := func(passwd any, rndData []byte) ([]byte, error) {

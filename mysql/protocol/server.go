@@ -330,6 +330,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 
 	handshakeRes, err := NewHandshakeResponseFromReader(firstPktReader)
 	if err != nil {
+		log.HexError(firstPktBytes)
 		return err
 	}
 
