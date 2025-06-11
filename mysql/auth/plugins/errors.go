@@ -12,23 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package auth
+package plugins
 
 import (
 	"errors"
-	"fmt"
 )
 
 var (
-	ErrNotSupported                = errors.New("not supported")
-	ErrAccessDenied                = errors.New("access denied")
-	ErrUnknownAuthenticationMethod = errors.New("unknown authentication method")
+	ErrInvalidArgument = errors.New("invalid argument")
 )
-
-func newErrNotSupported(s string) error {
-	return fmt.Errorf("%w %s", ErrNotSupported, s)
-}
-
-func newErrUnknownAuthenticationMethod(id string) error {
-	return fmt.Errorf("%w: %s", ErrUnknownAuthenticationMethod, id)
-}

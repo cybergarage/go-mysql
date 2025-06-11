@@ -12,23 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package auth
+package plugins
 
-import (
-	"errors"
-	"fmt"
-)
-
-var (
-	ErrNotSupported                = errors.New("not supported")
-	ErrAccessDenied                = errors.New("access denied")
-	ErrUnknownAuthenticationMethod = errors.New("unknown authentication method")
-)
-
-func newErrNotSupported(s string) error {
-	return fmt.Errorf("%w %s", ErrNotSupported, s)
-}
-
-func newErrUnknownAuthenticationMethod(id string) error {
-	return fmt.Errorf("%w: %s", ErrUnknownAuthenticationMethod, id)
+// MySQL: Clear text client plugin
+// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase_authentication_methods_clear_text_password.html
+func ClearEncrypt(passwd any, args ...any) (any, error) {
+	var strPasswd string
+	switch v := passwd.(type) {
+	case string:
+		strPasswd = v
+	case []byte:
+		strPasswd = string(v)
+	default:
+		return nil, ErrInvalidArgument
+	}
+	return strPasswd, nil
 }

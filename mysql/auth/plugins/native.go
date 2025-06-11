@@ -12,16 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package auth
+package plugins
 
 import (
 	"crypto/sha1"
-
-	"github.com/cybergarage/go-authenticator/auth"
 )
-
-// EncryptFunc is the interface for encrypting a password.
-type EncryptFunc = auth.EncryptFunc
 
 // MySQL: Native Authentication
 // https://dev.mysql.com/doc/dev/mysql-server/8.4.2/page_protocol_connection_phase_authentication_methods_native_password_authentication.html
