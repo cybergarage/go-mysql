@@ -153,7 +153,7 @@ func NewERRFromReader(reader io.Reader, opts ...ERROption) (*ERR, error) {
 	}
 
 	// sql_state_marker, sql_state
-	if pkt.Capability().IsEnabled(ClientProtocol41) {
+	if pkt.Capability().HasCapability(ClientProtocol41) {
 		// sql_state_marker
 		pkt.stateMarker, err = pkt.ReadFixedLengthString(1)
 		if err != nil {
@@ -216,7 +216,7 @@ func (pkt *ERR) Bytes() ([]byte, error) {
 	}
 
 	// sql_state_marker, sql_state
-	if pkt.Capability().IsEnabled(ClientProtocol41) {
+	if pkt.Capability().HasCapability(ClientProtocol41) {
 		// sql_state_marker
 		if err := w.WriteFixedLengthString(string(pkt.stateMarker), 1); err != nil {
 			return nil, err

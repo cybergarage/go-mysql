@@ -50,7 +50,7 @@ func (reader *PacketReader) ReadCapability() (Capability, error) {
 	}
 	Capabilitys = Capability(v)
 
-	if !Capabilitys.IsEnabled(ClientProtocol41) {
+	if !Capabilitys.HasCapability(ClientProtocol41) {
 		return Capabilitys, nil
 	}
 
@@ -78,7 +78,7 @@ func (reader *PacketReader) PeekCapability() (Capability, error) {
 	}
 	Capabilitys = Capability(v)
 
-	if !Capabilitys.IsEnabled(ClientProtocol41) {
+	if !Capabilitys.HasCapability(ClientProtocol41) {
 		return Capabilitys, nil
 	}
 

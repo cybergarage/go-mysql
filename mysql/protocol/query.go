@@ -103,7 +103,7 @@ func NewQueryFromCommand(cmd Command, opts ...QueryOption) (*Query, error) {
 	payload := cmd.Payload()
 	reader := NewPacketReaderWithReader(bytes.NewBuffer(payload[1:]))
 
-	if pkt.Capability().IsEnabled(ClientQueryAttributes) {
+	if pkt.Capability().HasCapability(ClientQueryAttributes) {
 		// parameter_count
 		pkt.paramCnt, err = reader.ReadLengthEncodedInt()
 		if err != nil {
@@ -170,7 +170,7 @@ func (pkt *Query) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	if pkt.Capability().IsEnabled(ClientQueryAttributes) {
+	if pkt.Capability().HasCapability(ClientQueryAttributes) {
 		// parameter_count
 		if err := w.WriteLengthEncodedInt(pkt.paramCnt); err != nil {
 			return nil, err

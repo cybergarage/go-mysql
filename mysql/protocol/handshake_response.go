@@ -92,7 +92,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		return nil, err
 	}
 
-	if !res.Capability().IsEnabled(ClientProtocol41) {
+	if !res.Capability().HasCapability(ClientProtocol41) {
 		return nil, newErrNotSupported("HandshakeResponse320")
 	}
 
@@ -120,7 +120,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		return nil, err
 	}
 
-	if res.Capability().IsEnabled(ClientPluginAuthLenencClientData) {
+	if res.Capability().HasCapability(ClientPluginAuthLenencClientData) {
 		res.authResponse, err = res.ReadLengthEncodedBytes()
 		if err != nil {
 			return nil, err
@@ -136,14 +136,14 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		}
 	}
 
-	if res.Capability().IsEnabled(ClientConnectWithDB) {
+	if res.Capability().HasCapability(ClientConnectWithDB) {
 		res.database, err = res.ReadNullTerminatedString()
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if res.Capability().IsEnabled(ClientPluginAuth) {
+	if res.Capability().HasCapability(ClientPluginAuth) {
 		res.clientPluginName, err = res.ReadNullTerminatedString()
 		if err != nil {
 			if errors.Is(err, io.EOF) {
@@ -154,7 +154,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		}
 	}
 
-	if res.Capability().IsEnabled(ClientConnectAttrs) {
+	if res.Capability().HasCapability(ClientConnectAttrs) {
 		attrSize, err := res.ReadLengthEncodedInt()
 		if err != nil {
 			return nil, err
@@ -179,7 +179,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		}
 	}
 
-	if res.Capability().IsEnabled(ClientZstdCompressionAlgorithm) {
+	if res.Capability().HasCapability(ClientZstdCompressionAlgorithm) {
 		res.zstdCompressionLevel, err = res.ReadByte()
 		if err != nil {
 			return nil, err
@@ -261,7 +261,7 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	if pkt.Capability().IsEnabled(ClientPluginAuthLenencClientData) {
+	if pkt.Capability().HasCapability(ClientPluginAuthLenencClientData) {
 		if err := w.WriteLengthEncodedBytes(pkt.authResponse); err != nil {
 			return nil, err
 		}
@@ -274,15 +274,15 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 		}
 	}
 
-	if pkt.Capability().IsEnabled(ClientConnectWithDB) {
+	if pkt.Capability().HasCapability(ClientConnectWithDB) {
 		if err := w.WriteNullTerminatedString(pkt.database); err != nil {
 			return nil, err
 		}
 	}
 
-	hasNextSection := pkt.Capability().IsEnabled(ClientConnectAttrs) && (0 < len(pkt.AttributeKeys()))
+	hasNextSection := pkt.Capability().HasCapability(ClientConnectAttrs) && (0 < len(pkt.AttributeKeys()))
 
-	if pkt.Capability().IsEnabled(ClientPluginAuth) {
+	if pkt.Capability().HasCapability(ClientPluginAuth) {
 		if 0 < len(pkt.clientPluginName) || hasNextSection {
 			if err := w.WriteNullTerminatedString(pkt.clientPluginName); err != nil {
 				return nil, err
@@ -290,9 +290,9 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 		}
 	}
 
-	hasNextSection = pkt.Capability().IsEnabled(ClientZstdCompressionAlgorithm)
+	hasNextSection = pkt.Capability().HasCapability(ClientZstdCompressionAlgorithm)
 
-	if pkt.Capability().IsEnabled(ClientConnectAttrs) {
+	if pkt.Capability().HasCapability(ClientConnectAttrs) {
 		if 0 < len(pkt.AttributeKeys()) || hasNextSection {
 			attrWriter := NewPacketWriter()
 			for _, key := range pkt.AttributeKeys() {
@@ -315,7 +315,7 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 		}
 	}
 
-	if pkt.Capability().IsEnabled(ClientZstdCompressionAlgorithm) {
+	if pkt.Capability().HasCapability(ClientZstdCompressionAlgorithm) {
 		if err := w.WriteByte(pkt.zstdCompressionLevel); err != nil {
 			return nil, err
 		}

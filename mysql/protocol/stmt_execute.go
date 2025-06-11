@@ -219,7 +219,7 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 			}
 			pkt.paramTypes[n] = FieldType(iv2)
 
-			if pkt.Capability().IsEnabled(ClientQueryAttributes) {
+			if pkt.Capability().HasCapability(ClientQueryAttributes) {
 				paramName, err := pktReader.ReadLengthEncodedString()
 				if err != nil {
 					return nil, err
@@ -310,7 +310,7 @@ func (pkt *StmtExecute) Bytes() ([]byte, error) {
 				if err := w.WriteInt2(uint16(pkt.paramTypes[n])); err != nil {
 					return nil, err
 				}
-				if pkt.Capability().IsEnabled(ClientQueryAttributes) {
+				if pkt.Capability().HasCapability(ClientQueryAttributes) {
 					if err := w.WriteLengthEncodedString(pkt.paramNames[n]); err != nil {
 						return nil, err
 					}

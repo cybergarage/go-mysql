@@ -139,7 +139,7 @@ func NewOKFromReader(reader io.Reader, opts ...OKOption) (*OK, error) {
 		return nil, err
 	}
 
-	if pkt.Capability().IsEnabled(ClientProtocol41) {
+	if pkt.Capability().HasCapability(ClientProtocol41) {
 		// status
 		v, err := pkt.ReadInt2()
 		if err != nil {
@@ -151,7 +151,7 @@ func NewOKFromReader(reader io.Reader, opts ...OKOption) (*OK, error) {
 		if err != nil {
 			return nil, err
 		}
-	} else if pkt.Capability().IsEnabled(ClientTransactions) {
+	} else if pkt.Capability().HasCapability(ClientTransactions) {
 		// status
 		pkt.status, err = pkt.ReadInt2()
 		if err != nil {
@@ -159,7 +159,7 @@ func NewOKFromReader(reader io.Reader, opts ...OKOption) (*OK, error) {
 		}
 	}
 
-	if pkt.Capability().IsEnabled(ClientSessionTrack) {
+	if pkt.Capability().HasCapability(ClientSessionTrack) {
 		// info
 		pkt.info, err = pkt.ReadLengthEncodedString()
 		if err != nil {
@@ -242,7 +242,7 @@ func (pkt *OK) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	if pkt.Capability().IsEnabled(ClientProtocol41) {
+	if pkt.Capability().HasCapability(ClientProtocol41) {
 		// status
 		if err := w.WriteInt2(uint16(pkt.status)); err != nil {
 			return nil, err
@@ -251,14 +251,14 @@ func (pkt *OK) Bytes() ([]byte, error) {
 		if err := w.WriteInt2(pkt.warnings); err != nil {
 			return nil, err
 		}
-	} else if pkt.Capability().IsEnabled(ClientTransactions) {
+	} else if pkt.Capability().HasCapability(ClientTransactions) {
 		// status
 		if err := w.WriteInt2(pkt.status); err != nil {
 			return nil, err
 		}
 	}
 
-	if pkt.Capability().IsEnabled(ClientSessionTrack) {
+	if pkt.Capability().HasCapability(ClientSessionTrack) {
 		// info
 		if err := w.WriteLengthEncodedString(pkt.info); err != nil {
 			return nil, err

@@ -92,7 +92,7 @@ func NewSSLRequestFromReader(reader io.Reader) (*SSLRequest, error) {
 		return nil, err
 	}
 
-	if pkt.Capabilitys.IsEnabled(ClientProtocol41) {
+	if pkt.Capabilitys.HasCapability(ClientProtocol41) {
 		pkt.maxPacketSize, err = pkt.ReadInt4()
 		if err != nil {
 			return nil, err
@@ -135,7 +135,7 @@ func (pkt *SSLRequest) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	if pkt.Capability().IsEnabled(ClientProtocol41) {
+	if pkt.Capability().HasCapability(ClientProtocol41) {
 		if err := w.WriteInt4(pkt.maxPacketSize); err != nil {
 			return nil, err
 		}

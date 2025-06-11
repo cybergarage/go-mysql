@@ -87,14 +87,14 @@ const (
 	ClientRemenberOptions Capability = 1073741824
 )
 
-// IsEnabled returns true if the specified flag is set.
-func (c Capability) IsEnabled(flag Capability) bool {
+// HasCapability returns true if the specified flag is set.
+func (c Capability) HasCapability(flag Capability) bool {
 	return (c & flag) != 0
 }
 
-// IsDisabled returns true if the specified flag is not set.
-func (c Capability) IsDisabled(flag Capability) bool {
-	return !c.IsEnabled(flag)
+// LacksCapability returns true if the specified flag is not set.
+func (c Capability) LacksCapability(flag Capability) bool {
+	return !c.HasCapability(flag)
 }
 
 // ToBytes returns the capability flag as bytes.

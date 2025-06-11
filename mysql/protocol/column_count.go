@@ -77,7 +77,7 @@ func NewColumnCountFromReader(r io.Reader, opts ...ColumnCountOption) (*ColumnCo
 
 	pkt := newColumnCountWith(pktReader, opts...)
 
-	if pkt.Capability().IsEnabled(ClientOptionalResultsetMetadata) {
+	if pkt.Capability().HasCapability(ClientOptionalResultsetMetadata) {
 		pkt.metadataFollows, err = pkt.ReadByte()
 		if err != nil {
 			return nil, err
@@ -118,7 +118,7 @@ func (pkt *ColumnCount) ColumnCount() uint64 {
 func (pkt *ColumnCount) Bytes() ([]byte, error) {
 	w := binary.NewWriter()
 
-	if pkt.Capability().IsEnabled(ClientOptionalResultsetMetadata) {
+	if pkt.Capability().HasCapability(ClientOptionalResultsetMetadata) {
 		err := w.WriteByte(pkt.metadataFollows)
 		if err != nil {
 			return nil, err

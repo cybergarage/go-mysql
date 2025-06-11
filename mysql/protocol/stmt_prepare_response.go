@@ -163,7 +163,7 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 		return nil, err
 	}
 
-	if pkt.capability.IsEnabled(ClientOptionalResultsetMetadata) {
+	if pkt.capability.HasCapability(ClientOptionalResultsetMetadata) {
 		v, err := pktHeader.ReadByte()
 		if err != nil {
 			return nil, err
@@ -183,7 +183,7 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 		}
 		pkt.params[n] = param
 	}
-	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
+	if pkt.Capability().LacksCapability(ClientDeprecateEOF) {
 		_, err := NewEOFFromReader(reader, WithEOFCapability(pkt.Capability()))
 		if err != nil {
 			return nil, err
@@ -198,7 +198,7 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 		}
 		pkt.columns[n] = column
 	}
-	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
+	if pkt.Capability().LacksCapability(ClientDeprecateEOF) {
 		_, err := NewEOFFromReader(reader, WithEOFCapability(pkt.Capability()))
 		if err != nil {
 			return nil, err
@@ -246,7 +246,7 @@ func (pkt *StmtPrepareResponse) ResultSetMetadata() ResultsetMetadata {
 // Bytes returns the packet bytes.
 func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
 	payloadLen := 1 + 4 + 2 + 2 + 1 + 2
-	if pkt.Capability().IsEnabled(ClientOptionalResultsetMetadata) {
+	if pkt.Capability().HasCapability(ClientOptionalResultsetMetadata) {
 		payloadLen++
 	}
 	pkt.SetPayloadLength(payloadLen)
@@ -282,7 +282,7 @@ func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	if pkt.Capability().IsEnabled(ClientOptionalResultsetMetadata) {
+	if pkt.Capability().HasCapability(ClientOptionalResultsetMetadata) {
 		if err := w.WriteByte(byte(pkt.resultSetMetadata)); err != nil {
 			return nil, err
 		}
@@ -302,7 +302,7 @@ func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
 		}
 		seqID = seqID.Next()
 	}
-	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
+	if pkt.Capability().LacksCapability(ClientDeprecateEOF) {
 		if err := w.WriteEOF(seqID, pkt.Capability(), pkt.ServerStatus()); err != nil {
 			return nil, err
 		}
@@ -316,7 +316,7 @@ func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
 		}
 		seqID = seqID.Next()
 	}
-	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
+	if pkt.Capability().LacksCapability(ClientDeprecateEOF) {
 		if err := w.WriteEOF(seqID, pkt.Capability(), pkt.ServerStatus()); err != nil {
 			return nil, err
 		}

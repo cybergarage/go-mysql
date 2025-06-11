@@ -223,7 +223,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	if err != nil {
 		return nil, err
 	}
-	if pkt.Capability().IsEnabled(ClientPluginAuth) {
+	if pkt.Capability().HasCapability(ClientPluginAuth) {
 		pkt.authPluginDataLen = iv1
 	}
 
@@ -244,7 +244,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 		pkt.authPluginData2 = pkt.authPluginData2[:authPluginData2Len-1]
 	}
 
-	if pkt.Capability().IsEnabled(ClientPluginAuth) {
+	if pkt.Capability().HasCapability(ClientPluginAuth) {
 		pkt.authPluginName, err = pkt.ReadNullTerminatedString()
 		if err != nil {
 			return nil, err
@@ -314,7 +314,7 @@ func (pkt *Handshake) Bytes() ([]byte, error) {
 	if err := w.WriteInt2(uint16(pkt.Capability() >> 16)); err != nil {
 		return nil, err
 	}
-	if pkt.Capability().IsEnabled(ClientPluginAuth) {
+	if pkt.Capability().HasCapability(ClientPluginAuth) {
 		// mysql-server 5.7 send_server_handshake_packet()
 		// https://github.com/mysql/mysql-server/blob/5.7/sql/auth/sql_authentication.cc#L512
 		// NOTE: " \0 byte, terminating the second part of a scramble"
@@ -338,7 +338,7 @@ func (pkt *Handshake) Bytes() ([]byte, error) {
 			return nil, err
 		}
 	}
-	if pkt.Capability().IsEnabled(ClientPluginAuth) {
+	if pkt.Capability().HasCapability(ClientPluginAuth) {
 		if err := w.WriteNullTerminatedString(pkt.authPluginName); err != nil {
 			return nil, err
 		}

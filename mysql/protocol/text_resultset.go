@@ -97,7 +97,7 @@ func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (
 
 	columnCount := pkt.columnCnt.ColumnCount()
 
-	if pkt.Capability().IsDisabled(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
+	if pkt.Capability().LacksCapability(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
 		for i := 0; i < int(columnCount); i++ {
 			colDef, err := NewColumnDefFromReader(reader)
 			if err != nil {
@@ -107,7 +107,7 @@ func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (
 		}
 	}
 
-	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
+	if pkt.Capability().LacksCapability(ClientDeprecateEOF) {
 		_, err := NewEOFFromReader(reader, WithEOFCapability(pkt.Capability()))
 		if err != nil {
 			return nil, err
@@ -203,7 +203,7 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 	secuenceID := pkt.columnCnt.SequenceID()
 	secuenceID = secuenceID.Next()
 
-	if pkt.Capability().IsDisabled(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
+	if pkt.Capability().LacksCapability(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
 		for _, colDef := range pkt.columnDefs {
 			colDef.SetSequenceID(secuenceID)
 			err := w.WritePacket(colDef)
@@ -214,7 +214,7 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 		}
 	}
 
-	if pkt.Capability().IsDisabled(ClientDeprecateEOF) {
+	if pkt.Capability().LacksCapability(ClientDeprecateEOF) {
 		err := w.WriteEOF(secuenceID, pkt.Capability())
 		if err != nil {
 			return nil, err
@@ -237,7 +237,7 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 		secuenceID = secuenceID.Next()
 	}
 
-	if pkt.Capability().IsEnabled(ClientDeprecateEOF) {
+	if pkt.Capability().HasCapability(ClientDeprecateEOF) {
 		err := w.WriteOK(secuenceID, pkt.Capability())
 		if err != nil {
 			return nil, err

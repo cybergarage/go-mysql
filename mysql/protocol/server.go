@@ -260,7 +260,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			return false
 		}
 		capFlags := NewCapabilityFromBytes(pkt.Payload()[0:4])
-		return capFlags.IsEnabled(ClientSSL)
+		return capFlags.HasCapability(ClientSSL)
 	}
 
 	if isSSLRequestPkt(firstPkt) {
@@ -335,7 +335,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	}
 
 	conn.SetCapability(handshakeRes.Capability())
-	if handshakeRes.Capability().IsEnabled(ClientConnectWithDB) {
+	if handshakeRes.Capability().HasCapability(ClientConnectWithDB) {
 		conn.SetDatabase(handshakeRes.Database())
 	}
 
