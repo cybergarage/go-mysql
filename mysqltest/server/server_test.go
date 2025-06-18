@@ -36,7 +36,7 @@ var testQueries []string = []string{
 }
 
 func TestServer(t *testing.T) {
-	log.SetStdoutDebugEnbled(true)
+	log.EnableStdoutDebug(true)
 
 	const (
 		username = "testuser"
