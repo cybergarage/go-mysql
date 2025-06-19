@@ -44,6 +44,7 @@ func NewDefaultConfig() *Config {
 	cfg.SetHost("127.0.0.1")
 	cfg.SetPort(3306)
 	cfg.SetSSL(true)
+	cfg.SetDBDebug(true)
 	cfg.SetDebug(true)
 	cfg.SetUser(sysbench.User())
 	cfg.SetPassword(sysbench.Password())
