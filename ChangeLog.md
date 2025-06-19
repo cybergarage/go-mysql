@@ -5,12 +5,16 @@
   - Support for major authentication methods.
     - caching_sha2_password
 
-## v1.3.2 (2025-06-XX)
+## v1.4.X (2025-06-XX)
 - New Features:
   - Support for statement commands
     - `COM_STMT_RESET`
     - `COM_STMT_SEND_LONG_DATA`
     - `COM_STMT_FETCH`
+
+## v1.3.2 (2025-06-XX)
+- New Features:
+  - Support for 4.1 authentication
 
 ## v1.3.1 (2025-05-30)
 - Improved:
