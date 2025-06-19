@@ -30,7 +30,8 @@ import (
 // https://mariadb.com/kb/en/connection/
 
 const (
-	handshakeResponseFillerLen = 23
+	handshakeResponseFillerLen                       = 23
+	handshakeResponseSecureConnectionAuthResponseLen = 20
 )
 
 // HandshakeResponse represents a MySQL Handshake Response packet.
@@ -121,7 +122,11 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 	}
 
 	if res.Capability().HasCapability(ClientPluginAuthLenencClientData) {
-		res.authResponse, err = res.ReadLengthEncodedBytes()
+		if res.Capability().HasCapability(ClientSecureConnection) {
+			res.authResponse, err = res.ReadFixedLengthBytes(handshakeResponseSecureConnectionAuthResponseLen)
+		} else {
+			res.authResponse, err = res.ReadLengthEncodedBytes()
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -262,8 +267,14 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 	}
 
 	if pkt.Capability().HasCapability(ClientPluginAuthLenencClientData) {
-		if err := w.WriteLengthEncodedBytes(pkt.authResponse); err != nil {
-			return nil, err
+		if pkt.Capability().HasCapability(ClientSecureConnection) {
+			if err := w.WriteFixedLengthBytes(pkt.authResponse, handshakeResponseSecureConnectionAuthResponseLen); err != nil {
+				return nil, err
+			}
+		} else {
+			if err := w.WriteLengthEncodedBytes(pkt.authResponse); err != nil {
+				return nil, err
+			}
 		}
 	} else {
 		if err := w.WriteByte(pkt.authResponseLength); err != nil {
