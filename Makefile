@@ -89,8 +89,8 @@ image: test
 image-push: image
 	docker push ${EXAMPLES_DOCKER_TAG_LATEST}
 
-rund: image
-	docker container run -it --rm -p 3307:3307 ${EXAMPLES_DOCKER_TAG}
+rund:
+	docker container run -it --rm -p 3307:3307 ${EXAMPLES_DOCKER_TAG_LATEST}
 
 clean:
 	go clean -i ${PKG}
