@@ -30,7 +30,7 @@ The protocol handler has been re-implemented independently to support good exten
 
 # Related Projects
 
-The go-mysql is being developed in collaboration with the following Cybergarage projects:
+The go-mysql is developed in collaboration with the following Cybergarage projects:
 
 -   [go-logger](https://github.com/cybergarage/go-logger) ![go logger](https://img.shields.io/github/v/tag/cybergarage/go-logger)
 -   [go-safecast](https://github.com/cybergarage/go-safecast) ![go safecast](https://img.shields.io/github/v/tag/cybergarage/go-safecast)
