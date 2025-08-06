@@ -32,11 +32,14 @@ func BytesToDuration(b []byte) (time.Duration, error) {
 	if len(b) < 1 {
 		return time.Duration(0), newErrInvalidTimeBytes(b)
 	}
+
 	l := int(b[0])
 	if len(b) < (l + 1) {
 		return time.Duration(0), newErrInvalidTimeBytes(b)
 	}
+
 	var isNegative, days, hour, minute, second, microsecond int
+
 	switch l {
 	case 0:
 		return time.Duration(0), nil
@@ -68,12 +71,16 @@ func BytesToDuration(b []byte) (time.Duration, error) {
 
 // TimeToDatetimeBytes converts a time.Time to a datetime byte slice.
 func DurationToTimeBytes(d time.Duration) []byte {
-	var isNegative byte
-	var days, hour, minute, second, microsecond int
+	var (
+		isNegative                              byte
+		days, hour, minute, second, microsecond int
+	)
+
 	if d < 0 {
 		isNegative = 1
 		d = -d
 	}
+
 	days = int(d / (24 * time.Hour))
 	d -= time.Duration(days) * 24 * time.Hour
 	hour = int(d / time.Hour)
@@ -97,5 +104,6 @@ func DurationToTimeBytes(d time.Duration) []byte {
 	b[10] = byte((microsecond >> 8) & 0xFF)
 	b[11] = byte((microsecond >> 16) & 0xFF)
 	b[12] = byte((microsecond >> 24) & 0xFF)
+
 	return b
 }

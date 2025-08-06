@@ -27,6 +27,7 @@ func TestYCSB(t *testing.T) {
 	log.EnableStdoutDebug(true)
 
 	server := server.NewServer()
+
 	err := server.Start()
 	if err != nil {
 		t.Error(err)

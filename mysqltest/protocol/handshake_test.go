@@ -87,7 +87,6 @@ func TestHandshakePacket(t *testing.T) {
 	// 	Unused: 00000000000000000000
 	// 	Salt: 2\x1Eg\ayx&\x18R\x1D\x01P
 	// 	Authentication Plugin: mysql_native_password
-
 	type expected struct {
 		seqID          protocol.SequenceID
 		protocolVer    protocol.ProtocolVersion
@@ -135,11 +134,13 @@ func TestHandshakePacket(t *testing.T) {
 				t.Error(err)
 				return
 			}
+
 			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return
 			}
+
 			reader := bytes.NewReader(testBytes)
 
 			pkt, err := protocol.NewHandshakeFromReader(reader)
@@ -147,32 +148,32 @@ func TestHandshakePacket(t *testing.T) {
 				t.Error(err)
 			}
 
-			if pkt.SequenceID() != test.expected.seqID {
-				t.Errorf("expected %d, got %d", test.expected.seqID, pkt.SequenceID())
+			if pkt.SequenceID() != test.seqID {
+				t.Errorf("expected %d, got %d", test.seqID, pkt.SequenceID())
 			}
 
-			if pkt.ProtocolVersion() != test.expected.protocolVer {
-				t.Errorf("expected %d, got %d", test.expected.protocolVer, pkt.ProtocolVersion())
+			if pkt.ProtocolVersion() != test.protocolVer {
+				t.Errorf("expected %d, got %d", test.protocolVer, pkt.ProtocolVersion())
 			}
 
-			if pkt.ServerVersion() != test.expected.serverVer {
-				t.Errorf("expected %s, got %s", test.expected.serverVer, pkt.ServerVersion())
+			if pkt.ServerVersion() != test.serverVer {
+				t.Errorf("expected %s, got %s", test.serverVer, pkt.ServerVersion())
 			}
 
-			if pkt.ConnectionID() != test.expected.conID {
-				t.Errorf("expected %d, got %d", test.expected.conID, pkt.ConnectionID())
+			if pkt.ConnectionID() != test.conID {
+				t.Errorf("expected %d, got %d", test.conID, pkt.ConnectionID())
 			}
 
-			if pkt.CharacterSet() != test.expected.charSet {
-				t.Errorf("expected %d, got %d", test.expected.charSet, pkt.CharacterSet())
+			if pkt.CharacterSet() != test.charSet {
+				t.Errorf("expected %d, got %d", test.charSet, pkt.CharacterSet())
 			}
 
-			if pkt.ServerStatus() != test.expected.serverStatus {
-				t.Errorf("expected %d, got %d", test.expected.serverStatus, pkt.ServerStatus())
+			if pkt.ServerStatus() != test.serverStatus {
+				t.Errorf("expected %d, got %d", test.serverStatus, pkt.ServerStatus())
 			}
 
-			if pkt.AuthPluginName() != test.expected.authPluginName {
-				t.Errorf("expected %s, got %s", test.expected.authPluginName, pkt.AuthPluginName())
+			if pkt.AuthPluginName() != test.authPluginName {
+				t.Errorf("expected %s, got %s", test.authPluginName, pkt.AuthPluginName())
 			}
 
 			// Compare the packet bytes
@@ -208,6 +209,7 @@ func TestServerHandshake(t *testing.T) {
 	}()
 
 	conn := protocol.NewConnWith(nil)
+
 	pkt, err := server.GenerateHandshakeForConn(conn)
 	if err != nil {
 		t.Errorf("expected nil, got %v", err)

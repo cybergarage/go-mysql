@@ -52,37 +52,40 @@ func TestErrPacket(t *testing.T) {
 				t.Error(err)
 				return
 			}
+
 			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return
 			}
+
 			reader := bytes.NewReader(testBytes)
 
 			pkt, err := protocol.NewERRFromReader(reader, protocol.WithERRCapability(protocol.ClientProtocol41))
 			if err != nil {
 				t.Error(err)
 			}
+
 			pkt.SetCapabilityEnabled(protocol.ClientProtocol41)
 
-			if pkt.SequenceID() != test.expected.seqID {
-				t.Errorf("expected %d, got %d", test.expected.seqID, pkt.SequenceID())
+			if pkt.SequenceID() != test.seqID {
+				t.Errorf("expected %d, got %d", test.seqID, pkt.SequenceID())
 			}
 
-			if pkt.Code() != test.expected.errCode {
-				t.Errorf("expected %d, got %d", test.expected.errCode, pkt.Code())
+			if pkt.Code() != test.errCode {
+				t.Errorf("expected %d, got %d", test.errCode, pkt.Code())
 			}
 
-			if pkt.StateMarker() != test.expected.stateMarker {
-				t.Errorf("expected %s, got %s", test.expected.stateMarker, pkt.StateMarker())
+			if pkt.StateMarker() != test.stateMarker {
+				t.Errorf("expected %s, got %s", test.stateMarker, pkt.StateMarker())
 			}
 
-			if pkt.State() != test.expected.state {
-				t.Errorf("expected %s, got %s", test.expected.state, pkt.State())
+			if pkt.State() != test.state {
+				t.Errorf("expected %s, got %s", test.state, pkt.State())
 			}
 
-			if pkt.ErrMsg() != test.expected.errMsg {
-				t.Errorf("expected %s, got %s", test.expected.errMsg, pkt.ErrMsg())
+			if pkt.ErrMsg() != test.errMsg {
+				t.Errorf("expected %s, got %s", test.errMsg, pkt.ErrMsg())
 			}
 
 			// Compare the packet bytes

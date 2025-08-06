@@ -63,6 +63,7 @@ func NewParameter(opts ...ParameterOption) Parameter {
 	for _, opt := range opts {
 		opt(param)
 	}
+
 	return param
 }
 
@@ -87,5 +88,6 @@ func (param *parameter) Value() (any, error) {
 		WithFieldType(param.typ),
 		WithFieldBytes(param.v),
 	)
+
 	return field.Value()
 }

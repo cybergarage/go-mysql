@@ -32,6 +32,7 @@ const (
 // SSLRequest represents a MySQL SSLRequest packet.
 type SSLRequest struct {
 	*packet
+
 	Capabilitys   Capability
 	characterSet  uint8
 	maxPacketSize uint32
@@ -73,6 +74,7 @@ func NewSSLRequest(opts ...SSLRequestOption) (*SSLRequest, error) {
 			return nil, err
 		}
 	}
+
 	return h, nil
 }
 
@@ -139,9 +141,11 @@ func (pkt *SSLRequest) Bytes() ([]byte, error) {
 		if err := w.WriteInt4(pkt.maxPacketSize); err != nil {
 			return nil, err
 		}
+
 		if err := w.WriteInt1(pkt.characterSet); err != nil {
 			return nil, err
 		}
+
 		if err := w.WriteFillerBytes(0x00, sslRequestFillerLen); err != nil {
 			return nil, err
 		}

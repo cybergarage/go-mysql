@@ -70,6 +70,7 @@ func TestFieldTypes(t *testing.T) {
 			if got := test.fieldType; got != FieldType(test.fieldEnum) {
 				t.Errorf("FieldType = %v, want %v", got, test.fieldEnum)
 			}
+
 			if got := test.fieldType.String(); got != test.expected {
 				t.Errorf("FieldType.String() = %v, want %v", got, test.expected)
 			}

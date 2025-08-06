@@ -75,6 +75,7 @@ func NewTextResultSet(opts ...TextResultSetOption) (*TextResultSet, error) {
 		rows:       []ResultSetRow{},
 	}
 	pkt.SetOptions(opts...)
+
 	return pkt, nil
 }
 
@@ -90,6 +91,7 @@ func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (
 	columnCountOpts := []ColumnCountOption{
 		WithColumnCountCapability(pkt.Capability()),
 	}
+
 	pkt.columnCnt, err = NewColumnCountFromReader(reader, columnCountOpts...)
 	if err != nil {
 		return nil, err
@@ -98,11 +100,12 @@ func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (
 	columnCount := pkt.columnCnt.ColumnCount()
 
 	if pkt.Capability().LacksCapability(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
-		for i := 0; i < int(columnCount); i++ {
+		for range columnCount {
 			colDef, err := NewColumnDefFromReader(reader)
 			if err != nil {
 				return nil, err
 			}
+
 			pkt.columnDefs = append(pkt.columnDefs, colDef)
 		}
 	}
@@ -126,11 +129,14 @@ func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (
 		if err != nil {
 			return nil, err
 		}
+
 		rowPktReader := NewPacketReaderWithReader(bytes.NewReader(rowPktBytes))
+
 		row, err := NewTextResultSetRowFromReader(rowPktReader, WithTextResultSetRowColmunCount(columnCount))
 		if err != nil {
 			return nil, err
 		}
+
 		pkt.rows = append(pkt.rows, row)
 
 		rowPkt, err = NewPacketWithReader(reader)
@@ -157,10 +163,12 @@ func (pkt *TextResultSet) SetCapability(c Capability) {
 // SetSequenceID sets the packet sequence ID.
 func (pkt *TextResultSet) SetSequenceID(n SequenceID) {
 	pkt.columnCnt.SetSequenceID(n)
+
 	for _, colDef := range pkt.columnDefs {
 		n = n.Next()
 		colDef.SetSequenceID(n)
 	}
+
 	for _, row := range pkt.rows {
 		n = n.Next()
 		row.SetSequenceID(n)
@@ -195,6 +203,7 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	_, err = w.WriteBytes(columCntBytes)
 	if err != nil {
 		return nil, err
@@ -206,10 +215,12 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 	if pkt.Capability().LacksCapability(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
 		for _, colDef := range pkt.columnDefs {
 			colDef.SetSequenceID(secuenceID)
+
 			err := w.WritePacket(colDef)
 			if err != nil {
 				return nil, err
 			}
+
 			secuenceID = secuenceID.Next()
 		}
 	}
@@ -219,6 +230,7 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		secuenceID = secuenceID.Next()
 	}
 
@@ -226,14 +238,17 @@ func (pkt *TextResultSet) Bytes() ([]byte, error) {
 
 	for _, row := range pkt.rows {
 		row.SetSequenceID(secuenceID)
+
 		rowBytes, err := row.Bytes()
 		if err != nil {
 			return nil, err
 		}
+
 		_, err = w.WriteBytes(rowBytes)
 		if err != nil {
 			return nil, err
 		}
+
 		secuenceID = secuenceID.Next()
 	}
 

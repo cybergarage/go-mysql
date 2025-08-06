@@ -30,5 +30,6 @@ func (s StatementID) NextStatementID() (StatementID, error) {
 	if s == 0xFFFFFFFF {
 		return 0, fmt.Errorf("statement ID %w", ErrOverflow)
 	}
+
 	return StatementID(atomic.AddUint32((*uint32)(&s), 1)), nil
 }

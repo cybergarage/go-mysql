@@ -30,6 +30,7 @@ const (
 // EOF represents a MySQL EOF packet.
 type EOF struct {
 	*packet
+
 	header   uint8
 	warnings uint16
 }
@@ -48,6 +49,7 @@ func newEOFPacket(p *packet, opts ...EOFOption) (*EOF, error) {
 			return nil, err
 		}
 	}
+
 	return pkt, nil
 }
 
@@ -107,6 +109,7 @@ func NewEOFFromReader(reader io.Reader, opts ...EOFOption) (*EOF, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if pkt.header != eofPacketHeader {
 		return nil, newErrInvalidHeader("EOF", pkt.header)
 	}
@@ -123,6 +126,7 @@ func NewEOFFromReader(reader io.Reader, opts ...EOFOption) (*EOF, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		pkt.SetServerStatus(ServerStatus(v))
 	}
 
@@ -153,6 +157,7 @@ func (pkt *EOF) Bytes() ([]byte, error) {
 		if err := w.WriteInt2(pkt.warnings); err != nil {
 			return nil, err
 		}
+
 		if err := w.WriteInt2(uint16(pkt.ServerStatus())); err != nil {
 			return nil, err
 		}

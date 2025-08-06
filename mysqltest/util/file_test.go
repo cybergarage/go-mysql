@@ -50,6 +50,7 @@ func TestFileListFiles(t *testing.T) {
 	// *.go files
 
 	ext := "go"
+
 	files, err = file.ListFilesWithExtention(ext)
 	if err != nil {
 		t.Error(err)
@@ -58,10 +59,12 @@ func TestFileListFiles(t *testing.T) {
 	if 0 < len(files) {
 		for _, file := range files {
 			path := file.Path
+
 			_, err := os.Stat(path)
 			if os.IsNotExist(err) {
 				t.Error(err)
 			}
+
 			if !strings.HasSuffix(path, ext) {
 				t.Errorf(errorFileListBadExtension, file.Path, ext)
 			}
@@ -88,10 +91,12 @@ func TestFileListFiles(t *testing.T) {
 	if 0 < len(files) {
 		for _, file := range files {
 			path := file.Path
+
 			_, err := os.Stat(path)
 			if os.IsNotExist(err) {
 				t.Error(err)
 			}
+
 			if !strings.HasSuffix(path, ext) {
 				t.Errorf(errorFileListBadExtension, file.Path, ext)
 			}

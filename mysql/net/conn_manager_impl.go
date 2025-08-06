@@ -43,10 +43,12 @@ func (mgr *connManager) UpdateConn(from Conn, to Conn) error {
 // Conns returns the included connections.
 func (mgr *connManager) Conns() []Conn {
 	conns := mgr.ConnManager.Conns()
+
 	ret := make([]Conn, len(conns))
 	for i, c := range conns {
 		ret[i] = c.(Conn) // nolint: forcetypeassert
 	}
+
 	return ret
 }
 
@@ -56,6 +58,7 @@ func (mgr *connManager) LookupConnByUID(cid uint64) (Conn, bool) {
 	if c == nil {
 		return nil, ok
 	}
+
 	return c.(Conn), ok // nolint: forcetypeassert
 }
 
@@ -65,6 +68,7 @@ func (mgr *connManager) LookupConnByUUID(uuid uuid.UUID) (Conn, bool) {
 	if c == nil {
 		return nil, ok
 	}
+
 	return c.(Conn), ok // nolint: forcetypeassert
 }
 

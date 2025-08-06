@@ -24,6 +24,7 @@ package protocol
 // NewBinaryResultSetRowFromTextResultSetRow creates a new BinaryResultSetRow from a TextResultSetRow.
 func NewBinaryResultSetRowFromTextResultSetRow(columDefs []ColumnDef, txtRow ResultSetRow) (*BinaryResultSetRow, error) {
 	txtColumns := txtRow.Columns()
+
 	columnCnt := len(txtColumns)
 	if columnCnt != len(columDefs) {
 		return nil, newErrInvalidColumnCount(columnCnt, len(columDefs))
@@ -34,11 +35,13 @@ func NewBinaryResultSetRowFromTextResultSetRow(columDefs []ColumnDef, txtRow Res
 		WithNullBitmapOffset(0),
 	)
 	binColums := []*BinaryResultSetColumn{}
+
 	for n, txtColum := range txtColumns {
 		if txtColum == nil {
 			nullBitmap.SetNull(n, true)
 			continue
 		}
+
 		binColum, err := NewBinaryResultSetColumn(
 			WithBinaryResultSetColumnType(FieldType(columDefs[n].ColType())),
 			WithBinaryResultSetColumnValue(txtColum),
@@ -46,8 +49,10 @@ func NewBinaryResultSetRowFromTextResultSetRow(columDefs []ColumnDef, txtRow Res
 		if err != nil {
 			return nil, err
 		}
+
 		binColums = append(binColums, binColum)
 	}
+
 	return NewBinaryResultSetRow(
 		WithBinaryResultSetRowColumnDefs(columDefs),
 		WithBinaryResultSetRowNullBitmap(nullBitmap),

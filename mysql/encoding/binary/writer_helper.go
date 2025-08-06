@@ -24,5 +24,6 @@ func (w *Writer) WriteTextResultsetRowString(s *string) error {
 	if s == nil {
 		return w.WriteNullString()
 	}
+
 	return w.WriteLengthEncodedString(*s)
 }

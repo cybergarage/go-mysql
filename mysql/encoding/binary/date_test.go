@@ -37,11 +37,13 @@ func TestDateEncode(t *testing.T) {
 
 	for _, tv := range ts {
 		b := TimeToDateBytes(tv)
+
 		v, err := BytesToDate(b)
 		if err != nil {
 			t.Error(err)
 			continue
 		}
+
 		if !tv.Equal(v) {
 			t.Errorf("Failed to convert (%s != %s)", tv, v)
 		}

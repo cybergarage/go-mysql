@@ -21,18 +21,21 @@ import (
 type preparedStmt struct {
 	*StmtPrepare
 	*StmtPrepareResponse
+
 	params []stmt.Parameter
 }
 
 // NewPreparedStatmentWith creates a new prepared statement with the packet.
 func NewPreparedStatmentWith(prePkt *StmtPrepare, resPkt *StmtPrepareResponse) stmt.PreparedStatement {
 	resParams := resPkt.Params()
+
 	params := make([]stmt.Parameter, len(resParams))
 	for n, resParam := range resParams {
 		params[n] = stmt.NewParameter(
 			stmt.WithParameterName(resParam.Name()),
 			stmt.WithParameterType(stmt.FieldType(resParam.ColType())))
 	}
+
 	return &preparedStmt{
 		StmtPrepare:         prePkt,
 		StmtPrepareResponse: resPkt,

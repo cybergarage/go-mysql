@@ -51,17 +51,20 @@ func TestStmtPrepareResponsePacket(t *testing.T) {
 				t.Error(err)
 				return
 			}
+
 			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return
 			}
+
 			reader := bytes.NewReader(testBytes)
 
 			opts := []protocol.StmtPrepareResponseOption{
 				protocol.WithStmtPrepareResponseCapability(test.Capability),
 				protocol.WithStmtPrepareResponseServerStatus(test.ServerStatus),
 			}
+
 			pkt, err := protocol.NewStmtPrepareResponseFromReader(reader, opts...)
 			if err != nil {
 				t.Error(err)

@@ -22,6 +22,7 @@ import (
 // StmtReset represents a COM_STMT_RESET packet.
 type StmtReset struct {
 	Command
+
 	stmdID StatementID
 }
 
@@ -33,6 +34,7 @@ func newStmtResetWithCommand(cmd Command, opts ...StmtResetOption) *StmtReset {
 	for _, opt := range opts {
 		opt(q)
 	}
+
 	return q
 }
 
@@ -75,6 +77,7 @@ func NewStmtResetFromCommand(cmd Command, opts ...StmtResetOption) (*StmtReset, 
 	if err != nil {
 		return nil, err
 	}
+
 	pkt.stmdID = StatementID(v)
 
 	return pkt, nil

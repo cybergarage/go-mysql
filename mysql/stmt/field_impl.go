@@ -67,6 +67,7 @@ func NewField(opts ...FieldOption) Field {
 	for _, opt := range opts {
 		opt(f)
 	}
+
 	return f
 }
 
@@ -102,70 +103,88 @@ func (f *field) Bytes() ([]byte, error) {
 		if !ok {
 			return nil, newErrInvalidField(f.t, f.v)
 		}
+
 		f.b = b
 	case query.MySQLTypeNull:
 		f.b = nil
 	case query.MySQLTypeTiny:
 		var cv int8
+
 		err := safecast.ToInt8(f.v, &cv)
 		if err != nil {
 			return nil, err
 		}
+
 		f.b = binary.Int1ToBytes(cv)
 	case query.MySQLTypeShort, query.MySQLTypeYear:
 		var cv int16
+
 		err := safecast.ToInt16(f.v, &cv)
 		if err != nil {
 			return nil, err
 		}
+
 		f.b = binary.Int2ToBytes(cv)
 	case query.MySQLTypeLong, query.MySQLTypeInt24:
 		var cv int32
+
 		err := safecast.ToInt32(f.v, &cv)
 		if err != nil {
 			return nil, err
 		}
+
 		f.b = binary.Int4ToBytes(cv)
 	case query.MySQLTypeLongLong:
 		var cv int64
+
 		err := safecast.ToInt64(f.v, &cv)
 		if err != nil {
 			return nil, err
 		}
+
 		f.b = binary.Int8ToBytes(cv)
 	case query.MySQLTypeFloat:
 		var cv float32
+
 		err := safecast.ToFloat32(f.v, &cv)
 		if err != nil {
 			return nil, err
 		}
+
 		f.b = binary.Float4ToBytes(cv)
 	case query.MySQLTypeDouble:
 		var cv float64
+
 		err := safecast.ToFloat64(f.v, &cv)
 		if err != nil {
 			return nil, err
 		}
+
 		f.b = binary.Float8ToBytes(cv)
 	case query.MySQLTypeDatetime, query.MySQLTypeTimestamp:
 		var cv time.Time
+
 		err := safecast.ToTime(f.v, &cv)
 		if err != nil {
 			return nil, err
 		}
+
 		f.b = binary.TimeToDatetimeBytes(cv)
 	case query.MySQLTypeDate:
 		var cv time.Time
+
 		err := safecast.ToTime(f.v, &cv)
 		if err != nil {
 			return nil, err
 		}
+
 		f.b = binary.TimeToDateBytes(cv)
 	case query.MySQLTypeTime:
 		cv, ok := f.v.(time.Duration)
 		if !ok {
 			return nil, newErrInvalidField(f.t, f.v)
 		}
+
 		f.b = binary.DurationToTimeBytes(cv)
 	default:
 		return nil, newErrNotSupportedFieldType(f.t)
@@ -179,7 +198,9 @@ func (f *field) Value() (any, error) {
 	if f.v != nil || f.t == query.MySQLTypeNull {
 		return f.v, nil
 	}
+
 	var err error
+
 	if f.v == nil && (0 < len(f.b)) {
 		switch f.t {
 		case query.MySQLTypeTiny:
@@ -208,5 +229,6 @@ func (f *field) Value() (any, error) {
 			return nil, newErrNotSupportedFieldType(f.t)
 		}
 	}
+
 	return f.v, err
 }

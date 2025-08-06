@@ -51,6 +51,7 @@ func NewServer() *Server {
 		tcpListener:    nil,
 	}
 	server.SetCapability(DefaultServerCapability)
+
 	return server
 }
 
@@ -72,6 +73,7 @@ func (server *Server) Capability() Capability {
 	} else {
 		capability &= ^ClientSSL
 	}
+
 	return capability
 }
 
@@ -125,11 +127,14 @@ func (server *Server) Restart() error {
 // open opens a listen socket.
 func (server *Server) open() error {
 	var err error
+
 	addr := net.JoinHostPort(server.Address(), strconv.Itoa(server.Port()))
+
 	server.tcpListener, err = net.Listen("tcp", addr)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -152,10 +157,7 @@ func (server *Server) serve() error {
 	defer server.close()
 
 	l := server.tcpListener
-	for {
-		if l == nil {
-			break
-		}
+	for l != nil {
 		conn, err := l.Accept()
 		if err != nil {
 			return err
@@ -173,6 +175,7 @@ func (server *Server) GenerateHandshakeForConn(conn mysqlnet.Conn) (*Handshake, 
 	if err != nil {
 		return nil, err
 	}
+
 	return NewHandshake(
 		WithHandshakeCharacterSet(CharSetUTF8),
 		WithHandshakeCapability(server.Capability()),
@@ -187,7 +190,6 @@ func (server *Server) GenerateHandshakeForConn(conn mysqlnet.Conn) (*Handshake, 
 func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintidx
 	// MySQL: Connection Lifecycle
 	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_lifecycle.html
-
 	constructConnection := func(netConn net.Conn) (Conn, error) {
 		server.lastConnID.Lock()
 		defer server.lastConnID.Unlock()
@@ -259,7 +261,9 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		if pkt.PayloadLength() < 4 {
 			return false
 		}
+
 		capFlags := NewCapabilityFromBytes(pkt.Payload()[0:4])
+
 		return capFlags.HasCapability(ClientSSL)
 	}
 
@@ -271,17 +275,19 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		}
 
 		// SSL exchange
-		tlsConfig, err := server.Config.TLSConfig()
+		tlsConfig, err := server.TLSConfig()
 		if err != nil {
 			conn.ResponseError(err)
 			return errors.Join(err, conn.Close())
 		}
+
 		tlsConn := tls.Server(conn, tlsConfig)
 		if err := tlsConn.Handshake(); err != nil {
 			conn.ResponseError(err)
 			return errors.Join(err, conn.Close())
 		}
-		ok, err := server.Manager.VerifyCertificate(tlsConn)
+
+		ok, err := server.VerifyCertificate(tlsConn)
 		if !ok {
 			log.Error(err)
 			return err
@@ -335,6 +341,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	}
 
 	conn.SetCapability(handshakeRes.Capability())
+
 	if handshakeRes.Capability().HasCapability(ClientConnectWithDB) {
 		conn.SetDatabase(handshakeRes.Database())
 	}
@@ -355,6 +362,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 			auth.ErrAccessDenied,
 			WithERRSecuenceID(handshakeRes.SequenceID().Next()),
 		)
+
 		return errors.Join(err, conn.Close())
 	}
 
@@ -372,24 +380,28 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	connServerStatus := conn.ServerStatus()
 
 	for {
-		var err error
-		var cmd Command
+		var (
+			err error
+			cmd Command
+		)
 
 		opts := []CommandOption{
 			WithCommandCapability(connCaps),
 		}
+
 		cmd, err = NewCommandFromReader(conn, opts...)
 		if err != nil {
 			if errors.Is(err, io.EOF) {
 				// Connection closed
 				break
 			}
+
 			return err
 		}
 
 		cmdType := cmd.Type()
 
-		loopSpan := server.Tracer.StartSpan(server.ProductName())
+		loopSpan := server.StartSpan(server.ProductName())
 		conn.SetSpanContext(loopSpan)
 		conn.StartSpan(cmdType.String())
 
@@ -399,6 +411,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		}
 
 		var res Response
+
 		switch cmdType {
 		case ComPing:
 			res, err = NewOK(
@@ -407,11 +420,12 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		case ComQuery:
 			if server.CommandHandler != nil {
 				var q *Query
+
 				q, err = NewQueryFromCommand(cmd,
 					WithQueryCapability(connCaps),
 				)
 				if err == nil {
-					res, err = server.CommandHandler.HandleQuery(conn, q)
+					res, err = server.HandleQuery(conn, q)
 				}
 			} else {
 				err = newErrNotSupportedCommandType(cmdType)
@@ -419,6 +433,7 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		case ComStmtPrepare:
 			if server.CommandHandler != nil {
 				var stmt *StmtPrepare
+
 				stmt, err = NewStmtPrepareFromCommand(cmd,
 					WithStmtPrepareCapability(connCaps),
 					WithStmtPrepareServerStatus(connServerStatus),
@@ -426,7 +441,8 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 				)
 				if err == nil {
 					var cmdRes *StmtPrepareResponse
-					cmdRes, err = server.CommandHandler.PrepareStatement(conn, stmt)
+
+					cmdRes, err = server.PrepareStatement(conn, stmt)
 					res = cmdRes
 				}
 			} else {
@@ -435,12 +451,13 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		case ComStmtExecute:
 			if server.CommandHandler != nil {
 				var stmt *StmtExecute
+
 				stmt, err = NewStmtExecuteFromCommand(cmd,
 					WithStmtExecuteStatementCapability(connCaps),
 					WithStmtExecuteStatementManager(conn),
 				)
 				if err == nil {
-					res, err = server.CommandHandler.ExecuteStatement(conn, stmt)
+					res, err = server.ExecuteStatement(conn, stmt)
 				}
 			} else {
 				err = newErrNotSupportedCommandType(cmdType)
@@ -448,9 +465,10 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 		case ComStmtClose:
 			if server.CommandHandler != nil {
 				var stmt *StmtClose
+
 				stmt, err = NewStmtCloseFromCommand(cmd)
 				if err == nil {
-					res, err = server.CommandHandler.CloseStatement(conn, stmt)
+					res, err = server.CloseStatement(conn, stmt)
 				}
 			} else {
 				err = newErrNotSupportedCommandType(cmdType)
@@ -460,7 +478,9 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 				WithOKCapability(connCaps),
 				WithOKSecuenceID(cmd.SequenceID().Next()),
 			)
+
 			finishSpans()
+
 			return err
 		default:
 			err = cmd.SkipPayload()

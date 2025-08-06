@@ -51,6 +51,7 @@ const (
 // Handshake represents a MySQL Handshake packet.
 type Handshake struct {
 	*packet
+
 	protocolVersion   uint8
 	serverVersion     string
 	connectionID      uint32
@@ -75,6 +76,7 @@ func newHandshakeWithPacket(msg *packet) *Handshake {
 	}
 	pkt.SetCapability(DefaultServerCapability)
 	pkt.SetServerStatus(DefaultServerStatus)
+
 	return pkt
 }
 
@@ -132,11 +134,13 @@ func WithHandshakeAuthPluginData(v []byte) HandshakeOption {
 		if authPluginDataPartMaxLen < len(v) {
 			v = v[:authPluginDataPartMaxLen]
 		}
+
 		pkt.authPluginDataLen = uint8(len(v) & 0xFF)
 		if len(v) <= authPluginDataPart1Len {
 			pkt.authPluginData1 = v
 			pkt.authPluginData2 = nil
 		}
+
 		pkt.authPluginData1 = v[:authPluginDataPart1Len]
 		pkt.authPluginData2 = v[authPluginDataPart1Len:]
 	}
@@ -152,10 +156,12 @@ func WithHandshakeAuthPluginName(v string) HandshakeOption {
 // NewHandshake returns a new MySQL Handshake packet.
 func NewHandshake(opts ...HandshakeOption) *Handshake {
 	pkt := newHandshakeWithPacket(newPacket())
+
 	pkt.serverVersion = SupportVersion
 	for _, opt := range opts {
 		opt(pkt)
 	}
+
 	return pkt
 }
 
@@ -199,6 +205,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	pkt.SetCapability(Capability(iv2))
 
 	pkt.characterSet, err = pkt.ReadByte()
@@ -210,19 +217,23 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	pkt.SetServerStatus(ServerStatus(iv2))
 
 	iv2, err = pkt.ReadInt2()
 	if err != nil {
 		return nil, err
 	}
+
 	pkt.SetCapabilityEnabled(Capability((uint32(iv2) << 16)))
 
 	pkt.authPluginDataLen = 0
+
 	iv1, err := pkt.ReadByte()
 	if err != nil {
 		return nil, err
 	}
+
 	if pkt.Capability().HasCapability(ClientPluginAuth) {
 		pkt.authPluginDataLen = iv1
 	}
@@ -241,6 +252,7 @@ func NewHandshakeFromReader(reader io.Reader) (*Handshake, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		pkt.authPluginData2 = pkt.authPluginData2[:authPluginData2Len-1]
 	}
 
@@ -290,30 +302,39 @@ func (pkt *Handshake) Bytes() ([]byte, error) {
 	if err := w.WriteByte(pkt.protocolVersion); err != nil {
 		return nil, err
 	}
+
 	if err := w.WriteNullTerminatedString(pkt.serverVersion); err != nil {
 		return nil, err
 	}
+
 	if err := w.WriteInt4(pkt.connectionID); err != nil {
 		return nil, err
 	}
+
 	if err := w.WriteFixedLengthBytes(pkt.authPluginData1, authPluginDataPart1Len); err != nil {
 		return nil, err
 	}
+
 	if err := w.WriteByte(0x00); err != nil {
 		return nil, err
 	}
+
 	if err := w.WriteInt2(uint16(pkt.Capability() & 0xFFFF)); err != nil {
 		return nil, err
 	}
+
 	if err := w.WriteByte(pkt.characterSet); err != nil {
 		return nil, err
 	}
+
 	if err := w.WriteInt2(uint16(pkt.ServerStatus())); err != nil {
 		return nil, err
 	}
+
 	if err := w.WriteInt2(uint16(pkt.Capability() >> 16)); err != nil {
 		return nil, err
 	}
+
 	if pkt.Capability().HasCapability(ClientPluginAuth) {
 		// mysql-server 5.7 send_server_handshake_packet()
 		// https://github.com/mysql/mysql-server/blob/5.7/sql/auth/sql_authentication.cc#L512
@@ -327,9 +348,11 @@ func (pkt *Handshake) Bytes() ([]byte, error) {
 			return nil, err
 		}
 	}
+
 	if err := w.WriteFixedLengthString("", handshakeReservedLen); err != nil {
 		return nil, err
 	}
+
 	if 0 < len(pkt.authPluginData2) {
 		// mysql-server 5.7 send_server_handshake_packet()
 		// https://github.com/mysql/mysql-server/blob/5.7/sql/auth/sql_authentication.cc#L512
@@ -338,6 +361,7 @@ func (pkt *Handshake) Bytes() ([]byte, error) {
 			return nil, err
 		}
 	}
+
 	if pkt.Capability().HasCapability(ClientPluginAuth) {
 		if err := w.WriteNullTerminatedString(pkt.authPluginName); err != nil {
 			return nil, err

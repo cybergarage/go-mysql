@@ -29,11 +29,13 @@ func TestUint8Endode(t *testing.T) {
 
 	for _, tv := range ts {
 		b := Uint8ToBytes(tv)
+
 		v, err := BytesToUint8(b)
 		if err != nil {
 			t.Error(err)
 			continue
 		}
+
 		if tv != v {
 			t.Errorf("Failed to convert (%d != %d)", tv, v)
 		}
@@ -50,15 +52,18 @@ func TestUint4Endode(t *testing.T) {
 
 	for _, tv := range ts {
 		b := Uint4ToBytes(tv)
+
 		v, err := BytesToUint4(b)
 		if err != nil {
 			t.Error(err)
 			continue
 		}
+
 		if err != nil {
 			t.Error(err)
 			continue
 		}
+
 		if tv != v {
 			t.Errorf("Failed to convert (%d != %d)", tv, v)
 		}
@@ -75,11 +80,13 @@ func TestUint3Endode(t *testing.T) {
 
 	for _, tv := range ts {
 		b := Uint3ToBytes(tv)
+
 		v, err := BytesToUint3(b)
 		if err != nil {
 			t.Error(err)
 			continue
 		}
+
 		if tv != v {
 			t.Errorf("Failed to convert (%d != %d)", tv, v)
 		}
@@ -96,11 +103,13 @@ func TestUint2Endode(t *testing.T) {
 
 	for _, tv := range ts {
 		b := Uint2ToBytes(tv)
+
 		v, err := BytesToUint2(b)
 		if err != nil {
 			t.Error(err)
 			continue
 		}
+
 		if tv != v {
 			t.Errorf("Failed to convert (%d != %d)", tv, v)
 		}
@@ -117,11 +126,13 @@ func TestUint1Endode(t *testing.T) {
 
 	for _, tv := range ts {
 		b := Uint1ToBytes(tv)
+
 		v, err := BytesToUint1(b)
 		if err != nil {
 			t.Error(err)
 			continue
 		}
+
 		if tv != v {
 			t.Errorf("Failed to convert (%d != %d)", tv, v)
 		}

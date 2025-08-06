@@ -36,8 +36,10 @@ func NewBinaryResultSetFromTextResultSet(txtRs *TextResultSet, opts ...BinaryRes
 		if err != nil {
 			return nil, err
 		}
+
 		binRows = append(binRows, *binRow)
 	}
+
 	opts = append(opts, WithBinaryResultSetRows(binRows))
 
 	return NewBinaryResultSet(opts...)

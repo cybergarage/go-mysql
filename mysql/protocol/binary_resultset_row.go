@@ -25,6 +25,7 @@ type BinaryResultSetRowOption func(*BinaryResultSetRow)
 // BinaryResultSetRow represents a MySQL binary resultset row response packet.
 type BinaryResultSetRow struct {
 	*packet
+
 	columnDefs []ColumnDef
 	nullBitmap *NullBitmap
 	colums     []*BinaryResultSetColumn
@@ -40,6 +41,7 @@ func newBinaryResultSetRowWithPacket(pkt *packet, opts ...BinaryResultSetRowOpti
 	for _, opt := range opts {
 		opt(row)
 	}
+
 	return row
 }
 
@@ -92,11 +94,13 @@ func NewBinaryResultSetRowFromReader(reader *PacketReader, opts ...BinaryResultS
 	// NULL bitmap, length= (column_count + 7 + 2) / 8
 	nullBitmapOffset := 2
 	nullBitmapBytes := make([]byte, CalculateNullBitmapLength(numColumns, nullBitmapOffset))
+
 	_, err = reader.
 		ReadBytes(nullBitmapBytes)
 	if err != nil {
 		return nil, err
 	}
+
 	row.nullBitmap = NewNullBitmap(
 		WithNullBitmapNumFields(numColumns),
 		WithNullBitmapOffset(nullBitmapOffset),
@@ -107,10 +111,11 @@ func NewBinaryResultSetRowFromReader(reader *PacketReader, opts ...BinaryResultS
 
 	row.colums = []*BinaryResultSetColumn{}
 
-	for n := 0; n < numColumns; n++ {
+	for n := range numColumns {
 		opts := []BinaryResultSetColumnOption{
 			WithBinaryResultSetColumnType(FieldType(row.columnDefs[n].ColType())),
 		}
+
 		var column *BinaryResultSetColumn
 		if !row.nullBitmap.IsNull(n) {
 			column, err = NewBinaryResultSetColumnFromReader(reader, opts...)
@@ -123,6 +128,7 @@ func NewBinaryResultSetRowFromReader(reader *PacketReader, opts ...BinaryResultS
 				return nil, err
 			}
 		}
+
 		row.colums = append(row.colums, column)
 	}
 
@@ -153,10 +159,12 @@ func (row *BinaryResultSetRow) Bytes() ([]byte, error) {
 		if row.nullBitmap.IsNull(n) {
 			continue
 		}
+
 		columnBytes, err := colum.Bytes()
 		if err != nil {
 			return nil, err
 		}
+
 		_, err = w.WriteBytes(columnBytes)
 		if err != nil {
 			return nil, err

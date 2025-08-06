@@ -42,10 +42,12 @@ type genericResponse struct {
 // NewOKFromReader returns a new OK packet from the reader.
 func NewGenericResponseFromReader(r io.Reader, opts ...GenericResponseOption) (GenericResponse, error) {
 	reader := NewPacketReaderWithReader(r)
+
 	header, err := reader.PeekByte()
 	if err != nil {
 		return nil, err
 	}
+
 	res := &genericResponse{
 		capFlags: 0,
 	}
@@ -60,6 +62,7 @@ func NewGenericResponseFromReader(r io.Reader, opts ...GenericResponseOption) (G
 		return NewERRFromReader(reader, WithERRCapability(res.capFlags))
 	default:
 	}
+
 	return nil, newErrInvalidHeader("response", header)
 }
 

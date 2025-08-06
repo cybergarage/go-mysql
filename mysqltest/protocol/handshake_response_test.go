@@ -130,11 +130,13 @@ func TestHandshakeResponsePacket(t *testing.T) {
 				t.Error(err)
 				return
 			}
+
 			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return
 			}
+
 			reader := bytes.NewReader(testBytes)
 
 			pkt, err := protocol.NewHandshakeResponseFromReader(reader)
@@ -143,49 +145,49 @@ func TestHandshakeResponsePacket(t *testing.T) {
 				return
 			}
 
-			if test.expected.capFlags != 0 {
-				if pkt.Capability() != test.expected.capFlags {
-					t.Errorf("expected %04X, got %04X", test.expected.capFlags, pkt.Capability())
+			if test.capFlags != 0 {
+				if pkt.Capability() != test.capFlags {
+					t.Errorf("expected %04X, got %04X", test.capFlags, pkt.Capability())
 				}
 			}
 
-			if test.expected.maxPkt != 0 {
-				if pkt.MaxPacketSize() != test.expected.maxPkt {
-					t.Errorf("expected %d, got %d", test.expected.maxPkt, pkt.MaxPacketSize())
+			if test.maxPkt != 0 {
+				if pkt.MaxPacketSize() != test.maxPkt {
+					t.Errorf("expected %d, got %d", test.maxPkt, pkt.MaxPacketSize())
 				}
 			}
 
-			if test.expected.charSet != 0 {
-				if pkt.CharSet() != test.expected.charSet {
-					t.Errorf("expected %d, got %d", test.expected.charSet, pkt.CharSet())
+			if test.charSet != 0 {
+				if pkt.CharSet() != test.charSet {
+					t.Errorf("expected %d, got %d", test.charSet, pkt.CharSet())
 				}
 			}
 
-			if 0 < len(test.expected.username) {
-				if pkt.Username() != test.expected.username {
-					t.Errorf("expected %s, got %s", test.expected.username, pkt.Username())
+			if 0 < len(test.username) {
+				if pkt.Username() != test.username {
+					t.Errorf("expected %s, got %s", test.username, pkt.Username())
 				}
 			}
 
-			if 0 < len(test.expected.authRes) {
-				if !bytes.Equal(pkt.AuthResponse(), test.expected.authRes) {
-					t.Errorf("expected %s, got %s", test.expected.authRes, pkt.AuthResponse())
+			if 0 < len(test.authRes) {
+				if !bytes.Equal(pkt.AuthResponse(), test.authRes) {
+					t.Errorf("expected %s, got %s", test.authRes, pkt.AuthResponse())
 				}
 			}
 
-			if 0 < len(test.expected.database) {
-				if pkt.Database() != test.expected.database {
-					t.Errorf("expected %s, got %s", test.expected.database, pkt.Database())
+			if 0 < len(test.database) {
+				if pkt.Database() != test.database {
+					t.Errorf("expected %s, got %s", test.database, pkt.Database())
 				}
 			}
 
-			if 0 < len(test.expected.pluginName) {
-				if pkt.ClientPluginName() != test.expected.pluginName {
-					t.Errorf("expected %s, got %s", test.expected.pluginName, pkt.ClientPluginName())
+			if 0 < len(test.pluginName) {
+				if pkt.ClientPluginName() != test.pluginName {
+					t.Errorf("expected %s, got %s", test.pluginName, pkt.ClientPluginName())
 				}
 			}
 
-			for key, value := range test.expected.attrs {
+			for key, value := range test.attrs {
 				v, ok := pkt.LookupAttribute(key)
 				if !ok || v != value {
 					t.Errorf("expected %s, got %s", value, v)

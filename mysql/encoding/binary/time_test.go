@@ -33,11 +33,13 @@ func TestTimeEncode(t *testing.T) {
 	for _, tv := range td {
 		t.Run(tv.String(), func(t *testing.T) {
 			b := DurationToTimeBytes(tv)
+
 			v, err := BytesToDuration(b)
 			if err != nil {
 				t.Error(err)
 				return
 			}
+
 			if tv != v {
 				t.Errorf("Failed to convert (%s != %s)", tv, v)
 			}

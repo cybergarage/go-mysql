@@ -22,6 +22,7 @@ import (
 
 func HexdumpError(t *testing.T, bytes []byte) {
 	t.Helper()
+
 	for _, line := range hexdump.EncodeBytesToOffsetHexdumpLines(bytes) {
 		t.Errorf("%s\n", line)
 	}

@@ -31,6 +31,7 @@ import (
 // StmtPrepareResponse represents a MySQL Prepare Response packet.
 type StmtPrepareResponse struct {
 	*packet
+
 	status            Status
 	stmtID            StatementID
 	columns           []ColumnDef
@@ -55,6 +56,7 @@ func newStmtPrepareResponseWithPacket(pkt *packet, opts ...StmtPrepareResponseOp
 	for _, opt := range opts {
 		opt(prPkt)
 	}
+
 	return prPkt
 }
 
@@ -116,6 +118,7 @@ func NewStmtPrepareResponse(opts ...StmtPrepareResponseOption) *StmtPrepareRespo
 	for _, opt := range opts {
 		opt(h)
 	}
+
 	return h
 }
 
@@ -134,12 +137,14 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 	if err != nil {
 		return nil, err
 	}
+
 	pkt.status = Status(i1)
 
 	i4, err := pktHeader.ReadInt4()
 	if err != nil {
 		return nil, err
 	}
+
 	pkt.stmtID = StatementID(i4)
 
 	numColumns, err := pktHeader.ReadInt2()
@@ -168,6 +173,7 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 		if err != nil {
 			return nil, err
 		}
+
 		pkt.resultSetMetadata = ResultsetMetadata(v)
 	}
 
@@ -176,13 +182,15 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 	}
 
 	pkt.params = make([]ColumnDef, numParams)
-	for n := 0; n < int(numParams); n++ {
+	for n := range numParams {
 		param, err := NewColumnDefFromReader(pktHeader)
 		if err != nil {
 			return nil, err
 		}
+
 		pkt.params[n] = param
 	}
+
 	if pkt.Capability().LacksCapability(ClientDeprecateEOF) {
 		_, err := NewEOFFromReader(reader, WithEOFCapability(pkt.Capability()))
 		if err != nil {
@@ -191,13 +199,15 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 	}
 
 	pkt.columns = make([]ColumnDef, numColumns)
-	for n := 0; n < int(numColumns); n++ {
+	for n := range numColumns {
 		column, err := NewColumnDefFromReader(pktHeader)
 		if err != nil {
 			return nil, err
 		}
+
 		pkt.columns[n] = column
 	}
+
 	if pkt.Capability().LacksCapability(ClientDeprecateEOF) {
 		_, err := NewEOFFromReader(reader, WithEOFCapability(pkt.Capability()))
 		if err != nil {
@@ -249,6 +259,7 @@ func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
 	if pkt.Capability().HasCapability(ClientOptionalResultsetMetadata) {
 		payloadLen++
 	}
+
 	pkt.SetPayloadLength(payloadLen)
 
 	w := NewPacketWriter()
@@ -297,25 +308,32 @@ func (pkt *StmtPrepareResponse) Bytes() ([]byte, error) {
 
 	for _, param := range pkt.params {
 		param.SetSequenceID(seqID)
+
 		if err := w.WritePacket(param); err != nil {
 			return nil, err
 		}
+
 		seqID = seqID.Next()
 	}
+
 	if pkt.Capability().LacksCapability(ClientDeprecateEOF) {
 		if err := w.WriteEOF(seqID, pkt.Capability(), pkt.ServerStatus()); err != nil {
 			return nil, err
 		}
+
 		seqID = seqID.Next()
 	}
 
 	for _, column := range pkt.columns {
 		column.SetSequenceID(seqID)
+
 		if err := w.WritePacket(column); err != nil {
 			return nil, err
 		}
+
 		seqID = seqID.Next()
 	}
+
 	if pkt.Capability().LacksCapability(ClientDeprecateEOF) {
 		if err := w.WriteEOF(seqID, pkt.Capability(), pkt.ServerStatus()); err != nil {
 			return nil, err

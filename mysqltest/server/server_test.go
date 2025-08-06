@@ -75,6 +75,7 @@ func TestServer(t *testing.T) {
 				auth.WithCredentialUsername(username),
 				auth.WithCredentialPassword(password),
 			)
+
 			server.SetCredentialStore(server)
 			server.SetCredential(cred)
 		}
@@ -91,14 +92,17 @@ func TestServer(t *testing.T) {
 			client.SetClientCertFile(clientCert)
 			client.SetRootCertFile(rootCert)
 		}
+
 		if setting.isPasswordEnabled {
 			client.SetUser(username)
 			client.SetPassword(password)
 		}
+
 		client.SetDatabase("ycsb")
 
 		err = client.Open()
 		defer client.Close()
+
 		if err != nil {
 			t.Error(err)
 			return
@@ -112,10 +116,12 @@ func TestServer(t *testing.T) {
 
 		for n, query := range testQueries {
 			t.Logf("[%d] %s", n, query)
+
 			rows, err := client.Query(query)
 			if err != nil {
 				t.Error(err)
 			}
+
 			rows.Close()
 		}
 

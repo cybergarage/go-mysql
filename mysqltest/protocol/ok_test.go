@@ -50,11 +50,13 @@ func TestOKPacket(t *testing.T) {
 				t.Error(err)
 				return
 			}
+
 			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return
 			}
+
 			reader := bytes.NewReader(testBytes)
 
 			pkt, err := protocol.NewOKFromReader(reader, test.opts...)
@@ -62,16 +64,16 @@ func TestOKPacket(t *testing.T) {
 				t.Error(err)
 			}
 
-			if pkt.SequenceID() != test.expected.seqID {
-				t.Errorf("expected %d, got %d", test.expected.seqID, pkt.SequenceID())
+			if pkt.SequenceID() != test.seqID {
+				t.Errorf("expected %d, got %d", test.seqID, pkt.SequenceID())
 			}
 
-			if pkt.AffectedRows() != test.expected.affectedRows {
-				t.Errorf("expected %d, got %d", test.expected.affectedRows, pkt.AffectedRows())
+			if pkt.AffectedRows() != test.affectedRows {
+				t.Errorf("expected %d, got %d", test.affectedRows, pkt.AffectedRows())
 			}
 
-			if pkt.LastInsertID() != test.expected.lastInsertID {
-				t.Errorf("expected %d, got %d", test.expected.lastInsertID, pkt.LastInsertID())
+			if pkt.LastInsertID() != test.lastInsertID {
+				t.Errorf("expected %d, got %d", test.lastInsertID, pkt.LastInsertID())
 			}
 
 			// Compare the packet bytes

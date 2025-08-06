@@ -44,10 +44,12 @@ func NewPacketReaderWithBytes(data []byte) *PacketReader {
 // ReadCapabilitys reads the capability flags.
 func (reader *PacketReader) ReadCapability() (Capability, error) {
 	var Capabilitys Capability
+
 	v, err := reader.ReadInt2()
 	if err != nil {
 		return 0, err
 	}
+
 	Capabilitys = Capability(v)
 
 	if !Capabilitys.HasCapability(ClientProtocol41) {
@@ -58,12 +60,14 @@ func (reader *PacketReader) ReadCapability() (Capability, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	Capabilitys |= (Capability)(Capabilitys3) << 16
 
 	Capabilitys4, err := reader.ReadInt1()
 	if err != nil {
 		return 0, err
 	}
+
 	Capabilitys |= (Capability)(Capabilitys4) << 24
 
 	return Capabilitys, nil
@@ -72,10 +76,12 @@ func (reader *PacketReader) ReadCapability() (Capability, error) {
 // PeekCapabilitys reads the capability flags.
 func (reader *PacketReader) PeekCapability() (Capability, error) {
 	var Capabilitys Capability
+
 	v, err := reader.PeekInt2()
 	if err != nil {
 		return 0, err
 	}
+
 	Capabilitys = Capability(v)
 
 	if !Capabilitys.HasCapability(ClientProtocol41) {
@@ -86,12 +92,14 @@ func (reader *PacketReader) PeekCapability() (Capability, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	Capabilitys |= (Capability)(Capabilitys3) << 16
 
 	Capabilitys4, err := reader.PeekInt1()
 	if err != nil {
 		return 0, err
 	}
+
 	Capabilitys |= (Capability)(Capabilitys4) << 24
 
 	return Capabilitys, nil
@@ -103,10 +111,12 @@ func (reader *PacketReader) ReadDatetimeBytes() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	v2, err := reader.ReadFixedLengthBytes(int(v1))
 	if err != nil {
 		return nil, err
 	}
+
 	return append([]byte{v1}, v2...), nil
 }
 
@@ -118,6 +128,7 @@ func (reader *PacketReader) ReadFieldBytes(t FieldType) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		return []byte(v), nil
 	case query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
 		return reader.ReadLengthEncodedBytes()
