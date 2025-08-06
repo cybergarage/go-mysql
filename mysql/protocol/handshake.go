@@ -51,6 +51,7 @@ const (
 // Handshake represents a MySQL Handshake packet.
 type Handshake struct {
 	*packet
+
 	protocolVersion   uint8
 	serverVersion     string
 	connectionID      uint32

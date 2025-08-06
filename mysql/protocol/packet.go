@@ -60,6 +60,7 @@ type Packet interface {
 // packet represents a MySQL packet.
 type packet struct {
 	*PacketReader
+
 	payloadLength uint32
 	sequenceID    SequenceID
 	payload       []byte

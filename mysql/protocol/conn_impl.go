@@ -31,6 +31,7 @@ type ConnOption = func(*conn)
 // conn represents a connection of MySQL binary.
 type conn struct {
 	mysqlnet.Conn
+
 	isClosed      bool
 	msgReader     *PacketReader
 	db            string

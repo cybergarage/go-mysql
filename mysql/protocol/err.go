@@ -34,6 +34,7 @@ type ErrCode = sql.Code
 // ERR represents a MySQL ERR packet.
 type ERR struct {
 	*packet
+
 	header      uint8
 	code        uint16
 	stateMarker string

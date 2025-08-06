@@ -47,7 +47,7 @@ func (w *PacketWriter) WriteCapability(c Capability) error {
 
 // WriteFillerBytes writes the filler bytes.
 func (w *PacketWriter) WriteFillerBytes(b byte, n int) error {
-	for i := 0; i < n; i++ {
+	for range n {
 		if err := w.WriteByte(b); err != nil {
 			return err
 		}

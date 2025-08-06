@@ -27,6 +27,7 @@ import (
 // server represents a base executor server.
 type server struct {
 	*protocol.Server
+
 	sqlExecutor     SQLExecutor
 	queryExecutor   QueryExecutor
 	exQueryExecutor ExQueryExecutor

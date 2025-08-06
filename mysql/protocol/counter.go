@@ -22,6 +22,7 @@ import (
 // Counter is a counter.
 type Counter struct {
 	sync.Mutex
+
 	count int32
 }
 

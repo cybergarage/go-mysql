@@ -43,6 +43,7 @@ func (t StatementBindSendType) IsToServer() bool {
 // StmtExecute represents a COM_STMT_EXECUTE packet.
 type StmtExecute struct {
 	Command
+
 	stmdID       StatementID
 	cursorType   CursorType
 	iterCnt      uint32
@@ -212,7 +213,7 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 	pkt.paramTypes = make([]FieldType, pkt.numParams)
 
 	if pkt.bindSendType.IsToServer() {
-		for n := 0; n < int(pkt.numParams); n++ {
+		for n := range pkt.numParams {
 			iv2, err := pktReader.ReadInt2()
 			if err != nil {
 				return nil, err
@@ -230,8 +231,8 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 	}
 
 	pkt.paramValues = make([][]byte, pkt.numParams)
-	for n := 0; n < int(pkt.numParams); n++ {
-		if pkt.nullBitmap.IsNull(n) {
+	for n := range pkt.numParams {
+		if pkt.nullBitmap.IsNull(int(n)) {
 			continue
 		}
 		v, err := pktReader.ReadFieldBytes(pkt.paramTypes[n])
@@ -244,15 +245,15 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 	// Create parameters
 
 	pkt.params = make([]stmt.Parameter, pkt.numParams)
-	for n := 0; n < int(pkt.numParams); n++ {
+	for n := range pkt.numParams {
 		paramOpts := []stmt.ParameterOption{}
-		if n < len(pkt.paramNames) {
+		if int(n) < len(pkt.paramNames) {
 			paramOpts = append(paramOpts, stmt.WithParameterName(pkt.paramNames[n]))
 		}
-		if n < len(pkt.paramTypes) {
+		if int(n) < len(pkt.paramTypes) {
 			paramOpts = append(paramOpts, stmt.WithParameterType(pkt.paramTypes[n]))
 		}
-		if n < len(pkt.paramValues) {
+		if int(n) < len(pkt.paramValues) {
 			paramOpts = append(paramOpts, stmt.WithParameterBytes(pkt.paramValues[n]))
 		}
 		pkt.params[n] = stmt.NewParameter(paramOpts...)
@@ -306,7 +307,7 @@ func (pkt *StmtExecute) Bytes() ([]byte, error) {
 		}
 
 		if pkt.bindSendType.IsToServer() {
-			for n := 0; n < int(pkt.numParams); n++ {
+			for n := range pkt.numParams {
 				if err := w.WriteInt2(uint16(pkt.paramTypes[n])); err != nil {
 					return nil, err
 				}
@@ -318,8 +319,8 @@ func (pkt *StmtExecute) Bytes() ([]byte, error) {
 			}
 		}
 
-		for n := 0; n < int(pkt.numParams); n++ {
-			if pkt.nullBitmap.IsNull(n) {
+		for n := range pkt.numParams {
+			if pkt.nullBitmap.IsNull(int(n)) {
 				continue
 			}
 			switch pkt.paramTypes[n] {

@@ -30,8 +30,8 @@ func TestNullBitmap(t *testing.T) {
 		t.Fatalf("expected empty bytes, got %v", bmap.Bytes())
 	}
 
-	for numFields := 0; numFields < 32; numFields++ {
-		for offset := 0; offset <= 2; offset++ {
+	for numFields := range 32 {
+		for offset := range 3 {
 			bmap := protocol.NewNullBitmap(
 				protocol.WithNullBitmapNumFields(numFields),
 				protocol.WithNullBitmapOffset(offset),
@@ -45,7 +45,7 @@ func TestNullBitmap(t *testing.T) {
 			}
 
 			// Test setting and getting null values
-			for i := 0; i < numFields; i++ {
+			for i := range numFields {
 				if i < (numFields - 1) {
 					if bmap.IsNull(i) {
 						t.Fatalf("expected field %d to be not null", i)

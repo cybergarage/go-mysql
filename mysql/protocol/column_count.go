@@ -31,6 +31,7 @@ type ColumnCountOption func(*ColumnCount)
 // ColumnDef represents a MySQL Column Definition packet.
 type ColumnCount struct {
 	*packet
+
 	capFlags        Capability
 	metadataFollows ResultsetMetadata
 	count           uint64

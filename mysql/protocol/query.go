@@ -25,6 +25,7 @@ import (
 // Query represents a COM_QUERY packet.
 type Query struct {
 	Command
+
 	query             string
 	paramCnt          uint64
 	paramSetCnt       uint64
@@ -126,7 +127,7 @@ func NewQueryFromCommand(cmd Command, opts ...QueryOption) (*Query, error) {
 			return nil, err
 		}
 		if pkt.newParamsBindFlag == 1 {
-			for n := 0; n < int(pkt.paramCnt); n++ {
+			for range pkt.paramCnt {
 				paramType, err := reader.ReadInt2()
 				if err != nil {
 					return nil, err

@@ -31,6 +31,7 @@ import (
 // StmtPrepareResponse represents a MySQL Prepare Response packet.
 type StmtPrepareResponse struct {
 	*packet
+
 	status            Status
 	stmtID            StatementID
 	columns           []ColumnDef
@@ -176,7 +177,7 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 	}
 
 	pkt.params = make([]ColumnDef, numParams)
-	for n := 0; n < int(numParams); n++ {
+	for n := range numParams {
 		param, err := NewColumnDefFromReader(pktHeader)
 		if err != nil {
 			return nil, err
@@ -191,7 +192,7 @@ func NewStmtPrepareResponseFromReader(reader io.Reader, opts ...StmtPrepareRespo
 	}
 
 	pkt.columns = make([]ColumnDef, numColumns)
-	for n := 0; n < int(numColumns); n++ {
+	for n := range numColumns {
 		column, err := NewColumnDefFromReader(pktHeader)
 		if err != nil {
 			return nil, err

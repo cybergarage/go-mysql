@@ -28,6 +28,7 @@ import (
 // BinaryResultSet represents a MySQL binary resultset response packet.
 type BinaryResultSet struct {
 	*packet
+
 	columnDefs []ColumnDef
 	rows       []BinaryResultSetRow
 }
@@ -97,7 +98,7 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 
 	// Column Definitions
 
-	for i := 0; i < int(columnCount); i++ {
+	for range columnCount {
 		colDef, err := NewColumnDefFromReader(reader)
 		if err != nil {
 			return nil, err

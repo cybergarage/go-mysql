@@ -29,6 +29,7 @@ import (
 // StmtPrepare represents a COM_STMT_PREPARE packet.
 type StmtPrepare struct {
 	Command
+
 	dbName               string
 	tblNames             []string
 	stmt                 query.Statement

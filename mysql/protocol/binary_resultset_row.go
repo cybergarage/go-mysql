@@ -25,6 +25,7 @@ type BinaryResultSetRowOption func(*BinaryResultSetRow)
 // BinaryResultSetRow represents a MySQL binary resultset row response packet.
 type BinaryResultSetRow struct {
 	*packet
+
 	columnDefs []ColumnDef
 	nullBitmap *NullBitmap
 	colums     []*BinaryResultSetColumn
@@ -107,7 +108,7 @@ func NewBinaryResultSetRowFromReader(reader *PacketReader, opts ...BinaryResultS
 
 	row.colums = []*BinaryResultSetColumn{}
 
-	for n := 0; n < numColumns; n++ {
+	for n := range numColumns {
 		opts := []BinaryResultSetColumnOption{
 			WithBinaryResultSetColumnType(FieldType(row.columnDefs[n].ColType())),
 		}

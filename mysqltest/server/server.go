@@ -30,6 +30,7 @@ const (
 // Server represents a test server.
 type Server struct {
 	*server.Server
+
 	credStore map[string]auth.Credential
 }
 

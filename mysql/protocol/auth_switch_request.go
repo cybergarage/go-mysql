@@ -39,6 +39,7 @@ func WithAuthSwitchRequestAuthData(authData string) AuthSwitchRequestOption {
 // AuthSwitchRequest represents the MySQL Protocol::AuthSwitchRequest packet.
 type AuthSwitchRequest struct {
 	*packet
+
 	status     byte
 	pluginName string
 	authData   string

@@ -21,6 +21,7 @@ import (
 type preparedStmt struct {
 	*StmtPrepare
 	*StmtPrepareResponse
+
 	params []stmt.Parameter
 }
 

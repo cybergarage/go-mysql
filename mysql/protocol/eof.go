@@ -30,6 +30,7 @@ const (
 // EOF represents a MySQL EOF packet.
 type EOF struct {
 	*packet
+
 	header   uint8
 	warnings uint16
 }

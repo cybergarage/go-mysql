@@ -98,7 +98,7 @@ func NewTextResultSetFromReader(reader io.Reader, opts ...TextResultSetOption) (
 	columnCount := pkt.columnCnt.ColumnCount()
 
 	if pkt.Capability().LacksCapability(ClientOptionalResultsetMetadata) || pkt.columnCnt.MetadataFollows() == ResultsetMetadataFull {
-		for i := 0; i < int(columnCount); i++ {
+		for range columnCount {
 			colDef, err := NewColumnDefFromReader(reader)
 			if err != nil {
 				return nil, err

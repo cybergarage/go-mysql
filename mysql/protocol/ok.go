@@ -28,6 +28,7 @@ const (
 // OK represents a MySQL OK packet.
 type OK struct {
 	*packet
+
 	header           uint8
 	affectedRows     uint64
 	lastInsertID     uint64

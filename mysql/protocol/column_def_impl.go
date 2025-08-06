@@ -38,6 +38,7 @@ type ColumnDefOption func(*columnDef)
 // columnDef represents a MySQL Column Definition packet.
 type columnDef struct {
 	*packet
+
 	catalog          string
 	schema           string
 	table            string

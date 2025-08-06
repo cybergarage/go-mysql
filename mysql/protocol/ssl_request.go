@@ -32,6 +32,7 @@ const (
 // SSLRequest represents a MySQL SSLRequest packet.
 type SSLRequest struct {
 	*packet
+
 	Capabilitys   Capability
 	characterSet  uint8
 	maxPacketSize uint32

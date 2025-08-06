@@ -22,6 +22,7 @@ import (
 // StmtReset represents a COM_STMT_RESET packet.
 type StmtReset struct {
 	Command
+
 	stmdID StatementID
 }
 

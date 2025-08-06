@@ -23,6 +23,7 @@ import (
 // Reader represents a packet reader.
 type Reader struct {
 	io.Reader
+
 	peekBuf []byte
 }
 
@@ -97,7 +98,7 @@ func (reader *Reader) PeekBytes(n int) ([]byte, error) {
 }
 
 func (reader *Reader) SkipBytes(n int) error {
-	for i := 0; i < n; i++ {
+	for range n {
 		_, err := reader.ReadByte()
 		if err != nil {
 			return err
@@ -306,10 +307,10 @@ func (reader *Reader) ReadLengthEncodedString() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	switch {
-	case n == 0:
+	switch n {
+	case 0:
 		return "", nil
-	case n == NullString:
+	case NullString:
 		return "", ErrNull
 	}
 	return reader.ReadFixedLengthString(int(n))

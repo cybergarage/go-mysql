@@ -27,6 +27,7 @@ import (
 // StmtClose represents a COM_STMT_CLOSE packet.
 type StmtClose struct {
 	Command
+
 	stmdID StatementID
 }
 
