@@ -50,19 +50,16 @@ func WithBinaryResultSetColumnBytes(b []byte) BinaryResultSetColumnOption {
 func WithBinaryResultSetColumnValue(v any) BinaryResultSetColumnOption {
 	return func(column *BinaryResultSetColumn) error {
 		w := NewPacketWriter()
-
 		err := w.WriteFieldValue(column.t, v)
 		if err != nil {
 			return err
 		}
 
 		reader := NewPacketReaderWithBytes(w.Bytes())
-
 		v, err := reader.ReadFieldBytes(column.t)
 		if err != nil {
 			return err
 		}
-
 		column.bytes = v
 
 		return nil
@@ -80,7 +77,6 @@ func NewBinaryResultSetColumn(opts ...BinaryResultSetColumnOption) (*BinaryResul
 			return nil, err
 		}
 	}
-
 	return column, nil
 }
 
@@ -95,7 +91,6 @@ func NewBinaryResultSetColumnFromReader(reader *PacketReader, opts ...BinaryResu
 	if err != nil {
 		return nil, err
 	}
-
 	column.bytes = v
 
 	return column, nil
@@ -112,7 +107,6 @@ func (column *BinaryResultSetColumn) Value() (any, error) {
 		stmt.WithFieldType(column.t),
 		stmt.WithFieldBytes(column.bytes),
 	)
-
 	return field.Value()
 }
 
@@ -122,6 +116,5 @@ func (column *BinaryResultSetColumn) Bytes() ([]byte, error) {
 	if err := w.WriteFieldBytes(column.t, column.bytes); err != nil {
 		return nil, err
 	}
-
 	return w.Bytes(), nil
 }

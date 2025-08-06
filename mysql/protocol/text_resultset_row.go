@@ -29,7 +29,6 @@ type TextResultSetRowOption func(*TextResultSetRow)
 // TextResultSetRow represents a MySQL text resultset row response packet.
 type TextResultSetRow struct {
 	*packet
-
 	columns []*string
 }
 
@@ -39,7 +38,6 @@ func newTextResultSetRowWithPacket(pkt *packet, opts ...TextResultSetRowOption) 
 		columns: []*string{},
 	}
 	row.SetOptions(opts...)
-
 	return row
 }
 
@@ -70,14 +68,12 @@ func NewTextResultSetRowFromReader(reader *PacketReader, opts ...TextResultSetRo
 	}
 
 	row := newTextResultSetRowWithPacket(pktReader, opts...)
-
 	columnCount := len(row.columns)
-	for n := range columnCount {
+	for n := 0; n < columnCount; n++ {
 		column, err := row.ReadColumn()
 		if err != nil {
 			return nil, err
 		}
-
 		row.columns[n] = column
 	}
 
@@ -102,7 +98,6 @@ func (row *TextResultSetRow) Columns() []any {
 	for n, column := range row.columns {
 		columns[n] = column
 	}
-
 	return columns
 }
 
@@ -115,8 +110,6 @@ func (row *TextResultSetRow) Bytes() ([]byte, error) {
 			return nil, err
 		}
 	}
-
 	row.SetPayload(w.Bytes())
-
 	return row.packet.Bytes()
 }

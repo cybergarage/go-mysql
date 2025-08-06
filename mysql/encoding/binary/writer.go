@@ -39,7 +39,7 @@ func (w *Writer) WriteByte(b byte) error {
 
 // WriteBytes writes a byte array.
 func (w *Writer) WriteBytes(b []byte) (int, error) {
-	return w.Write(b)
+	return w.Buffer.Write(b)
 }
 
 // WriteInt1 writes a 1 byte integer.
@@ -96,19 +96,16 @@ func (w *Writer) WriteLengthEncodedInt(v uint64) error {
 		if err := w.WriteInt1(0xFC); err != nil {
 			return err
 		}
-
 		return w.WriteInt2(uint16(v))
 	case 3:
 		if err := w.WriteInt1(0xFD); err != nil {
 			return err
 		}
-
 		return w.WriteInt3(uint32(v))
 	default:
 		if err := w.WriteInt1(0xFE); err != nil {
 			return err
 		}
-
 		return w.WriteInt8(v)
 	}
 }
@@ -119,12 +116,10 @@ func (w *Writer) WriteNullTerminatedString(s string) error {
 	if err != nil {
 		return err
 	}
-
 	err = w.WriteByte(0)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -134,12 +129,10 @@ func (w *Writer) WriteNullTerminatedBytes(b []byte) error {
 	if err != nil {
 		return err
 	}
-
 	err = w.WriteByte(0)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -149,13 +142,11 @@ func (w *Writer) WriteEOFTerminatedString(s string) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
 func (w *Writer) writeFixedLengthBytes(b []byte, fb byte, n int) error {
 	var wb []byte
-
 	switch {
 	case b == nil:
 		wb = bytes.Repeat([]byte{fb}, n)
@@ -164,12 +155,10 @@ func (w *Writer) writeFixedLengthBytes(b []byte, fb byte, n int) error {
 	default:
 		wb = slices.Concat(b, bytes.Repeat([]byte{fb}, n-len(b)))
 	}
-
 	_, err := w.WriteBytes(wb)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -191,22 +180,17 @@ func (w *Writer) WriteFixedLengthNullBytes(n int) error {
 // WriteLengthEncodedBytes writes a length encoded bytes.
 func (w *Writer) WriteLengthEncodedBytes(b []byte) error {
 	var n uint64
-
 	err := safecast.ToUint64(len(b), &n)
 	if err != nil {
 		return err
 	}
-
 	if err := w.WriteLengthEncodedInt(n); err != nil {
 		return err
 	}
-
 	if n == 0 {
 		return nil
 	}
-
 	_, err = w.WriteBytes(b)
-
 	return err
 }
 

@@ -48,33 +48,32 @@ func NewDefaultConfig() *Config {
 	cfg.SetDebug(true)
 	cfg.SetUser(sysbench.User())
 	cfg.SetPassword(sysbench.Password())
-
 	return cfg
 }
 
 // SetHost sets the host.
 func (cfg *Config) SetHost(host string) {
-	cfg.Set(MySQLHost, host)
+	cfg.Config.Set(MySQLHost, host)
 }
 
 // SetPort sets the port.
 func (cfg *Config) SetPort(port int) {
-	cfg.Set(MySQLPort, strconv.Itoa(port))
+	cfg.Config.Set(MySQLPort, strconv.Itoa(port))
 }
 
 // SetUser sets the user.
 func (cfg *Config) SetUser(user string) {
-	cfg.Set(MySQLUser, user)
+	cfg.Config.Set(MySQLUser, user)
 }
 
 // SetPassword sets the password.
 func (cfg *Config) SetPassword(password string) {
-	cfg.Set(MySQLPassword, password)
+	cfg.Config.Set(MySQLPassword, password)
 }
 
 // SetDB sets the db.
 func (cfg *Config) SetDB(db string) {
-	cfg.Set(MySQLDB, db)
+	cfg.Config.Set(MySQLDB, db)
 }
 
 // SetSSL sets the ssl.

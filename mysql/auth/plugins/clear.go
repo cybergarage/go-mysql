@@ -26,6 +26,5 @@ func ClearEncrypt(passwd any, args ...any) (any, error) {
 	default:
 		return nil, ErrInvalidArgument
 	}
-
 	return strPasswd, nil
 }

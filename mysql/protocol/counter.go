@@ -22,7 +22,6 @@ import (
 // Counter is a counter.
 type Counter struct {
 	sync.Mutex
-
 	count int32
 }
 
@@ -52,8 +51,6 @@ func (counter *Counter) Inc() int32 {
 	if counter.count == math.MaxInt32 {
 		counter.count = 0
 	}
-
 	counter.count++
-
 	return counter.count
 }

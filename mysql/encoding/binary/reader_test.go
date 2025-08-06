@@ -26,23 +26,18 @@ func TestReader(t *testing.T) {
 	// Test PeekInt32 and ReadInt32
 	reader := NewReaderWithReader(bytes.NewBuffer(buf))
 	expectedInt4 := uint32(0x64636261)
-
 	actualInt4, err := reader.ReadInt4()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualInt4 != expectedInt4 {
 		t.Errorf("Expected %v, but got %v", expectedInt4, actualInt4)
 	}
-
 	expectedInt4 = uint32(0x68676665)
-
 	actualInt4, err = reader.ReadInt4()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualInt4 != expectedInt4 {
 		t.Errorf("Expected %v, but got %v", expectedInt4, actualInt4)
 	}
@@ -50,12 +45,10 @@ func TestReader(t *testing.T) {
 	// Test ReadInt3
 	reader = NewReaderWithReader(bytes.NewBuffer(buf))
 	expectedInt3 := uint32(0x636261)
-
 	actualInt3, err := reader.ReadInt3()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualInt3 != expectedInt3 {
 		t.Errorf("Expected %v, but got %v", expectedInt3, actualInt3)
 	}
@@ -63,12 +56,10 @@ func TestReader(t *testing.T) {
 	// Test ReadInt2
 	reader = NewReaderWithReader(bytes.NewBuffer(buf))
 	expectedInt2 := uint16(0x6261)
-
 	actualInt2, err := reader.ReadInt2()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualInt2 != expectedInt2 {
 		t.Errorf("Expected %v, but got %v", expectedInt2, actualInt2)
 	}
@@ -76,12 +67,10 @@ func TestReader(t *testing.T) {
 	// Test ReadBytesUntil
 	reader = NewReaderWithReader(bytes.NewBuffer(buf))
 	expectedBytes := []byte{0x61, 0x62, 0x63}
-
 	actualBytes, err := reader.ReadBytesUntil(0x64)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if !bytes.Equal(actualBytes, expectedBytes) {
 		t.Errorf("Expected %v, but got %v", expectedBytes, actualBytes)
 	}
@@ -89,12 +78,10 @@ func TestReader(t *testing.T) {
 	// Test ReadNullTerminatedString
 	reader = NewReaderWithReader(bytes.NewBuffer(append(buf, 0x00)))
 	expectedString := "\x61\x62\x63\x64\x65\x66\x67\x68"
-
 	actualString, err := reader.ReadNullTerminatedString()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualString != expectedString {
 		t.Errorf("Expected %v, but got %v", expectedString, actualString)
 	}
@@ -102,12 +89,10 @@ func TestReader(t *testing.T) {
 	// Test ReadEOFTerminatedString
 	reader = NewReaderWithReader(bytes.NewBuffer(buf))
 	expectedString = "\x61\x62\x63\x64\x65\x66\x67\x68"
-
 	actualString, err = reader.ReadEOFTerminatedString()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualString != expectedString {
 		t.Errorf("Expected %v, but got %v", expectedString, actualString)
 	}
@@ -115,12 +100,10 @@ func TestReader(t *testing.T) {
 	// Test ReadFixedLengthString
 	reader = NewReaderWithReader(bytes.NewBuffer(buf))
 	expectedString = "\x61\x62\x63\x64"
-
 	actualString, err = reader.ReadFixedLengthString(4)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualString != expectedString {
 		t.Errorf("Expected %v, but got %v", expectedString, actualString)
 	}
@@ -128,12 +111,10 @@ func TestReader(t *testing.T) {
 	// Test ReadVariableLengthString
 	reader = NewReaderWithReader(bytes.NewBuffer(buf))
 	expectedString = "\x61\x62\x63\x64"
-
 	actualString, err = reader.ReadVariableLengthString(4)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualString != expectedString {
 		t.Errorf("Expected %v, but got %v", expectedString, actualString)
 	}

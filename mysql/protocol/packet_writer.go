@@ -42,18 +42,16 @@ func (w *PacketWriter) WriteCapability(c Capability) error {
 	if c.HasCapability(ClientProtocol41) {
 		return w.WriteInt4(uint32(c))
 	}
-
 	return w.WriteInt2(uint16(c >> 16))
 }
 
 // WriteFillerBytes writes the filler bytes.
 func (w *PacketWriter) WriteFillerBytes(b byte, n int) error {
-	for range n {
+	for i := 0; i < n; i++ {
 		if err := w.WriteByte(b); err != nil {
 			return err
 		}
 	}
-
 	return nil
 }
 
@@ -63,19 +61,16 @@ func (w *PacketWriter) WritePacket(pkt Response) error {
 	if err != nil {
 		return err
 	}
-
 	_, err = w.WriteBytes(pktBytes)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
 // WriteOK writes a OK packet.
 func (w *PacketWriter) WriteOK(opts ...any) error {
 	okOpts := []OKOption{}
-
 	for _, opt := range opts {
 		switch v := opt.(type) {
 		case SequenceID:
@@ -86,58 +81,48 @@ func (w *PacketWriter) WriteOK(opts ...any) error {
 			okOpts = append(okOpts, WithOKServerStatus(v))
 		}
 	}
-
 	ok, err := NewOK(okOpts...)
 	if err != nil {
 		return err
 	}
-
 	okBytes, err := ok.Bytes()
 	if err != nil {
 		return err
 	}
-
 	_, err = w.WriteBytes(okBytes)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
 // WriteErr writes a ERR packet.
 func (w *PacketWriter) WriteErr(opts ...any) error {
 	errOpts := []ERROption{}
-
 	for _, opt := range opts {
 		switch v := opt.(type) {
 		case SequenceID:
 			errOpts = append(errOpts, WithERRSecuenceID(v))
 		}
 	}
-
 	pkt, err := NewERR(errOpts...)
 	if err != nil {
 		return err
 	}
-
 	errBytes, err := pkt.Bytes()
 	if err != nil {
 		return err
 	}
-
 	_, err = w.WriteBytes(errBytes)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
 // WriteEOF writes a EOF packet.
 func (w *PacketWriter) WriteEOF(opts ...any) error {
 	eofOpts := []EOFOption{}
-
 	for _, opt := range opts {
 		switch v := opt.(type) {
 		case SequenceID:
@@ -148,22 +133,18 @@ func (w *PacketWriter) WriteEOF(opts ...any) error {
 			eofOpts = append(eofOpts, WithEOFServerStatus(v))
 		}
 	}
-
 	eof, err := NewEOF(eofOpts...)
 	if err != nil {
 		return err
 	}
-
 	eofBytes, err := eof.Bytes()
 	if err != nil {
 		return err
 	}
-
 	_, err = w.WriteBytes(eofBytes)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -195,6 +176,5 @@ func (w *PacketWriter) WriteFieldBytes(t FieldType, v []byte) error {
 		_, err := w.WriteBytes(v)
 		return err
 	}
-
 	return newErrFieldNotSupported(t)
 }

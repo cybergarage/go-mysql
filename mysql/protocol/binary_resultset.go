@@ -28,7 +28,6 @@ import (
 // BinaryResultSet represents a MySQL binary resultset response packet.
 type BinaryResultSet struct {
 	*packet
-
 	columnDefs []ColumnDef
 	rows       []BinaryResultSetRow
 }
@@ -40,7 +39,6 @@ func newBinaryResultSetWithPacket(pkt *packet, opts ...BinaryResultSetOption) *B
 		rows:       []BinaryResultSetRow{},
 	}
 	q.SetOptions(opts...)
-
 	return q
 }
 
@@ -99,12 +97,11 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 
 	// Column Definitions
 
-	for range columnCount {
+	for i := 0; i < int(columnCount); i++ {
 		colDef, err := NewColumnDefFromReader(reader)
 		if err != nil {
 			return nil, err
 		}
-
 		rsPkt.columnDefs = append(rsPkt.columnDefs, colDef)
 	}
 
@@ -122,28 +119,23 @@ func NewBinaryResultSetFromReader(reader io.Reader, opts ...BinaryResultSetOptio
 		if err != nil {
 			return nil, err
 		}
-
 		pktHeader, err := pkt.PayloadHeaderByte()
 		if err != nil {
 			return nil, err
 		}
-
 		if pktHeader == 0xFE {
 			break
 		}
-
 		pktBytes, err := pkt.Bytes()
 		if err != nil {
 			return nil, err
 		}
-
 		row, err := NewBinaryResultSetRowFromReader(
 			NewPacketReaderWithBytes(pktBytes),
 			WithBinaryResultSetRowColumnDefs(rsPkt.columnDefs))
 		if err != nil {
 			return nil, err
 		}
-
 		rsPkt.rows = append(rsPkt.rows, *row)
 	}
 
@@ -172,19 +164,16 @@ func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 	pkt.SetSequenceID(seqID)
 
 	firstPktWriter := NewPacketWriter()
-
 	err := firstPktWriter.WriteLengthEncodedInt(uint64(len(pkt.columnDefs)))
 	if err != nil {
 		return nil, err
 	}
-
 	pkt.SetPayload(firstPktWriter.Bytes())
 
 	firstPktBytes, err := pkt.packet.Bytes()
 	if err != nil {
 		return nil, err
 	}
-
 	_, err = w.WriteBytes(firstPktBytes)
 	if err != nil {
 		return nil, err
@@ -195,12 +184,10 @@ func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 	for _, colDef := range pkt.columnDefs {
 		seqID = seqID.Next()
 		colDef.SetSequenceID(seqID)
-
 		bytes, err := colDef.Bytes()
 		if err != nil {
 			return nil, err
 		}
-
 		_, err = w.WriteBytes(bytes)
 		if err != nil {
 			return nil, err
@@ -219,12 +206,10 @@ func (pkt *BinaryResultSet) Bytes() ([]byte, error) {
 	for _, row := range pkt.rows {
 		seqID = seqID.Next()
 		row.SetSequenceID(seqID)
-
 		rowBytes, err := row.Bytes()
 		if err != nil {
 			return nil, err
 		}
-
 		_, err = w.WriteBytes(rowBytes)
 		if err != nil {
 			return nil, err

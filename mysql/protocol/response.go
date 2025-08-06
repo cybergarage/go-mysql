@@ -49,7 +49,6 @@ func NewResponseWithError(err error) (Response, error) {
 	if err == nil {
 		return NewOK()
 	}
-
 	return NewERR(
 		WithERRMessage(err.Error()),
 	)

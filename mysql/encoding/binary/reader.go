@@ -23,7 +23,6 @@ import (
 // Reader represents a packet reader.
 type Reader struct {
 	io.Reader
-
 	peekBuf []byte
 }
 
@@ -43,12 +42,10 @@ func NewReaderWithBytes(buf []byte) *Reader {
 // ReadByte reads a byte.
 func (reader *Reader) ReadByte() (byte, error) {
 	b := make([]byte, 1)
-
 	_, err := reader.ReadBytes(b)
 	if err != nil {
 		return 0, err
 	}
-
 	return b[0], nil
 }
 
@@ -56,69 +53,56 @@ func (reader *Reader) ReadByte() (byte, error) {
 func (reader *Reader) ReadBytes(buf []byte) (int, error) {
 	nBufSize := len(buf)
 	nReadBuf := 0
-
 	if 0 < len(reader.peekBuf) {
 		nCopy := copy(buf, reader.peekBuf)
 		reader.peekBuf = reader.peekBuf[nCopy:]
 		nReadBuf = nCopy
 	}
-
 	if nBufSize <= nReadBuf {
 		return nReadBuf, nil
 	}
-
 	nRead, err := io.ReadAtLeast(reader.Reader, buf[nReadBuf:], nBufSize-nReadBuf)
 	if err != nil {
 		return nReadBuf, err
 	}
-
 	nReadBuf += nRead
-
 	return nReadBuf, err
 }
 
 // ReadNBytes reads the specified number of bytes.
 func (reader *Reader) ReadNBytes(n int) ([]byte, error) {
 	buf := make([]byte, n)
-
 	nRead, err := reader.ReadBytes(buf)
 	if err != nil {
 		return nil, err
 	}
-
 	if nRead != n {
 		return nil, newErrInvalidLength(n, nRead)
 	}
-
 	return buf, nil
 }
 
 // PeekBytes peeks a byte array.
 func (reader *Reader) PeekBytes(n int) ([]byte, error) {
 	buf := make([]byte, n)
-
 	nRead, err := reader.ReadBytes(buf)
 	if err != nil {
 		return nil, err
 	}
-
 	if nRead != n {
 		return nil, newErrInvalidLength(n, nRead)
 	}
-
 	reader.peekBuf = append(reader.peekBuf, buf...)
-
 	return buf, nil
 }
 
 func (reader *Reader) SkipBytes(n int) error {
-	for range n {
+	for i := 0; i < n; i++ {
 		_, err := reader.ReadByte()
 		if err != nil {
 			return err
 		}
 	}
-
 	return nil
 }
 
@@ -128,7 +112,6 @@ func (reader *Reader) PeekByte() (uint8, error) {
 	if err != nil {
 		return 0, err
 	}
-
 	return uint8(b[0]), nil
 }
 
@@ -143,7 +126,6 @@ func (reader *Reader) PeekInt2() (uint16, error) {
 	if err != nil {
 		return 0, err
 	}
-
 	return BytesToUint2(int16Bytes)
 }
 
@@ -153,7 +135,6 @@ func (reader *Reader) PeekInt4() (uint32, error) {
 	if err != nil {
 		return 0, err
 	}
-
 	return BytesToUint4(int32Bytes)
 }
 
@@ -163,71 +144,58 @@ func (reader *Reader) ReadInt1() (uint8, error) {
 	if err != nil {
 		return 0, err
 	}
-
 	return uint8(b), nil
 }
 
 // ReadInt2 reads a 16-bit integer.
 func (reader *Reader) ReadInt2() (uint16, error) {
 	int16Bytes := make([]byte, 2)
-
 	nRead, err := reader.ReadBytes(int16Bytes)
 	if err != nil {
 		return 0, err
 	}
-
 	if nRead != 2 {
 		return 0, newErrInvalidLength(2, nRead)
 	}
-
 	return BytesToUint2(int16Bytes)
 }
 
 // ReadInt3 reads a 24-bit integer.
 func (reader *Reader) ReadInt3() (uint32, error) {
 	int24Bytes := make([]byte, 3)
-
 	nRead, err := reader.ReadBytes(int24Bytes)
 	if err != nil {
 		return 0, err
 	}
-
 	if nRead != 3 {
 		return 0, newErrInvalidLength(3, nRead)
 	}
-
 	return BytesToUint3(int24Bytes)
 }
 
 // ReadInt4 reads a 32-bit integer.
 func (reader *Reader) ReadInt4() (uint32, error) {
 	int32Bytes := make([]byte, 4)
-
 	nRead, err := reader.ReadBytes(int32Bytes)
 	if err != nil {
 		return 0, err
 	}
-
 	if nRead != 4 {
 		return 0, newErrInvalidLength(4, nRead)
 	}
-
 	return BytesToUint4(int32Bytes)
 }
 
 // ReadInt8 reads a 64-bit integer.
 func (reader *Reader) ReadInt8() (uint64, error) {
 	int64Bytes := make([]byte, 8)
-
 	nRead, err := reader.ReadBytes(int64Bytes)
 	if err != nil {
 		return 0, err
 	}
-
 	if nRead != 8 {
 		return 0, newErrInvalidLength(8, nRead)
 	}
-
 	return BytesToUint8(int64Bytes)
 }
 
@@ -237,7 +205,6 @@ func (reader *Reader) ReadLengthEncodedInt() (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
-
 	switch {
 	case firstByte <= 0xFB:
 		return uint64(firstByte), nil
@@ -260,20 +227,16 @@ func (reader *Reader) ReadLengthEncodedInt() (uint64, error) {
 // ReadBytesUntil reads a byte array until the specified delimiter.
 func (reader *Reader) ReadBytesUntil(delim byte) ([]byte, error) {
 	buf := make([]byte, 0)
-
 	for {
 		b, err := reader.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-
 		if b == delim {
 			break
 		}
-
 		buf = append(buf, b)
 	}
-
 	return buf, nil
 }
 
@@ -283,7 +246,6 @@ func (reader *Reader) ReadNullTerminatedString() (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	return string(strBytes), nil
 }
 
@@ -293,24 +255,20 @@ func (reader *Reader) ReadNullTerminatedBytes() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return bytes, nil
 }
 
 // ReadEOFTerminatedString reads a string until EOF.
 func (reader *Reader) ReadEOFTerminatedString() (string, error) {
 	buf := make([]byte, 0)
-
 	for {
 		b, err := reader.ReadByte()
 		if err != nil {
 			if errors.Is(err, io.EOF) {
 				return string(buf), nil
 			}
-
 			return "", err
 		}
-
 		buf = append(buf, b)
 	}
 }
@@ -318,16 +276,13 @@ func (reader *Reader) ReadEOFTerminatedString() (string, error) {
 // ReadFixedLengthBytes reads a fixed bytes.
 func (reader *Reader) ReadFixedLengthBytes(n int) ([]byte, error) {
 	b := make([]byte, n)
-
 	nRead, err := reader.ReadBytes(b)
 	if err != nil {
 		return nil, err
 	}
-
 	if nRead != n {
 		return nil, newErrInvalidLength(n, nRead)
 	}
-
 	return b, nil
 }
 
@@ -337,7 +292,6 @@ func (reader *Reader) ReadFixedLengthString(n int) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	return string(b), nil
 }
 
@@ -352,14 +306,12 @@ func (reader *Reader) ReadLengthEncodedString() (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	switch n {
-	case 0:
+	switch {
+	case n == 0:
 		return "", nil
-	case NullString:
+	case n == NullString:
 		return "", ErrNull
 	}
-
 	return reader.ReadFixedLengthString(int(n))
 }
 
@@ -369,10 +321,8 @@ func (reader *Reader) ReadLengthEncodedBytes() ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
-
 	if n == 0 {
 		return []byte{}, nil
 	}
-
 	return reader.ReadFixedLengthBytes(int(n))
 }

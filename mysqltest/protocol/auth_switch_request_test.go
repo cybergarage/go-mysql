@@ -40,13 +40,11 @@ func TestAuthSwitchRequest(t *testing.T) {
 				t.Error(err)
 				return
 			}
-
 			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return
 			}
-
 			reader := bytes.NewReader(testBytes)
 
 			pkt, err := protocol.NewAuthSwitchRequestFromReader(reader)

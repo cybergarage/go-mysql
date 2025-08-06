@@ -41,7 +41,6 @@ func (mgr *stmtManager) NextPreparedStatementID() (StatementID, error) {
 func (mgr *stmtManager) RegisterPreparedStatement(stmt PreparedStatement) error {
 	mgr.stmtIDMap[stmt.StatementID()] = stmt
 	mgr.stmtQueryMap[stmt.Query()] = stmt
-
 	return nil
 }
 
@@ -51,7 +50,6 @@ func (mgr *stmtManager) LookupPreparedStatementByID(stmtID StatementID) (Prepare
 	if !ok {
 		return nil, newErrInvalidStatementID(stmtID)
 	}
-
 	return stmt, nil
 }
 
@@ -61,7 +59,6 @@ func (mgr *stmtManager) LookupPreparedStatementByQuery(query string) (PreparedSt
 	if !ok {
 		return nil, newErrInvalidQuery(query)
 	}
-
 	return stmt, nil
 }
 
@@ -77,7 +74,6 @@ func (mgr *stmtManager) RemovePreparedStatementByID(stmtID StatementID) {
 	if err != nil {
 		return
 	}
-
 	mgr.RemovePreparedStatement(stmt)
 }
 
@@ -87,6 +83,5 @@ func (mgr *stmtManager) RemovePreparedStatementByQuery(query string) {
 	if err != nil {
 		return
 	}
-
 	mgr.RemovePreparedStatement(stmt)
 }

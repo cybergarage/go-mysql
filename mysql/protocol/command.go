@@ -152,7 +152,6 @@ func (t CommandType) String() string {
 	case ComRegisterSlave:
 		return "ComRegisterSlave"
 	}
-
 	return "ComUnknown"
 }
 
@@ -170,7 +169,6 @@ func NewCommandWith(cmdType CommandType, pkt Packet, opts ...CommandOption) Comm
 		capFlags: 0,
 	}
 	cmd.SetOptions(opts...)
-
 	return cmd
 }
 
@@ -221,7 +219,6 @@ func (cmd *command) IsType(t CommandType) error {
 	if cmd.cmdType != t {
 		return newErrInvalidCommandType(cmd.cmdType, t)
 	}
-
 	return nil
 }
 
@@ -240,6 +237,5 @@ func (cmd *command) SkipPayload() error {
 	if cmd.Packet == nil {
 		return nil
 	}
-
 	return cmd.Packet.Reader().SkipBytes(int(cmd.PayloadLength() - 1))
 }

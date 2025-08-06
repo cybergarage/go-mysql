@@ -74,7 +74,6 @@ func NewHandshakeResponse(opts ...HandshakeResponseOption) *HandshakeResponse {
 	for _, opt := range opts {
 		opt(h)
 	}
-
 	return h
 }
 
@@ -119,7 +118,6 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 			res.username = ""
 			return res, nil
 		}
-
 		return nil, err
 	}
 
@@ -129,7 +127,6 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		} else {
 			res.authResponse, err = res.ReadLengthEncodedBytes()
 		}
-
 		if err != nil {
 			return nil, err
 		}
@@ -138,7 +135,6 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		if err != nil {
 			return nil, err
 		}
-
 		res.authResponse, err = res.ReadFixedLengthBytes(int(res.authResponseLength))
 		if err != nil {
 			return nil, err
@@ -159,7 +155,6 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 				res.clientPluginName = ""
 				return res, nil
 			}
-
 			return nil, err
 		}
 	}
@@ -169,14 +164,12 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 		if err != nil {
 			return nil, err
 		}
-
 		readAttrSize := 0
 		for readAttrSize < int(attrSize) {
 			key, err := res.ReadLengthEncodedString()
 			if err != nil {
 				return nil, err
 			}
-
 			keyLen := len(key)
 			readAttrSize += binary.LengthEncodeIntSize(uint64(keyLen)) + keyLen
 
@@ -184,7 +177,6 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 			if err != nil {
 				return nil, err
 			}
-
 			valueLen := len(value)
 			readAttrSize += binary.LengthEncodeIntSize(uint64(valueLen)) + valueLen
 
@@ -242,7 +234,6 @@ func (pkt *HandshakeResponse) AutMethod() (auth.AuthMethod, error) {
 	if len(pkt.clientPluginName) == 0 {
 		return auth.MySQLAuthenticationNone, nil
 	}
-
 	return auth.NewAuthMethodFromID(pkt.clientPluginName)
 }
 
@@ -289,7 +280,6 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 		if err := w.WriteByte(pkt.authResponseLength); err != nil {
 			return nil, err
 		}
-
 		if err := w.WriteFixedLengthBytes(pkt.authResponse, int(pkt.authResponseLength)); err != nil {
 			return nil, err
 		}
@@ -316,25 +306,20 @@ func (pkt *HandshakeResponse) Bytes() ([]byte, error) {
 	if pkt.Capability().HasCapability(ClientConnectAttrs) {
 		if 0 < len(pkt.AttributeKeys()) || hasNextSection {
 			attrWriter := NewPacketWriter()
-
 			for _, key := range pkt.AttributeKeys() {
 				value, _ := pkt.LookupAttribute(key)
 				if err := attrWriter.WriteLengthEncodedString(key); err != nil {
 					return nil, err
 				}
-
 				if err := attrWriter.WriteLengthEncodedString(value); err != nil {
 					return nil, err
 				}
 			}
-
 			attrBytes := attrWriter.Bytes()
-
 			attrSize := len(attrBytes)
 			if err := w.WriteLengthEncodedInt(uint64(attrSize)); err != nil {
 				return nil, err
 			}
-
 			if _, err := w.WriteBytes(attrBytes); err != nil {
 				return nil, err
 			}

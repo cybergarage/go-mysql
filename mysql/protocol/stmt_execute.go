@@ -43,7 +43,6 @@ func (t StatementBindSendType) IsToServer() bool {
 // StmtExecute represents a COM_STMT_EXECUTE packet.
 type StmtExecute struct {
 	Command
-
 	stmdID       StatementID
 	cursorType   CursorType
 	iterCnt      uint32
@@ -75,7 +74,6 @@ func newStmtExecuteWithCommand(cmd Command, opts ...StmtExecuteOption) *StmtExec
 	for _, opt := range opts {
 		opt(q)
 	}
-
 	return q
 }
 
@@ -167,14 +165,12 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 	if err != nil {
 		return nil, err
 	}
-
 	pkt.stmdID = StatementID(iv4)
 
 	iv1, err := pktReader.ReadInt1()
 	if err != nil {
 		return nil, err
 	}
-
 	pkt.cursorType = CursorType(iv1)
 
 	pkt.iterCnt, err = pktReader.ReadInt4()
@@ -187,7 +183,6 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 		if err != nil {
 			return nil, err
 		}
-
 		pkt.numParams = uint16(len(stmt.Parameters()))
 	}
 
@@ -201,7 +196,6 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 		if _, err := pktReader.ReadBytes(nullBitmapBytes); err != nil {
 			return nil, err
 		}
-
 		pkt.nullBitmap = NewNullBitmap(
 			WithNullBitmapNumFields(int(pkt.numParams)),
 			WithNullBitmapBytes(nullBitmapBytes),
@@ -212,19 +206,17 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 	if err != nil {
 		return nil, err
 	}
-
 	pkt.bindSendType = StatementBindSendType(iv1)
 
 	pkt.paramNames = make([]string, pkt.numParams)
 	pkt.paramTypes = make([]FieldType, pkt.numParams)
 
 	if pkt.bindSendType.IsToServer() {
-		for n := range pkt.numParams {
+		for n := 0; n < int(pkt.numParams); n++ {
 			iv2, err := pktReader.ReadInt2()
 			if err != nil {
 				return nil, err
 			}
-
 			pkt.paramTypes[n] = FieldType(iv2)
 
 			if pkt.Capability().HasCapability(ClientQueryAttributes) {
@@ -232,43 +224,37 @@ func NewStmtExecuteFromCommand(cmd Command, opts ...StmtExecuteOption) (*StmtExe
 				if err != nil {
 					return nil, err
 				}
-
 				pkt.paramNames[n] = paramName
 			}
 		}
 	}
 
 	pkt.paramValues = make([][]byte, pkt.numParams)
-	for n := range pkt.numParams {
-		if pkt.nullBitmap.IsNull(int(n)) {
+	for n := 0; n < int(pkt.numParams); n++ {
+		if pkt.nullBitmap.IsNull(n) {
 			continue
 		}
-
 		v, err := pktReader.ReadFieldBytes(pkt.paramTypes[n])
 		if err != nil {
 			return nil, err
 		}
-
 		pkt.paramValues[n] = v
 	}
 
 	// Create parameters
 
 	pkt.params = make([]stmt.Parameter, pkt.numParams)
-	for n := range pkt.numParams {
+	for n := 0; n < int(pkt.numParams); n++ {
 		paramOpts := []stmt.ParameterOption{}
-		if int(n) < len(pkt.paramNames) {
+		if n < len(pkt.paramNames) {
 			paramOpts = append(paramOpts, stmt.WithParameterName(pkt.paramNames[n]))
 		}
-
-		if int(n) < len(pkt.paramTypes) {
+		if n < len(pkt.paramTypes) {
 			paramOpts = append(paramOpts, stmt.WithParameterType(pkt.paramTypes[n]))
 		}
-
-		if int(n) < len(pkt.paramValues) {
+		if n < len(pkt.paramValues) {
 			paramOpts = append(paramOpts, stmt.WithParameterBytes(pkt.paramValues[n]))
 		}
-
 		pkt.params[n] = stmt.NewParameter(paramOpts...)
 	}
 
@@ -320,11 +306,10 @@ func (pkt *StmtExecute) Bytes() ([]byte, error) {
 		}
 
 		if pkt.bindSendType.IsToServer() {
-			for n := range pkt.numParams {
+			for n := 0; n < int(pkt.numParams); n++ {
 				if err := w.WriteInt2(uint16(pkt.paramTypes[n])); err != nil {
 					return nil, err
 				}
-
 				if pkt.Capability().HasCapability(ClientQueryAttributes) {
 					if err := w.WriteLengthEncodedString(pkt.paramNames[n]); err != nil {
 						return nil, err
@@ -333,11 +318,10 @@ func (pkt *StmtExecute) Bytes() ([]byte, error) {
 			}
 		}
 
-		for n := range pkt.numParams {
-			if pkt.nullBitmap.IsNull(int(n)) {
+		for n := 0; n < int(pkt.numParams); n++ {
+			if pkt.nullBitmap.IsNull(n) {
 				continue
 			}
-
 			switch pkt.paramTypes[n] {
 			case query.MySQLTypeString, query.MySQLTypeVarString, query.MySQLTypeVarchar, query.MySQLTypeTinyBlob, query.MySQLTypeMediumBlob, query.MySQLTypeLongBlob, query.MySQLTypeBlob:
 				if err := w.WriteLengthEncodedBytes(pkt.paramValues[n]); err != nil {

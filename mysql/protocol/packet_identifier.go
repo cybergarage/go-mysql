@@ -35,10 +35,8 @@ func (pkt *packet) IsEOF() bool {
 	if len(pkt.payload) == 1 && pkt.payload[0] == eofPacketHeader {
 		return true
 	}
-
 	if len(pkt.payload) == 5 && pkt.payload[0] == eofPacketHeader {
 		return true
 	}
-
 	return false
 }

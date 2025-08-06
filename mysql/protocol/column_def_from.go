@@ -27,19 +27,16 @@ import (
 func NewColumnDefsFromResultSet(rs sql.ResultSet) ([]ColumnDef, error) {
 	schema := rs.Schema()
 	columns := schema.Columns()
-
 	columnDefs := make([]ColumnDef, len(columns))
 	for n, column := range columns {
 		t, err := query.NewFieldTypeFrom(column.DataType())
 		if err != nil {
 			return nil, err
 		}
-
 		c, err := query.NewColumnDefFlagFrom(column.Constraint())
 		if err != nil {
 			return nil, err
 		}
-
 		columnDef := NewColumnDef(
 			WithColumnDefSchema(schema.DatabaseName()),
 			WithColumnDefTable(schema.TableName()),
@@ -49,7 +46,6 @@ func NewColumnDefsFromResultSet(rs sql.ResultSet) ([]ColumnDef, error) {
 		)
 		columnDefs[n] = columnDef
 	}
-
 	return columnDefs, nil
 }
 
@@ -59,12 +55,10 @@ func NewColumnDefsFromSystemSchemaColumn(column system.SchemaColumn) (ColumnDef,
 	if err != nil {
 		return nil, err
 	}
-
 	c, err := query.NewColumnDefFlagFrom(column.Constraint())
 	if err != nil {
 		return nil, err
 	}
-
 	columnDef := NewColumnDef(
 		WithColumnDefSchema(column.Schema()),
 		WithColumnDefTable(column.Table()),
@@ -72,6 +66,5 @@ func NewColumnDefsFromSystemSchemaColumn(column system.SchemaColumn) (ColumnDef,
 		WithColumnDefType(uint8(t)),
 		WithColumnDefFlags(uint16(c)),
 	)
-
 	return columnDef, nil
 }

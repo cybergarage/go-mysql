@@ -36,7 +36,6 @@ func NewFileWithPath(path string) *File {
 	file := &File{
 		Path: path,
 	}
-
 	return file
 }
 
@@ -56,11 +55,9 @@ func (file *File) IsDir() bool {
 	if err != nil {
 		return false
 	}
-
 	if !fi.IsDir() {
 		return false
 	}
-
 	return true
 }
 
@@ -77,18 +74,16 @@ func (file *File) ListFilesWithExtention(targetExt string) ([]*File, error) {
 		if info.IsDir() {
 			return nil
 		}
-
 		if 0 < len(targetExt) {
 			fileExt := filepath.Ext(path)
 			if !strings.HasSuffix(fileExt, targetExt) {
 				return nil
 			}
 		}
-
 		files = append(files, NewFileWithPath(path))
-
 		return nil
 	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -109,15 +104,13 @@ func (file *File) ListFilesWithRegexp(re *regexp.Regexp) ([]*File, error) {
 		if info.IsDir() {
 			return nil
 		}
-
 		if !re.Match([]byte(path)) { // nolint: mirror
 			return nil
 		}
-
 		files = append(files, NewFileWithPath(path))
-
 		return nil
 	})
+
 	if err != nil {
 		return nil, err
 	}

@@ -38,10 +38,8 @@ func BytesToInt8(b []byte) (int64, error) {
 			int64(b[2])<<16 |
 			int64(b[1])<<8 |
 			int64(b[0])
-
 		return v, nil
 	}
-
 	return 0, newErrInvalidLength(8, len(b))
 }
 
@@ -56,7 +54,6 @@ func Int8ToBytes(v int64) []byte {
 	b[5] = byte((v >> 40) & 0xFF)
 	b[6] = byte((v >> 48) & 0xFF)
 	b[7] = byte((v >> 56) & 0xFF)
-
 	return b
 }
 
@@ -77,10 +74,8 @@ func BytesToInt4(b []byte) (int32, error) {
 			int32(b[2])<<16 |
 			int32(b[1])<<8 |
 			int32(b[0])
-
 		return v, nil
 	}
-
 	return 0, newErrInvalidLength(4, len(b))
 }
 
@@ -91,7 +86,6 @@ func Int4ToBytes(v int32) []byte {
 	b[1] = byte((v >> 8) & 0xFF)
 	b[2] = byte((v >> 16) & 0xFF)
 	b[3] = byte((v >> 24) & 0xFF)
-
 	return b
 }
 
@@ -108,10 +102,8 @@ func BytesToInt3(b []byte) (int32, error) {
 		v := int32(b[2])<<16 |
 			int32(b[1])<<8 |
 			int32(b[0])
-
 		return v, nil
 	}
-
 	return 0, newErrInvalidLength(3, len(b))
 }
 
@@ -121,7 +113,6 @@ func Int3ToBytes(v int32) []byte {
 	b[0] = byte(v & 0xFF)
 	b[1] = byte((v >> 8) & 0xFF)
 	b[2] = byte((v >> 16) & 0xFF)
-
 	return b
 }
 
@@ -134,10 +125,8 @@ func BytesToInt2(b []byte) (int16, error) {
 	case 2:
 		v := int16(b[1])<<8 |
 			int16(b[0])
-
 		return v, nil
 	}
-
 	return 0, newErrInvalidLength(2, len(b))
 }
 
@@ -146,7 +135,6 @@ func Int2ToBytes(v int16) []byte {
 	b := make([]byte, 2)
 	b[1] = byte((v >> 8) & 0xFF)
 	b[0] = byte(v & 0xFF)
-
 	return b
 }
 
@@ -155,7 +143,6 @@ func BytesToInt1(b []byte) (int8, error) {
 	if len(b) != 1 {
 		return 0, newErrInvalidLength(1, len(b))
 	}
-
 	return int8(b[0]), nil
 }
 
@@ -163,6 +150,5 @@ func BytesToInt1(b []byte) (int8, error) {
 func Int1ToBytes(v int8) []byte {
 	b := make([]byte, 1)
 	b[0] = byte(v)
-
 	return b
 }

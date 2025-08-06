@@ -27,7 +27,6 @@ import (
 // StmtClose represents a COM_STMT_CLOSE packet.
 type StmtClose struct {
 	Command
-
 	stmdID StatementID
 }
 
@@ -39,7 +38,6 @@ func newStmtCloseWithCommand(cmd Command, opts ...StmtCloseOption) *StmtClose {
 	for _, opt := range opts {
 		opt(q)
 	}
-
 	return q
 }
 
@@ -82,7 +80,6 @@ func NewStmtCloseFromCommand(cmd Command, opts ...StmtCloseOption) (*StmtClose, 
 	if err != nil {
 		return nil, err
 	}
-
 	pkt.stmdID = StatementID(v)
 
 	return pkt, nil

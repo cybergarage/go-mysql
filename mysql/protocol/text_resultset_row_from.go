@@ -41,21 +41,17 @@ const (
 // NewTextResultSetRowsFromResultSet returns a new ResultSetRow list from the specified ResultSet.
 func NewTextResultSetRowsFromResultSet(rs sql.ResultSet) ([]ResultSetRow, error) {
 	rows := []ResultSetRow{}
-
 	for rs.Next() {
 		rsRow, err := rs.Row()
 		if err != nil {
 			return nil, err
 		}
-
 		row, err := NewTextResultSetRowFrom(rs.Schema(), rsRow)
 		if err != nil {
 			return nil, err
 		}
-
 		rows = append(rows, row)
 	}
-
 	return rows, nil
 }
 
@@ -63,15 +59,12 @@ func NewTextResultSetRowsFromResultSet(rs sql.ResultSet) ([]ResultSetRow, error)
 func NewTextResultSetRowFrom(schema sql.ResultSetSchema, rsRow sql.ResultSetRow) (ResultSetRow, error) {
 	schemaColumns := schema.Columns()
 	schemaColumnCount := len(schemaColumns)
-
 	rowColumns := make([]*string, len(rsRow.Values()))
 	for n, v := range rsRow.Values() {
 		if schemaColumnCount <= n {
 			return nil, fmt.Errorf("schema column count (%d) is less than row column count (%d)", schemaColumnCount, n)
 		}
-
 		columnType := schemaColumns[n].DataType()
-
 		rowValue, err := NewTextResultSetRowValueFrom(columnType, v)
 		if err == nil {
 			rowColumns[n] = &rowValue
@@ -81,11 +74,9 @@ func NewTextResultSetRowFrom(schema sql.ResultSetSchema, rsRow sql.ResultSetRow)
 			return nil, err
 		}
 	}
-
 	row := NewTextResultSetRow(
 		WithTextResultSetRowColmuns(rowColumns),
 	)
-
 	return row, nil
 }
 
@@ -98,42 +89,33 @@ func NewTextResultSetRowValueFrom(t query.DataType, v any) (string, error) {
 	switch t {
 	case query.CharData, query.CharacterData, query.VarCharData, query.VarCharacterData, query.TextData, query.TinyTextData, query.LongTextData:
 		var rv string
-
 		err := safecast.ToString(v, &rv)
 		if err != nil {
 			return "", err
 		}
-
 		return rv, nil
 	case query.IntData, query.IntegerData, query.SmallIntData, query.MediumIntData, query.TinyIntData:
 		var rv int
-
 		err := safecast.ToInt(v, &rv)
 		if err != nil {
 			return "", err
 		}
-
 		return strconv.Itoa(rv), nil
 	case query.FloatData, query.DoubleData, query.RealData:
 		var rv float64
-
 		err := safecast.ToFloat64(v, &rv)
 		if err != nil {
 			return "", err
 		}
-
 		return strconv.FormatFloat(rv, 'f', -1, 64), nil
 	case query.TimeStampData, query.DateTimeData:
 		var rv time.Time
-
 		err := safecast.ToTime(v, &rv)
 		if err != nil {
 			return "", err
 		}
-
 		return rv.Format(DateTimeFormat), nil
 	default:
 	}
-
 	return fmt.Sprintf("%s", v), nil
 }

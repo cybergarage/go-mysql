@@ -60,7 +60,6 @@ type Packet interface {
 // packet represents a MySQL packet.
 type packet struct {
 	*PacketReader
-
 	payloadLength uint32
 	sequenceID    SequenceID
 	payload       []byte
@@ -115,7 +114,6 @@ func NewPacket(opts ...PacketOption) *packet {
 	pkt := newPacket()
 	pkt.SetOptions(opts...)
 	pkt.SetCapabilityEnabled(ClientProtocol41)
-
 	return pkt
 }
 
@@ -128,17 +126,14 @@ func NewPacketWithReader(reader io.Reader) (*packet, error) {
 func NewPacketWithPacketReader(reader *PacketReader) (*packet, error) {
 	pkt := newPacket()
 	pkt.PacketReader = reader
-
 	err := pkt.ReadHeader()
 	if err != nil {
 		return nil, err
 	}
-
 	err = pkt.ReadPayload()
 	if err != nil {
 		return nil, err
 	}
-
 	return pkt, nil
 }
 
@@ -146,12 +141,10 @@ func NewPacketWithPacketReader(reader *PacketReader) (*packet, error) {
 func NewPacketHeaderWithReader(reader io.Reader) (*packet, error) {
 	pkt := newPacket()
 	pkt.PacketReader = NewPacketReaderWithReader(reader)
-
 	err := pkt.ReadHeader()
 	if err != nil {
 		return nil, err
 	}
-
 	return pkt, nil
 }
 
@@ -166,16 +159,13 @@ func (pkt *packet) SetOptions(opts ...PacketOption) {
 func (pkt *packet) ReadHeader() error {
 	// Read the payload length
 	payloadLengthBuf := make([]byte, 3)
-
 	nread, err := pkt.ReadBytes(payloadLengthBuf)
 	if err != nil {
 		return err
 	}
-
 	if nread != 3 {
 		return io.EOF
 	}
-
 	pkt.payloadLength = uint32(payloadLengthBuf[0]) | uint32(payloadLengthBuf[1])<<8 | uint32(payloadLengthBuf[2])<<16
 
 	// Read the sequence ID
@@ -183,7 +173,6 @@ func (pkt *packet) ReadHeader() error {
 	if err != nil {
 		return err
 	}
-
 	pkt.sequenceID = SequenceID(seqIDByte)
 
 	return nil
@@ -192,18 +181,14 @@ func (pkt *packet) ReadHeader() error {
 // ReadPayload reads the packet payload.
 func (pkt *packet) ReadPayload() error {
 	payload := make([]byte, pkt.payloadLength)
-
 	nread, err := pkt.ReadBytes(payload)
 	if err != nil {
 		return err
 	}
-
 	if nread != int(pkt.payloadLength) {
 		return io.EOF
 	}
-
 	pkt.payload = payload
-
 	return nil
 }
 
@@ -281,7 +266,6 @@ func (pkt *packet) HeaderBytes() []byte {
 		byte((pkt.payloadLength >> 16) & 0xFF),
 	}
 	seqIDByte := byte(pkt.sequenceID)
-
 	return slices.Concat(payloadLengthBuf, []byte{seqIDByte})
 }
 
@@ -290,7 +274,6 @@ func (pkt *packet) PayloadHeaderByte() (byte, error) {
 	if len(pkt.payload) < 1 {
 		return 0, newErrInvalidPacketLength(uint32(len(pkt.payload)))
 	}
-
 	return pkt.payload[0], nil
 }
 

@@ -23,21 +23,17 @@ func NewStatementsFromPreparedStatement(prepStmt PreparedStatement, params []Par
 	if len(params) != len(prepStmt.Parameters()) {
 		return nil, newErrInvalidParameters()
 	}
-
 	bindParams := make(stmt.BindParams, len(params))
 	for n, param := range params {
 		v, err := param.Value()
 		if err != nil {
 			return nil, err
 		}
-
 		bindParams[n] = stmt.NewBindParam(v)
 	}
-
 	bindStmt := stmt.NewBindStatement(
 		stmt.WithBindStatementQuery(prepStmt.Query()),
 		stmt.WithBindStatementParams(bindParams),
 	)
-
 	return bindStmt.Statements()
 }

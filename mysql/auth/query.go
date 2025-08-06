@@ -45,23 +45,18 @@ func WithQueryClientPluginName(clientPluginName string) QueryOptionFn {
 		if len(clientPluginName) == 0 {
 			return nil
 		}
-
 		method, err := NewAuthMethodFromID(clientPluginName)
 		if err != nil {
 			return err
 		}
-
 		if method == MySQLAuthenticationNone {
 			return nil
 		}
-
 		encryptFunc, err := method.EncryptFunc()
 		if err != nil {
 			return err
 		}
-
 		q.SetEncryptFunc(encryptFunc)
-
 		return nil
 	}
 }

@@ -51,7 +51,6 @@ func NewDefaultConfig() Config {
 		serverStatus:   DefaultServerStatus,
 		autuPluginName: DefaultAuthPluginName,
 	}
-
 	return config
 }
 
@@ -101,11 +100,9 @@ func (config *config) ServerVersion() string {
 	if 0 < len(config.productName) {
 		ver = fmt.Sprintf("%s-%s", ver, config.productName)
 	}
-
 	if 0 < len(config.productVersion) {
 		ver = fmt.Sprintf("%s-%s", ver, config.productVersion)
 	}
-
 	return ver
 }
 

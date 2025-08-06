@@ -30,7 +30,6 @@ const (
 // Server represents a test server.
 type Server struct {
 	*server.Server
-
 	credStore map[string]auth.Credential
 }
 
@@ -65,6 +64,5 @@ func (server *Server) SetCredential(cred auth.Credential) {
 func (server *Server) LookupCredential(q auth.Query) (auth.Credential, bool, error) {
 	user := q.Username()
 	cred, ok := server.credStore[user]
-
 	return cred, ok, nil
 }

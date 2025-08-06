@@ -33,10 +33,9 @@ func NewManager() Manager {
 
 // Authenticate	authenticates a connection with a query.
 func (mgr *manager) Authenticate(conn net.Conn, q Query) bool {
-	ok, err := mgr.VerifyCredential(conn, q)
+	ok, err := mgr.Manager.VerifyCredential(conn, q)
 	if err != nil {
 		return false
 	}
-
 	return ok
 }

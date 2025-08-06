@@ -77,7 +77,6 @@ func (executor *defaultQueryExecutor) Select(conn Conn, stmt sql.Select) (Respon
 	if err != nil {
 		return nil, err
 	}
-
 	return protocol.NewTextResultSetFromResultSet(rs)
 }
 
@@ -87,7 +86,6 @@ func (executor *defaultQueryExecutor) Update(conn Conn, stmt sql.Update) (Respon
 	if err != nil {
 		return protocol.NewResponseWithError(err)
 	}
-
 	return protocol.NewOK(
 		protocol.WithOKAffectedRows(uint64(rs.RowsAffected())),
 	)
@@ -99,7 +97,6 @@ func (executor *defaultQueryExecutor) Delete(conn Conn, stmt sql.Delete) (Respon
 	if err != nil {
 		return protocol.NewResponseWithError(err)
 	}
-
 	return protocol.NewOK(
 		protocol.WithOKAffectedRows(uint64(rs.RowsAffected())),
 	)

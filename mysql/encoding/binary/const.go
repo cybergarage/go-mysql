@@ -16,5 +16,5 @@ package binary
 
 // MySQL: Text Resultset Row
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset_row.html
-// NULL is sent as 0xFB.
+// NULL is sent as 0xFB
 const NullString = 0xFB

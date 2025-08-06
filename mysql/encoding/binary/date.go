@@ -41,6 +41,5 @@ func TimeToDateBytes(t time.Time) []byte {
 	b[2] = byte((year >> 8) & 0xFF)
 	b[3] = byte(t.Month())
 	b[4] = byte(t.Day())
-
 	return b
 }

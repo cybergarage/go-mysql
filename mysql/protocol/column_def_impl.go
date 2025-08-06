@@ -38,7 +38,6 @@ type ColumnDefOption func(*columnDef)
 // columnDef represents a MySQL Column Definition packet.
 type columnDef struct {
 	*packet
-
 	catalog          string
 	schema           string
 	table            string
@@ -70,7 +69,6 @@ func newColumnDefWith(p *packet, opts ...ColumnDefOption) *columnDef {
 		decimals:         0,
 	}
 	pkt.SetOptions(opts...)
-
 	return pkt
 }
 

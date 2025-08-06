@@ -24,70 +24,60 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 	w := NewWriter()
 
 	expectedInt1 := uint8(0x61)
-
 	err := w.WriteInt1(expectedInt1)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
 	expectedInt2 := uint16(0x6261)
-
 	err = w.WriteInt2(expectedInt2)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
 	expectedInt3 := uint32(0x636261)
-
 	err = w.WriteInt3(expectedInt3)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
 	expectedInt4 := uint32(0x64636261)
-
 	err = w.WriteInt4(expectedInt4)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
 	expectedInt8 := uint64(0x6867666564636261)
-
 	err = w.WriteInt8(expectedInt8)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
 	expectedLengthEncodedInt1 := uint64(250)
-
 	err = w.WriteLengthEncodedInt(expectedLengthEncodedInt1)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
 	expectedLengthEncodedInt2 := uint64(65535)
-
 	err = w.WriteLengthEncodedInt(expectedLengthEncodedInt2)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
 	expectedLengthEncodedInt3 := uint64(16777215)
-
 	err = w.WriteLengthEncodedInt(expectedLengthEncodedInt3)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
 	expectedLengthEncodedInt8 := uint64(16777216)
-
 	err = w.WriteLengthEncodedInt(expectedLengthEncodedInt8)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
 	expectedBytes := []byte{0x69, 0x6A, 0x6B, 0x6C}
-
 	_, err = w.WriteBytes(expectedBytes)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
@@ -99,7 +89,6 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 	}
 
 	expectedString := "mnop"
-
 	err = w.WriteNullTerminatedString(expectedString)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
@@ -126,12 +115,10 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 
 	writerBytes := w.Bytes()
 	reader := NewReaderWithBytes(writerBytes)
-
 	actualInt1, err := reader.ReadInt1()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualInt1 != expectedInt1 {
 		t.Errorf("Expected %v, but got %v", expectedInt1, actualInt1)
 	}
@@ -140,7 +127,6 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualInt2 != expectedInt2 {
 		t.Errorf("Expected %v, but got %v", expectedInt2, actualInt2)
 	}
@@ -149,7 +135,6 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualInt3 != expectedInt3 {
 		t.Errorf("Expected %v, but got %v", expectedInt3, actualInt3)
 	}
@@ -158,7 +143,6 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualInt4 != expectedInt4 {
 		t.Errorf("Expected %v, but got %v", expectedInt4, actualInt4)
 	}
@@ -167,7 +151,6 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualInt8 != expectedInt8 {
 		t.Errorf("Expected %v, but got %v", expectedInt8, actualInt8)
 	}
@@ -176,7 +159,6 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualLengthEncodedInt1 != expectedLengthEncodedInt1 {
 		t.Errorf("Expected %v, but got %v", expectedLengthEncodedInt1, actualLengthEncodedInt1)
 	}
@@ -185,7 +167,6 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualLengthEncodedInt2 != expectedLengthEncodedInt2 {
 		t.Errorf("Expected %v, but got %v", expectedLengthEncodedInt2, actualLengthEncodedInt2)
 	}
@@ -194,7 +175,6 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualLengthEncodedInt3 != expectedLengthEncodedInt3 {
 		t.Errorf("Expected %v, but got %v", expectedLengthEncodedInt3, actualLengthEncodedInt3)
 	}
@@ -203,18 +183,15 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualLengthEncodedInt8 != expectedLengthEncodedInt8 {
 		t.Errorf("Expected %v, but got %v", expectedLengthEncodedInt8, actualLengthEncodedInt8)
 	}
 
 	actualBytes := make([]byte, len(expectedBytes))
-
 	_, err = reader.ReadBytes(actualBytes)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if !bytes.Equal(actualBytes, expectedBytes) {
 		t.Errorf("Expected %v, but got %v", expectedBytes, actualBytes)
 	}
@@ -223,7 +200,6 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if bytes.HasPrefix(actualBytes, expectedBytes) == false {
 		t.Errorf("Expected %v, but got %v", expectedString, actualBytes)
 	}
@@ -232,7 +208,6 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualString != expectedString {
 		t.Errorf("Expected %v, but got %v", expectedString, actualString)
 	}
@@ -241,7 +216,6 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if strings.HasPrefix(actualString, expectedString) == false {
 		t.Errorf("Expected %v, but got %v", expectedString, actualString)
 	}
@@ -250,7 +224,6 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualString != expectedString {
 		t.Errorf("Expected %v, but got %v", expectedString, actualString)
 	}
@@ -259,7 +232,6 @@ func TestWriter(t *testing.T) { //nolint:maintidx
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
 	if actualString != expectedString {
 		t.Errorf("Expected %v, but got %v", expectedString, actualString)
 	}

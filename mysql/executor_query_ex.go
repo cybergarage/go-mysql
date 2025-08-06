@@ -36,8 +36,7 @@ func (executor *defaultExQueryExecutor) CreateIndex(conn Conn, stmt query.Create
 	if err != nil {
 		return nil, err
 	}
-
-	return executor.AlterTable(conn, alterStmt)
+	return executor.QueryExecutor.AlterTable(conn, alterStmt)
 }
 
 // DropIndex handles a DROP INDEX query.
@@ -46,20 +45,17 @@ func (executor *defaultExQueryExecutor) DropIndex(conn Conn, stmt query.DropInde
 	if err != nil {
 		return nil, err
 	}
-
-	return executor.AlterTable(conn, alterStmt)
+	return executor.QueryExecutor.AlterTable(conn, alterStmt)
 }
 
 // Truncate handles a TRUNCATE query.
 func (executor *defaultExQueryExecutor) Truncate(conn Conn, stmt query.Truncate) (Response, error) {
 	for _, table := range stmt.Tables() {
 		stmt := sql.NewDeleteWith(table, sql.NewCondition())
-
-		_, err := executor.Delete(conn, stmt)
+		_, err := executor.QueryExecutor.Delete(conn, stmt)
 		if err != nil {
 			return nil, err
 		}
 	}
-
 	return protocol.NewResponseWithError(nil)
 }

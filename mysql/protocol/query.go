@@ -25,7 +25,6 @@ import (
 // Query represents a COM_QUERY packet.
 type Query struct {
 	Command
-
 	query             string
 	paramCnt          uint64
 	paramSetCnt       uint64
@@ -53,7 +52,6 @@ func newQueryWithCommand(cmd Command, opts ...QueryOption) *Query {
 	for _, opt := range opts {
 		opt(q)
 	}
-
 	return q
 }
 
@@ -123,31 +121,26 @@ func NewQueryFromCommand(cmd Command, opts ...QueryOption) (*Query, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		pkt.newParamsBindFlag, err = reader.ReadInt1()
 		if err != nil {
 			return nil, err
 		}
-
 		if pkt.newParamsBindFlag == 1 {
-			for range pkt.paramCnt {
+			for n := 0; n < int(pkt.paramCnt); n++ {
 				paramType, err := reader.ReadInt2()
 				if err != nil {
 					return nil, err
 				}
-
 				paramName, err := reader.ReadLengthEncodedString()
 				if err != nil {
 					return nil, err
 				}
-
 				pkt.params = append(pkt.params,
 					&QueryParameter{
 						Type: uint16(paramType),
 						Name: paramName,
 					})
 			}
-
 			pkt.paramValues, err = reader.ReadLengthEncodedBytes()
 			if err != nil {
 				return nil, err
@@ -192,22 +185,18 @@ func (pkt *Query) Bytes() ([]byte, error) {
 		if err := w.WriteLengthEncodedBytes([]byte{}); err != nil {
 			return nil, err
 		}
-
 		if err := w.WriteByte(pkt.newParamsBindFlag); err != nil {
 			return nil, err
 		}
-
 		if pkt.newParamsBindFlag == 1 {
 			for _, param := range pkt.params {
 				if err := w.WriteInt2(param.Type); err != nil {
 					return nil, err
 				}
-
 				if err := w.WriteLengthEncodedString(param.Name); err != nil {
 					return nil, err
 				}
 			}
-
 			if err := w.WriteLengthEncodedBytes(pkt.paramValues); err != nil {
 				return nil, err
 			}

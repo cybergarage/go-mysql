@@ -40,7 +40,6 @@ func TestServer(t *testing.T) {
 	}()
 
 	client := mysql.NewClient()
-
 	err = client.Open()
 	if err != nil {
 		t.Error(err)

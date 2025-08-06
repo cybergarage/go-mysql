@@ -27,6 +27,7 @@ import (
 func TestMySQLBinaryProtocolExamples(t *testing.T) {
 	// MySQL: Binary Protocol Resultset
 	// https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_binary_resultset.html
+
 	tests := []struct {
 		typ       stmt.FieldType
 		hexString string
@@ -60,18 +61,15 @@ func TestMySQLBinaryProtocolExamples(t *testing.T) {
 				t.Errorf("Failed to decode the hex string (%s)", test.hexString)
 				return
 			}
-
 			field := stmt.NewField(
 				stmt.WithFieldType(test.typ),
 				stmt.WithFieldBytes(bytes),
 			)
-
 			v, err := field.Value()
 			if err != nil {
 				t.Error(err)
 				return
 			}
-
 			if v != test.expected {
 				t.Errorf("Expected %v, but got %v", test.expected, v)
 			}

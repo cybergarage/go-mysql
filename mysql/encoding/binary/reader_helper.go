@@ -23,11 +23,10 @@ func (reader *Reader) ReadTextResultsetRowString() (*string, error) {
 	s, err := reader.ReadLengthEncodedString()
 	if err == nil {
 		return &s, nil
-	}
 
+	}
 	if errors.Is(err, ErrNull) {
 		return nil, nil
 	}
-
 	return nil, err
 }

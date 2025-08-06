@@ -27,7 +27,6 @@ import (
 // server represents a base executor server.
 type server struct {
 	*protocol.Server
-
 	sqlExecutor     SQLExecutor
 	queryExecutor   QueryExecutor
 	exQueryExecutor ExQueryExecutor
@@ -48,9 +47,9 @@ func NewServer() Server {
 		server.queryExecutor,
 	)
 
-	server.SetProductName(PackageName)
-	server.SetProductVersion(Version)
-	server.SetCommandHandler(server)
+	server.Server.SetProductName(PackageName)
+	server.Server.SetProductVersion(Version)
+	server.Server.SetCommandHandler(server)
 
 	return server
 }
@@ -58,7 +57,6 @@ func NewServer() Server {
 // SetExecutor sets an executor to the server.
 func (server *server) SetSQLExecutor(sqlExeutor SQLExecutor) {
 	server.sqlExecutor = sqlExeutor
-
 	executors := []any{
 		server.queryExecutor,
 		server.exQueryExecutor,
@@ -68,11 +66,9 @@ func (server *server) SetSQLExecutor(sqlExeutor SQLExecutor) {
 		if executor == nil {
 			continue
 		}
-
 		if _, ok := executor.(Server); ok {
 			continue
 		}
-
 		if setter, ok := executor.(SQLExecutorSetter); ok {
 			setter.SetSQLExecutor(sqlExeutor)
 		}
@@ -118,14 +114,12 @@ func (server *server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protoc
 	}
 
 	parser := query.NewParser()
-
 	stmts, err := parser.ParseString(q.Query())
 	if err != nil {
 		return server.errorHandler.ParserError(conn, q.Query(), err)
 	}
 
 	seqID := q.SequenceID().Next()
-
 	for _, stmt := range stmts {
 		res, err := server.HandleStatement(conn, stmt)
 		if err != nil {
@@ -177,7 +171,6 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 	}
 
 	opts := []protocol.StmtPrepareResponseOption{}
-
 	schemaColumnRs, err := system.NewSchemaColumnsResultSetFromResultSet(rs)
 	if err != nil {
 		return nil, err
@@ -192,40 +185,32 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 		case len(columnNames) == 1 && columnNames[0] == "*":
 			return true
 		}
-
 		return false
 	}
 
 	lookupColumDefs := func(schemaColumnRs system.SchemaColumnsResultSet, columnNames []string) ([]protocol.ColumnDef, error) {
 		columnDefs := []protocol.ColumnDef{}
-
 		if isAllColumnsLookup(columnNames) {
 			for _, schemaColumn := range schemaColumnRs.Columns() {
 				columnDef, err := protocol.NewColumnDefsFromSystemSchemaColumn(schemaColumn)
 				if err != nil {
 					return nil, err
 				}
-
 				columnDefs = append(columnDefs, columnDef)
 			}
-
 			return columnDefs, nil
 		}
-
 		for _, columnName := range columnNames {
 			schemaColumn, err := schemaColumnRs.LookupColumn(columnName)
 			if err != nil {
 				return nil, err
 			}
-
 			columnDef, err := protocol.NewColumnDefsFromSystemSchemaColumn(schemaColumn)
 			if err != nil {
 				return nil, err
 			}
-
 			columnDefs = append(columnDefs, columnDef)
 		}
-
 		return columnDefs, nil
 	}
 
@@ -233,7 +218,6 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 	if err != nil {
 		return nil, err
 	}
-
 	opts = append(opts, protocol.WithStmtPrepareResponseColumns(resultSetColumnDefs))
 
 	// Create response params for the prepare response.
@@ -242,7 +226,6 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 	if err != nil {
 		return nil, err
 	}
-
 	opts = append(opts, protocol.WithStmtPrepareResponseParams(paramColumnDefs))
 
 	// Generate next statement ID and create prepare response.
@@ -251,7 +234,6 @@ func (server *server) PrepareStatement(conn protocol.Conn, stmtPrep *protocol.St
 	if err != nil {
 		return nil, err
 	}
-
 	opts = append(opts, protocol.WithStmtPrepareResponseStatementID(stmtID))
 
 	stmPrepRes := protocol.NewStmtPrepareResponse(opts...)
@@ -279,23 +261,18 @@ func (server *server) ExecuteStatement(conn protocol.Conn, stmtExec *protocol.St
 	if err != nil {
 		return nil, err
 	}
-
 	stmts, err := preStmt.Bind(stmtExec.Parameters())
 	if err != nil {
 		return nil, err
 	}
-
 	if len(stmts) != 1 {
 		return nil, fmt.Errorf("multiple prepared statements are not supported: %s", preStmt.Query())
 	}
-
 	stmt := stmts[0]
-
 	res, err := server.HandleStatement(conn, stmt)
 	if err != nil {
 		return nil, err
 	}
-
 	switch res := res.(type) {
 	case *protocol.TextResultSet:
 		return protocol.NewBinaryResultSetFromTextResultSet(
@@ -304,7 +281,6 @@ func (server *server) ExecuteStatement(conn protocol.Conn, stmtExec *protocol.St
 			protocol.WithBinaryResultSetServerStatus(conn.ServerStatus()),
 		)
 	}
-
 	return res, nil
 }
 
@@ -315,13 +291,10 @@ func (server *server) CloseStatement(conn protocol.Conn, stmt *protocol.StmtClos
 }
 
 func (server *server) HandleStatement(conn protocol.Conn, stmt query.Statement) (protocol.Response, error) {
-	var (
-		err error
-		res protocol.Response
-	)
+	var err error
+	var res protocol.Response
 
 	// nolint: forcetypeassert
-
 	switch stmt.StatementType() {
 	case query.BeginStatement:
 		stmt := stmt.(query.Begin)
@@ -384,7 +357,6 @@ func (server *server) Start() error {
 	type starter interface {
 		Start() error
 	}
-
 	starters := []starter{
 		server.Server,
 	}
@@ -394,7 +366,6 @@ func (server *server) Start() error {
 			return stderr.Join(err, server.Stop())
 		}
 	}
-
 	return nil
 }
 
@@ -403,7 +374,6 @@ func (server *server) Stop() error {
 	type stopper interface {
 		Stop() error
 	}
-
 	stoppers := []stopper{
 		server.Server,
 	}
@@ -413,7 +383,6 @@ func (server *server) Stop() error {
 			return err
 		}
 	}
-
 	return nil
 }
 
@@ -423,6 +392,5 @@ func (server *server) Restart() error {
 	if err != nil {
 		return err
 	}
-
 	return server.Start()
 }

@@ -34,7 +34,6 @@ func TestSysbench(t *testing.T) {
 		t.Error(err)
 		return
 	}
-
 	t.Logf("Working directory: %s", wkdir)
 
 	// Check cert files if exists
@@ -57,7 +56,6 @@ func TestSysbench(t *testing.T) {
 	// Setup server
 
 	server := server.NewServer()
-
 	err = server.Start()
 	if err != nil {
 		t.Error(err)

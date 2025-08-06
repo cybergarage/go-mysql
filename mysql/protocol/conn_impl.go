@@ -31,7 +31,6 @@ type ConnOption = func(*conn)
 // conn represents a connection of MySQL binary.
 type conn struct {
 	mysqlnet.Conn
-
 	isClosed      bool
 	msgReader     *PacketReader
 	db            string
@@ -60,7 +59,6 @@ func NewConnWith(netConn net.Conn, opts ...ConnOption) Conn {
 		serverStatus:  0,
 	}
 	conn.SetOptions(opts...)
-
 	return conn
 }
 
@@ -118,13 +116,10 @@ func (conn *conn) Close() error {
 	if conn.isClosed {
 		return nil
 	}
-
 	if err := conn.Conn.Close(); err != nil {
 		return err
 	}
-
 	conn.isClosed = true
-
 	return nil
 }
 
@@ -225,20 +220,16 @@ func (conn *conn) ResponsePacket(resMsg Response, opts ...ResponseOption) error 
 	if resMsg == nil {
 		return nil
 	}
-
 	for _, opt := range opts {
 		opt(resMsg)
 	}
-
 	resBytes, err := resMsg.Bytes()
 	if err != nil {
 		return err
 	}
-
-	if _, err := conn.Write(resBytes); err != nil {
+	if _, err := conn.Conn.Write(resBytes); err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -247,14 +238,12 @@ func (conn *conn) ResponsePackets(resMsgs []Response, opts ...ResponseOption) er
 	if len(resMsgs) == 0 {
 		return nil
 	}
-
 	for _, resMsg := range resMsgs {
 		err := conn.ResponsePacket(resMsg, opts...)
 		if err != nil {
 			return err
 		}
 	}
-
 	return nil
 }
 
@@ -264,7 +253,6 @@ func (conn *conn) ResponseOK(opts ...OKOption) error {
 	if err != nil {
 		return err
 	}
-
 	return conn.ResponsePacket(pkt)
 }
 
@@ -274,6 +262,5 @@ func (conn *conn) ResponseError(err error, opts ...ERROption) error {
 	if err != nil {
 		return err
 	}
-
 	return conn.ResponsePacket(pkt)
 }

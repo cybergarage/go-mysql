@@ -29,7 +29,6 @@ import (
 // StmtPrepare represents a COM_STMT_PREPARE packet.
 type StmtPrepare struct {
 	Command
-
 	dbName               string
 	tblNames             []string
 	stmt                 query.Statement
@@ -51,7 +50,6 @@ func newStmtPrepareWithCommand(cmd Command, opts ...StmtPrepareOption) *StmtPrep
 	for _, opt := range opts {
 		opt(q)
 	}
-
 	return q
 }
 
@@ -68,14 +66,14 @@ func WithStmtPrepareQuery(query string) StmtPrepareOption {
 // WithStmtPrepareCapability sets the capability.
 func WithStmtPrepareCapability(c Capability) StmtPrepareOption {
 	return func(q *StmtPrepare) {
-		q.SetCapability(c)
+		q.Command.SetCapability(c)
 	}
 }
 
 // WithStmtPrepareServerStatus sets the server status.
 func WithStmtPrepareServerStatus(s ServerStatus) StmtPrepareOption {
 	return func(q *StmtPrepare) {
-		q.SetServerStatus(s)
+		q.Command.SetServerStatus(s)
 	}
 }
 
@@ -126,12 +124,10 @@ func NewStmtPrepareFromCommand(cmd Command, opts ...StmtPrepareOption) (*StmtPre
 // nolint: forcetypeassert
 func (pkt *StmtPrepare) parseQuery() error {
 	parser := query.NewParser()
-
 	stmts, err := parser.ParseString(pkt.query)
 	if err != nil {
 		return err
 	}
-
 	if len(stmts) != 1 {
 		return newInvalidStatement(pkt.query)
 	}
@@ -141,10 +137,8 @@ func (pkt *StmtPrepare) parseQuery() error {
 	pkt.parameterColumnNames = []string{}
 
 	var parameterColumnsFromExpr func(expr query.Expr) []string
-
 	parameterColumnsFromExpr = func(expr query.Expr) []string {
 		columns := []string{}
-
 		switch expr := expr.(type) {
 		case *query.CmpExpr:
 			if expr.Right().IsPlaceHolder() {
@@ -157,7 +151,6 @@ func (pkt *StmtPrepare) parseQuery() error {
 			columns = append(columns, parameterColumnsFromExpr(expr.Left())...)
 			columns = append(columns, parameterColumnsFromExpr(expr.Right())...)
 		}
-
 		return columns
 	}
 
@@ -165,30 +158,25 @@ func (pkt *StmtPrepare) parseQuery() error {
 		if !cond.HasConditions() {
 			return []string{}
 		}
-
 		return parameterColumnsFromExpr(cond.Expr())
 	}
 
 	switch pkt.stmt.StatementType() {
 	case query.InsertStatement:
 		stmt := pkt.stmt.(query.Insert)
-
 		pkt.tblNames = []string{stmt.TableName()}
 		for _, col := range stmt.Columns() {
 			if !col.IsPlaceHolder() {
 				continue
 			}
-
 			pkt.parameterColumnNames = append(pkt.parameterColumnNames, col.Name())
 		}
 	case query.SelectStatement:
 		stmt := pkt.stmt.(query.Select)
-
 		pkt.tblNames = stmt.From().TableNames()
 		for _, sel := range stmt.Selectors() {
 			pkt.resultSetColumnNames = append(pkt.resultSetColumnNames, sel.Name())
 		}
-
 		pkt.parameterColumnNames = parameterColumnsFromCondition(stmt.Where())
 	case query.UpdateStatement:
 		stmt := pkt.stmt.(query.Update)

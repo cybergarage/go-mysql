@@ -28,12 +28,10 @@ func NativeEncrypt(passwd any, args ...any) (any, error) {
 		// SHA1( password ) XOR SHA1( "20-bytes random data from server" <concat> SHA1( SHA1( password ) ) )
 		xor := func(a, b []byte) []byte {
 			minLength := min(len(a), len(b))
-
 			result := make([]byte, minLength)
-			for n := range minLength {
+			for n := 0; n < minLength; n++ {
 				result[n] = a[n] ^ b[n]
 			}
-
 			return result
 		}
 
@@ -67,12 +65,10 @@ func NativeEncrypt(passwd any, args ...any) (any, error) {
 	if len(args) == 0 {
 		return "", ErrInvalidArgument
 	}
-
 	rndData, ok := args[0].([]byte)
 	if !ok {
 		return "", ErrInvalidArgument
 	}
-
 	if len(rndData) != 20 {
 		return "", ErrInvalidArgument
 	}

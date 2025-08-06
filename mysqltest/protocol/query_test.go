@@ -56,31 +56,28 @@ func TestQueryPacket(t *testing.T) {
 				t.Error(err)
 				return
 			}
-
 			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return
 			}
-
 			reader := bytes.NewReader(testBytes)
 
 			opts := []protocol.QueryOption{
 				protocol.WithQueryCapability(test.capFlags),
 			}
-
 			pkt, err := protocol.NewQueryFromReader(reader, opts...)
 			if err != nil {
 				t.Error(err)
 				return
 			}
 
-			if pkt.SequenceID() != test.seqID {
-				t.Errorf("expected %d, got %d", test.seqID, pkt.SequenceID())
+			if pkt.SequenceID() != test.expected.seqID {
+				t.Errorf("expected %d, got %d", test.expected.seqID, pkt.SequenceID())
 			}
 
-			if pkt.Query() != test.query {
-				t.Errorf("expected %s, got %s", test.query, pkt.Query())
+			if pkt.Query() != test.expected.query {
+				t.Errorf("expected %s, got %s", test.expected.query, pkt.Query())
 			}
 
 			// Compare the packet bytes

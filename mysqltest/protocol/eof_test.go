@@ -48,32 +48,29 @@ func TestEOFPacket(t *testing.T) {
 				t.Error(err)
 				return
 			}
-
 			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return
 			}
-
 			reader := bytes.NewReader(testBytes)
 
 			pkt, err := protocol.NewEOFFromReader(reader, protocol.WithEOFCapability(protocol.ClientProtocol41))
 			if err != nil {
 				t.Error(err)
 			}
-
 			pkt.SetCapabilityEnabled(protocol.ClientProtocol41)
 
-			if pkt.SequenceID() != test.seqID {
-				t.Errorf("expected %d, got %d", test.seqID, pkt.SequenceID())
+			if pkt.SequenceID() != test.expected.seqID {
+				t.Errorf("expected %d, got %d", test.expected.seqID, pkt.SequenceID())
 			}
 
-			if pkt.Warnings() != test.warnings {
-				t.Errorf("expected %d, got %d", test.warnings, pkt.Warnings())
+			if pkt.Warnings() != test.expected.warnings {
+				t.Errorf("expected %d, got %d", test.expected.warnings, pkt.Warnings())
 			}
 
-			if pkt.ServerStatus() != test.status {
-				t.Errorf("expected %d, got %d", test.status, pkt.ServerStatus())
+			if pkt.ServerStatus() != test.expected.status {
+				t.Errorf("expected %d, got %d", test.expected.status, pkt.ServerStatus())
 			}
 
 			// Compare the packet bytes

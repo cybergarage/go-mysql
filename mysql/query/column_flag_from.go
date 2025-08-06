@@ -24,14 +24,11 @@ func NewColumnDefFlagFrom(c query.Constraint) (ColumnDefFlag, error) {
 	if (c & query.PrimaryKeyConstraint) != 0 {
 		cdf |= PriKeyFlag
 	}
-
 	if (c & query.NotNullConstraint) != 0 {
 		cdf |= NotNullFlag
 	}
-
 	if (c & query.UniqueConstraint) != 0 {
 		cdf |= UniqueKeyFlag
 	}
-
 	return cdf, nil
 }

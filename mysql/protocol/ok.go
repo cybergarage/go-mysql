@@ -28,7 +28,6 @@ const (
 // OK represents a MySQL OK packet.
 type OK struct {
 	*packet
-
 	header           uint8
 	affectedRows     uint64
 	lastInsertID     uint64
@@ -97,7 +96,6 @@ func newOKPacket(p *packet, opts ...OKOption) (*OK, error) {
 	for _, opt := range opts {
 		opt(pkt)
 	}
-
 	return pkt, nil
 }
 
@@ -125,7 +123,6 @@ func NewOKFromReader(reader io.Reader, opts ...OKOption) (*OK, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	if (pkt.header != okPacketHeader) && (pkt.header != errPacketHeader) {
 		return nil, newErrInvalidHeader("OK", pkt.header)
 	}
@@ -148,7 +145,6 @@ func NewOKFromReader(reader io.Reader, opts ...OKOption) (*OK, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		pkt.status = uint16(v)
 		// warnings
 		pkt.warnings, err = pkt.ReadInt2()
@@ -169,7 +165,6 @@ func NewOKFromReader(reader io.Reader, opts ...OKOption) (*OK, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		if pkt.ServerStatus().IsEnabled(ServerSessionStateChanged) {
 			// sessionStateInfo
 			pkt.sessionStateInfo, err = pkt.ReadLengthEncodedString()
@@ -268,7 +263,6 @@ func (pkt *OK) Bytes() ([]byte, error) {
 		if err := w.WriteLengthEncodedString(pkt.info); err != nil {
 			return nil, err
 		}
-
 		if pkt.ServerStatus().IsEnabled(ServerSessionStateChanged) {
 			// sessionStateInfo
 			if err := w.WriteLengthEncodedString(pkt.sessionStateInfo); err != nil {

@@ -29,7 +29,6 @@ func TestSSLNewRequestPacket(t *testing.T) {
 		t.Error(err)
 		return
 	}
-
 	reqBytes, err := req.Bytes()
 	if err != nil {
 		t.Error(err)
@@ -41,7 +40,6 @@ func TestSSLNewRequestPacket(t *testing.T) {
 		t.Error(err)
 		return
 	}
-
 	req2Bytes, err := req2.Bytes()
 	if err != nil {
 		t.Error(err)
@@ -70,13 +68,11 @@ func TestSSLRequestPacket(t *testing.T) {
 				t.Error(err)
 				return
 			}
-
 			testBytes, err := hexdump.NewBytesWithHexdumpBytes(testData)
 			if err != nil {
 				t.Error(err)
 				return
 			}
-
 			reader := bytes.NewReader(testBytes)
 
 			pkt, err := protocol.NewSSLRequestFromReader(reader)

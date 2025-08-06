@@ -38,10 +38,8 @@ func BytesToUint8(b []byte) (uint64, error) {
 			uint64(b[2])<<16 |
 			uint64(b[1])<<8 |
 			uint64(b[0])
-
 		return v, nil
 	}
-
 	return 0, newErrInvalidLength(8, len(b))
 }
 
@@ -56,7 +54,6 @@ func Uint8ToBytes(v uint64) []byte {
 	b[5] = byte((v >> 40) & 0xFF)
 	b[6] = byte((v >> 48) & 0xFF)
 	b[7] = byte((v >> 56) & 0xFF)
-
 	return b
 }
 
@@ -77,10 +74,8 @@ func BytesToUint4(b []byte) (uint32, error) {
 			uint32(b[2])<<16 |
 			uint32(b[1])<<8 |
 			uint32(b[0])
-
 		return v, nil
 	}
-
 	return 0, newErrInvalidLength(4, len(b))
 }
 
@@ -91,7 +86,6 @@ func Uint4ToBytes(v uint32) []byte {
 	b[1] = byte((v >> 8) & 0xFF)
 	b[2] = byte((v >> 16) & 0xFF)
 	b[3] = byte((v >> 24) & 0xFF)
-
 	return b
 }
 
@@ -108,10 +102,8 @@ func BytesToUint3(b []byte) (uint32, error) {
 		v := uint32(b[2])<<16 |
 			uint32(b[1])<<8 |
 			uint32(b[0])
-
 		return v, nil
 	}
-
 	return 0, newErrInvalidLength(3, len(b))
 }
 
@@ -121,7 +113,6 @@ func Uint3ToBytes(v uint32) []byte {
 	b[2] = byte((v >> 16) & 0xFF)
 	b[1] = byte((v >> 8) & 0xFF)
 	b[0] = byte(v & 0xFF)
-
 	return b
 }
 
@@ -134,10 +125,8 @@ func BytesToUint2(b []byte) (uint16, error) {
 	case 2:
 		v := uint16(b[1])<<8 |
 			uint16(b[0])
-
 		return v, nil
 	}
-
 	return 0, newErrInvalidLength(2, len(b))
 }
 
@@ -146,7 +135,6 @@ func Uint2ToBytes(v uint16) []byte {
 	b := make([]byte, 2)
 	b[0] = byte(v & 0xFF)
 	b[1] = byte((v >> 8) & 0xFF)
-
 	return b
 }
 
@@ -155,7 +143,6 @@ func BytesToUint1(b []byte) (uint8, error) {
 	if len(b) != 1 {
 		return 0, newErrInvalidLength(1, len(b))
 	}
-
 	return b[0], nil
 }
 
@@ -163,6 +150,5 @@ func BytesToUint1(b []byte) (uint8, error) {
 func Uint1ToBytes(v uint8) []byte {
 	b := make([]byte, 1)
 	b[0] = v
-
 	return b
 }

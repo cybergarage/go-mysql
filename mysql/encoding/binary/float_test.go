@@ -32,13 +32,11 @@ func TestFloat8Endode(t *testing.T) {
 
 	for _, tv := range ts {
 		b := Float8ToBytes(tv)
-
 		v, err := BytesToFloat8(b)
 		if err != nil {
 			t.Error(err)
 			continue
 		}
-
 		if tv != v {
 			t.Errorf("Failed to convert (%f != %f)", tv, v)
 		}
@@ -58,13 +56,11 @@ func TestFloat4Endode(t *testing.T) {
 
 	for _, tv := range ts {
 		b := Float4ToBytes(tv)
-
 		v, err := BytesToFloat4(b)
 		if err != nil {
 			t.Error(err)
 			continue
 		}
-
 		if tv != v {
 			t.Errorf("Failed to convert (%f != %f)", tv, v)
 		}

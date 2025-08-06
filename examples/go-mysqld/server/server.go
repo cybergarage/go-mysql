@@ -33,6 +33,5 @@ func NewServer() *Server {
 		Store:  store.NewStore(),
 	}
 	server.SetSQLExecutor(server.Store)
-
 	return server
 }
