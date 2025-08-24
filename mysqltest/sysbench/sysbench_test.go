@@ -99,7 +99,7 @@ func TestSysbench(t *testing.T) {
 	// Setup sysbench configuation
 
 	cfg := NewDefaultConfig()
-	cfg.SetDB(testDBName)
+	// cfg.SetDB(testDBName)
 	cfg.SetSkipOnError(true)
 
 	cmds := []string{
