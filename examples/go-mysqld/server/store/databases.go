@@ -19,7 +19,7 @@ import (
 )
 
 // Databases represents a collection of databases.
-type Databases map[string]*Database
+type Databases map[string]*Database // nolint: recvcheck
 
 // NewDatabases returns a databases instance.
 func NewDatabases() Databases {
