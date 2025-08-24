@@ -66,11 +66,12 @@ func NewTextResultSetRowFrom(schema sql.ResultSetSchema, rsRow sql.ResultSetRow)
 		}
 		columnType := schemaColumns[n].DataType()
 		rowValue, err := NewTextResultSetRowValueFrom(columnType, v)
-		if err == nil {
+		switch {
+		case err == nil:
 			rowColumns[n] = &rowValue
-		} else if errors.Is(err, ErrNull) {
+		case errors.Is(err, ErrNull):
 			rowColumns[n] = nil
-		} else {
+		default:
 			return nil, err
 		}
 	}
