@@ -1,10 +1,6 @@
 module github.com/cybergarage/go-mysql
 
-<<<<<<< HEAD
-go 1.22
-=======
-go 1.22
->>>>>>> f4fdb6d (Update go.mod)
+go 1.24
 
 require (
 	github.com/cybergarage/go-authenticator v1.0.5
