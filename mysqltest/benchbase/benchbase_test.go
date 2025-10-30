@@ -19,8 +19,8 @@ import (
 	"testing"
 
 	"github.com/cybergarage/go-logger/log"
-	"github.com/cybergarage/go-mysql/mysql"
 	"github.com/cybergarage/go-mysql/mysqltest/server"
+	"github.com/cybergarage/go-sqltest/sqltest/benchbase"
 	// BenchBase integration placeholder: BenchBase is Java-based.
 	// Actual invocation would require spawning BenchBase workload runner via CLI.
 	// We keep this test minimal and focused on server startup lifecycle.
@@ -30,7 +30,14 @@ import (
 // TODO: Integrate BenchBase by invoking its Java runner with appropriate configuration
 // once a local benchmark harness or wrapper is added (e.g., using exec.Command).
 func TestBenchBase(t *testing.T) {
+	// Enable verbose debug logging to observe benchmark progress.
 	log.EnableStdoutDebug(true)
+
+	// Skip early if BenchBase tooling is not available on this system.
+	if !benchbase.IsInstalled() {
+		t.Skip("BenchBase is not installed; skipping test")
+		return
+	}
 
 	wkdir, err := os.Getwd()
 	if err != nil {
@@ -45,36 +52,17 @@ func TestBenchBase(t *testing.T) {
 	}
 	defer srv.Stop()
 
-	// Open client connection
-	client := mysql.NewClient()
-	if err := client.Open(); err != nil {
-		t.Fatalf("failed to open client: %v", err)
+	// List of benches to execute; expand as needed.
+	// Common BenchBase benches include: tpcc, tatp, smallbank, ycsb, epinions, etc.
+	benches := []string{
+		"tpcc",
 	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			t.Error(err)
-		}
-	}()
 
-	// Placeholder database for BenchBase
-	// In future, BenchBase will create and use its own schemas.
-	dbName := "benchbase_temp"
-	if err := client.CreateDatabase(dbName); err != nil {
-		t.Fatalf("create database error: %v", err)
+	// Each bench is run as a subtest for isolated reporting in go test output.
+	for _, bench := range benches {
+		// shadow for closure capture
+		t.Run(bench, func(t *testing.T) {
+			benchbase.RunWorkload(t, bench)
+		})
 	}
-	defer func() {
-		if err := client.DropDatabase(dbName); err != nil {
-			t.Errorf("drop database error: %v", err)
-		}
-	}()
-
-	// Placeholder assertion: ensure database exists via a simple query.
-	// Depending on mysql.Client API, implement a SHOW DATABASES or similar if available.
-	// For now we just log creation success.
-	t.Logf("BenchBase placeholder DB created: %s", dbName)
-
-	// Future Work:
-	// 1. Add configuration loader for BenchBase workloads.
-	// 2. Execute Java BenchBase driver with connection parameters.
-	// 3. Collect performance metrics and validate basic query patterns.
 }
