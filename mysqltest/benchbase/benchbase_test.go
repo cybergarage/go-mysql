@@ -27,8 +27,6 @@ import (
 )
 
 // TestBenchBase starts a test MySQL-compatible server and performs basic lifecycle checks.
-// TODO: Integrate BenchBase by invoking its Java runner with appropriate configuration
-// once a local benchmark harness or wrapper is added (e.g., using exec.Command).
 func TestBenchBase(t *testing.T) {
 	// Enable verbose debug logging to observe benchmark progress.
 	log.EnableStdoutDebug(true)
