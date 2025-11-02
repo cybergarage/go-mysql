@@ -30,6 +30,7 @@ const (
 		ClientFoundRows |
 		ClientLongColumnFlag |
 		ClientProtocol41 |
+		ClientSecureConnection |
 		ClientPluginAuth
 
 	DefaultHandshakeServerCapabilities = DefaultServerCapability |
