@@ -21,9 +21,6 @@ import (
 	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-mysql/mysqltest/server"
 	"github.com/cybergarage/go-sqltest/sqltest/benchbase"
-	// BenchBase integration placeholder: BenchBase is Java-based.
-	// Actual invocation would require spawning BenchBase workload runner via CLI.
-	// We keep this test minimal and focused on server startup lifecycle.
 )
 
 // TestBenchBase starts a test MySQL-compatible server and performs basic lifecycle checks.
