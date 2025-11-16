@@ -1,0 +1,39 @@
+#!/bin/bash
+set -eu
+
+MYSQL_CONTAINER_NAME="mysql"
+MYSQL_VERSION="8.0.44"
+MYSQL_USER="root"
+MYSQL_ROOT_PASSWORD="password"
+MYSQL_PORT=3306
+BENCHBASE_JAR="benchbase.jar"
+
+DUMP_FILE="benchbase-run-$(date +%Y%m%d%H%M%S).pcap"
+
+echo "Starting MySQL Docker container..."
+docker run --name $MYSQL_CONTAINER_NAME \
+  -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD \
+  -p $MYSQL_PORT:$MYSQL_PORT \
+  -d $MYSQL_CONTAINER_NAME:$MYSQL_VERSION
+
+echo "Waiting for MySQL to be ready..."
+sleep 10
+
+echo "Creating Benchbase database..."
+mysql -u $MYSQL_USER -p$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS benchbase;"
+
+echo "Starting tcpdump on port $MYSQL_PORT..."
+sudo tcpdump -i lo port $MYSQL_PORT -w $DUMP_FILE &
+TCPDUMP_PID=$!
+
+echo "Running Benchbase TPC-C benchmark..."
+make run
+
+echo "Stopping tcpdump..."
+sudo kill $TCPDUMP_PID
+
+echo "Stopping and removing MySQL Docker container..."
+docker stop $MYSQL_CONTAINER_NAME
+docker rm $MYSQL_CONTAINER_NAME
+
+echo "Done! TCP dump saved as $DUMP_FILE"
