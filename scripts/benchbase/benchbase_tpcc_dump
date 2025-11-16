@@ -8,7 +8,7 @@ MYSQL_ROOT_PASSWORD="password"
 MYSQL_PORT=3306
 BENCHBASE_JAR="benchbase.jar"
 
-DUMP_FILE="benchbase-run-$(date +%Y%m%d%H%M%S).pcap"
+DUMP_FILE="mysql-benchbase-$(date +%Y%m%d-%H%M%S).pcap"
 
 echo "Starting MySQL Docker container..."
 docker run --name $MYSQL_CONTAINER_NAME \
@@ -17,10 +17,17 @@ docker run --name $MYSQL_CONTAINER_NAME \
   -d $MYSQL_CONTAINER_NAME:$MYSQL_VERSION
 
 echo "Waiting for MySQL to be ready..."
-sleep 10
+for i in {1..30}; do
+  if mysql -u $MYSQL_USER -p$MYSQL_ROOT_PASSWORD --protocol=tcp --host=localhost --port=$MYSQL_PORT -e "SELECT 1" >/dev/null 2>&1; then
+    echo "MySQL is ready!"
+    break
+  fi
+  echo "Waiting for MySQL... ($i/30)"
+  sleep 2
+done
 
 echo "Creating Benchbase database..."
-mysql -u $MYSQL_USER -p$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS benchbase;"
+mysql -u $MYSQL_USER -p$MYSQL_ROOT_PASSWORD --protocol=tcp --host=localhost --port=$MYSQL_PORT -e "CREATE DATABASE IF NOT EXISTS benchbase;"
 
 echo "Starting tcpdump on port $MYSQL_PORT..."
 sudo tcpdump -i lo port $MYSQL_PORT -w $DUMP_FILE &
