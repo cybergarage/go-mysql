@@ -60,40 +60,19 @@ clean:
 	@echo "Cleaning BenchBase files..."
 	rm -rf $(BENCHBASE_DIR) lib data config scripts $(BENCHBASE_JAR)
 
-# Force rebuild (clean + setup)
-.PHONY: rebuild
-rebuild: clean setup
-
-# Run BenchBase help
-.PHONY: help
-help: $(BENCHBASE_JAR)
-	java -jar $(BENCHBASE_JAR) -h
-
 # Run TPCC benchmark (requires server to be running)
-.PHONY: run-tpcc
-run-tpcc: $(BENCHBASE_JAR)
+.PHONY: run
+run: $(BENCHBASE_JAR)
 	java -jar $(BENCHBASE_JAR) -b tpcc -c tpcc_config.xml --create=true --load=true --execute=true
 
-# Show current status
-.PHONY: status
-status:
-	@echo "BenchBase Setup Status:"
-	@echo "  JAR file: $(shell [ -f $(BENCHBASE_JAR) ] && echo "✓ Present" || echo "✗ Missing")"
-	@echo "  lib directory: $(shell [ -d lib ] && echo "✓ Present" || echo "✗ Missing")"
-	@echo "  data directory: $(shell [ -d data ] && echo "✓ Present" || echo "✗ Missing")"
-	@echo "  config directory: $(shell [ -d config ] && echo "✓ Present" || echo "✗ Missing")"
-	@echo "  scripts directory: $(shell [ -d scripts ] && echo "✓ Present" || echo "✗ Missing")"
-	@echo "  Java: $(shell command -v java >/dev/null 2>&1 && echo "✓ Available" || echo "✗ Not found")"
-	@echo "  Git: $(shell command -v git >/dev/null 2>&1 && echo "✓ Available" || echo "✗ Not found")"
-
 # Show make targets
-.PHONY: list
-list:
+.PHONY: help
+help:
 	@echo "Available targets:"
 	@echo "  setup    - Setup BenchBase (default)"
 	@echo "  clean    - Remove all BenchBase files"
 	@echo "  rebuild  - Clean and setup BenchBase"
 	@echo "  help     - Show BenchBase help"
-	@echo "  run-tpcc - Run TPCC benchmark"
+	@echo "  run      - Run TPCC benchmark"
 	@echo "  status   - Show current setup status"
 	@echo "  list     - Show this help message"
