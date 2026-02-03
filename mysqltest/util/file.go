@@ -91,7 +91,7 @@ func (file *File) ListFilesWithExtention(targetExt string) ([]*File, error) {
 	return files, nil
 }
 
-// ListFilesWithExtention returns files which has the specified extensions in the directory.
+// ListFilesWithRegexp returns files matched by the specified regexp.
 func (file *File) ListFilesWithRegexp(re *regexp.Regexp) ([]*File, error) {
 	if !file.IsDir() {
 		return nil, fmt.Errorf(errorFileIsNotDirectory, file.Path)

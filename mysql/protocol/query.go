@@ -59,14 +59,14 @@ func newQueryWithCommand(cmd Command, opts ...QueryOption) *Query {
 // QueryOption represents a MySQL Query option.
 type QueryOption func(*Query)
 
-// WithQuery returns a QueryOption that sets the query.
+// WithQueryString returns a QueryOption that sets the query string.
 func WithQueryString(v string) QueryOption {
 	return func(pkt *Query) {
 		pkt.query = v
 	}
 }
 
-// WithQueryCapabilities returns a QueryOption that sets the capabilities.
+// WithQueryCapability returns a QueryOption that sets the capabilities.
 func WithQueryCapability(c Capability) QueryOption {
 	return func(pkt *Query) {
 		pkt.SetCapability(c)

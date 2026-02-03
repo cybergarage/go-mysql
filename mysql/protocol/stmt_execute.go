@@ -116,7 +116,7 @@ func WithStmtExecuteNumParams(numParams uint16) StmtExecuteOption {
 	}
 }
 
-// WithStmtExecuteBindSendType sets the bind send type.
+// WithStmtExecuteStatementManager sets the statement manager.
 func WithStmtExecuteStatementManager(stmtMgr stmt.StatementManager) StmtExecuteOption {
 	return func(q *StmtExecute) {
 		q.stmtMgr = stmtMgr

@@ -24,7 +24,7 @@ import (
 // CommandOption represents a MySQL Command option.
 type CommandOption func(Command)
 
-// WithCommandCapabilities returns a CommandOption that sets the capabilities.
+// WithCommandCapability returns a CommandOption that sets the capabilities.
 func WithCommandCapability(c Capability) CommandOption {
 	return func(cmd Command) {
 		cmd.SetCapability(c)
@@ -102,7 +102,7 @@ const (
 	ComStmtClose CommandType = 0x19
 	// ComStmtReset: Command Stmt Reset.
 	ComStmtReset CommandType = 0x1a
-	// ComStmeFetch: Command Stmt Fetch.
+	// ComStmtFetch: Command Stmt Fetch.
 	ComStmtFetch CommandType = 0x1b
 )
 

@@ -110,21 +110,21 @@ func WithColumnDefOrgName(orgName string) ColumnDefOption {
 	}
 }
 
-// WithColumnDefColLength returns a ColumnDefOption to set the column length.
+// WithColumnDefFixedFieldLength returns a ColumnDefOption to set the fixed field length.
 func WithColumnDefFixedFieldLength(fixedFieldLength uint64) ColumnDefOption {
 	return func(pkt *columnDef) {
 		pkt.fixedFieldLength = fixedFieldLength
 	}
 }
 
-// WithColumnDefColLength returns a ColumnDefOption to set the column length.
+// WithColumnDefCharSet returns a ColumnDefOption to set the character set.
 func WithColumnDefCharSet(charSet uint16) ColumnDefOption {
 	return func(pkt *columnDef) {
 		pkt.charSet = charSet
 	}
 }
 
-// WithColumnDefColLength returns a ColumnDefOption to set the column length.
+// WithColumnDefType returns a ColumnDefOption to set the column type.
 func WithColumnDefType(colType uint8) ColumnDefOption {
 	return func(pkt *columnDef) {
 		pkt.colType = colType

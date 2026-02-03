@@ -37,7 +37,7 @@ type TextResultSet struct {
 // TextResultSetOption represents a COM_QUERY text resultset option.
 type TextResultSetOption func(*TextResultSet)
 
-// WithTextResultSetCapabilities returns a text resultset option to set the capabilities.
+// WithTextResultSetCapability returns a text resultset option to set the capabilities.
 func WithTextResultSetCapability(c Capability) TextResultSetOption {
 	return func(pkt *TextResultSet) {
 		pkt.capFlags = c

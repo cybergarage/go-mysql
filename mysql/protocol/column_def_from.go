@@ -23,7 +23,7 @@ import (
 // MySQL: Column Definition
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset_column_definition.html
 
-// NewColumnDefFromReader returns a new ColumnDef from the reader.
+// NewColumnDefsFromResultSet returns ColumnDef instances from the specified result set.
 func NewColumnDefsFromResultSet(rs sql.ResultSet) ([]ColumnDef, error) {
 	schema := rs.Schema()
 	columns := schema.Columns()
@@ -49,7 +49,7 @@ func NewColumnDefsFromResultSet(rs sql.ResultSet) ([]ColumnDef, error) {
 	return columnDefs, nil
 }
 
-// NewColumnDefFromSystemSchemaColumn returns a new ColumnDef from the system schema column.
+// NewColumnDefsFromSystemSchemaColumn returns a ColumnDef from the specified system schema column.
 func NewColumnDefsFromSystemSchemaColumn(column system.SchemaColumn) (ColumnDef, error) {
 	t, err := query.NewFieldTypeFrom(column.DataType())
 	if err != nil {

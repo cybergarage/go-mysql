@@ -39,7 +39,7 @@ type genericResponse struct {
 	capFlags Capability
 }
 
-// NewOKFromReader returns a new OK packet from the reader.
+// NewGenericResponseFromReader returns a generic response packet from the reader.
 func NewGenericResponseFromReader(r io.Reader, opts ...GenericResponseOption) (GenericResponse, error) {
 	reader := NewPacketReaderWithReader(r)
 	header, err := reader.PeekByte()

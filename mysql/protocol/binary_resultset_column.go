@@ -30,7 +30,7 @@ type BinaryResultSetColumn struct {
 	bytes []byte
 }
 
-// WithBinaryResultSetRowType returns a binary resultset row option to set the type.
+// WithBinaryResultSetColumnType returns a binary resultset column option to set the type.
 func WithBinaryResultSetColumnType(t FieldType) BinaryResultSetColumnOption {
 	return func(column *BinaryResultSetColumn) error {
 		column.t = t
@@ -38,7 +38,7 @@ func WithBinaryResultSetColumnType(t FieldType) BinaryResultSetColumnOption {
 	}
 }
 
-// WithBinaryResultSetRowBytes returns a binary resultset row option to set the bytes.
+// WithBinaryResultSetColumnBytes returns a binary resultset column option to set the bytes.
 func WithBinaryResultSetColumnBytes(b []byte) BinaryResultSetColumnOption {
 	return func(column *BinaryResultSetColumn) error {
 		column.bytes = b
@@ -46,7 +46,7 @@ func WithBinaryResultSetColumnBytes(b []byte) BinaryResultSetColumnOption {
 	}
 }
 
-// WithBinaryResultSetRowValue returns a binary resultset row option to set the value.
+// WithBinaryResultSetColumnValue returns a binary resultset column option to set the value.
 func WithBinaryResultSetColumnValue(v any) BinaryResultSetColumnOption {
 	return func(column *BinaryResultSetColumn) error {
 		w := NewPacketWriter()

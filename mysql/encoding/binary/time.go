@@ -27,7 +27,7 @@ const (
 	defaultTimeBytesLen = 12
 )
 
-// BytesToTime converts a byte slice to a time.Time.
+// BytesToDuration converts a byte slice to a time.Duration.
 func BytesToDuration(b []byte) (time.Duration, error) {
 	if len(b) < 1 {
 		return time.Duration(0), newErrInvalidTimeBytes(b)
@@ -66,7 +66,7 @@ func BytesToDuration(b []byte) (time.Duration, error) {
 	return d, nil
 }
 
-// TimeToDatetimeBytes converts a time.Time to a datetime byte slice.
+// DurationToTimeBytes converts a time.Duration to a MySQL TIME-encoded byte slice.
 func DurationToTimeBytes(d time.Duration) []byte {
 	var isNegative byte
 	var days, hour, minute, second, microsecond int

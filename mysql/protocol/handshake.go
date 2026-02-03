@@ -124,7 +124,7 @@ func WithHandshakeServerStatus(v ServerStatus) HandshakeOption {
 	}
 }
 
-// WithHandshakeAuthPluginData1 sets the auth plugin data.
+// WithHandshakeAuthPluginData sets the auth plugin data.
 func WithHandshakeAuthPluginData(v []byte) HandshakeOption {
 	// NOTE: mysql-server 5.7 send_server_handshake_packet()
 	// https://github.com/mysql/mysql-server/blob/5.7/sql/auth/sql_authentication.cc#L512
@@ -143,7 +143,7 @@ func WithHandshakeAuthPluginData(v []byte) HandshakeOption {
 	}
 }
 
-// WithHandshakeAuthPluginData2 sets the auth plugin name.
+// WithHandshakeAuthPluginName sets the auth plugin name.
 func WithHandshakeAuthPluginName(v string) HandshakeOption {
 	return func(pkt *Handshake) {
 		pkt.authPluginName = v

@@ -194,7 +194,7 @@ func NewHandshakeResponseFromReader(reader io.Reader) (*HandshakeResponse, error
 	return res, nil
 }
 
-// Capabilitys returns the capability flags.
+// Capability returns the capability flags.
 func (pkt *HandshakeResponse) Capability() Capability {
 	return Capability(pkt.Capabilitys)
 }

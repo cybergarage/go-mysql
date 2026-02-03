@@ -14,6 +14,8 @@
 
 package binary
 
+// NullString is the NULL marker (0xFB) used in MySQL text resultset rows.
+//
 // MySQL: Text Resultset Row
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset_row.html
 // NULL is sent as 0xFB.

@@ -14,7 +14,7 @@
 
 package plugins
 
-// MySQL: Clear text client plugin
+// ClearEncrypt implements the clear text client authentication plugin.
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase_authentication_methods_clear_text_password.html
 func ClearEncrypt(passwd any, args ...any) (any, error) {
 	var strPasswd string

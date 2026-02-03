@@ -214,12 +214,12 @@ func (pkt *StmtPrepare) TableNames() []string {
 	return pkt.tblNames
 }
 
-// SetResultSetColumnNames sets the result set column names.
+// ResultSetColumnNames returns the result set column names.
 func (pkt *StmtPrepare) ResultSetColumnNames() []string {
 	return pkt.resultSetColumnNames
 }
 
-// SetParameterColumnNames sets the parameter column names.
+// ParameterColumnNames returns the parameter column names.
 func (pkt *StmtPrepare) ParameterColumnNames() []string {
 	return pkt.parameterColumnNames
 }

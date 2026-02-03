@@ -26,7 +26,7 @@ type conn struct {
 	stmt.StatementManager
 }
 
-// NewConn returns a new connection instance.
+// NewConnWith returns a new connection instance.
 func NewConnWith(netConn net.Conn) Conn {
 	return &conn{
 		Conn:             mysqlnet.NewConnWith(netConn),

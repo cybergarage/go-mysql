@@ -41,7 +41,7 @@ func NewPacketReaderWithBytes(data []byte) *PacketReader {
 	}
 }
 
-// ReadCapabilitys reads the capability flags.
+// ReadCapability reads the capability flags.
 func (reader *PacketReader) ReadCapability() (Capability, error) {
 	var Capabilitys Capability
 	v, err := reader.ReadInt2()
@@ -69,7 +69,7 @@ func (reader *PacketReader) ReadCapability() (Capability, error) {
 	return Capabilitys, nil
 }
 
-// PeekCapabilitys reads the capability flags.
+// PeekCapability reads the capability flags.
 func (reader *PacketReader) PeekCapability() (Capability, error) {
 	var Capabilitys Capability
 	v, err := reader.PeekInt2()
@@ -97,7 +97,7 @@ func (reader *PacketReader) PeekCapability() (Capability, error) {
 	return Capabilitys, nil
 }
 
-// ReadFieldBytes reads the field bytes.
+// ReadDatetimeBytes reads MySQL date/time encoded bytes.
 func (reader *PacketReader) ReadDatetimeBytes() ([]byte, error) {
 	v1, err := reader.ReadByte()
 	if err != nil {

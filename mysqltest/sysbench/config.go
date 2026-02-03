@@ -21,6 +21,7 @@ import (
 )
 
 const (
+	// MySQLHost is the sysbench option key for the MySQL host.
 	// https://github.com/akopytov/sysbench
 	MySQLHost     = "mysql-host"
 	MySQLPort     = "mysql-port"

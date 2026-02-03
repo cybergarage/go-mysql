@@ -19,10 +19,10 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// Client represents a PostgreSQL client interface.
+// Client represents a MySQL client interface.
 type Client = sqltest.Client
 
-// NewDefaultClient returns a new default PostgreSQL client.
+// NewClient returns a new default MySQL client.
 func NewClient() Client {
 	return sqltest.NewMySQLClient()
 }

@@ -71,7 +71,7 @@ const (
 	ClientSessionTrack Capability = 8388608
 	// ClientDeprecateEOF represents the CLIENT_DEPRECATE_EOF capability flag.
 	ClientDeprecateEOF Capability = 16777216
-	// ClientCapabilitiyClientOptionalResultsetMetadata represents the CLIENT_OPTIONAL_RESULTSET_METADATA capability flag.
+	// ClientOptionalResultsetMetadata represents the CLIENT_OPTIONAL_RESULTSET_METADATA capability flag.
 	ClientOptionalResultsetMetadata Capability = 33554432
 	// ClientZstdCompressionAlgorithm represents the CLIENT_ZSTD_COMPRESSION_ALGORITHMS capability flag.
 	ClientZstdCompressionAlgorithm Capability = 67108864
@@ -97,7 +97,7 @@ func (c Capability) LacksCapability(flag Capability) bool {
 	return !c.HasCapability(flag)
 }
 
-// ToBytes returns the capability flag as bytes.
+// NewCapabilityFromBytes returns a Capability decoded from the specified 4-byte value.
 func NewCapabilityFromBytes(data []byte) Capability {
 	return Capability(uint32(data[0]) | uint32(data[1])<<8 | uint32(data[2])<<16 | uint32(data[3])<<24)
 }

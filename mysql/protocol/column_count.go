@@ -25,10 +25,10 @@ import (
 // Result Set Packets - MariaDB Knowledge Base
 // https://mariadb.com/kb/en/result-set-packets/#column-count-packet
 
-// ColumnDefOption represents a function to set a ColumnDef option.
+// ColumnCountOption represents a function to set a ColumnCount option.
 type ColumnCountOption func(*ColumnCount)
 
-// ColumnDef represents a MySQL Column Definition packet.
+// ColumnCount represents a MySQL column count packet.
 type ColumnCount struct {
 	*packet
 

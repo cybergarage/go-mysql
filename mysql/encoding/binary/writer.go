@@ -162,7 +162,7 @@ func (w *Writer) writeFixedLengthBytes(b []byte, fb byte, n int) error {
 	return nil
 }
 
-// WriteFixedLengthString writes a fixed length bytes.
+// WriteFixedLengthBytes writes fixed length bytes.
 func (w *Writer) WriteFixedLengthBytes(b []byte, n int) error {
 	return w.writeFixedLengthBytes(b, 0x00, n)
 }

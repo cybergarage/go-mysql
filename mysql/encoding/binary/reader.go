@@ -250,7 +250,7 @@ func (reader *Reader) ReadNullTerminatedString() (string, error) {
 	return string(strBytes), nil
 }
 
-// ReadNullTerminatedString reads a string until NULL.
+// ReadNullTerminatedBytes reads bytes until NULL.
 func (reader *Reader) ReadNullTerminatedBytes() ([]byte, error) {
 	bytes, err := reader.ReadBytesUntil(0x00)
 	if err != nil {
@@ -301,7 +301,7 @@ func (reader *Reader) ReadVariableLengthString(n int) (string, error) {
 	return reader.ReadFixedLengthString(n)
 }
 
-// ReadLengthEncodedInt reads a length encoded integer.
+// ReadLengthEncodedString reads a length encoded string.
 func (reader *Reader) ReadLengthEncodedString() (string, error) {
 	n, err := reader.ReadLengthEncodedInt()
 	if err != nil {

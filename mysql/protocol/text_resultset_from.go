@@ -23,7 +23,7 @@ import (
 // MySQL: Text Resultset
 // https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query_response_text_resultset.html
 
-// TextResultSet represents a MySQL text resultset response packet.
+// NewTextResultSetFromResultSet returns a MySQL text resultset response packet from the specified result set.
 func NewTextResultSetFromResultSet(rs sql.ResultSet) (*TextResultSet, error) {
 	columDefs, err := NewColumnDefsFromResultSet(rs)
 	if err != nil {

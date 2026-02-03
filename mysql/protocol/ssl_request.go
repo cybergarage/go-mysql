@@ -50,7 +50,7 @@ func newSSLRequestWithPacket(msg *packet) *SSLRequest {
 // SSLRequestOption represents a MySQL SSLRequest option.
 type SSLRequestOption func(*SSLRequest) error
 
-// WithSSLRequestCapabilitys sets the capability flags.
+// WithSSLRequestCapability sets the capability flags.
 func WithSSLRequestCapability(v Capability) SSLRequestOption {
 	return func(h *SSLRequest) error {
 		h.Capabilitys = v
@@ -118,7 +118,7 @@ func NewSSLRequestFromReader(reader io.Reader) (*SSLRequest, error) {
 	return pkt, err
 }
 
-// Capabilitys returns the capability flags.
+// Capability returns the capability flags.
 func (pkt *SSLRequest) Capability() Capability {
 	return Capability(pkt.Capabilitys)
 }

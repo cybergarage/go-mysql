@@ -21,5 +21,5 @@ import (
 // CredentialAuthenticator is the interface for authenticating a client using credential.
 type CredentialAuthenticator = auth.CredentialAuthenticator
 
-// CredentialAuthenticator is the credential authenticator.
+// CredentialStore is the credential store.
 type CredentialStore = auth.CredentialStore

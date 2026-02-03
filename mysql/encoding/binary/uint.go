@@ -138,7 +138,7 @@ func Uint2ToBytes(v uint16) []byte {
 	return b
 }
 
-// BytesToUint8 converts the specified byte array to an integer.
+// BytesToUint1 converts the specified byte array to an integer.
 func BytesToUint1(b []byte) (uint8, error) {
 	if len(b) != 1 {
 		return 0, newErrInvalidLength(1, len(b))

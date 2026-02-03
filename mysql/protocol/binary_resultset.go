@@ -46,7 +46,7 @@ func newBinaryResultSetWithPacket(pkt *packet, opts ...BinaryResultSetOption) *B
 // BinaryResultSetOption represents a COM_QUERY binary resultset option.
 type BinaryResultSetOption func(*BinaryResultSet)
 
-// WithBinaryResultSetCapabilities returns a binary resultset option to set the capabilities.
+// WithBinaryResultSetCapability returns a binary resultset option to set the capabilities.
 func WithBinaryResultSetCapability(c Capability) BinaryResultSetOption {
 	return func(pkt *BinaryResultSet) {
 		pkt.SetCapability(c)

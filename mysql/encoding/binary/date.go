@@ -32,7 +32,7 @@ func BytesToDate(b []byte) (time.Time, error) {
 	return BytesToTime(b)
 }
 
-// TimeToDatetimeBytes converts a time.Time to a datetime byte slice.
+// TimeToDateBytes converts a time.Time to a date byte slice.
 func TimeToDateBytes(t time.Time) []byte {
 	year := t.Year()
 	b := make([]byte, dateBytesLen+1)

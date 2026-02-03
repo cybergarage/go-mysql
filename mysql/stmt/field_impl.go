@@ -33,7 +33,7 @@ type field struct {
 	v any
 }
 
-// Field represents a field option.
+// FieldOption represents a field option.
 type FieldOption func(*field)
 
 // WithFieldType returns a field option to set the field type.

@@ -77,14 +77,14 @@ func WithConnTracer(t tracer.Context) func(*conn) {
 	}
 }
 
-// WithConnTLSConnectionState sets a TLS connection state.
+// WithConnTLSConn sets the TLS connection.
 func WithConnTLSConn(s *tls.Conn) func(*conn) {
 	return func(conn *conn) {
 		conn.tlsConn = s
 	}
 }
 
-// Withuint64 sets a connection ID.
+// WithConnID sets a connection ID.
 func WithConnID(id uint64) func(*conn) {
 	return func(conn *conn) {
 		conn.id = id
@@ -98,7 +98,7 @@ func WithConnUUID(id uuid.UUID) func(*conn) {
 	}
 }
 
-// WithConnCapabilities sets capabilities.
+// WithConnCapability sets capabilities.
 func WithConnCapability(c Capability) func(*conn) {
 	return func(conn *conn) {
 		conn.caps = c

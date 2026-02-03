@@ -37,7 +37,7 @@ func (w *PacketWriter) WriteCommandType(cmd Command) error {
 	return w.WriteByte(byte(cmd.Type()))
 }
 
-// WriteCapabilitys writes the capability flags.
+// WriteCapability writes the capability flags.
 func (w *PacketWriter) WriteCapability(c Capability) error {
 	if c.HasCapability(ClientProtocol41) {
 		return w.WriteInt4(uint32(c))

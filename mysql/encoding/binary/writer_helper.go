@@ -19,7 +19,7 @@ func (w *Writer) WriteNullString() error {
 	return w.WriteByte(NullString)
 }
 
-// WriteTextResultsetRow writes a text resultset row.
+// WriteTextResultsetRowString writes a text resultset row string.
 func (w *Writer) WriteTextResultsetRowString(s *string) error {
 	if s == nil {
 		return w.WriteNullString()

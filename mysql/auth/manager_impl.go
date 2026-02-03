@@ -24,7 +24,7 @@ type manager struct {
 	auth.Manager
 }
 
-// Manager represents a MySQL auth manager.
+// NewManager returns a new MySQL auth manager.
 func NewManager() Manager {
 	return &manager{
 		Manager: auth.NewManager(),
