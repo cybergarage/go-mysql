@@ -49,7 +49,7 @@ func NewServer() *Server {
 	ca, err := auth.NewCertificateAuthenticator(
 		auth.WithCommonNameRegexp("localhost"),
 	)
-	if err != nil {
+	if err == nil {
 		server.SetCertificateAuthenticator(ca)
 	}
 

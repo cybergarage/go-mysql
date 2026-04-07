@@ -50,7 +50,7 @@ func NewServer() *Server {
 		CommandHandler: nil,
 		tcpListener:    nil,
 	}
-	server.SetCapability(DefaultServerCapability)
+	server.SetCapability(DefaultHandshakeServerCapabilities)
 	return server
 }
 
