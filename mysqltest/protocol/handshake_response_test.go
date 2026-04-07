@@ -123,6 +123,20 @@ func TestHandshakeResponsePacket(t *testing.T) {
 		// 		zstdLevel:  0,
 		// 	},
 		// },
+		{
+			"data/handshake-response-benchbase-v2023.hex",
+			expected{
+				capFlags:   protocol.Capability(0x8820F),
+				maxPkt:     0,
+				charSet:    0,
+				username:   "admin",
+				authRes:    nil,
+				database:   "benchbase",
+				pluginName: "mysql_native_password",
+				attrs:      map[string]string{},
+				zstdLevel:  0,
+			},
+		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			testData, err := testEmbedPacketFiles.ReadFile(test.name)
