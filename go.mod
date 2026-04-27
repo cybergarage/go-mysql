@@ -5,9 +5,9 @@ go 1.25.0
 require (
 	github.com/cybergarage/go-authenticator v1.0.5
 	github.com/cybergarage/go-logger v1.3.12
-	github.com/cybergarage/go-safecast v1.3.3
+	github.com/cybergarage/go-safecast v1.3.5
 	github.com/cybergarage/go-sasl v1.2.6
-	github.com/cybergarage/go-sqlparser v1.6.1-0.20251106105631-9593f74c9bfb
+	github.com/cybergarage/go-sqlparser v1.6.1-0.20260427065214-5314ca55420e
 	github.com/cybergarage/go-sqltest v1.6.2-0.20251103145359-271a22450d34
 	github.com/cybergarage/go-tracing v1.1.7
 	github.com/go-sql-driver/mysql v1.9.0
@@ -22,6 +22,6 @@ require (
 	github.com/jackc/pgx/v5 v5.5.5 // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	golang.org/x/crypto v0.45.0 // indirect
-	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0 // indirect
+	golang.org/x/exp v0.0.0-20260112195511-716be5621a96 // indirect
 	golang.org/x/text v0.31.0 // indirect
 )
