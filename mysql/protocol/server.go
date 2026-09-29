@@ -356,6 +356,8 @@ func (server *Server) receive(netConn net.Conn) error { //nolint:gocyclo,maintid
 	}
 
 	err = conn.ResponseOK(
+		WithOKCapability(conn.Capability()),
+		WithOKServerStatus(conn.ServerStatus()),
 		WithOKSecuenceID(handshakeRes.SequenceID().Next()),
 	)
 	if err != nil {

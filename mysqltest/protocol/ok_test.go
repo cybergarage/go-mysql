@@ -88,3 +88,34 @@ func TestOKPacket(t *testing.T) {
 		})
 	}
 }
+
+func TestOKPacketWithClientProtocol41Capability(t *testing.T) {
+	pkt, err := protocol.NewOK(
+		protocol.WithOKCapability(protocol.ClientProtocol41),
+		protocol.WithOKSecuenceID(protocol.SequenceID(2)),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	pktBytes, err := pkt.Bytes()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	const headerLength = 4
+	const protocol41OKPayloadLength = 7
+	if got := len(pktBytes) - headerLength; got != protocol41OKPayloadLength {
+		t.Fatalf("expected payload length %d, got %d", protocol41OKPayloadLength, got)
+	}
+
+	reader := bytes.NewReader(pktBytes)
+	parsedPkt, err := protocol.NewOKFromReader(reader, protocol.WithOKCapability(protocol.ClientProtocol41))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if parsedPkt.SequenceID() != protocol.SequenceID(2) {
+		t.Errorf("expected sequence ID %d, got %d", protocol.SequenceID(2), parsedPkt.SequenceID())
+	}
+}

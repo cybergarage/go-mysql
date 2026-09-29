@@ -117,6 +117,9 @@ func (server *server) HandleQuery(conn protocol.Conn, q *protocol.Query) (protoc
 	parser := query.NewParser()
 	stmts, err := parser.ParseString(q.Query())
 	if err != nil {
+		if server.errorHandler == nil {
+			return nil, err
+		}
 		return server.errorHandler.ParserError(conn, q.Query(), err)
 	}
 
